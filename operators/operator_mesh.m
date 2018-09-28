@@ -1,3 +1,6 @@
+% function operator_mesh(options)
+
+BC = options.BC;
 
 %% pressure volumes
 
@@ -378,6 +381,12 @@ ypp = kron(yp,ones(Nx,1));
 xpp = reshape(xpp,Nx,Ny);
 ypp = reshape(ypp,Nx,Ny);
 
+
+% store quantities in the grid structure
+options.grid.Nux_in = Nux_in;
+options.grid.Nuy_in = Nuy_in;
+options.grid.Nvx_in = Nvx_in;
+options.grid.Nvy_in = Nvy_in;
 
 % plot the grid: velocity points and pressure points
 if plotgrid==1

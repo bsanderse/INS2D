@@ -7,7 +7,7 @@ if (restart.load==0)
     
     % create results directory if not present
     if (~isdir(path_results))
-        unix(['mkdir ' path_results]);
+        mkdir(path_results);
     end  
 
     path_results = [path_results '/' file];
@@ -17,12 +17,12 @@ if (restart.load==0)
         path_results = ['results/' file '_' num2str(i_file)];
         i_file = i_file+1;
     end
-    unix(['mkdir ' path_results]);  
+    mkdir(path_results);  
     
     % copy inputfiles in result folder so that restart is possible and settings
     % can be reproduced
-    unix(['mkdir ' path_results '/inputfiles']);
-    unix(['cp inputfiles/*.m ' path_results '/inputfiles']);
+%     mkdir([path_results '/inputfiles']);
+%     copyfile('inputfiles/*.m ' path_results '/inputfiles']);
 
 end
 

@@ -9,13 +9,13 @@
 
 %   see readme.txt
 
-%   Benjamin Sanderse, June 2012
+%   Benjamin Sanderse, September 2018
 
 
 %% close figures and clean variables
 
 clc;
-clear all;
+clearvars;
 close all;
 format compact;
 format long;
@@ -37,6 +37,16 @@ addpath('ibm/');
 if (~isempty(strfind(path,'inputfiles')))
     rmpath('inputfiles/');
 end
+
+
+%% select case file
+
+% example case names (see case_files directory):
+% LDC, BFS, doublejet
+
+folder_cases = 'case_files';
+case_name    = 'LDC';
+
 
 
 % determine dt for finest mesh
@@ -68,7 +78,11 @@ jj = 1;
     
 %% load input parameters and constants
 disp('read input parameters...')
-run('inputfiles/parameters');       % current parameter file
+% run('inputfiles/parameters');       % current parameter file
+run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+    
+% save into structure 'options'
+accumulate_structure;
 
 % create files and directory for statistics, tecplot, restart, convergence
 % files
@@ -76,7 +90,8 @@ create_files;
 
 if (restart.load == 0)
     
-    addpath('inputfiles');
+%     addpath('inputfiles');
+    addpath([folder_cases '/' case_name]);
     
 elseif (restart.load ==1)
    
@@ -127,9 +142,10 @@ operators;
 
 %% initialization of solution vectors
 % disp('initialization of vectors...');
-fprintf(fcw,'initialization of vectors...\n');
+fprintf(fcw,'initialization of solution vectors...\n');
 if (restart.load == 0)
     initialize;
+    
 end
 
 %% construct body force or immersed boundary method

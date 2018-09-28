@@ -25,15 +25,15 @@ eLe = eLe.*ones(Ny+1,1);
 eRi = eRi.*ones(Ny+1,1);
 
 
-uLo_i      = uBC(xin,y(1),t,Re); 
-uUp_i      = uBC(xin,y(end),t,Re); 
-uLe_i      = uBC(x(1),yp,t,Re); 
-uRi_i      = uBC(x(end),yp,t,Re); 
+uLo_i      = uBC(xin,y(1),t,options); 
+uUp_i      = uBC(xin,y(end),t,options); 
+uLe_i      = uBC(x(1),yp,t,options); 
+uRi_i      = uBC(x(end),yp,t,options); 
 
-vLo_i      = vBC(xp,y(1),t,Re); 
-vUp_i      = vBC(xp,y(end),t,Re);
-vLe_i      = vBC(x(1),yin,t,Re);
-vRi_i      = vBC(x(end),yin,t,Re);
+vLo_i      = vBC(xp,y(1),t,options); 
+vUp_i      = vBC(xp,y(end),t,options);
+vLe_i      = vBC(x(1),yin,t,options);
+vRi_i      = vBC(x(end),yin,t,options);
 
 % uLe_i  = interp1q(y,uLe,yp);
 % uRi_i  = interp1q(y,uRi,yp);
