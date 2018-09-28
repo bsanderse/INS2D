@@ -1,0 +1,198 @@
+%   This m-file contains the code for the 2D incompressible Navier-Stokes
+%   equations using a Finite Volume Method and a pressure correction
+%   method.
+%   - horizontal numbering of volumes
+%   - 2nd and 4th order spatial (central) discretization convection and diffusion
+%   - general boundary conditions; switch fourth order BC by changing
+%   addpath('functions/new') to addpath('functions/verstappen'); check
+%   operator_convection_diffusion construction of Duy and Dvx
+
+%   see readme.txt
+
+%   Benjamin Sanderse, June 2012
+
+
+%% close figures and clean variables
+
+clc;
+clear all;
+close all;
+format compact;
+format long;
+% warning('off');
+
+tic;
+
+%% add paths
+addpath('force/');
+addpath('functions/new/');
+% addpath('functions/verstappen/');
+addpath('operators/');
+addpath('postprocessing/');
+addpath('solvers/');
+addpath('time/');
+addpath('ibm/');
+
+% path for inputfiles will be determined based on the value of 'restart'
+if (~isempty(strfind(path,'inputfiles')))
+    rmpath('inputfiles/');
+end
+
+
+% determine dt for finest mesh
+% mesh_list = [40 80];% [160 80 40 20 10];% 20 40 80 160];
+% mesh_list = [160 80 40 20 10];
+% mesh_list = [5 10 20 40 80];
+mesh_list = 64;
+% mesh_list = [16 32 64 128];
+% dt_list = 0.01; %0.002*pi;
+% 
+for j = 1:length(mesh_list)
+%     Nx = mesh_list(jj);
+   
+%     if (jj>1)
+%     dt_list(end+1) = 1/(round(1/(dt_list(end)*2)));
+%     end
+%     dt_list = 0.5*[dt_min dt_min/2 dt_min/10];
+jj = 1;
+% for j = 1:length(dt_list)
+% %     tic;
+%     Nx
+%     dt = dt_list(j)
+%     dt = dt*2
+%     j=1;
+    
+% relax = relax_list(j);
+% relax = 0;
+% Re = Re_list(j);
+    
+%% load input parameters and constants
+disp('read input parameters...')
+run('inputfiles/parameters');       % current parameter file
+
+% create files and directory for statistics, tecplot, restart, convergence
+% files
+create_files;
+
+if (restart.load == 0)
+    
+    addpath('inputfiles');
+    
+elseif (restart.load ==1)
+   
+    fprintf(fcw,['using parameter file from ' restart.folder '\n']);
+    addpath([restart.folder '/inputfiles/']);
+    % copy restart settings because they will be overwritten
+    restart_temp = restart;
+    % run parameter file from restart folder
+    parameters;
+    path_results = restart_temp.folder;
+    % copy restart info from current parameter file back
+    restart      = restart_temp;        
+    
+end
+
+
+% add own matlab libraries
+addpath(library_path);
+
+% add PETSc path (defined in parameters.m)
+if (poisson == 5)
+    addpath(petsc_mex);
+end
+
+
+% turbulence constants
+if (strcmp(visc,'turbulent'))
+    constants_ke;
+end
+
+%% construct mesh
+% disp('construct mesh...')
+fprintf(fcw,'construct mesh...\n');
+mesh_generation;
+
+%% boundary conditions
+% disp('boundary conditions...')
+fprintf(fcw,'boundary conditions...\n');
+boundary_conditions;
+
+
+%% construct operators (matrices)
+% disp('construct operators...');
+fprintf(fcw,'construct operators...\n');
+operators;
+
+
+
+%% initialization of solution vectors
+% disp('initialization of vectors...');
+fprintf(fcw,'initialization of vectors...\n');
+if (restart.load == 0)
+    initialize;
+end
+
+%% construct body force or immersed boundary method
+force;
+
+
+%% input checking
+input_check;
+
+% keyboard;
+
+%% start the solver
+fprintf(fcw,['setting-up simulation took ' num2str(toc) '\n']);
+
+fprintf(fcw,'start solver...\n');
+tic
+if (steady==1)
+
+%     max_res(1) = 10*accuracy;                 % prevent the while loop from stopping directly
+    
+    if (strcmp(visc,'turbulent'))
+        solver_steady_ke;
+    elseif (strcmp(visc,'laminar'))
+        if (order4==0)
+            if (ibm==0)
+                solver_steady;              
+            elseif (ibm==1)
+                solver_steady_ibm;
+            end
+        elseif (order4==1)
+            solver_steady_4thorder;
+        end
+    end
+ 
+else
+    
+    if (strcmp(visc,'turbulent'))
+        solver_unsteady_ke;
+    elseif (strcmp(visc,'laminar') || strcmp(visc,'LES'))
+        solver_unsteady;
+    end
+    
+    fprintf(fcw,['simulated time: ' num2str(t) '\n']);
+    
+end
+cpu(j,jj) = toc;
+fprintf(fcw,['total elapsed CPU time: ' num2str(toc) '\n']);
+
+if (poisson==5)
+    close(PS);
+end
+
+%% post-processing
+fprintf(fcw,'post-processing...\n');
+post_processing;
+
+% save all data to a matlab file
+if (save_file == 1)
+    save(file_mat);
+end
+
+clear n Fx Fy
+% clear nonlinear_its
+% 
+end
+% end

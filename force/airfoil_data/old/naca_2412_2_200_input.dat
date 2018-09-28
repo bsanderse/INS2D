@@ -1,0 +1,20 @@
+naca 2412
+gdes 
+gset 
+tgap 0 0.2
+exec 
+camb 
+wrtc 
+force/airfoil_data/naca_2412_2_200_camb.dat
+
+
+
+psav force/airfoil_data/naca_2412_2_200_coord.dat
+oper
+visc
+1000000
+alfa 2
+cpwr force/airfoil_data/naca_2412_2_200_cp.dat
+dump force/airfoil_data/naca_2412_2_200_cf.dat
+
+quit

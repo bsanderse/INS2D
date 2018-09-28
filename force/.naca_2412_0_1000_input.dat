@@ -1,0 +1,21 @@
+naca 2412
+gdes 
+gset 
+tgap 0 0.2
+exec 
+camb 
+wrtc 
+.naca_2412_0_1000_camb.dat
+
+
+
+psav .naca_2412_0_1000_coord.dat
+
+oper
+visc
+1000
+alfa 0
+cpwr .naca_2412_0_1000_cp.dat
+dump .naca_2412_0_1000_cf.dat
+
+quit
