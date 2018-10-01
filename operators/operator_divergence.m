@@ -1,3 +1,37 @@
+function options = operator_divergence(options)
+% construct divergence and gradient operator
+
+% boundary conditions
+BC = options.BC;
+
+Nx = options.grid.Nx;
+Ny = options.grid.Ny;
+
+% number of interior points and boundary points
+Npx    = options.grid.Npx;
+Npy    = options.grid.Npy;
+Nux_in = options.grid.Nux_in;
+Nux_b  = options.grid.Nux_b;
+Nux_t  = options.grid.Nux_t;
+Nuy_in = options.grid.Nuy_in;
+Nuy_b  = options.grid.Nuy_b;
+Nuy_t  = options.grid.Nuy_t;
+Nvx_in = options.grid.Nvx_in;
+Nvx_b  = options.grid.Nvx_b;
+Nvx_t  = options.grid.Nvx_t;
+Nvy_in = options.grid.Nvy_in;
+Nvy_b  = options.grid.Nvy_b;
+Nvy_t  = options.grid.Nvy_t;
+
+hx  = options.grid.hx;
+hy  = options.grid.hy;
+
+
+order4 = options.discretization.order4;
+
+steady = options.case.steady;
+visc   = options.case.visc;
+
 %% Divergence operator M
 
 % note that the divergence matrix M is not square
@@ -12,7 +46,7 @@ mat_hy = spdiags(hy,0,Ny,Ny);
 % hy(block+1)
 diag1       = ones(Nux_t,1);
 M1D         = spdiags([-diag1 diag1],[0 1],Nux_t-1,Nux_t);
-                                  
+
 % we only need derivative at inner pressure points, so we map the resulting
 % boundary matrix (restrict)
 diagpos = 0;
@@ -37,9 +71,9 @@ Bup    = kron(speye(Nuy_in),BMx);
 
 % boundary conditions
 Mx_BC  = BC_general(Nux_t,Nux_in,Nux_b, ...
-                                      BC.u.left,BC.u.right,hx(1),hx(end)); 
+    BC.u.left,BC.u.right,hx(1),hx(end));
 Mx_BC.Bbc = kron(mat_hy,M1D*Mx_BC.Btemp);
-                                  
+
 % extend to 2D
 Mx     = kron(mat_hy,M1D*Mx_BC.B1D);
 
@@ -48,10 +82,10 @@ if (order4==1)
     M1D3        = spdiags([-diag1 diag1],[0 3],Nux_t-1,Nux_t+2);
     M1D3        = BMx*M1D3;
     Mx_BC3      = BC_div2(Nux_t+2,Nux_in,Nux_t+2-Nux_in, ...
-                                      BC.u.left,BC.u.right,hx(1),hx(end));
+        BC.u.left,BC.u.right,hx(1),hx(end));
     Mx3         = kron(mat_hy3,M1D3*Mx_BC3.B1D);
     Mx_BC3.Bbc  = kron(mat_hy3,M1D3*Mx_BC3.Btemp);
-
+    
 end
 
 %% My
@@ -82,7 +116,7 @@ Bvp    = kron(BMy,speye(Nvx_in));
 
 % boundary conditions
 My_BC  = BC_general(Nvy_t,Nvy_in,Nvy_b, ...
-                                      BC.v.low,BC.v.up,hy(1),hy(end));
+    BC.v.low,BC.v.up,hy(1),hy(end));
 My_BC.Bbc = kron(M1D*My_BC.Btemp,mat_hx);
 
 % extend to 2D
@@ -93,13 +127,13 @@ if (order4==1)
     M1D3        = spdiags([-diag1 diag1],[0 3],Nvy_t-1,Nvy_t+2);
     M1D3        = BMy*M1D3;
     My_BC3      = BC_div2(Nvy_t+2,Nvy_in,Nvy_t+2-Nvy_in, ...
-                                      BC.v.low,BC.v.up,hy(1),hy(end));
+        BC.v.low,BC.v.up,hy(1),hy(end));
     My3         = kron(M1D3*My_BC3.B1D,mat_hx3);
     My_BC3.Bbc  = kron(M1D3*My_BC3.Btemp,mat_hx3);
-
+    
 end
 
-    
+
 %% resulting divergence matrix
 if (order4==1)
     Mx     = alfa*Mx-Mx3;
@@ -121,25 +155,46 @@ G      = [Gx; Gy];
 % end
 
 
+%% store in options structure
+options.discretization.M  = M;
+options.discretization.Mx = Mx;
+options.discretization.My = My;
+options.discretization.Mx_BC = Mx_BC;
+options.discretization.My_BC = My_BC;
+options.discretization.G  = G;
+options.discretization.Gx = Gx;
+options.discretization.Gy = Gy;
+
+if (order4==1)
+    options.discretization.Mx3 = Mx3;
+    options.discretization.My3 = My3;
+    options.discretization.Mx_BC3 = Mx_BC3;
+    options.discretization.My_BC3 = My_BC3;
+    options.discretization.Gx3 = Gx3;
+    options.discretization.Gy3 = Gy3;
+end
+
 %% Pressure matrix for pressure correction method;
 % also used to make initial data divergence free or compute additional poisson solve
 
 if (steady == 0 && ~strcmp(visc,'turbulent'))
     
+    poisson = options.solversettings.poisson;
+    
     %   Note that the matrix for the pressure is constant in time.
-    %   Only the right hand side vector changes, so the pressure matrix 
+    %   Only the right hand side vector changes, so the pressure matrix
     %   can be set up outside the time-stepping-loop.
-
+    
     %   Laplace = div grad
     A     = M*spdiags(Om_inv,0,Nu+Nv,Nu+Nv)*G;
-
-   %   LU decomposition
+    
+    %   LU decomposition
     if (poisson==3)
         if (exist(['cg.' mexext],'file')==3)
             [B, d]   = spdiags(A);
             ndia     = (length(d)+1)/2;
             dia      = d(ndia:end);
-            B        = B(:,ndia:-1:1);               
+            B        = B(:,ndia:-1:1);
         else
             fprintf(fcw,'No correct CG mex file available, switching to Matlab implementation \n');
             poisson = 4;
@@ -162,19 +217,19 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
     if (poisson==5)
         fprintf(fcw,'Petsc for pressure matrix solution... waiting for matrix\n');
         % open socket only once
-%         system('petscmpiexec -n 2 ./solvers/petsc_poisson_par -viewer_socket_port 5600 -pc_type hypre -pc_hypre_type boomeramg &');
+        %         system('petscmpiexec -n 2 ./solvers/petsc_poisson_par -viewer_socket_port 5600 -pc_type hypre -pc_hypre_type boomeramg &');
         PS = PetscOpenSocket(5600);
         PetscBinaryWrite(PS,-A);
         fprintf(fcw,'...matrix written to Petsc!\n');
     end
-
+    
     % check if all the row sums of the pressure matrix are zero, which
     % should be the case if there are no pressure boundary conditions
     if (~strcmp(BC.v.low,'pres') && ~strcmp(BC.v.up,'pres') && ...
-        ~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres'))    
+            ~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres'))
         if (max(abs(A*ones(Np,1)))>1e-10)
             fprintf(fcw,'warning: pressure matrix: not all rowsums are zero!\n');
         end
     end
-
+    
 end

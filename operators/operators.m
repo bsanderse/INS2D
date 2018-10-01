@@ -1,31 +1,31 @@
 %% mesh 
-operator_mesh;
+options = operator_mesh(options);
 
 
 %% averaging operators
-operator_averaging;
+options = operator_averaging(options);
+
 
 %% interpolation operators
-operator_interpolation;
+options = operator_interpolation(options);
+
 
 %% divergence (u,v)-> p and gradient p->(u,v) operator 
-operator_divergence;
+options = operator_divergence(options);
+
 
 %% convection and diffusion operators on u- and v- centered volumes
-operator_convection_diffusion;
-
-
-
+options = operator_convection_diffusion(options);
 
 
 %% post-processing
-operator_postprocessing;
+options = operator_postprocessing(options);
 
 
 %% boundary conditions
-interpolate_bc;
-operator_bc_divergence;
-operator_bc_momentum;
+% interpolate_bc;
+options = operator_bc_divergence(t,options);
+% operator_bc_momentum;
 
 
 %% turbulence

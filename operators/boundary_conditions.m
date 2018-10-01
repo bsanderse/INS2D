@@ -26,7 +26,8 @@ end
 
 file_name = [options.case.project '_uBC'];
 if (exist(file_name,'file'))
-    uBC  = str2func(file_name);    
+    % create function handle with name uBC
+    uBC = str2func(file_name);    
 else
     error(['BCtype file ' file_name ' not available']);
 end
@@ -39,6 +40,7 @@ uRi      = uBC(x(end),y,t,options);
 
 file_name = [options.case.project '_vBC'];
 if (exist(file_name,'file'))
+    % create function handle with name vBC    
     vBC   = str2func(file_name);    
 else
     error(['BCtype file ' file_name ' not available']);

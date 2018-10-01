@@ -25,15 +25,15 @@ eLe = eLe.*ones(Ny+1,1);
 eRi = eRi.*ones(Ny+1,1);
 
 
-uLo_i      = uBC(xin,y(1),t,options); 
-uUp_i      = uBC(xin,y(end),t,options); 
-uLe_i      = uBC(x(1),yp,t,options); 
-uRi_i      = uBC(x(end),yp,t,options); 
+uLo_i      = uBC(options.grid.xin,y(1),t,options); 
+uUp_i      = uBC(options.grid.xin,y(end),t,options); 
+uLe_i      = uBC(x(1),options.grid.yp,t,options); 
+uRi_i      = uBC(x(end),options.grid.yp,t,options); 
 
-vLo_i      = vBC(xp,y(1),t,options); 
-vUp_i      = vBC(xp,y(end),t,options);
-vLe_i      = vBC(x(1),yin,t,options);
-vRi_i      = vBC(x(end),yin,t,options);
+vLo_i      = vBC(options.grid.xp,y(1),t,options); 
+vUp_i      = vBC(options.grid.xp,y(end),t,options);
+vLe_i      = vBC(x(1),options.grid.yin,t,options);
+vRi_i      = vBC(x(end),options.grid.yin,t,options);
 
 % uLe_i  = interp1q(y,uLe,yp);
 % uRi_i  = interp1q(y,uRi,yp);
@@ -48,11 +48,11 @@ vRi_i      = vBC(x(end),yin,t,options);
 % BC used when additional pressure equation is solved
 
 
-dudtLe_i   = dudtBC(x(1),yp,t,Re); 
-dudtRi_i   = dudtBC(x(end),yp,t,Re);
+dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re); 
+dudtRi_i   = dudtBC(x(end),options.grid.yp,t,Re);
 
-dvdtLo_i   = dvdtBC(xp,y(1),t,Re); 
-dvdtUp_i   = dvdtBC(xp,y(end),t,Re);
+dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re); 
+dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,Re);
 
 
 

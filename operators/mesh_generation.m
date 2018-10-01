@@ -12,7 +12,7 @@ else
     error(['mesh file ' file_name ' not available']);
     
 end
-   
+
 
 %% derived mesh quantities
 
@@ -37,6 +37,16 @@ gy          = zeros(Ny+1,1);
 gy(1)       = hy(1)/2;
 gy(2:Ny)    = (hy(1:Ny-1)+hy(2:Ny))/2;
 gy(Ny+1)    = hy(end)/2;
+
+
+options.grid.x  = x;
+options.grid.y  = y;
+options.grid.xp = xp;
+options.grid.yp = yp;
+options.grid.hx = hx;
+options.grid.hy = hy;
+options.grid.gx = gx;
+options.grid.gy = gy;
 
 
 fprintf(fcw,['Nx=' num2str(Nx) ', min(hx)=' num2str(min(hx)) '\n']); 

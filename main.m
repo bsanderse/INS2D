@@ -21,6 +21,8 @@ format compact;
 format long;
 % warning('off');
 
+global uBC vBC;
+
 tic;
 
 %% add paths

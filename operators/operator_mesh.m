@@ -1,8 +1,23 @@
-% function operator_mesh(options)
+function options = operator_mesh(options)
 
 BC = options.BC;
 
+
 %% pressure volumes
+
+Nx = options.grid.Nx;
+Ny = options.grid.Ny;
+x = options.grid.x;
+y = options.grid.y;
+hx = options.grid.hx;
+hy = options.grid.hy;
+gx = options.grid.gx;
+gy = options.grid.gy;
+xp = options.grid.xp;
+yp = options.grid.yp;
+% gx = options.grid.gx;
+% gy = options.grid.gy;
+
 
 % number of pressure points
 Npx         = Nx;
@@ -15,12 +30,12 @@ Np          = Npx*Npy;
 % x(1)   x(2)   x(3) ....      x(Nx)   x(Nx+1)
 % |      |      |              |       |
 % |      |      |              |       |
-% Dirichlet BC: 
+% Dirichlet BC:
 % uLe    u(1)   u(2) ....      u(Nx-1) uRi
-% periodic BC: 
+% periodic BC:
 % u(1)   u(2)   u(3) ....      u(Nx)   u(1)
 % pressure BC:
-% u(1)   u(2)   u(3) ....      u(Nx)   u(Nx+1) 
+% u(1)   u(2)   u(3) ....      u(Nx)   u(Nx+1)
 
 
 % x-dir
@@ -35,15 +50,15 @@ end
 if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
     Nux_in  = Nux_in-1;
 end
-Nux_t       = Nux_in + Nux_b;  % total number 
+Nux_t       = Nux_in + Nux_b;  % total number
 
 % y-dir
 Nuy_b       = 2;               % boundary points
 Nuy_in      = Ny;              % inner points
 Nuy_t       = Nuy_in + Nuy_b;  % total number
 
-% total number 
-Nu          = Nux_in*Nuy_in;  
+% total number
+Nu          = Nux_in*Nuy_in;
 
 
 %% v-volumes
@@ -65,21 +80,21 @@ end
 if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per'))
     Nvy_in  = Nvy_in-1;
 end
-Nvy_t       = Nvy_in + Nvy_b;  % total number 
+Nvy_t       = Nvy_in + Nvy_b;  % total number
 
-% total number 
-Nv          = Nvx_in*Nvy_in;  
+% total number
+Nv          = Nvx_in*Nvy_in;
 
 
-%% extra variables 
+%% extra variables
 N1 = (Nux_in+1)*Nuy_in; %size(Iu_ux,1);
 N2 = Nux_in*(Nuy_in+1); %size(Iv_uy,1);
-N3 = (Nvx_in+1)*Nvy_in; % size(Iu_vx,1); 
+N3 = (Nvx_in+1)*Nvy_in; % size(Iu_vx,1);
 N4 =  Nvx_in*(Nvy_in+1); % size(Iv_vy,1);
 
 
 %% for a grid with three times larger volumes:
-if (order4==1)
+if (options.discretization.order4 == 1)
     hx3          = zeros(Nx,1);
     hx3(2:end-1) = hx(1:end-2)+hx(2:end-1)+hx(3:end);
     if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
@@ -89,7 +104,7 @@ if (order4==1)
         hx3(1)   = 2*hx(1)+hx(2);
         hx3(end) = hx(end-1)+2*hx(end);
     end
-
+    
     hy3          = zeros(Ny,1);
     hy3(2:end-1) = hy(1:end-2)+hy(2:end-1)+hy(3:end);
     if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per'))
@@ -98,11 +113,11 @@ if (order4==1)
     else
         hy3(1)   = 2*hy(1)+hy(2);
         hy3(end) = hy(end-1)+2*hy(end);
-    end    
-
+    end
+    
     hxi3         = hx3;
     hyi3         = hy3;
-
+    
     
     % distance between pressure points
     gx3          = zeros(Nx+1,1);
@@ -115,10 +130,10 @@ if (order4==1)
     else
         gx3(1)   = 2*gx(1)+2*gx(2);
         gx3(2)   = 2*gx(1)+gx(2)+gx(3);
-        gx3(end-1) = 2*gx(end)+gx(end-1)+gx(end-2); 
+        gx3(end-1) = 2*gx(end)+gx(end-1)+gx(end-2);
         gx3(end) = 2*gx(end)+2*gx(end-1);
     end
-
+    
     % distance between pressure points
     gy3          = zeros(Ny+1,1);
     gy3(3:Ny-1)  = gy(2:end-3)+gy(3:end-2)+gy(4:end-1);
@@ -130,10 +145,10 @@ if (order4==1)
     else
         gy3(1)   = 2*gy(1)+2*gy(2);
         gy3(2)   = 2*gy(1)+gy(2)+gy(3);
-        gy3(end-1) = 2*gy(end)+gy(end-1)+gy(end-2); 
+        gy3(end-1) = 2*gy(end)+gy(end-1)+gy(end-2);
         gy3(end) = 2*gy(end)+2*gy(end-1);
-    end    
-
+    end
+    
 end
 
 %% adapt mesh metrics depending on number of volumes
@@ -152,73 +167,73 @@ hxi         = hx;
 % restrict Nx+2 to Nux_in+1 points
 if (strcmp(BC.u.left,'dir') && strcmp(BC.u.right,'dir'))
     xin     = x(2:end-1);
-    hxd     = hx;  
+    hxd     = hx;
     gxi     = gx(2:end-1);
-    diagpos = 1;    
+    diagpos = 1;
     
-    if (order4==1)
-       hxd3  = [hx3(1); hx3; hx3(end)];      
-       hxd13 = [hx(1); hx; hx(end)];
-       gxd3  = [2*gx(1)+gx(2)+gx(3); gx3; 2*gx(end)+gx(end-1)+gx(end-2)];
-       gxd13 = [gx(2); 2*gx(1); gx(2:end-1); 2*gx(end); gx(end-1)];
-       gxi3  = gx3(2:end-1);
+    if (options.discretization.order4==1)
+        hxd3  = [hx3(1); hx3; hx3(end)];
+        hxd13 = [hx(1); hx; hx(end)];
+        gxd3  = [2*gx(1)+gx(2)+gx(3); gx3; 2*gx(end)+gx(end-1)+gx(end-2)];
+        gxd13 = [gx(2); 2*gx(1); gx(2:end-1); 2*gx(end); gx(end-1)];
+        gxi3  = gx3(2:end-1);
     end
-
+    
 end
 if (strcmp(BC.u.left,'dir') && strcmp(BC.u.right,'pres'))
     xin     = x(2:end);
     hxd     = [hx; hx(end)];
-    gxi     = gx(2:end);    
-    diagpos = 1;    
-%     if (order4==1)
-%        hxd13 = [hx(1);hx;hx(end)];
-%        gxi3  = gx3;
-%     end
-
+    gxi     = gx(2:end);
+    diagpos = 1;
+    %     if (order4==1)
+    %        hxd13 = [hx(1);hx;hx(end)];
+    %        gxi3  = gx3;
+    %     end
+    
 end
 if (strcmp(BC.u.left,'pres') && strcmp(BC.u.right,'dir'))
     xin     = x(1:end-1);
     hxd     = [hx(1); hx];
-    gxi     = gx(1:end-1);    
-    diagpos = 0;    
-%     if (order4==1)
-%        hxd13 = [hx(1);hx;hx(end)];
-%        gxi3  = gx3;
-%     end
+    gxi     = gx(1:end-1);
+    diagpos = 0;
+    %     if (order4==1)
+    %        hxd13 = [hx(1);hx;hx(end)];
+    %        gxi3  = gx3;
+    %     end
     
 end
 if (strcmp(BC.u.left,'pres') && strcmp(BC.u.right,'pres'))
     xin     = x(1:end);
     hxd     = [hx(1); hx; hx(end)];
     gxi     = gx;
-    diagpos = 0;  
-%     if (order4==1)
-%        hxd13 = [hx(1);hx;hx(end)];
-%        gxi3  = gx3;
-%     end
+    diagpos = 0;
+    %     if (order4==1)
+    %        hxd13 = [hx(1);hx;hx(end)];
+    %        gxi3  = gx3;
+    %     end
     
 end
 if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
     xin      = x(1:end-1);
-    hxd      = [hx(end); hx]; 
+    hxd      = [hx(end); hx];
     gxi      = [gx(1)+gx(end); gx(2:end-1)];
     gxd(1)   = (hx(1)+hx(end))/2;
-    gxd(end) = (hx(1)+hx(end))/2;    
+    gxd(end) = (hx(1)+hx(end))/2;
     diagpos  = 0;
     
     if (order4==1)
-      hxd3   = [hx3(end-1); hx3(end); hx3; hx3(1)];
-      hxd13  = [hx(end-1); hx(end); hx; hx(1)];
-      gxd3   = [gx3(end-1); gx3; gx3(2);];
-      gxd13  = [gx(end-1); gx(1)+gx(end); gx(2:end-1); gx(end)+gx(1); gx(2)];
-      gxi3   = gx3(1:end-1);
+        hxd3   = [hx3(end-1); hx3(end); hx3; hx3(1)];
+        hxd13  = [hx(end-1); hx(end); hx; hx(1)];
+        gxd3   = [gx3(end-1); gx3; gx3(2);];
+        gxd13  = [gx(end-1); gx(1)+gx(end); gx(2:end-1); gx(end)+gx(1); gx(2)];
+        gxi3   = gx3(1:end-1);
     end
-
+    
 end
 
 Bmap  = spdiags(ones(Nux_in+1,1),diagpos,Nux_in+1,Nx+2);
 
-% matrix to map from Nvx_t-1 to Nux_in points 
+% matrix to map from Nvx_t-1 to Nux_in points
 % (used in interpolation, convection_diffusion, viscosity)
 Bvux  = spdiags(ones(Nvx_t-1,1),diagpos,Nux_in,Nvx_t-1);
 % map from Npx+2 points to Nux_t-1 points (ux faces)
@@ -240,55 +255,55 @@ hyi         = hy;
 % restrict Ny+2 to Nvy_in+1 points
 if (strcmp(BC.v.low,'dir') && strcmp(BC.v.up,'dir'))
     yin = y(2:end-1);
-    hyd = hy;  
-    gyi = gy(2:end-1);    
+    hyd = hy;
+    gyi = gy(2:end-1);
     diagpos = 1;
     
-    if (order4==1)
-       hyd3  = [hy3(1); hy3; hy3(end)];      
-       hyd13 = [hy(1); hy; hy(end)];
-       gyd3  = [2*gy(1)+gy(2)+gy(3); gy3; 2*gy(end)+gy(end-1)+gy(end-2)];
-       gyd13 = [gy(2); 2*gy(1); gy(2:end-1); 2*gy(end); gy(end-1)];
-       gyi3  = gy3(2:end-1);
-    end    
+    if (options.discretization.order4==1)
+        hyd3  = [hy3(1); hy3; hy3(end)];
+        hyd13 = [hy(1); hy; hy(end)];
+        gyd3  = [2*gy(1)+gy(2)+gy(3); gy3; 2*gy(end)+gy(end-1)+gy(end-2)];
+        gyd13 = [gy(2); 2*gy(1); gy(2:end-1); 2*gy(end); gy(end-1)];
+        gyi3  = gy3(2:end-1);
+    end
 end
 if (strcmp(BC.v.low,'dir') && strcmp(BC.v.up,'pres'))
     yin = y(2:end);
     hyd = [hy; hy(end)];
-    gyi = gy(2:end);      
+    gyi = gy(2:end);
     diagpos = 1;
 end
 if (strcmp(BC.v.low,'pres') && strcmp(BC.v.up,'dir'))
     yin = y(1:end-1);
     hyd = [hy(1); hy];
-    gyi = gy(1:end-1);        
+    gyi = gy(1:end-1);
     diagpos = 0;
 end
 if (strcmp(BC.v.low,'pres') && strcmp(BC.v.up,'pres'))
     yin = y(1:end);
     hyd = [hy(1); hy; hy(end)];
-    gyi = gy;    
-    diagpos = 0; 
+    gyi = gy;
+    diagpos = 0;
 end
 if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per'))
     yin      = y(1:end-1);
-    hyd      = [hy(end); hy]; 
+    hyd      = [hy(end); hy];
     gyi      = [gy(1)+gy(end); gy(2:end-1)];
     gyd(1)   = (hy(1)+hy(end))/2;
-    gyd(end) = (hy(1)+hy(end))/2;        
+    gyd(end) = (hy(1)+hy(end))/2;
     diagpos = 0;
     
     if (order4==1)
-      hyd3   = [hy3(end-1); hy3(end); hy3; hy3(1)];
-      hyd13  = [hy(end-1); hy(end); hy; hy(1)];
-      gyd3   = [gy3(end-1); gy3; gy3(2);];
-      gyd13  = [gy(end-1); gy(1)+gy(end); gy(2:end-1); gy(end)+gy(1); gy(2)];
-      gyi3   = gy3(1:end-1);
-    end    
+        hyd3   = [hy3(end-1); hy3(end); hy3; hy3(1)];
+        hyd13  = [hy(end-1); hy(end); hy; hy(1)];
+        gyd3   = [gy3(end-1); gy3; gy3(2);];
+        gyd13  = [gy(end-1); gy(1)+gy(end); gy(2:end-1); gy(end)+gy(1); gy(2)];
+        gyi3   = gy3(1:end-1);
+    end
 end
 Bmap  = spdiags(ones(Nvy_in+1,1),diagpos,Nvy_in+1,Ny+2);
 
-% matrix to map from Nuy_t-1 to Nvy_in points 
+% matrix to map from Nuy_t-1 to Nvy_in points
 % (used in interpolation, convection_diffusion)
 Buvy   = spdiags(ones(Nuy_t-1,1),diagpos,Nvy_in,Nuy_t-1);
 % map from Npy+2 points to Nvy_t-1 points (vy faces)
@@ -320,7 +335,7 @@ Om     = [Omu; Omv];
 Om_inv = [Omu_inv; Omv_inv];
 
 
-if (order4==1)
+if (options.discretization.order4==1)
     
     % differencing for second order operators on the fourth order mesh
     Omux1  = kron(hyi,hxd13);
@@ -329,7 +344,7 @@ if (order4==1)
     Omvy1  = kron(hyd13,hxi);
     
     % volume (area) of pressure control volumes
-    Omp3  = kron(hyi3,hxi3); 
+    Omp3  = kron(hyi3,hxi3);
     % volume (area) of u-vel control volumes
     Omu3  = kron(hyi3,gxi3);
     % volume (area) of v-vel control volumes
@@ -360,7 +375,7 @@ if (order4==1)
     
     Omvort1 = Omvort;
     Omvort3 = kron(gyi3,gxi3);
-%     Omvort  = alfa*Omvort - Omvort3;
+    %     Omvort  = alfa*Omvort - Omvort3;
     
 end
 
@@ -382,13 +397,48 @@ xpp = reshape(xpp,Nx,Ny);
 ypp = reshape(ypp,Nx,Ny);
 
 
-% store quantities in the grid structure
+% store quantities in the structure
+options.grid.Npx = Npx;
+options.grid.Npy = Npy
+
 options.grid.Nux_in = Nux_in;
+options.grid.Nux_b  = Nux_b;
+options.grid.Nux_t  = Nux_t;
+
 options.grid.Nuy_in = Nuy_in;
+options.grid.Nuy_b  = Nuy_b;
+options.grid.Nuy_t  = Nuy_t;
+
 options.grid.Nvx_in = Nvx_in;
+options.grid.Nvx_b  = Nvx_b;
+options.grid.Nvx_t  = Nvx_t;
+
 options.grid.Nvy_in = Nvy_in;
+options.grid.Nvy_b  = Nvy_b;
+options.grid.Nvy_t  = Nvy_t;
+
+options.grid.Omux   = Omux;
+options.grid.Omvx   = Omvx;
+options.grid.Omuy   = Omuy;
+options.grid.Omvy   = Omvy;
+
+options.grid.hxi = hxi;
+options.grid.hyi = hyi;
+options.grid.hxd = hxd;
+options.grid.hyd = hyd;
+
+options.grid.gxi = gxi;
+options.grid.gyi = gyi;
+options.grid.gxd = gxd;
+options.grid.gyd = gyd;
+
+options.grid.Buvy = Buvy;
+options.grid.Bvux = Bvux;
+
+options.grid.xin  = xin;
+options.grid.yin  = yin;
 
 % plot the grid: velocity points and pressure points
-if plotgrid==1
-    plot_staggered(x,y);    
+if (options.visualization.plotgrid==1)
+    plot_staggered(x,y);
 end
