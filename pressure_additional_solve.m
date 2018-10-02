@@ -1,33 +1,28 @@
-%% additional pressure solve
+function p = pressure_additional_solve(uh,vh,p,t,options)
+% additional pressure solve
 % make the pressure compatible with the velocity field. this should
 % also result in same order pressure as velocity
 
-if (p_add_solve==1)
-    % evaluate BC and force at end of time step
-    t = tn + dt;
-    if (BC_unsteady == 1)   
-        boundary_conditions;
-        interpolate_bc;
-        operator_bc_momentum;
-        operator_bc_divergence;
+    Om_inv = options.grid.Om_inv;
+
+    if (options.BC.BC_unsteady == 1)   
+        options = set_bc_vectors(t,options);
     end
-    force;
-    t = tn;    
-      
-    % convection
-    cu     = uh;
-    cv     = vh;
-    convection;
+    
+    M  = options.discretization.M;
+    % note: derivative of BC!
+    ydM = options.discretization.ydM;
+    
+    % note: F already contains G*p with the current p
+    % we therefore effectively solve for the pressure difference
+    [~,Ru,Rv] = F(uh,vh,p,t,options);
+    
+    R  = [Ru;Rv];
+    
+    f  = M*R + ydM;
+    
+    dp = pressure_poisson(f,t,options);
 
-    % diffusion
-    diffusion;
+    p  = p+dp;
 
-    Ru     =  - convu + d2u + Fx - y_px;    
-    Rv     =  - convv + d2v + Fy - y_py;
-    R      = Om_inv.*[Ru;Rv];
-    f      = M*R + ydM;
-
-    pressure_poisson;
-
-    p = dp;
 end

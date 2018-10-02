@@ -1,4 +1,35 @@
+function [convu, convv] = convection(uh,vh,t,options)
 % evaluate convective terms
+
+order4     = options.discretization.order4;
+regularize = options.case.regularize;
+
+Cux = options.discretization.Cux;
+Cuy = options.discretization.Cuy;
+Cvx = options.discretization.Cvx;
+Cvy = options.discretization.Cvy;
+
+Au_ux = options.discretization.Au_ux;
+Au_uy = options.discretization.Au_uy;
+Av_vx = options.discretization.Av_vx;
+Av_vy = options.discretization.Av_vy;
+
+yAu_ux = options.discretization.yAu_ux;
+yAu_uy = options.discretization.yAu_uy;
+yAv_vx = options.discretization.yAv_vx;
+yAv_vy = options.discretization.yAv_vy;
+
+Iu_ux = options.discretization.Iu_ux;
+Iv_uy = options.discretization.Iv_uy;
+Iu_vx = options.discretization.Iu_vx;
+Iv_vy = options.discretization.Iv_vy;
+
+yIu_ux = options.discretization.yIu_ux;
+yIv_uy = options.discretization.yIv_uy;
+yIu_vx = options.discretization.yIu_vx;
+yIv_vy = options.discretization.yIv_vy;
+
+%%
 
 % assumes uh, vh, cu, cv
 % normally cu = uh, cv = vh
@@ -186,7 +217,32 @@ if (order4==0)
     end
 
 elseif (order4==1)
-   
+
+    alfa   = options.discretization.alfa;
+    
+    Au_ux3 = options.discretization.Au_ux3;
+    Au_uy3 = options.discretization.Au_uy3;
+    Av_vx3 = options.discretization.Av_vx3;
+    Av_vy3 = options.discretization.Av_vy3;
+    yAu_ux3 = options.discretization.yAu_ux3;
+    yAu_uy3 = options.discretization.yAu_uy3;
+    yAv_vx3 = options.discretization.yAv_vx3;
+    yAv_vy3 = options.discretization.yAv_vy3;    
+    
+    Iu_ux3 = options.discretization.Iu_ux3;
+    Iv_uy3 = options.discretization.Iv_uy3;
+    Iu_vx3 = options.discretization.Iu_vx3;
+    Iv_vy3 = options.discretization.Iv_vy3;
+    yIu_ux3 = options.discretization.yIu_ux3;
+    yIv_uy3 = options.discretization.yIv_uy3;
+    yIu_vx3 = options.discretization.yIu_vx3;
+    yIv_vy3 = options.discretization.yIv_vy3;   
+    
+    Cux3 = options.discretization.Cux3;
+    Cuy3 = options.discretization.Cuy3;
+    Cvx3 = options.discretization.Cvx3;
+    Cvy3 = options.discretization.Cvy3;
+    
     cu     = uh;
     cv     = vh;
 
@@ -225,6 +281,8 @@ elseif (order4==1)
     
     convu = alfa*du2dx - du2dx3 + alfa*duvdy - duvdy3;
     convv = alfa*duvdx - duvdx3 + alfa*dv2dy - dv2dy3;
+    
+end
     
     
 end

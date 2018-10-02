@@ -19,6 +19,16 @@ if (strcmp(visc,'turbulent'))
 
 end
 
+if (order4 == 1)
+    if (~strcmp(visc,'laminar'))
+        error('order 4 only implemented for laminar flow; need to add Su_vx and Sv_uy for 4th order method');
+    end
+    
+    if (regularize~=0)
+        error('order 4 only implemented for standard convection with regularize=0');
+    end
+end
+
 
 if (restart.load == 1)
     
@@ -45,8 +55,8 @@ if (restart.load == 1)
 else
     
     % process data from initialize.m
-    uh    = u(:);
-    vh    = v(:);
+    uh    = u_start(:);
+    vh    = v_start(:);
     V     = [uh; vh];
     V_old = V; 
 
@@ -64,6 +74,8 @@ else
     % for steady problems the time for allocating during running is negligible,
     % since normally only a few iterations are required
     if (steady==0)
+        t     = t_start;
+        
         if (timestep.set==1)
             set_timestep;
         end
@@ -80,29 +92,29 @@ else
     
     % calculate kinetic energy and momentum of initial velocity field   
     % iteration 1 corresponds to t=0 (for unsteady simulations)
-    check_conservation;
-   
-%     k(1)    = 0.5*sum(Omu.*uh.^2) + 0.5*sum(Omv.*vh.^2);
-%     umom(1) = sum(Omu.*uh);
-%     vmom(1) = sum(Omv.*vh);        
+%     check_conservation;
+   [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(uh,vh,t,options);
+    
     
     if (maxdiv(1)>1e-12 && steady==0)
         fprintf(fcw,['warning: initial velocity field not (discretely) divergence free: ' num2str(maxdiv(1)) '\n']);
-        fprintf(fcw,['additional projection to make initial velocity field divergence free\n']);
+        fprintf(fcw,'additional projection to make initial velocity field divergence free\n');
+        
         % make velocity field divergence free
-        f = M*V + yM;
-        pressure_poisson;
-        V = V - Om_inv.*(G*dp);
+        Om_inv = options.grid.Om_inv;
+        G = options.discretization.G;
+        Nu = options.grid.Nu;
+        Nv = options.grid.Nv;
+        
+        f  = options.discretization.M*V + options.discretization.yM;
+        dp = pressure_poisson(f,t,options);
+        V  = V - Om_inv.*(G*dp);
         uh = V(1:Nu); vh = V(Nu+1:end);
         % repeat conservation with updated velocity field
-        check_conservation;
+        [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(uh,vh,t,options);
     else
-        Cu = Cux*spdiags(Iu_ux*uh+yIu_ux,0,N1,N1)*Au_ux + ...
-             Cuy*spdiags(Iv_uy*vh+yIv_uy,0,N2,N2)*Au_uy;
-        Cv = Cvx*spdiags(Iu_vx*uh+yIu_vx,0,N3,N3)*Av_vx + ...
-             Cvy*spdiags(Iv_vy*vh+yIv_vy,0,N4,N4)*Av_vy;
-        fprintf(fcw,[num2str(max2d(abs(Cu+Cu'))) '\n']);
-        fprintf(fcw,[num2str(max2d(abs(Cv+Cv'))) '\n']);
+        [symmetry_flag, symmetry_error] = check_symmetry(uh,vh,t,options);
+
 
     %     if (max2d(abs(Cu+Cu'))>1e-12 && ...
     %           ~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres') )
@@ -115,61 +127,54 @@ else
     end    
 
     if (steady==1)
-
-        p   = zeros(Np,1);
+        % initial guess is the provided initial condition
+        p  = p_start(:);
 
     else
 
         if (p_initial == 1)
             %% calculate initial pressure from a Poisson equation
 
-            tn     = t;
+            p = pressure_additional_solve(uh,vh,p_start(:),t,options);
             
-            boundary_conditions;
-            interpolate_bc;
-            operator_bc_divergence;
-            operator_bc_momentum;
-            force;
-            
-            % convection
-            cu     = uh;
-            cv     = vh;
-            convection;
-
-            % diffusion
-            diffusion;
-
-            Ru     =  - convu + d2u + Fx - y_px;    
-            Rv     =  - convv + d2v + Fy - y_py;
-
-            R      = Om_inv.*[Ru;Rv];
-            
-            % get yM at a next time instant
-%             yM1    = yM;
-%             % forward Euler:
-%             t      = tn + dt;
+%             tn     = t;
+%             
 %             boundary_conditions;
 %             interpolate_bc;
 %             operator_bc_divergence;
-%             t      = tn;
+%             operator_bc_momentum;
+%             force;
 %             
-%             yM2    = yM;
-%             f      = M*R + (yM2-yM1)/dt;
-            
-
-            f  = M*R + ydM;
-            % we should have sum(f) = 0 for periodic and no-slip BC
-            pressure_poisson;
-            p  = dp;
+%             % convection
+%             cu     = uh;
+%             cv     = vh;
+%             convection;
+% 
+%             % diffusion
+%             diffusion;
+% 
+%             Ru     =  - convu + d2u + Fx - y_px;    
+%             Rv     =  - convv + d2v + Fy - y_py;
+% 
+%             R      = Om_inv.*[Ru;Rv];           
+% 
+%             f  = M*R + ydM;
+%             % we should have sum(f) = 0 for periodic and no-slip BC
+%             pressure_poisson;
+%             p  = dp;
 %             run('results/periodic_channel/error_initialp.m');
+        else
+           % use provided initial condition (not recommended) 
+           p = p_start(:);
+           
         end
  
     end
 
-    % residual at n=1
+    % residual of momentum equations at start
     if (strcmp(visc,'laminar'))
-        residual;
-        maxres(1) = max(abs([resu;resv]));
+        [maxres(1), ~, ~] = F(uh,vh,p,t,options);
+%         maxres(1) = max(abs([resu;resv]));
     else
         maxres(1) = 0;
     end

@@ -13,7 +13,7 @@ else
     
 end
 
-%% get BC values
+%% set BC functions
 
 % values set below can be either Dirichlet or Neumann value, 
 % depending on BC set above. in case of Neumann (symmetry, pressure) 
@@ -32,10 +32,10 @@ else
     error(['BCtype file ' file_name ' not available']);
 end
 
-uLo      = uBC(x,y(1),t,options);
-uUp      = uBC(x,y(end),t,options); 
-uLe      = uBC(x(1),y,t,options);
-uRi      = uBC(x(end),y,t,options);
+% uLo      = uBC(x,y(1),t,options);
+% uUp      = uBC(x,y(end),t,options); 
+% uLe      = uBC(x(1),y,t,options);
+% uRi      = uBC(x(end),y,t,options);
 
 
 file_name = [options.case.project '_vBC'];
@@ -45,10 +45,10 @@ if (exist(file_name,'file'))
 else
     error(['BCtype file ' file_name ' not available']);
 end
-vLo      = vBC(x,y(1),t,options); 
-vUp      = vBC(x,y(end),t,options);
-vLe      = vBC(x(1),y,t,options); 
-vRi      = vBC(x(end),y,t,options);
+% vLo      = vBC(x,y(1),t,options); 
+% vUp      = vBC(x,y(end),t,options);
+% vLe      = vBC(x(1),y,t,options); 
+% vRi      = vBC(x(end),y,t,options);
 
 
 %% pressure
@@ -61,6 +61,10 @@ pRi      = p_inf; %-0.5*exp(2*lambda*x2)+(lambda/Re)*exp(lambda*x2)*cos(2*pi*y);
 pLo      = p_inf;
 pUp      = p_inf;
 
+options.BC.pLe = pLe;
+options.BC.pRi = pRi;
+options.BC.pLo = pLo;
+options.BC.pUp = pUp;
 
 %% k-eps values
 
@@ -74,7 +78,17 @@ eUp      = 0;
 eLe      = 0;%kappa^2./(log((1+z0_nondim)/z0_nondim)^3*(y+z0_nondim)); 
 eRi      = 0;
    
-    
+options.BC.kLe = kLe;
+options.BC.kRi = kRi;
+options.BC.kLo = kLo;
+options.BC.kUp = kUp;
+
+options.BC.eLe = eLe;
+options.BC.eRi = eRi;
+options.BC.eLo = eLo;
+options.BC.eUp = eUp;
+
+
 % Neumann BC used to extrapolate values to the boundary
 % change only in case of periodic to 'per', otherwise leave at 'sym'
 %     BC.nu.left  = 'sym';   % 

@@ -4,10 +4,9 @@ function options = operator_divergence(options)
 % boundary conditions
 BC = options.BC;
 
-Nx = options.grid.Nx;
-Ny = options.grid.Ny;
-
 % number of interior points and boundary points
+Nx     = options.grid.Nx;
+Ny     = options.grid.Ny;
 Npx    = options.grid.Npx;
 Npy    = options.grid.Npy;
 Nux_in = options.grid.Nux_in;
@@ -23,11 +22,23 @@ Nvy_in = options.grid.Nvy_in;
 Nvy_b  = options.grid.Nvy_b;
 Nvy_t  = options.grid.Nvy_t;
 
-hx  = options.grid.hx;
-hy  = options.grid.hy;
+Nu     = options.grid.Nu;
+Nv     = options.grid.Nv;
+Np     = options.grid.Np;
+
+hx     = options.grid.hx;
+hy     = options.grid.hy;
+
+Om_inv = options.grid.Om_inv;
 
 
 order4 = options.discretization.order4;
+
+if (order4 == 1)
+    alfa   = options.discretization.alfa;
+    hxi3   = options.grid.hxi3;
+    hyi3   = options.grid.hyi3;    
+end
 
 steady = options.case.steady;
 visc   = options.case.visc;
@@ -78,6 +89,7 @@ Mx_BC.Bbc = kron(mat_hy,M1D*Mx_BC.Btemp);
 Mx     = kron(mat_hy,M1D*Mx_BC.B1D);
 
 if (order4==1)
+    mat_hy3     = spdiags(hyi3,0,Ny,Ny);        
     diag1       = ones(Nux_t+1,1);
     M1D3        = spdiags([-diag1 diag1],[0 3],Nux_t-1,Nux_t+2);
     M1D3        = BMx*M1D3;
@@ -123,6 +135,7 @@ My_BC.Bbc = kron(M1D*My_BC.Btemp,mat_hx);
 My     = kron(M1D*My_BC.B1D,mat_hx);
 
 if (order4==1)
+    mat_hx3     = spdiags(hxi3,0,Nx,Nx);    
     diag1       = ones(Nvy_t+1,1);
     M1D3        = spdiags([-diag1 diag1],[0 3],Nvy_t-1,Nvy_t+2);
     M1D3        = BMy*M1D3;
@@ -165,13 +178,14 @@ options.discretization.G  = G;
 options.discretization.Gx = Gx;
 options.discretization.Gy = Gy;
 
+options.discretization.Bup = Bup;
+options.discretization.Bvp = Bvp;
+
 if (order4==1)
     options.discretization.Mx3 = Mx3;
     options.discretization.My3 = My3;
     options.discretization.Mx_BC3 = Mx_BC3;
     options.discretization.My_BC3 = My_BC3;
-    options.discretization.Gx3 = Gx3;
-    options.discretization.Gy3 = Gy3;
 end
 
 %% Pressure matrix for pressure correction method;
@@ -179,6 +193,7 @@ end
 
 if (steady == 0 && ~strcmp(visc,'turbulent'))
     
+    fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;
     
     %   Note that the matrix for the pressure is constant in time.
@@ -195,6 +210,11 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
             ndia     = (length(d)+1)/2;
             dia      = d(ndia:end);
             B        = B(:,ndia:-1:1);
+            
+            options.solversettings.ndia = ndia;
+            options.solversettings.dia  = dia;
+            options.solversettings.B    = B;
+            
         else
             fprintf(fcw,'No correct CG mex file available, switching to Matlab implementation \n');
             poisson = 4;
@@ -203,15 +223,20 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
     if (poisson==4)
         % preconditioner
         A_pc = make_cholinc(A);
+        options.solversettings.A_pc = A_pc;
     end
     if (poisson==2)
         fprintf(fcw,'incomplete LU decomposition of pressure matrix...\n');
         setup.type = 'nofill';
-        [L, U] = ilu(-A,setup);
+        [L,U] = ilu(A,setup);
+        options.solversettings.L = L;
+        options.solversettings.U = U;        
     end
     if (poisson==1)
         fprintf(fcw,'LU decomposition of pressure matrix...\n');
         [L, U] = lu(A);
+        options.solversettings.L = L;
+        options.solversettings.U = U;
     end
     
     if (poisson==5)
@@ -231,5 +256,9 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
             fprintf(fcw,'warning: pressure matrix: not all rowsums are zero!\n');
         end
     end
+    
+    
+    options.discretization.A = A;
+    
     
 end

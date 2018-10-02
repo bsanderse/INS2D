@@ -20,8 +20,10 @@ object='case';
 
 voi={
     'project',      [];...
-    'steady',       [];...
-    'visc',         [];    % 0: laminar; 1: turbulent (k-eps)
+    'steady',       [];...    % 0: unsteady; 1: steady
+    'visc',         [];...    % 0: laminar; 1: turbulent (k-eps)
+    'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
+    'force_unsteady', [];     % 0: steady forcing; 1: unsteady forcing
     };
 
 accumulate_object;
@@ -59,7 +61,21 @@ accumulate_object;
 object = 'discretization';
 
 voi = {
-    'order4',   0; % 0: 2nd order; 1: 4th order in time 
+    'order4',   0;... % 0: 2nd order; 1: 4th order in time 
+    'alfa',  81;...   % richardson extrapolation factor = 3^4
+    'beta',  9/8;   % interpolation factor
+    };
+
+accumulate_object;
+
+%% time marching
+object = 'time';
+
+voi = {
+    't_start', 0;...
+    't_end', [];...
+    'dt', []; ...
+    'RK', []; ...
     };
 
 accumulate_object;
@@ -90,20 +106,24 @@ voi = {
 
 accumulate_object;
 
+%% output files
+object = 'output';
+
+voi = {
+    'tecplot_write', 0; ...          % write to tecplot file
+    'tecplot_n',  1; ...         % write tecplot files every n    
+};
+
+accumulate_object;
 
 %% visualization settings
 object = 'visualization';
 
 voi={
-    'plotgrid', 0; ...       % plot gridlines and pressure points
-    
-    'tecplot_write', 0; ...          % write to tecplot file
-    'tecplot_n',  1; ...         % write tecplot files every n
-    
+    'plotgrid', 0; ...       % plot gridlines and pressure points    
     'rtp_show', 1; ...         % real time plotting 
     'rtp_type', 'velocity'; % velocity, quiver, vorticity or pressure
-    'rtp_n', 10; 
-    
+    'rtp_n', 10;     
     };
 
 accumulate_object;

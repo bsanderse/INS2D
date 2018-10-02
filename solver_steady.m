@@ -8,6 +8,10 @@ if (restart.load == 0)
 end
 
 % zero block for total matrix
+Np = options.grid.Np;
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+
 Z2 = spalloc(Np,Np,0);
 
 % right hand side

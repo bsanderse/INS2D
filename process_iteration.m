@@ -1,14 +1,15 @@
 % process data from this iteration
 
       % calculate mass, momentum and energy
-      check_conservation;
+      [maxdiv(n), umom(n), vmom(n), k(n)] = check_conservation(uh,vh,t,options);
+      
+%       check_conservation;
             
       % residual (in Finite Volume form)
       % for ke model residual also contains k and e terms and is computed
       % in solver_unsteady_ke
       if (~strcmp(visc,'turbulent'))
-        residual;
-        maxres(n) = max(abs([resu;resv]));
+          [maxres(n), ~, ~] = F(uh,vh,p,t,options);        
       end
       
       % statistics

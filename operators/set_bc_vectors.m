@@ -1,14 +1,27 @@
-function options = operator_bc_divergence(t,options)
-% construct boundary conditions for divergence operator
+function options = set_bc_vectors(t,options)
+% construct boundary conditions 
 
+
+%% get settings from options structure
+
+% 4th order
 order4 = options.discretization.order4;
-
+% Reynolds number
 Re = options.fluid.Re;
-
+% boundary conditions
 BC = options.BC;
 
 global uBC vBC;
 
+% type of stress tensor
+visc = options.case.visc;
+
+
+if (order4 == 1)
+    alfa   = options.discretization.alfa;
+end
+
+%% grid settings
 
 % number of interior points and boundary points
 Nux_in = options.grid.Nux_in;
@@ -25,26 +38,39 @@ yp  = options.grid.yp;
 
 
 %% get BC values
+uLo      = uBC(x,y(1),t,options);
+uUp      = uBC(x,y(end),t,options);
+% uLe      = uBC(x(1),y,t,options);
+% uRi      = uBC(x(end),y,t,options);
 
-uLo_i      = uBC(xin,y(1),t,options); 
-uUp_i      = uBC(xin,y(end),t,options); 
-uLe_i      = uBC(x(1),yp,t,options); 
-uRi_i      = uBC(x(end),yp,t,options); 
+uLo_i    = uBC(xin,y(1),t,options);
+uUp_i    = uBC(xin,y(end),t,options);
+uLe_i    = uBC(x(1),yp,t,options);
+uRi_i    = uBC(x(end),yp,t,options);
 
-vLo_i      = vBC(xp,y(1),t,options); 
+% vLo      = vBC(x,y(1),t,options);
+% vUp      = vBC(x,y(end),t,options);
+vLe      = vBC(x(1),y,t,options);
+vRi      = vBC(x(end),y,t,options);
+
+vLo_i      = vBC(xp,y(1),t,options);
 vUp_i      = vBC(xp,y(end),t,options);
 vLe_i      = vBC(x(1),yin,t,options);
 vRi_i      = vBC(x(end),yin,t,options);
 
-dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re); 
+dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re);
 dudtRi_i   = dudtBC(x(end),options.grid.yp,t,Re);
 
-dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re); 
+dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re);
 dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,Re);
 
+pLe = options.BC.pLe;
+pRi = options.BC.pRi;
+pLo = options.BC.pLo;
+pUp = options.BC.pUp;
 
 
-%% divergence
+%% boundary conditions for divergence
 
 Mx_BC = options.discretization.Mx_BC;
 My_BC = options.discretization.My_BC;
@@ -105,7 +131,7 @@ options.discretization.yM  = yM;
 options.discretization.ydM = ydM;
 
 
-%% pressure
+%% boundary conditions for pressure
 
 % left and right side
 y1D_le            = zeros(Nux_in,1);
@@ -134,7 +160,19 @@ options.discretization.y_px = y_px;
 options.discretization.y_py = y_py;
 
 
-%% averaging
+%% boundary conditions for averaging
+
+Au_ux_BC = options.discretization.Au_ux_BC;
+Au_uy_BC = options.discretization.Au_uy_BC;
+Av_vx_BC = options.discretization.Av_vx_BC;
+Av_vy_BC = options.discretization.Av_vy_BC;
+if (order4==1)
+    Au_ux_BC3 = options.discretization.Au_ux_BC3;
+    Au_uy_BC3 = options.discretization.Au_uy_BC3;
+    Av_vx_BC3 = options.discretization.Av_vx_BC3;
+    Av_vy_BC3 = options.discretization.Av_vy_BC3;
+end
+
 % Au_ux
 % uLe_i  = interp1(y,uLe,yp);
 % uRi_i  = interp1(y,uRi,yp);
@@ -185,9 +223,25 @@ end
 
 
 
-%% diffusion
+%% boundary conditions for diffusion
+
+Su_ux_BC = options.discretization.Su_ux_BC;
+Su_uy_BC = options.discretization.Su_uy_BC;
+Sv_vx_BC = options.discretization.Sv_vx_BC;
+Sv_vy_BC = options.discretization.Sv_vy_BC;
+Dux = options.discretization.Dux;
+Duy = options.discretization.Duy;
+Dvx = options.discretization.Dvx;
+Dvy = options.discretization.Dvy;
+
 
 if (order4==0)
+    
+    Su_vx_BC_lr = options.discretization.Su_vx_BC_lr;
+    Su_vx_BC_lu = options.discretization.Su_vx_BC_lu;
+    Sv_uy_BC_lr = options.discretization.Sv_uy_BC_lr;
+    Sv_uy_BC_lu = options.discretization.Sv_uy_BC_lu;
+    
     % Su_ux
     % uLe_i  = interp1(y,uLe,yp);
     % uRi_i  = interp1(y,uRi,yp);
@@ -252,6 +306,15 @@ end
 
 if (order4==1)
     
+    Su_ux_BC3 = options.discretization.Su_ux_BC3;
+    Su_uy_BC3 = options.discretization.Su_uy_BC3;
+    Sv_vx_BC3 = options.discretization.Sv_vx_BC3;
+    Sv_vy_BC3 = options.discretization.Sv_vy_BC3;    
+    Diffux_div = options.discretization.Diffux_div;
+    Diffuy_div = options.discretization.Diffuy_div;
+    Diffvx_div = options.discretization.Diffvx_div;
+    Diffvy_div = options.discretization.Diffvy_div;
+    
     ybc1    = kron(uLe_i,Su_ux_BC.ybc1) + kron(uRi_i,Su_ux_BC.ybc2);
     ybc3    = kron(uLe_i,Su_ux_BC3.ybc1) + kron(uRi_i,Su_ux_BC3.ybc2);
     ySu_ux  = alfa*Su_ux_BC.Bbc*ybc1 - Su_ux_BC3.Bbc*ybc3;
@@ -276,7 +339,24 @@ options.discretization.yDiffu = yDiffu;
 options.discretization.yDiffv = yDiffv;
 
 
-%% interpolation
+%% boundary conditions for interpolation
+
+Iu_ux_BC    = options.discretization.Iu_ux_BC;
+Iv_uy_BC_lr = options.discretization.Iv_uy_BC_lr;
+Iv_uy_BC_lu = options.discretization.Iv_uy_BC_lu;
+Iu_vx_BC_lr = options.discretization.Iu_vx_BC_lr;
+Iu_vx_BC_lu = options.discretization.Iu_vx_BC_lu;
+Iv_vy_BC    = options.discretization.Iv_vy_BC;
+
+if (order4 == 1)   
+    Iu_ux_BC3    = options.discretization.Iu_ux_BC3;
+    Iv_uy_BC_lu3 = options.discretization.Iv_uy_BC_lu3;
+    Iv_uy_BC_lr3 = options.discretization.Iv_uy_BC_lr3;
+    Iu_vx_BC_lu3 = options.discretization.Iu_vx_BC_lu3;    
+    Iu_vx_BC_lr3 = options.discretization.Iu_vx_BC_lr3;
+    Iv_vy_BC3    = options.discretization.Iv_vy_BC3;
+end
+
 % Iu_ux
 % uLe_i           = interp1(y,uLe,yp);
 % uRi_i           = interp1(y,uRi,yp);

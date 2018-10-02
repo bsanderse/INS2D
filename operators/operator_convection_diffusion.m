@@ -37,6 +37,34 @@ Bvux = options.grid.Bvux;
 
 order4 = options.discretization.order4;
 
+if (order4 == 1)
+    alfa   = options.discretization.alfa;
+    hxi3   = options.grid.hxi3;
+    hyi3   = options.grid.hyi3;
+    gxi3   = options.grid.gxi3;
+    gyi3   = options.grid.gyi3;
+    hxd13  = options.grid.hxd13;
+    hxd3   = options.grid.hxd3;
+    hyd13  = options.grid.hyd13;
+    hyd3   = options.grid.hyd3;
+    gxd13  = options.grid.gxd13;
+    gxd3   = options.grid.gxd3;
+    gyd13  = options.grid.gyd13;
+    gyd3   = options.grid.gyd3;
+    Omux   = options.grid.Omux;
+    Omuy   = options.grid.Omuy;
+    Omvx   = options.grid.Omvx;
+    Omvy   = options.grid.Omvy;
+    Omux1  = options.grid.Omux1;
+    Omux3  = options.grid.Omux3;
+    Omuy1  = options.grid.Omuy1;
+    Omuy3  = options.grid.Omuy3;
+    Omvx1  = options.grid.Omvx1;
+    Omvx3  = options.grid.Omvx3;
+    Omvy1  = options.grid.Omvy1;
+    Omvy3  = options.grid.Omvy3;
+end
+
 visc = options.case.visc;
 Re   = options.fluid.Re;
 
@@ -433,6 +461,8 @@ if ( strcmp(visc,'laminar') )
     
     
 elseif ( strcmp(visc,'turbulent') || strcmp(visc,'LES') )
+    % only implemented for 2nd order
+    
     % diffusion u-momentum
     Diffu_u = Dux*( (1/Re) * 2*Su_ux) + Duy*( (1/Re) * Su_uy);
     Diffu_v = Duy*( (1/Re) * Sv_uy);
@@ -449,15 +479,42 @@ options.discretization.Cvx   = Cvx;
 options.discretization.Cvy   = Cvy;
 options.discretization.Su_ux = Su_ux;
 options.discretization.Su_uy = Su_uy;
-options.discretization.Sv_uy = Sv_uy;
 options.discretization.Sv_vx = Sv_vx;
 options.discretization.Sv_vy = Sv_vy;
+options.discretization.Su_ux_BC = Su_ux_BC;
+options.discretization.Su_uy_BC = Su_uy_BC;
+options.discretization.Sv_vx_BC = Sv_vx_BC;
+options.discretization.Sv_vy_BC = Sv_vy_BC;
+options.discretization.Sv_uy = Sv_uy;
+options.discretization.Su_vx = Su_vx;
 options.discretization.Dux   = Dux;
 options.discretization.Duy   = Duy;
 options.discretization.Dvx   = Dvx;
 options.discretization.Dvy   = Dvy;
 options.discretization.Diffu = Diffu;
 options.discretization.Diffv = Diffv;
+
+if (order4 == 0)
+    options.discretization.Su_vx_BC_lr = Su_vx_BC_lr;
+    options.discretization.Su_vx_BC_lu = Su_vx_BC_lu;
+    options.discretization.Sv_uy_BC_lr = Sv_uy_BC_lr;
+    options.discretization.Sv_uy_BC_lu = Sv_uy_BC_lu;
+end
+
+if (order4 == 1)
+    options.discretization.Cux3 = Cux3;
+    options.discretization.Cuy3 = Cuy3;
+    options.discretization.Cvx3 = Cvx3;
+    options.discretization.Cvy3 = Cvy3;
+    options.discretization.Su_ux_BC3 = Su_ux_BC3;
+    options.discretization.Su_uy_BC3 = Su_uy_BC3;
+    options.discretization.Sv_vx_BC3 = Sv_vx_BC3;
+    options.discretization.Sv_vy_BC3 = Sv_vy_BC3;
+    options.discretization.Diffux_div = Diffux_div;
+    options.discretization.Diffuy_div = Diffuy_div;
+    options.discretization.Diffvx_div = Diffvx_div;
+    options.discretization.Diffvy_div = Diffvy_div;
+end
 
 
 %% additional for implicit time stepping diffusion

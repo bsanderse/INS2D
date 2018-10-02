@@ -43,6 +43,8 @@ if (restart.load == 0)
         fwrite(fpres,[project ' ' num2str(Nx) ' ' num2str(Ny) ' ' num2str(Re,'%10.3e') nl]);
         fwrite(fpres,['convergence information pressure solve' nl]);
         fprintf(fpres,'n          iter.        norm             cpu-time\n');
+    else
+        fpres      = 0;
     end
 
     % file with convergence information
@@ -60,5 +62,9 @@ if (cw_output == 0)
 else
     fcw        = 1;
 end
+
+options.output.fpres = fpres;
+options.output.fconv = fconv;
+options.output.fcw   = fcw;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

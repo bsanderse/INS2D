@@ -22,12 +22,6 @@ options = operator_convection_diffusion(options);
 options = operator_postprocessing(options);
 
 
-%% boundary conditions
-% interpolate_bc;
-options = operator_bc_divergence(t,options);
-% operator_bc_momentum;
-
-
 %% turbulence
 if (regularize>0)
      

@@ -90,10 +90,9 @@ for i_RK=1:s_RK
     % update velocity current stage
     utemp      = ku*A_RK(i_RK,:)';
     vtemp      = kv*A_RK(i_RK,:)';    
-%  keyboard
+
 
     R       = [utemp;vtemp];
-    
     
     t       = tn + c_RK(i_RK)*dt;
     

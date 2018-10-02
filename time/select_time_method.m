@@ -86,4 +86,6 @@
 %           time_RadIIA_u_s3;
       elseif (method==192)
           time_CN_u_linear;
+      elseif (method==20)
+          time_ERK;
       end

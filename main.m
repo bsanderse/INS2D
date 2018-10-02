@@ -15,7 +15,7 @@
 %% close figures and clean variables
 
 clc;
-clearvars;
+clear all;
 close all;
 format compact;
 format long;
@@ -135,23 +135,26 @@ fprintf(fcw,'boundary conditions...\n');
 boundary_conditions;
 
 
-%% construct operators (matrices)
+%% construct operators (matrices) which are time-independent
 % disp('construct operators...');
 fprintf(fcw,'construct operators...\n');
 operators;
-
 
 
 %% initialization of solution vectors
 % disp('initialization of vectors...');
 fprintf(fcw,'initialization of solution vectors...\n');
 if (restart.load == 0)
-    initialize;
-    
+    initialize;    
 end
 
+%% boundary conditions
+% interpolate_bc;
+options = set_bc_vectors(t,options);
+% operator_bc_momentum;
+
 %% construct body force or immersed boundary method
-force;
+[Fx,Fy] = force(t,options);
 
 
 %% input checking
@@ -164,35 +167,47 @@ fprintf(fcw,['setting-up simulation took ' num2str(toc) '\n']);
 
 fprintf(fcw,'start solver...\n');
 tic
-if (steady==1)
 
-%     max_res(1) = 10*accuracy;                 % prevent the while loop from stopping directly
-    
+if (steady==1)   
     if (strcmp(visc,'turbulent'))
-        solver_steady_ke;
+        disp('Steady flow with k-epsilon model, 2nd order');
     elseif (strcmp(visc,'laminar'))
         if (order4==0)
             if (ibm==0)
+                disp('Steady flow with laminar viscosity model, 2nd order');                                
                 solver_steady;              
             elseif (ibm==1)
+                disp('Steady flow with laminar viscosity model and immersed boundary method, 2nd order');                
                 solver_steady_ibm;
+            else
+                error('wrong value for ibm parameter');
             end
         elseif (order4==1)
+            disp('Steady flow with laminar viscosity model, 4th order');             
             solver_steady_4thorder;
+        else
+            error('wrong value for order4 parameter');
         end
+    else
+        error('wrong value for visc parameter');
     end
  
 else
     
     if (strcmp(visc,'turbulent'))
+        disp('Unsteady flow with k-eps model, 2nd order');                     
         solver_unsteady_ke;
     elseif (strcmp(visc,'laminar') || strcmp(visc,'LES'))
+        disp('Unsteady flow with laminar or LES model');                             
         solver_unsteady;
+    else
+        error('wrong value for visc parameter');
     end
     
     fprintf(fcw,['simulated time: ' num2str(t) '\n']);
     
 end
+
 cpu(j,jj) = toc;
 fprintf(fcw,['total elapsed CPU time: ' num2str(toc) '\n']);
 

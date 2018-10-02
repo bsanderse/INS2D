@@ -1,3 +1,13 @@
+function [d2u, d2v] = diffusion(uh,vh,t,options)
+
+visc = options.case.visc;
+
+Diffu  = options.discretization.Diffu;
+Diffv  = options.discretization.Diffv;
+yDiffu = options.discretization.yDiffu;
+yDiffv = options.discretization.yDiffv;
+
+
 if (strcmp(visc,'laminar'))
     
     d2u     = Diffu*uh + yDiffu;
@@ -5,18 +15,18 @@ if (strcmp(visc,'laminar'))
     
 else
     
-%     Diffu_11   = Dux*( nu_ux * 2 * Su_ux) + Duy*( nu_uy * Su_uy);
-%     Diffu_12   = Duy*( nu_uy * Sv_uy);
-%     Diffv_21   = Dvx*( nu_vx * Su_vx);
-%     Diffv_22   = Dvx*( nu_vx * Sv_vx) + Dvy*( nu_vy * 2 * Sv_vy);
-
+    %     Diffu_11   = Dux*( nu_ux * 2 * Su_ux) + Duy*( nu_uy * Su_uy);
+    %     Diffu_12   = Duy*( nu_uy * Sv_uy);
+    %     Diffv_21   = Dvx*( nu_vx * Su_vx);
+    %     Diffv_22   = Dvx*( nu_vx * Sv_vx) + Dvy*( nu_vy * 2 * Sv_vy);
+    
     strain_tensor;
     
     C_S  = 0.17;
     filter_length = deltax; % =sqrt(FV size) for uniform grids
     
     % Smagorinsky
-%     nu_t = (C_S^2)*(filter_length^2)*sqrt(4*q);
+    %     nu_t = (C_S^2)*(filter_length^2)*sqrt(4*q);
     
     % q-r
     C_d  = deltax^2/8;
@@ -50,10 +60,12 @@ else
     yp_ext                  = [yp(1)-hy(1);yp;yp(end)+hy(end)];
     nu_t_uy                 = interp2(yp_ext',xp_ext,nu_t_ghost,y',xin);
     nu_t_vx                 = interp2(yp_ext',xp_ext,nu_t_ghost,yin',x);
-
+    
     
     d2u = Dux*((2*(nu + nu_t_ux(:))).*S11(:)) + Duy*((2*(nu + nu_t_uy(:))).*S12(:));
     d2v = Dvx*((2*(nu + nu_t_vx(:))).*S21(:)) + Dvy*((2*(nu + nu_t_vy(:))).*S22(:));
+    
+end
 
 end
 

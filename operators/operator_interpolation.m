@@ -31,6 +31,12 @@ Bvux = options.grid.Bvux;
 
 order4 = options.discretization.order4;
 
+if (order4 == 1)
+    beta   = options.discretization.beta;
+    hxi3            = options.grid.hxi3;
+    hyi3            = options.grid.hyi3;    
+end
+
 weight          = 1/2;
 
 %%
@@ -137,6 +143,7 @@ if (order4==0)
 end
 
 if (order4==1)
+    
     mat_hx3         = spdiags(hxi3,0,Nx,Nx);
     mat_hy3         = spdiags(hyi3,0,Ny,Ny);
     
@@ -308,11 +315,25 @@ options.discretization.Iv_uy = Iv_uy;
 options.discretization.Iu_vx = Iu_vx;
 options.discretization.Iv_vy = Iv_vy;
 
+options.discretization.Iu_ux_BC = Iu_ux_BC;
+options.discretization.Iv_vy_BC = Iv_vy_BC;
+
+options.discretization.Iv_uy_BC_lr = Iv_uy_BC_lr;
+options.discretization.Iv_uy_BC_lu = Iv_uy_BC_lu;
+options.discretization.Iu_vx_BC_lr = Iu_vx_BC_lr;
+options.discretization.Iu_vx_BC_lu = Iu_vx_BC_lu;
+
 if (order4==1)
     options.discretization.Iu_ux3 = Iu_ux3;
     options.discretization.Iv_uy3 = Iv_uy3;
     options.discretization.Iu_vx3 = Iu_vx3;
     options.discretization.Iv_vy3 = Iv_vy3;
+    options.discretization.Iu_ux_BC3 = Iu_ux_BC3;
+    options.discretization.Iv_uy_BC_lr3 = Iv_uy_BC_lr3;
+    options.discretization.Iv_uy_BC_lu3 = Iv_uy_BC_lu3;    
+    options.discretization.Iu_vx_BC_lr3 = Iu_vx_BC_lr3;
+    options.discretization.Iu_vx_BC_lu3 = Iu_vx_BC_lu3;
+    options.discretization.Iv_vy_BC3 = Iv_vy_BC3;
 end
 
 end

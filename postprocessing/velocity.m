@@ -4,10 +4,20 @@
 % constructed in operator_divergence
 
 % evaluate boundary conditions at current time
-boundary_conditions;
-interpolate_bc;
-operator_bc_divergence;
-operator_bc_momentum;
+% boundary_conditions;
+% interpolate_bc;
+% operator_bc_divergence;
+% operator_bc_momentum;
+options = set_bc_vectors(t,options);
+
+Au_ux  = options.discretization.Au_ux;
+yAu_ux = options.discretization.yAu_ux;
+Av_vy  = options.discretization.Av_vy;
+yAv_vy = options.discretization.yAv_vy;
+Bup = options.discretization.Bup;
+Bvp = options.discretization.Bvp;
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;
 
 uh_temp = uh; vh_temp = vh;
 if (ibm==1)

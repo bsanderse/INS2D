@@ -1,19 +1,33 @@
+function dp = pressure_poisson(f,t,options)
+% compute pressure from pressure poisson problem with right-hand side f
+
 % assume the Laplace matrix is known (A) and is possibly factorized (LU);
 % right hand side is given by f
 % we should have sum(f) = 0 for periodic and no-slip BC
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Solve the Poisson equation for the pressure                      %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Np   = options.grid.Np;
 dp   = zeros(Np,1);
 
+fpres = options.output.fpres;
+
+poisson  = options.solversettings.poisson;
+CG_acc   = options.solversettings.CG_acc;
+CG_maxit = options.solversettings.CG_maxit;
 
 if (poisson==1) 
     % using pre-determined LU decomposition
+    L   = options.solversettings.L;
+    U   = options.solversettings.U;
     b   = L\f;                                                                                   
     dp  = U\b;
 elseif (poisson==2)
     % using preconditioned CG
+    A   = options.discretization.A;
+    L   = options.solversettings.L;    
+
     t_pressure = toc;
     [dp, flag, norm1, iter]  = pcg(-A,-f,CG_acc,CG_maxit,L,L',dp);
     if (flag>0)
@@ -24,10 +38,14 @@ elseif (poisson==2)
     end  
     t_solve    = toc - t_pressure;   
 elseif (poisson==3)  
+    B    = options.solversettings.B;        
+    dia  = options.solversettings.dia;
+    ndia = options.solversettings.ndia;        
     t_pressure = toc;   
     [dp,iter,norm1,norm2]=cg(B,int64(dia),int64(ndia),f,CG_acc,int64(Np),dp,int64(CG_maxit));
     t_solve    = toc - t_pressure;    
 elseif (poisson==4)
+    A_pc   = options.solversettings.A_pc;        
     t_pressure = toc;   
     [dp,iter,norm1,norm2]=cg_matlab(A,f,CG_acc,dp,CG_maxit,A_pc);
     t_solve    = toc - t_pressure;    
@@ -53,7 +71,9 @@ end
 
 % write information on pressure solve
 if (poisson==2 || poisson==3 || poisson==4)
-    fprintf(fpres,'%-10i %-10i %16.8e %16.8e\n',n,iter,norm1,t_solve);
+    fprintf(fpres,'%-10i %-10i %16.8e %16.8e\n',t,iter,norm1,t_solve);
 elseif (poisson == 5)
-    fprintf(fpres,'%-10i %-10i %16.8e %16.8e %16.8e\n',n,iter,norm1,t_write,t_read);
+    fprintf(fpres,'%-10i %-10i %16.8e %16.8e %16.8e\n',t,iter,norm1,t_write,t_read);
+end
+
 end

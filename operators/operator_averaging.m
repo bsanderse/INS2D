@@ -141,10 +141,18 @@ options.discretization.Au_ux = Au_ux;
 options.discretization.Au_uy = Au_uy;
 options.discretization.Av_vx = Av_vx;
 options.discretization.Av_vy = Av_vy;
+options.discretization.Au_ux_BC = Au_ux_BC;
+options.discretization.Au_uy_BC = Au_uy_BC;
+options.discretization.Av_vx_BC = Av_vx_BC;
+options.discretization.Av_vy_BC = Av_vy_BC;
 
 if (order4==1)
     options.discretization.Au_ux3 = Au_ux3;
     options.discretization.Au_uy3 = Au_uy3;
     options.discretization.Av_vx3 = Av_vx3;
     options.discretization.Av_vy3 = Av_vy3;
+    options.discretization.Au_ux_BC3 = Au_ux_BC3;
+    options.discretization.Au_uy_BC3 = Au_uy_BC3;
+    options.discretization.Av_vx_BC3 = Av_vx_BC3;
+    options.discretization.Av_vy_BC3 = Av_vy_BC3;    
 end

@@ -6,7 +6,7 @@ project = 'LDC';   % project name used in filenames
 %%% flow properties
 %     u_inf   = 1;
 %     delta   = 1;
-    Re      = 1000;                  % Reynolds number
+    Re      = 10;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -22,8 +22,8 @@ project = 'LDC';   % project name used in filenames
     y1      = 0;
     y2      = 1;
 
-    Nx      = 64; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 64;                   % number of volumes in the y-direction
+    Nx      = 10; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 10;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -55,11 +55,11 @@ project = 'LDC';   % project name used in filenames
 %%% time discretization
 
     % steady or unsteady solver
-    steady  = 1;         % steady(1) or unsteady(0)
+    steady  = 0;         % steady(1) or unsteady(0)
 
     order4  = 0;
-    alfa    = 3^4;       % richardson extrapolation factor
-    beta    = 9/8;       % interpolation factor: (9/8 for 4th order (only effective for order4=1), 1 for 2nd order)
+%     alfa    = 3^4;       % richardson extrapolation factor
+%     beta    = 9/8;       % interpolation factor: (9/8 for 4th order (only effective for order4=1), 1 for 2nd order)
     
     % only for steady problems:
 
@@ -71,9 +71,9 @@ project = 'LDC';   % project name used in filenames
     
     % only for unsteady problems:
 
-        dt            = 0.01;       % time step (for explicit methods it can be
+        dt            = 0.001;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
-        t             = 0;        % start time
+        t_start       = 0;        % start time
         t_end         = 1;         % end time
 
         CFL           = 1;              
@@ -110,7 +110,8 @@ project = 'LDC';   % project name used in filenames
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
         
-        method            = 61;
+        method            = 20;
+        RK                = 'RK44';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up
@@ -136,12 +137,12 @@ project = 'LDC';   % project name used in filenames
 %%% solver settings
 
     % pressure
-    poisson          = 2; % 1: direct solver, 
+    poisson          = 1; % 1: direct solver, 
                           % 2: CG with ILU (matlab), 
                           % 3: CG mexfile, 
                           % 4: CG with IC, own Matlab impl.
                           % 5: Petsc
-    p_initial        = 0; % calculate pressure field compatible
+    p_initial        = 1; % calculate pressure field compatible
                           % with the velocity field at t=0
     p_add_solve      = 1; % do additional pressure solve to make it same 
                           % order as velocity
@@ -176,7 +177,7 @@ project = 'LDC';   % project name used in filenames
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 10;
+    rtp.n            = 1;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

@@ -1,8 +1,32 @@
+function [Fx, Fy] = force(t,options)
 % body force
 % in Finite Volume setting, so integrated
 
-% % only run if unsteady force or at first iteration
-if (force_unsteady == 1 || exist('n','var')==0) 
+force_unsteady = options.case.force_unsteady;
+
+% % only run if unsteady force or at first iteration of steady 
+if (force_unsteady == 1 || t == options.time.t_start) 
+
+    file_name = [options.case.project '_force'];
+    
+    if (exist(file_name,'file'))
+        % create function handle with name bodyforce
+        bodyforce = str2func(file_name);    
+        [Fx, Fy]  = bodyforce(t,options);
+    else
+        % 
+        Fx = zeros(options.grid.Nu,1);
+        Fy = zeros(options.grid.Nv,1);
+        
+        if (force_unsteady == 1)
+            error(['Body force file ' file_name ' not available']);
+        end
+    end
+    
+else
+    Fx = zeros(options.grid.Nu,1);
+    Fy = zeros(options.grid.Nv,1);
+end
 
 %% actuator methods:
 % force_airfoil_surfaceCp;

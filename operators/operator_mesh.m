@@ -3,12 +3,15 @@ function options = operator_mesh(options)
 BC = options.BC;
 
 
+order4 = options.discretization.order4;
+alfa   = options.discretization.alfa;
+
 %% pressure volumes
 
 Nx = options.grid.Nx;
 Ny = options.grid.Ny;
-x = options.grid.x;
-y = options.grid.y;
+x  = options.grid.x;
+y  = options.grid.y;
 hx = options.grid.hx;
 hy = options.grid.hy;
 gx = options.grid.gx;
@@ -94,7 +97,7 @@ N4 =  Nvx_in*(Nvy_in+1); % size(Iv_vy,1);
 
 
 %% for a grid with three times larger volumes:
-if (options.discretization.order4 == 1)
+if (order4 == 1)
     hx3          = zeros(Nx,1);
     hx3(2:end-1) = hx(1:end-2)+hx(2:end-1)+hx(3:end);
     if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
@@ -399,7 +402,8 @@ ypp = reshape(ypp,Nx,Ny);
 
 % store quantities in the structure
 options.grid.Npx = Npx;
-options.grid.Npy = Npy
+options.grid.Npy = Npy;
+options.grid.Np  = Np;
 
 options.grid.Nux_in = Nux_in;
 options.grid.Nux_b  = Nux_b;
@@ -417,6 +421,18 @@ options.grid.Nvy_in = Nvy_in;
 options.grid.Nvy_b  = Nvy_b;
 options.grid.Nvy_t  = Nvy_t;
 
+options.grid.Nu     = Nu;
+options.grid.Nv     = Nv;
+options.grid.N1     = N1;
+options.grid.N2     = N2;
+options.grid.N3     = N3;
+options.grid.N4     = N4;
+
+options.grid.Om_inv = Om_inv;
+options.grid.Omu    = Omu;
+options.grid.Omv    = Omv;
+options.grid.Omu_inv = Omu_inv;
+options.grid.Omv_inv = Omv_inv;
 options.grid.Omux   = Omux;
 options.grid.Omvx   = Omvx;
 options.grid.Omuy   = Omuy;
@@ -437,6 +453,29 @@ options.grid.Bvux = Bvux;
 
 options.grid.xin  = xin;
 options.grid.yin  = yin;
+
+if (order4 == 1)
+    options.grid.hxi3  = hxi3;
+    options.grid.hyi3  = hyi3;    
+    options.grid.gxi3  = gxi3;
+    options.grid.gyi3  = gyi3;  
+    options.grid.hxd13 = hxd13;
+    options.grid.hxd3  = hxd3;  
+    options.grid.hyd13 = hyd13;
+    options.grid.hyd3  = hyd3;      
+    options.grid.gxd13 = gxd13;  
+    options.grid.gxd3  = gxd3;      
+    options.grid.gyd13 = gyd13;      
+    options.grid.gyd3  = gyd3;      
+    options.grid.Omux1  = Omux1;
+    options.grid.Omux3  = Omux3;
+    options.grid.Omuy1  = Omuy1;
+    options.grid.Omuy3  = Omuy3;    
+    options.grid.Omvx1  = Omvx1;
+    options.grid.Omvx3  = Omvx3;
+    options.grid.Omvy1  = Omvy1;
+    options.grid.Omvy3  = Omvy3;        
+end
 
 % plot the grid: velocity points and pressure points
 if (options.visualization.plotgrid==1)
