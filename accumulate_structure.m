@@ -111,7 +111,10 @@ object = 'output';
 
 voi = {
     'tecplot_write', 0; ...          % write to tecplot file
-    'tecplot_n',  1; ...         % write tecplot files every n    
+    'tecplot_n',  1; ...         % write tecplot files every n   
+    'save_results', 0; ...
+    'path_results', 'results'; ...
+    'save_file', 0;
 };
 
 accumulate_object;

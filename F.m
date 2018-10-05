@@ -15,7 +15,7 @@ y_py = options.discretization.y_py;
 % diffusion
 [d2u, d2v] = diffusion(uh,vh,t,options);
 
-% force
+% body force
 [Fx, Fy] = force(t,options);
 
 % residual

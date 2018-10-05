@@ -45,7 +45,7 @@
       
                    
       %for real time plotting:
-      if (rtp.show==1 && rem(n,rtp.n) == 0)
+      if (rtp.show==1 && rem(n-1,rtp.n) == 0)
             switch rtp.type
                 case {'vorticity'}
                     vorticity;
@@ -59,7 +59,7 @@
                     pressure;
             end
              fprintf(fcw,['t=' num2str(t) '\n']);
-             pause(0.1)
+             pause(0.01)
       end
         
       % write data to Tecplot file        

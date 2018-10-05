@@ -3,8 +3,7 @@ function p = pressure_additional_solve(uh,vh,p,t,options)
 % make the pressure compatible with the velocity field. this should
 % also result in same order pressure as velocity
 
-    Om_inv = options.grid.Om_inv;
-
+    % get updated BC for ydM
     if (options.BC.BC_unsteady == 1)   
         options = set_bc_vectors(t,options);
     end

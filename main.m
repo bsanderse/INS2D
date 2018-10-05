@@ -47,7 +47,7 @@ end
 % LDC, BFS, doublejet
 
 folder_cases = 'case_files';
-case_name    = 'LDC';
+case_name    = 'LDC_unsteady';
 
 
 

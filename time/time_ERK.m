@@ -46,27 +46,12 @@ kp     = zeros(Np,s_RK);
 M      = options.discretization.M;
 % boundary condition for divergence operator (known from last time step)
 yMn    = options.discretization.yM;
+yM     = yMn;    
+
 
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn,options);
 end
-
-% 
-% uLo_n  = uLo; uLe_n = uLe; uUp_n  = uUp; uRi_n = uRi;
-% dudtLo_RK = zeros(Nx+1,s_RK); dudtUp_RK = zeros(Nx+1,s_RK);
-% dudtLe_RK = zeros(Ny+1,s_RK); dudtRi_RK = zeros(Ny+1,s_RK);
-% 
-% uLo_i_n = uLo_i; uLe_i_n = uLe_i; uUp_i_n = uUp_i; uRi_i_n = uRi_i;
-% dudtLo_RK_i = zeros(Nux_in,s_RK); dudtUp_RK_i = zeros(Nux_in,s_RK);
-% dudtLe_RK_i = zeros(Ny,s_RK); dudtRi_RK_i = zeros(Ny,s_RK);
-% 
-% vLo_n  = vLo; vLe_n = vLe; vUp_n  = vUp; vRi_n = vRi;
-% dvdtLo_RK = zeros(Nx+1,s_RK); dvdtUp_RK = zeros(Nx+1,s_RK);
-% dvdtLe_RK = zeros(Ny+1,s_RK); dvdtRi_RK = zeros(Ny+1,s_RK);
-% 
-% vLo_i_n  = vLo_i; vLe_i_n = vLe_i; vUp_i_n = vUp_i; vRi_i_n = vRi_i;
-% dvdtLo_RK_i = zeros(Nx,s_RK); dvdtUp_RK_i = zeros(Nx,s_RK);
-% dvdtLe_RK_i = zeros(Nvy_in,s_RK); dvdtRi_RK_i = zeros(Nvy_in,s_RK);
 
 ti = tn;
 
@@ -79,12 +64,13 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current velocity field uh, vh at
     % level i
     % this includes force evaluation at ti 
-    % this exclu
     % boundary conditions should have been set through set_bc_vectors
     [~,Fu,Fv]  = F(uh,vh,p,ti,options);
     
     % store right-hand side of stage i
-    ku(:,i_RK) = Fu + Omu_inv.*(Gx*p); % this removes the pressure contribution
+    % we remove the pressure contribution Gx*p and Gy*p (but not the
+    % vectors y_px and y_py)
+    ku(:,i_RK) = Fu + Omu_inv.*(Gx*p);
     kv(:,i_RK) = Fv + Omv_inv.*(Gy*p); 
     
     % update velocity current stage by sum of F_i's until this stage,
@@ -97,33 +83,29 @@ for i_RK=1:s_RK
     % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
     % the boundary conditions at t_(i+1)  
     ti         = tn + c_RK(i_RK)*dt;
-    
     if (options.BC.BC_unsteady == 1)
         options = set_bc_vectors(ti,options);
+        yM      = options.discretization.yM;    
     end
-    yM   = options.discretization.yM;
-%     y_px = options.discretization.y_px;
-%     y_py = options.discretization.y_py;
     
-    % divergence of R is directly calculated with M
+    % divergence of intermediate velocity field is directly calculated with M
     f       = (M*Vtemp + (yM-yMn)/dt)/c_RK(i_RK);
     
     % we should have sum(f) = 0 for periodic and no-slip BC
     % solve the Poisson equation for the pressure, but not for the first
     % step if the boundary conditions are steady
     if (options.BC.BC_unsteady==1 || i_RK>1)
+        % the time ti below is only for output writing
         dp = pressure_poisson(f,ti,options);
     else
-        dp = zeros(Np,1);
+        dp = pn;
     end
-%     p  = p + dp;    
+    % store pressure
     kp(:,i_RK) = dp;
-
    
     % update velocity current stage, which is now divergence free
     uh      = uhn + dt*(utemp - c_RK(i_RK)*Omu_inv.*(Gx*dp));
     vh      = vhn + dt*(vtemp - c_RK(i_RK)*Omv_inv.*(Gy*dp));
-
     
 end
 
