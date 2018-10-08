@@ -9,15 +9,13 @@ function p = pressure_additional_solve(uh,vh,p,t,options)
     end
     
     M  = options.discretization.M;
-    % note: derivative of BC!
+    % note: time derivative of BC in ydM
     ydM = options.discretization.ydM;
     
     % note: F already contains G*p with the current p
     % we therefore effectively solve for the pressure difference
-    [~,Ru,Rv] = F(uh,vh,p,t,options);
-    
-    R  = [Ru;Rv];
-    
+    [~,R,~] = F(uh,vh,p,t,options);
+        
     f  = M*R + ydM;
     
     dp = pressure_poisson(f,t,options);

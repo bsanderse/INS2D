@@ -4,7 +4,7 @@ project = 'LDC';   % project name used in filenames
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 10;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -20,8 +20,8 @@ project = 'LDC';   % project name used in filenames
     y1      = 0;
     y2      = 1;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 100;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -50,32 +50,33 @@ project = 'LDC';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% time discretization
+%%% time and space discretization
 
     % steady or unsteady solver
     steady  = 1;         % steady(1) or unsteady(0)
 
+    % spatial accuracy: 2nd or 4th order
     order4  = 0;
-
-    % only for steady problems:
-    linearization = 'Newton';  % Newton or Picard linearization
-    nPicard       = 6;         % in case of Newton, first do nPicard Picard steps
-    accuracy      = 1e-8;
-    relax         = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% solver settings
-   
+
+    % only for steady problems:
+    linearization = 'Newton';  % Newton or Picard linearization
+    nPicard       = 2;         % in case of Newton, first do nPicard Picard steps
+    accuracy      = 1e-8;
+    relax         = 0;
+    
     % accuracy for non-linear solves (method 62, 72, 9)
     nonlinear_acc          = 1e-14;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
-    nonlinear_build_matrix = 1;    % for small dt one can approximate
-                                   % the matrix with I/dt
-    nonlinear_Newton       = 1;    % take full Jacobian
+    nonlinear_build_matrix = 1;    % 1: build Jacobian; 0: do not build Jacobian
+                                   % approximate iteration matrix with I/dt
+    nonlinear_Newton       = 1;    % 1: take full Jacobian at each iteration
     simplified_Newton      = 0;    % constant matrix during nonlinear iteration
     nonlinear_startingvalues = 0;
                                    

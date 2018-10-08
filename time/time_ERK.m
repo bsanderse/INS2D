@@ -5,11 +5,9 @@ Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
 
-Omu_inv = options.grid.Omu_inv;
-Omv_inv = options.grid.Omv_inv;
+Om_inv = options.grid.Om_inv;
 
-Gx = options.discretization.Gx;
-Gy = options.discretization.Gy;
+G = options.discretization.G;
 
 
 % get coefficients of RK method
@@ -37,8 +35,8 @@ Vn     = [uhn; vhn];
 pn     = p;
 
 % right hand side evaluations, initialized at zero
-ku     = zeros(Nu,s_RK);
-kv     = zeros(Nv,s_RK);
+k     = zeros(Nu+Nv,s_RK);
+% k     = zeros(Nv,s_RK);
 kp     = zeros(Np,s_RK);
 
 
@@ -65,20 +63,17 @@ for i_RK=1:s_RK
     % level i
     % this includes force evaluation at ti 
     % boundary conditions should have been set through set_bc_vectors
-    [~,Fu,Fv]  = F(uh,vh,p,ti,options);
+    [~,F_rhs]  = F(uh,vh,p,ti,options);
     
     % store right-hand side of stage i
     % we remove the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
-    ku(:,i_RK) = Fu + Omu_inv.*(Gx*p);
-    kv(:,i_RK) = Fv + Omv_inv.*(Gy*p); 
+    k(:,i_RK) = F_rhs + Om_inv.*(G*p);
     
     % update velocity current stage by sum of F_i's until this stage,
     % weighted with Butcher tableau coefficients
     % this gives u_(i+1), and for i=s gives u_(n+1)
-    utemp      = ku*A_RK(i_RK,:)';
-    vtemp      = kv*A_RK(i_RK,:)';    
-    Vtemp      = [utemp;vtemp];    
+    Vtemp      = k*A_RK(i_RK,:)';
     
     % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
     % the boundary conditions at t_(i+1)  
@@ -104,8 +99,9 @@ for i_RK=1:s_RK
     kp(:,i_RK) = dp;
    
     % update velocity current stage, which is now divergence free
-    uh      = uhn + dt*(utemp - c_RK(i_RK)*Omu_inv.*(Gx*dp));
-    vh      = vhn + dt*(vtemp - c_RK(i_RK)*Omv_inv.*(Gy*dp));
+    V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
+    uh = V(1:Nu);
+    vh = V(Nu+1:Nu+Nv);
     
 end
 
