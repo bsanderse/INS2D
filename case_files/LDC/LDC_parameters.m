@@ -20,8 +20,8 @@ project = 'LDC';   % project name used in filenames
     y1      = 0;
     y2      = 1;
 
-    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 10; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 10;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -64,21 +64,26 @@ project = 'LDC';   % project name used in filenames
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% solver settings
 
-    % only for steady problems:
-    linearization = 'Newton';  % Newton or Picard linearization
-    nPicard       = 2;         % in case of Newton, first do nPicard Picard steps
-    accuracy      = 1e-8;
-    relax         = 0;
+    % for steady problems or unsteady problems with implicit methods:
+
+    relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    % accuracy for non-linear solves (method 62, 72, 9)
     nonlinear_acc          = 1e-14;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
-    nonlinear_build_matrix = 1;    % 1: build Jacobian; 0: do not build Jacobian
-                                   % approximate iteration matrix with I/dt
-    nonlinear_Newton       = 1;    % 1: take full Jacobian at each iteration
-    simplified_Newton      = 0;    % constant matrix during nonlinear iteration
-    nonlinear_startingvalues = 0;
+        
+    nonlinear_Newton       = 1;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+                                   % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
+                                   % 2: full Newton; build Jacobian at each
+                                   % iteration
+    Jacobian_type          = 1;    % 0: Picard linearization
+                                   % 1: Newton linearization
+                                   
+    % for steady problems only:
+    nPicard                = 2;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
+    
+    % for unsteady problems only:
+    nonlinear_startingvalues = 0;  % extrapolate values from last time step to get accurate initial guess
                                    
     % location of PETSc-matlab mex files                                    
     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';
@@ -94,7 +99,7 @@ project = 'LDC';   % project name used in filenames
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 10;
+    rtp.n            = 1;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

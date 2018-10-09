@@ -1,5 +1,5 @@
-function [convu, convv, Jacu, Jacv] = convection(uh,vh,t,options)
-% evaluate convective terms
+function [convu, convv, Jacu, Jacv] = convection(uh,vh,t,options,getJacobian)
+% evaluate convective terms and, optionally, Jacobians
 
 order4     = options.discretization.order4;
 regularize = options.case.regularize;
@@ -67,15 +67,15 @@ if (order4==0)
         convu  = du2dx + duvdy;
         convv  = duvdx + dv2dy;
         
-        if (options.solversettings.nonlinear_build_matrix==1)
-            Newton     = options.solversettings.nonlinear_Newton;
+        if (getJacobian==1)
+            Newton     = options.solversettings.Newton_factor;
             N1 = options.grid.N1;
             N2 = options.grid.N2;
             N3 = options.grid.N3;
             N4 = options.grid.N4;
             
-            C1         = Cux*spdiags(u_ux,0,N1,N1);
-            C2         = Cux*spdiags(uf_ux,0,N1,N1)*Newton;
+            C1         = Cux*spdiags(uf_ux,0,N1,N1);
+            C2         = Cux*spdiags(u_ux,0,N1,N1)*Newton;
             Conv_ux_11 = C1*Au_ux + C2*Iu_ux;
             
             C1         = Cuy*spdiags(vf_uy,0,N2,N2);

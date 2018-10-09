@@ -94,12 +94,16 @@ voi = {
     'nonlinear_acc', 1e-14; ...
     'nonlinear_relacc', 1e-14; ...
     'nonlinear_maxit', 10; ...
-    'nonlinear_build_matrix', 1; ...    % for small dt one can approximate
-                                   % the matrix with I/dt
-    'nonlinear_Newton', 1; ...    % take full Jacobian
-    'simplified_Newton', 0; ...    % constant matrix during nonlinear iteration
+    'nonlinear_Newton', 1; ...  % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+                                   % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
+                                   % 2: full Newton; build Jacobian at each
+                                   % iteration
+    'Jacobian_type', 0; ...    % 0: Picard linearization, 1: Newton linearization
     'nonlinear_startingvalues', 0;
-                                   
+        
+    % 
+    'nPicard', 5; % number of Picard steps before switching to Newton when linearization is Newton
+    
     % location of PETSc-matlab mex files                                    
 %     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';
     };

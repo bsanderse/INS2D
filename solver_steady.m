@@ -25,11 +25,11 @@ G  = options.discretization.G;
 M  = options.discretization.M;
 yM = options.discretization.yM;
 
-while ( maxres(n) > accuracy)
+while ( maxres(n) > options.solversettings.nonlinear_acc)
     
-    % switch to Newton after nPicard steps
-    if (strcmp(linearization,'Newton') && n>nPicard)
-        Newton = 1;
+    % switch to Newton after nPicard steps if Jacobian_type=1
+    if (options.solversettings.Jacobian_type == 1 && n>options.solversettings.nPicard)
+        options.solversettings.Newton_factor = 1;
     end
     
     n = n+1;
@@ -40,15 +40,20 @@ while ( maxres(n) > accuracy)
     % where dF is the Jacobian dFdq, and q contains both velocity and
     % pressure
     % res is the residual, which contains all the terms in the momentum
-    % equation
-    [maxres(n), fmom, dfmom] = F(uh,vh,p,t,options);
+    % equation and in the mass equations
+    % fmom contains the right hand side of the momentum equation when
+    % written in du/dt = fmom form, so fmom = -conv + diff - grad p
+    [~, fmom, dfmom] = F(uh,vh,p,t,options,1);
     fmass     = M*V+yM;
-    f         = [fmom; fmass];
-    Z         = [dfmom -G; M Z2];
+    f         = [-fmom; fmass];
+    % it is unclear why, but when using an asymmetric version of the G and
+    % M blocks (using -M for mass equation), the Matlab solver converges much faster
+    % 
+    Z         = [dfmom -G; -M Z2];
     
     
     %% solve with direct solver from Matlab
-    dq        = -Z\f;
+    dq        = Z\f;
     
     dV        = dq(1:Nu+Nv);
     dp        = dq(Nu+Nv+1:end);

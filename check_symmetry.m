@@ -49,4 +49,14 @@ else
     flag = 0;
 end
 
+        
+%     if (max2d(abs(Cu+Cu'))>1e-12 && ...
+%           ~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres') )
+%         disp('warning: convection operator u not skew-symmetric');
+%     end
+%     if (max2d(abs(Cv+Cv'))>1e-12  && ...
+%           ~strcmp(BC.v.low,'pres') && ~strcmp(BC.v.up,'pres') )
+%         disp('warning: convection operator v not skew-symmetric');
+%     end
+
 end
