@@ -43,7 +43,7 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     % equation and in the mass equations
     % fmom contains the right hand side of the momentum equation when
     % written in du/dt = fmom form, so fmom = -conv + diff - grad p
-    [~, fmom, dfmom] = F(uh,vh,p,t,options,1);
+    [~, fmom, dfmom] = F(V,p,t,options,1);
     fmass     = M*V+yM;
     f         = [-fmom; fmass];
     % it is unclear why, but when using an asymmetric version of the G and
@@ -57,12 +57,8 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     
     dV        = dq(1:Nu+Nv);
     dp        = dq(Nu+Nv+1:end);
-    du        = dV(1:Nu);
-    dv        = dV(Nu+1:end);
-    
+
     V         = V + dV;
-    uh        = uh + du;
-    vh        = vh + dv;
     p         = p + dp;
     
     %% check residuals, conservation, write output files

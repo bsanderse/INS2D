@@ -1,4 +1,4 @@
-function p = pressure_additional_solve(uh,vh,p,t,options)
+function p = pressure_additional_solve(V,p,t,options)
 % additional pressure solve
 % make the pressure compatible with the velocity field. this should
 % also result in same order pressure as velocity
@@ -14,7 +14,7 @@ function p = pressure_additional_solve(uh,vh,p,t,options)
     
     % note: F already contains G*p with the current p
     % we therefore effectively solve for the pressure difference
-    [~,R,~] = F(uh,vh,p,t,options);
+    [~,R,~] = F(V,p,t,options);
         
     f  = M*R + ydM;
     

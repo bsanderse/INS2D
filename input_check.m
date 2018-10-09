@@ -76,7 +76,7 @@ else
     
     %% kinetic energy and momentum of initial velocity field
     % iteration 1 corresponds to t=0 (for unsteady simulations)
-    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(uh,vh,t,options);
+    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
     
     
     if (maxdiv(1)>1e-12 && steady==0)
@@ -92,9 +92,9 @@ else
         f  = options.discretization.M*V + options.discretization.yM;
         dp = pressure_poisson(f,t,options);
         V  = V - Om_inv.*(G*dp);
-        uh = V(1:Nu); vh = V(Nu+1:end);
+%         uh = V(1:Nu); vh = V(Nu+1:end);
         % repeat conservation with updated velocity field
-        [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(uh,vh,t,options);
+        [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
     else
         [symmetry_flag, symmetry_error] = check_symmetry(uh,vh,t,options);
 
@@ -125,7 +125,7 @@ else
     else        
         if (p_initial == 1)
             % calculate initial pressure from a Poisson equation           
-            p = pressure_additional_solve(uh,vh,p_start(:),t,options);
+            p = pressure_additional_solve(V,p_start(:),t,options);
         else
             % use provided initial condition (not recommended)
             p = p_start(:);
@@ -141,7 +141,7 @@ else
     
     %% residual of momentum equations at start
     if (strcmp(options.case.visc,'laminar'))
-        [maxres(1), ~, ~] = F(uh,vh,p,t,options,0);
+        [maxres(1), ~, ~] = F(V,p,t,options,0);
     else
         maxres(1) = 0;
     end

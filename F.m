@@ -1,13 +1,15 @@
-function [maxres,Fres,dF] = F(uh,vh,p,t,options,getJacobian)
+function [maxres,Fres,dF] = F(V,p,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
-if (nargin<6)
+if (nargin<5)
     getJacobian = 0;
 end
 
-
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+
+uh = V(1:Nu);
+vh = V(Nu+1:Nu+Nv);
 
 Om_inv = options.grid.Om_inv;
 

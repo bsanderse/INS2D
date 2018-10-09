@@ -1,5 +1,10 @@
-function [maxdiv,umom,vmom,k] = check_conservation(uh,vh,t,options)
+function [maxdiv,umom,vmom,k] = check_conservation(V,t,options)
 % check mass, momentum and energy conservation properties of velocity field
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+
+uh = V(1:Nu);
+vh = V(Nu+1:Nu+Nv);
 
 global uBC vBC;
 

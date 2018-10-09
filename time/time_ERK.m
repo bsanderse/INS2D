@@ -24,21 +24,18 @@ s_RK = length(b_RK);
 % is always zero for explicit methods
 A_RK = [A_RK(2:end,:); b_RK'];
 
-% number of stages
+% vector with time instances 
 c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 
 % store variables at start of time step
 tn     = t;
-uhn    = uh;
-vhn    = vh;
-Vn     = [uhn; vhn];
+Vn     = V;
 pn     = p;
 
 % right hand side evaluations, initialized at zero
-k     = zeros(Nu+Nv,s_RK);
-% k     = zeros(Nv,s_RK);
+k      = zeros(Nu+Nv,s_RK);
+% array for the pressure
 kp     = zeros(Np,s_RK);
-
 
 % divergence operator
 M      = options.discretization.M;
@@ -63,12 +60,12 @@ for i_RK=1:s_RK
     % level i
     % this includes force evaluation at ti 
     % boundary conditions should have been set through set_bc_vectors
-    [~,F_rhs]  = F(uh,vh,p,ti,options);
+    [~,F_rhs]  = F(V,p,ti,options);
     
     % store right-hand side of stage i
     % we remove the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
-    k(:,i_RK) = F_rhs + Om_inv.*(G*p);
+    k(:,i_RK)  = F_rhs + Om_inv.*(G*p);
     
     % update velocity current stage by sum of F_i's until this stage,
     % weighted with Butcher tableau coefficients
@@ -100,13 +97,8 @@ for i_RK=1:s_RK
    
     % update velocity current stage, which is now divergence free
     V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
-    uh = V(1:Nu);
-    vh = V(Nu+1:Nu+Nv);
-    
-end
 
-% gather solution into V
-V = [uh;vh];
+end
 
 
 if (options.BC.BC_unsteady == 1)
@@ -127,5 +119,5 @@ if (options.BC.BC_unsteady == 1)
     % standard method
     p = kp(:,end);
 else
-    p = pressure_additional_solve(uh,vh,p,tn+dt,options);
+    p = pressure_additional_solve(V,p,tn+dt,options);
 end

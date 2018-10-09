@@ -19,6 +19,9 @@ Bvp = options.discretization.Bvp;
 Npx = options.grid.Npx;
 Npy = options.grid.Npy;
 
+uh = V(1:Nu);
+vh = V(Nu+1:Nu+Nv);
+
 uh_temp = uh; vh_temp = vh;
 if (ibm==1)
     % blank inside values for plotting purposes, in case of immersed boundary method
