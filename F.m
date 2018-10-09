@@ -22,7 +22,7 @@ y_py = options.discretization.y_py;
 [convu, convv, dconvu, dconvv] = convection(uh,vh,t,options,getJacobian);
 
 % diffusion
-[d2u, d2v] = diffusion(uh,vh,t,options);
+[d2u, d2v, dDiffu, dDiffv] = diffusion(uh,vh,t,options,getJacobian);
 
 % body force
 [Fx, Fy] = force(t,options);
@@ -46,9 +46,6 @@ if (getJacobian==1)
     % solution u,v
     % so we only have convection and diffusion in the Jacobian
     
-    % extend diffusion with zero block
-    dDiffu = [options.discretization.Diffu spalloc(Nu,Nv,0)];
-    dDiffv = [spalloc(Nv,Nu,0) options.discretization.Diffv];
     dFu  = - dconvu + dDiffu;
     dFv  = - dconvv + dDiffv;
     

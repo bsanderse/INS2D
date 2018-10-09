@@ -52,7 +52,7 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     Z         = [dfmom -G; -M Z2];
     
     
-    %% solve with direct solver from Matlab
+    %% solve with direct solver
     dq        = Z\f;
     
     dV        = dq(1:Nu+Nv);
@@ -61,9 +61,11 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     V         = V + dV;
     p         = p + dp;
     
+    
     %% check residuals, conservation, write output files
     process_iteration;
-    maxres(n)
+    
+    fprintf(fcw,'residual momentum equation: %16.8e \n', maxres(n));
     
     % write convergence information to file
     if (options.output.save_results == 1)

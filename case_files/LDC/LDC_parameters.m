@@ -4,7 +4,7 @@ project = 'LDC';   % project name used in filenames
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 10;                  % Reynolds number
+    Re      = 1000;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -20,8 +20,8 @@ project = 'LDC';   % project name used in filenames
     y1      = 0;
     y2      = 1;
 
-    Nx      = 10; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 10;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;

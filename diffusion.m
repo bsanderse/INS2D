@@ -1,17 +1,27 @@
-function [d2u, d2v] = diffusion(uh,vh,t,options)
+function [d2u, d2v, Jacu, Jacv] = diffusion(uh,vh,t,options,getJacobian)
 
 visc = options.case.visc;
+
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
 
 Diffu  = options.discretization.Diffu;
 Diffv  = options.discretization.Diffv;
 yDiffu = options.discretization.yDiffu;
 yDiffv = options.discretization.yDiffv;
 
+Jacu = spalloc(Nu,Nu+Nv,0);
+Jacv = spalloc(Nv,Nu+Nv,0);
 
 if (strcmp(visc,'laminar'))
     
     d2u     = Diffu*uh + yDiffu;
     d2v     = Diffv*vh + yDiffv;
+    
+    if (getJacobian == 1)
+        Jacu    = [Diffu spalloc(Nu,Nv,0)];
+        Jacv    = [spalloc(Nv,Nu,0) Diffv];
+    end
     
 else
     
