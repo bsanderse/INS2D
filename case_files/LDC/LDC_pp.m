@@ -1,23 +1,31 @@
-% post-processing
+%% post-processing Lid-driven cavity results
 
-% line = {'k-','b-','k--','b--','kx-'};
-line = {'r-','b-','k-','m-','g-'};
+line  = {'r-','b-','k-','m-','g-'};
 color = char(line(j));
 
 %load BP data
-run('results/LDC/BP.m');
-    
-u = reshape(uh,Nux_in,Nuy_in);
-v = reshape(vh,Nvx_in,Nvy_in);
+% run('results/LDC/BP.m');
+
+Nux_in = options.grid.Nux_in;
+Nuy_in = options.grid.Nuy_in;
+Nvx_in = options.grid.Nvx_in;
+Nvy_in = options.grid.Nvy_in;
+Npx    = options.grid.Npx;
+Npy    = options.grid.Npy;    
+
+uh   = V(1:Nu);
+vh   = V(Nu+1:Nu+Nv);
+u    = reshape(uh,Nux_in,Nuy_in);
+v    = reshape(vh,Nvx_in,Nvy_in);
 pres = reshape(p,Npx,Npy);
-% vorticity
-% omega = reshape(omega,Npx-1,Npy-1);
 
 if (floor(Nx/2)==Nx/2 && floor(Ny/2)==Ny/2)
     pres_ = pres-(pres(Nx/2+1,Ny/2+1)+pres(Nx/2,Ny/2))/2;
 else
     pres_ = pres-pres(ceil(Nx/2),ceil(Ny/2));
 end
+
+%% create centerline plots
 
 if (floor(Nx/2)==Nx/2) % Nx even
     disp('min u along vertical centerline');
@@ -43,9 +51,9 @@ if (floor(Nx/2)==Nx/2) % Nx even
     %%
     figure(1)
     hold on
-    if (j==1)
-    plot(uBP,yBP,'bx');
-    end
+%     if (j==1)
+%     plot(uBP,yBP,'bx');
+%     end
 %     plot(-uGhia,yBP,'rx');
     plot(u(Nx/2,:),yp,color) 
     xlabel('u')
@@ -63,9 +71,9 @@ if (floor(Nx/2)==Nx/2) % Nx even
     
     figure(3)
     hold on
-    if (j==1)    
-    plot(pvBP,yBP,'bx');
-    end
+%     if (j==1)    
+%     plot(pvBP,yBP,'bx');
+%     end
     plot((pres_(Nx/2,:)+pres_(Nx/2+1,:))/2,yp,color) 
     xlabel('p')
     ylabel('y')
@@ -107,9 +115,9 @@ if (floor(Ny/2)==Ny/2) % Ny even
    
     figure(4)
     hold on
-    if (j==1)
-    plot(xBP,vBP,'bx');
-    end
+%     if (j==1)
+%     plot(xBP,vBP,'bx');
+%     end
 %     plot(xBP,vGhia,'rx');
     plot(xp,v(:,Ny/2),color) 
     xlabel('x')
@@ -128,9 +136,9 @@ if (floor(Ny/2)==Ny/2) % Ny even
 
     figure(6)
     hold on
-    if (j==1)
-    plot(xBP,phBP,'bx');
-    end
+%     if (j==1)
+%     plot(xBP,phBP,'bx');
+%     end
     plot(xp,(pres_(:,Ny/2)+pres_(:,Ny/2+1))/2,color)
     xlabel('x')
     ylabel('p')
@@ -146,10 +154,12 @@ else
     disp(1-xp(pos));
 end
 
-figure
-%%
 
-if (j==length(mesh_list))    
+%% convergence graphs
+
+if (j==length(mesh_list) && length(mesh_list)>1)    
+    
+    figure
     if (Re==1000)
         umax_exact = 0.3885698;
         vmin_exact = -0.5270771;

@@ -104,18 +104,18 @@ else
     %% body forces
     
     % set body force if not set
-    if (exist('Fx','var')~=1)
-        Fx    = zeros(Nu,1);
-    end
-    if (exist('Fy','var')~=1)
-        Fy    = zeros(Nv,1);
-    end
+%     if (exist('Fx','var')~=1)
+%         Fx    = zeros(Nu,1);
+%     end
+%     if (exist('Fy','var')~=1)
+%         Fy    = zeros(Nv,1);
+%     end
 
-    if (strcmp(options.case.visc,'turbulent'))
-        % initialize body forces k and epsilon equation
-        Fk  = zeros(Np,1);
-        Fe  = zeros(Np,1);
-    end
+%     if (strcmp(options.case.visc,'turbulent'))
+%         % initialize body forces k and epsilon equation
+%         Fk  = zeros(Np,1);
+%         Fe  = zeros(Np,1);
+%     end
 
     
     %% initialize pressure

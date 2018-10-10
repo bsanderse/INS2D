@@ -152,18 +152,15 @@ if (restart.load == 0)
 end
 
 %% boundary conditions
-% interpolate_bc;
 options = set_bc_vectors(t,options);
-% operator_bc_momentum;
 
 %% construct body force or immersed boundary method
-[Fx,Fy] = force(t,options);
+% [Fx,Fy] = force(t,options);
 
 
 %% input checking
 input_check;
 
-% keyboard;
 
 %% start the solver
 fprintf(fcw,['setting-up simulation took ' num2str(toc) '\n']);
