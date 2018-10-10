@@ -1,4 +1,4 @@
-project = 'LDC';   % project name used in filenames
+% project = 'LDC';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,23 +31,6 @@ project = 'LDC';   % project name used in filenames
     sy      = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% force
-    % force is to be set in force.m
-    
-    force_unsteady     = 0; % set to 1 if force is time dependent
-    
-    % immersed boundary method
-    ibm     = 0;
-    
-    % position of body
-    x_c     = 0;
-    y_c     = 0;
-    D       = 1; % diameter
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% time and space discretization
 
@@ -55,7 +38,7 @@ project = 'LDC';   % project name used in filenames
     steady  = 1;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order
-    order4  = 0;
+    order4  = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

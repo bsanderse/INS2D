@@ -23,7 +23,8 @@ voi={
     'steady',       [];...    % 0: unsteady; 1: steady
     'visc',         [];...    % 0: laminar; 1: turbulent (k-eps)
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
-    'force_unsteady', [];     % 0: steady forcing; 1: unsteady forcing
+    'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing
+    'ibm', 0; % 0: no immersed boundary method; 1: immersed boundary method
     };
 
 accumulate_object;

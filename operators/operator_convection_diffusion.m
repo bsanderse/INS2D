@@ -442,34 +442,39 @@ end
 
 %% assemble operators
 
-if ( strcmp(visc,'laminar') )
+switch visc
     
-    if (order4==0)
-        Diffu  = Dux*( (1/Re)* Su_ux) + Duy*( (1/Re)* Su_uy);
-        Diffv  = Dvx*( (1/Re)* Sv_vx) + Dvy*( (1/Re)* Sv_vy);
-    elseif (order4==1)
-        Diffux_div = (alfa*Dux - Dux3)*spdiags(1./Omux,0,length(Omux),length(Omux));
-        Diffuy_div = (alfa*Duy - Duy3)*spdiags(1./Omuy,0,length(Omuy),length(Omuy));
-        Diffvx_div = (alfa*Dvx - Dvx3)*spdiags(1./Omvx,0,length(Omvx),length(Omvx));
-        Diffvy_div = (alfa*Dvy - Dvy3)*spdiags(1./Omvy,0,length(Omvy),length(Omvy));
-        Diffu  = (1/Re)*Diffux_div*(alfa*Su_ux-Su_ux3) + ...
-            (1/Re)*Diffuy_div*(alfa*Su_uy-Su_uy3);
-        Diffv  = (1/Re)*Diffvx_div*(alfa*Sv_vx-Sv_vx3) + ...
-            (1/Re)*Diffvy_div*(alfa*Sv_vy-Sv_vy3);
+    case 'laminar'
         
-    end
-    
-    
-elseif ( strcmp(visc,'turbulent') || strcmp(visc,'LES') )
-    % only implemented for 2nd order
-    
-    % diffusion u-momentum
-    Diffu_u = Dux*( (1/Re) * 2*Su_ux) + Duy*( (1/Re) * Su_uy);
-    Diffu_v = Duy*( (1/Re) * Sv_uy);
-    % diffusion v-momentum
-    Diffv_u = Dvx*( (1/Re) * Su_vx);
-    Diffv_v = Dvx*( (1/Re) * Sv_vx) + Dvy*( (1/Re) * 2*Sv_vy);
-    
+        
+        if (order4==0)
+            Diffu  = Dux*( (1/Re)* Su_ux) + Duy*( (1/Re)* Su_uy);
+            Diffv  = Dvx*( (1/Re)* Sv_vx) + Dvy*( (1/Re)* Sv_vy);
+        elseif (order4==1)
+            Diffux_div = (alfa*Dux - Dux3)*spdiags(1./Omux,0,length(Omux),length(Omux));
+            Diffuy_div = (alfa*Duy - Duy3)*spdiags(1./Omuy,0,length(Omuy),length(Omuy));
+            Diffvx_div = (alfa*Dvx - Dvx3)*spdiags(1./Omvx,0,length(Omvx),length(Omvx));
+            Diffvy_div = (alfa*Dvy - Dvy3)*spdiags(1./Omvy,0,length(Omvy),length(Omvy));
+            Diffu  = (1/Re)*Diffux_div*(alfa*Su_ux-Su_ux3) + ...
+                (1/Re)*Diffuy_div*(alfa*Su_uy-Su_uy3);
+            Diffv  = (1/Re)*Diffvx_div*(alfa*Sv_vx-Sv_vx3) + ...
+                (1/Re)*Diffvy_div*(alfa*Sv_vy-Sv_vy3);
+            
+        end
+        
+        
+    case {'turbulent','LES'}
+        % only implemented for 2nd order
+        
+        % diffusion u-momentum
+        Diffu_u = Dux*( (1/Re) * 2*Su_ux) + Duy*( (1/Re) * Su_uy);
+        Diffu_v = Duy*( (1/Re) * Sv_uy);
+        % diffusion v-momentum
+        Diffv_u = Dvx*( (1/Re) * Su_vx);
+        Diffv_v = Dvx*( (1/Re) * Sv_vx) + Dvy*( (1/Re) * 2*Sv_vy);
+        
+    otherwise
+        error('wrong visc parameter');
 end
 
 
@@ -485,8 +490,6 @@ options.discretization.Su_ux_BC = Su_ux_BC;
 options.discretization.Su_uy_BC = Su_uy_BC;
 options.discretization.Sv_vx_BC = Sv_vx_BC;
 options.discretization.Sv_vy_BC = Sv_vy_BC;
-options.discretization.Sv_uy = Sv_uy;
-options.discretization.Su_vx = Su_vx;
 options.discretization.Dux   = Dux;
 options.discretization.Duy   = Duy;
 options.discretization.Dvx   = Dvx;
@@ -494,75 +497,82 @@ options.discretization.Dvy   = Dvy;
 options.discretization.Diffu = Diffu;
 options.discretization.Diffv = Diffv;
 
-if (order4 == 0)
-    options.discretization.Su_vx_BC_lr = Su_vx_BC_lr;
-    options.discretization.Su_vx_BC_lu = Su_vx_BC_lu;
-    options.discretization.Sv_uy_BC_lr = Sv_uy_BC_lr;
-    options.discretization.Sv_uy_BC_lu = Sv_uy_BC_lu;
+switch visc
+    case {'turbulent','LES'}
+        options.discretization.Sv_uy = Sv_uy;
+        options.discretization.Su_vx = Su_vx;
 end
 
-if (order4 == 1)
-    options.discretization.Cux3 = Cux3;
-    options.discretization.Cuy3 = Cuy3;
-    options.discretization.Cvx3 = Cvx3;
-    options.discretization.Cvy3 = Cvy3;
-    options.discretization.Su_ux_BC3 = Su_ux_BC3;
-    options.discretization.Su_uy_BC3 = Su_uy_BC3;
-    options.discretization.Sv_vx_BC3 = Sv_vx_BC3;
-    options.discretization.Sv_vy_BC3 = Sv_vy_BC3;
-    options.discretization.Diffux_div = Diffux_div;
-    options.discretization.Diffuy_div = Diffuy_div;
-    options.discretization.Diffvx_div = Diffvx_div;
-    options.discretization.Diffvy_div = Diffvy_div;
-end
-
-
-%% additional for implicit time stepping diffusion
-
-
-if (exist('theta','var') && method==2 && strcmp(visc,'laminar'))
-    fprintf(fcw,'implicit time-stepping for diffusion\n');
-    % implicit time-stepping for diffusion
-    % solving (I-dt*Diffu)*uh* = ...
     
-    Diffu_impl = speye(Nu,Nu) - theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu;
-    Diffv_impl = speye(Nv,Nv) - theta*dt*spdiags(Omv_inv,0,Nv,Nv)*Diffv;
-    
-    if (poisson_diffusion == 1)
-        % LU decomposition
-        fprintf(fcw,'LU decomposition of diffusion matrices...\n');
-        tic;
-        [L_diffu, U_diffu] = lu(Diffu_impl);
-        [L_diffv, U_diffv] = lu(Diffv_impl);
-        toc;
-    elseif (poisson_diffusion ==3)
-        if (exist(['cg.' mexext],'file')==3)
-            [L_diffu, d_diffu] = spdiags(Diffu_impl);
-            ndia_diffu  = (length(d_diffu)+1)/2; % number of diagonals needed in cg
-            dia_diffu   = d_diffu(ndia_diffu:end);
-            L_diffu     = L_diffu(:,ndia_diffu:-1:1);
-            
-            [L_diffv, d_diffv] = spdiags(Diffv_impl);
-            ndia_diffv  = (length(d_diffv)+1)/2; % number of diagonals needed in cg
-            dia_diffv   = d_diffv(ndia_diffv:end);
-            L_diffv     = L_diffv(:,ndia_diffv:-1:1);
-            
-        else
-            fprintf(fcw,'No correct CG mex file available, switching to Matlab implementation\n');
-            %             poisson = 4;
-        end
+    if (order4 == 0)
+        options.discretization.Su_vx_BC_lr = Su_vx_BC_lr;
+        options.discretization.Su_vx_BC_lu = Su_vx_BC_lu;
+        options.discretization.Sv_uy_BC_lr = Sv_uy_BC_lr;
+        options.discretization.Sv_uy_BC_lu = Sv_uy_BC_lu;
     end
     
-    % CG
-    %     [Diffu_diag, d_diffu]   = spdiags(speye(Nu,Nu)-theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu);
-    %     nd_diffu                = (length(d_diffu)+1)/2;
-    %     dia_diffu               = d_diffu(nd_diffu:end);
-    %     B_diffu                 = zeros(Nux_in*Nuy_in,nd_diffu);
-    %     B_diffu(:,1:nd_diffu)   = Diffu_diag(:,nd_diffu:-1:1);
-    %
-    %     [Diffv_diag, d_diffv]   = spdiags(speye(Nv,Nv)-theta*dt*spdiags(Omv_inv,0,Nv,Nv)*Diffv);
-    %     nd_diffv                = (length(d_diffv)+1)/2;
-    %     dia_diffv               = d_diffv(nd_diffv:end);
-    %     B_diffv                 = zeros(Nvx_in*Nvy_in,nd_diffv);
-    %     B_diffv(:,1:nd_diffv)   = Diffv_diag(:,nd_diffv:-1:1);
-end
+    if (order4 == 1)
+        options.discretization.Cux3 = Cux3;
+        options.discretization.Cuy3 = Cuy3;
+        options.discretization.Cvx3 = Cvx3;
+        options.discretization.Cvy3 = Cvy3;
+        options.discretization.Su_ux_BC3 = Su_ux_BC3;
+        options.discretization.Su_uy_BC3 = Su_uy_BC3;
+        options.discretization.Sv_vx_BC3 = Sv_vx_BC3;
+        options.discretization.Sv_vy_BC3 = Sv_vy_BC3;
+        options.discretization.Diffux_div = Diffux_div;
+        options.discretization.Diffuy_div = Diffuy_div;
+        options.discretization.Diffvx_div = Diffvx_div;
+        options.discretization.Diffvy_div = Diffvy_div;
+    end
+    
+    
+    %% additional for implicit time stepping diffusion
+    
+    
+    if (exist('theta','var') && method==2 && strcmp(visc,'laminar'))
+        fprintf(fcw,'implicit time-stepping for diffusion\n');
+        % implicit time-stepping for diffusion
+        % solving (I-dt*Diffu)*uh* = ...
+        
+        Diffu_impl = speye(Nu,Nu) - theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu;
+        Diffv_impl = speye(Nv,Nv) - theta*dt*spdiags(Omv_inv,0,Nv,Nv)*Diffv;
+        
+        if (poisson_diffusion == 1)
+            % LU decomposition
+            fprintf(fcw,'LU decomposition of diffusion matrices...\n');
+            tic;
+            [L_diffu, U_diffu] = lu(Diffu_impl);
+            [L_diffv, U_diffv] = lu(Diffv_impl);
+            toc;
+        elseif (poisson_diffusion ==3)
+            if (exist(['cg.' mexext],'file')==3)
+                [L_diffu, d_diffu] = spdiags(Diffu_impl);
+                ndia_diffu  = (length(d_diffu)+1)/2; % number of diagonals needed in cg
+                dia_diffu   = d_diffu(ndia_diffu:end);
+                L_diffu     = L_diffu(:,ndia_diffu:-1:1);
+                
+                [L_diffv, d_diffv] = spdiags(Diffv_impl);
+                ndia_diffv  = (length(d_diffv)+1)/2; % number of diagonals needed in cg
+                dia_diffv   = d_diffv(ndia_diffv:end);
+                L_diffv     = L_diffv(:,ndia_diffv:-1:1);
+                
+            else
+                fprintf(fcw,'No correct CG mex file available, switching to Matlab implementation\n');
+                %             poisson = 4;
+            end
+        end
+        
+        % CG
+        %     [Diffu_diag, d_diffu]   = spdiags(speye(Nu,Nu)-theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu);
+        %     nd_diffu                = (length(d_diffu)+1)/2;
+        %     dia_diffu               = d_diffu(nd_diffu:end);
+        %     B_diffu                 = zeros(Nux_in*Nuy_in,nd_diffu);
+        %     B_diffu(:,1:nd_diffu)   = Diffu_diag(:,nd_diffu:-1:1);
+        %
+        %     [Diffv_diag, d_diffv]   = spdiags(speye(Nv,Nv)-theta*dt*spdiags(Omv_inv,0,Nv,Nv)*Diffv);
+        %     nd_diffv                = (length(d_diffv)+1)/2;
+        %     dia_diffv               = d_diffv(nd_diffv:end);
+        %     B_diffv                 = zeros(Nvx_in*Nvy_in,nd_diffv);
+        %     B_diffv(:,1:nd_diffv)   = Diffv_diag(:,nd_diffv:-1:1);
+    end

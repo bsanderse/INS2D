@@ -84,17 +84,17 @@ if (order4==0)
             Conv_uy_12 = C2*Iv_uy;
             
             Jacu       = [Conv_ux_11 + Conv_uy_11 Conv_uy_12];
-
+            
             C1         = Cvx*spdiags(uf_vx,0,N3,N3);
             C2         = Cvx*spdiags(v_vx,0,N3,N3)*Newton;
             Conv_vx_21 = C2*Iu_vx;
             Conv_vx_22 = C1*Av_vx;
-
+            
             C1         = Cvy*spdiags(vf_vy,0,N4,N4);
-            C2         = Cvy*spdiags(v_vy,0,N4,N4)*Newton;       
+            C2         = Cvy*spdiags(v_vy,0,N4,N4)*Newton;
             Conv_vy_22 = C1*Av_vy + C2*Iv_vy;
-
-            Jacv       = [Conv_vx_21 Conv_vx_22 + Conv_vy_22];            
+            
+            Jacv       = [Conv_vx_21 Conv_vx_22 + Conv_vy_22];
         end
         
         
@@ -321,6 +321,59 @@ elseif (order4==1)
     
     convu = alfa*du2dx - du2dx3 + alfa*duvdy - duvdy3;
     convv = alfa*duvdx - duvdx3 + alfa*dv2dy - dv2dy3;
+    
+    if (getJacobian==1)
+        Newton     = options.solversettings.Newton_factor;
+        N1 = options.grid.N1;
+        N2 = options.grid.N2;
+        N3 = options.grid.N3;
+        N4 = options.grid.N4;
+        
+        %% 2nd order operations
+        C1         = Cux*spdiags(uf_ux,0,N1,N1);
+        C2         = Cux*spdiags(u_ux,0,N1,N1)*Newton;
+        Conv_ux_11 = C1*Au_ux + C2*Iu_ux;
+        C1         = Cuy*spdiags(vf_uy,0,N2,N2);
+        C2         = Cuy*spdiags(u_uy,0,N2,N2)*Newton;
+        Conv_uy_11 = C1*Au_uy;
+        Conv_uy_12 = C2*Iv_uy;
+        Jacu1      = [Conv_ux_11 + Conv_uy_11 Conv_uy_12];
+        
+        C1         = Cvx*spdiags(uf_vx,0,N3,N3);
+        C2         = Cvx*spdiags(v_vx,0,N3,N3)*Newton;
+        Conv_vx_21 = C2*Iu_vx;
+        Conv_vx_22 = C1*Av_vx;
+        C1         = Cvy*spdiags(vf_vy,0,N4,N4);
+        C2         = Cvy*spdiags(v_vy,0,N4,N4)*Newton;
+        Conv_vy_22 = C1*Av_vy + C2*Iv_vy;
+        Jacv1       = [Conv_vx_21 Conv_vx_22 + Conv_vy_22];
+        
+        %% 4th order operations
+        C1     = Cux3*spdiags(uf_ux3,0,length(uf_ux3),length(uf_ux3));
+        C2     = Cux3*spdiags(u_ux3,0,length(u_ux3),length(u_ux3))*Newton;
+        Conv_ux_11_3 = C1*Au_ux3 + C2*Iu_ux3;
+        C1         = Cuy3*spdiags(vf_uy3,0,length(vf_uy3),length(vf_uy3));
+        C2         = Cuy3*spdiags(u_uy3,0,length(vf_uy3),length(vf_uy3))*Newton;
+        Conv_uy_11_3 = C1*Au_uy3;
+        Conv_uy_12_3 = C2*Iv_uy3;
+        Jacu3      = [Conv_ux_11_3 + Conv_uy_11_3 Conv_uy_12_3];
+        
+        
+        %%  v-component
+        C1         = Cvx3*spdiags(uf_vx3,0,length(uf_vx3),length(uf_vx3));
+        C2         = Cvx3*spdiags(v_vx3,0,length(v_vx3),length(v_vx3))*Newton;
+        Conv_vx_21_3 = C2*Iu_vx3;
+        Conv_vx_22_3 = C1*Av_vx3;        
+        C1         = Cvy3*spdiags(vf_vy3,0,length(vf_vy3),length(vf_vy3));
+        C2         = Cvy3*spdiags(v_vy3,0,length(v_vy3),length(v_vy3))*Newton;
+        Conv_vy_22_3 = C1*Av_vy3 + C2*Iv_vy3;
+        Jacv3      =  [Conv_vx_21_3 Conv_vx_22_3 + Conv_vy_22_3];
+
+        % linear combination to get the 4th order operator
+        Jacu  = alfa*Jacu1 - Jacu3;
+        Jacv  = alfa*Jacv1 - Jacv3;
+    end
+    
     
 end
 

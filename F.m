@@ -40,7 +40,7 @@ end
 maxres  = max(abs(Fres));
 
 if (getJacobian==1)
-    % Jacobian required
+    % Jacobian requested
         
     % we assume here that the body force Fx, Fy is not depending on the
     % solution u,v
