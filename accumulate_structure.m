@@ -19,7 +19,7 @@
 object='case';
 
 voi={
-    'project',      [];...
+    'project',      case_name;...
     'steady',       [];...    % 0: unsteady; 1: steady
     'visc',         [];...    % 0: laminar; 1: turbulent (k-eps)
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2

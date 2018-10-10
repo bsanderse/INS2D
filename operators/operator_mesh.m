@@ -454,6 +454,12 @@ options.grid.Bvux = Bvux;
 options.grid.xin  = xin;
 options.grid.yin  = yin;
 
+options.grid.xu  = xu;
+options.grid.yu  = yu;
+options.grid.xv  = xv;
+options.grid.yv  = yv;
+
+
 if (order4 == 1)
     options.grid.hxi3  = hxi3;
     options.grid.hyi3  = hyi3;    

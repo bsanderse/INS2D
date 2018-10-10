@@ -1,9 +1,9 @@
-project = 'LDC';   % project name used in filenames
+% project = 'BFS';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1000;                  % Reynolds number
+    Re      = 800;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -15,11 +15,11 @@ project = 'LDC';   % project name used in filenames
 %%% domain and mesh
     global x1 x2 y1 y2;
     x1      = 0;
-    x2      = 1;
-    y1      = 0;
-    y2      = 1;
+    x2      = 15;
+    y1      = -0.5;
+    y2      = 0.5;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 600; %mesh_list(j);         % number of volumes in the x-direction
     Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
@@ -79,7 +79,7 @@ project = 'LDC';   % project name used in filenames
                                    % 1: Newton linearization
                                    
     % for steady problems only:
-    nPicard                = 2;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
+    nPicard                = 10;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
     
     % for unsteady problems only:
     nonlinear_startingvalues = 0;  % extrapolate values from last time step to get accurate initial guess
@@ -96,9 +96,9 @@ project = 'LDC';   % project name used in filenames
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 1;
+    rtp.n            = 5;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

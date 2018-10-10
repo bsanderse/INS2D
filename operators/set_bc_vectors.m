@@ -1,9 +1,11 @@
 function options = set_bc_vectors(t,options)
-% construct boundary conditions 
+% construct boundary conditions
 
 
 %% get settings from options structure
 
+% steady
+steady = options.case.steady;
 % 4th order
 order4 = options.discretization.order4;
 % Reynolds number
@@ -26,6 +28,7 @@ end
 % number of interior points and boundary points
 Nux_in = options.grid.Nux_in;
 Nvy_in = options.grid.Nvy_in;
+Np     = options.grid.Np;
 
 xin = options.grid.xin;
 yin = options.grid.yin;
@@ -53,16 +56,18 @@ uRi_i    = uBC(x(end),yp,t,options);
 vLe      = vBC(x(1),y,t,options);
 vRi      = vBC(x(end),y,t,options);
 
-vLo_i      = vBC(xp,y(1),t,options);
-vUp_i      = vBC(xp,y(end),t,options);
-vLe_i      = vBC(x(1),yin,t,options);
-vRi_i      = vBC(x(end),yin,t,options);
+vLo_i    = vBC(xp,y(1),t,options);
+vUp_i    = vBC(xp,y(end),t,options);
+vLe_i    = vBC(x(1),yin,t,options);
+vRi_i    = vBC(x(end),yin,t,options);
 
-dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re);
-dudtRi_i   = dudtBC(x(end),options.grid.yp,t,Re);
-
-dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re);
-dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,Re);
+if (steady == 0 && options.BC.BC_unsteady==1)
+    dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re);
+    dudtRi_i   = dudtBC(x(end),options.grid.yp,t,Re);
+    
+    dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re);
+    dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,Re);
+end
 
 pLe = options.BC.pLe;
 pRi = options.BC.pRi;
@@ -101,35 +106,41 @@ if (order4==1)
 end
 
 yM     = yMx + yMy;
+options.discretization.yM  = yM;
 
-% derivative of divergence
-ybc    = kron(dudtLe_i,Mx_BC.ybc1) + kron(dudtRi_i,Mx_BC.ybc2);
-ydMx   = Mx_BC.Bbc*ybc;
-if (order4==1)
-    ybc3  = kron(dudtLe_i,Mx_BC3.ybc1) + kron(dudtRi_i,Mx_BC3.ybc2);
-    ydMx3 = Mx_BC3.Bbc*ybc3;
-    ydMx  = alfa*ydMx - ydMx3;
+
+%% time derivative of divergence
+if (steady == 0)
+    if (options.BC.BC_unsteady==1)
+        ybc    = kron(dudtLe_i,Mx_BC.ybc1) + kron(dudtRi_i,Mx_BC.ybc2);
+        ydMx   = Mx_BC.Bbc*ybc;
+        if (order4==1)
+            ybc3  = kron(dudtLe_i,Mx_BC3.ybc1) + kron(dudtRi_i,Mx_BC3.ybc2);
+            ydMx3 = Mx_BC3.Bbc*ybc3;
+            ydMx  = alfa*ydMx - ydMx3;
+        end
+        
+        % My
+        ybc    = kron(My_BC.ybc1,dvdtLo_i) + kron(My_BC.ybc2,dvdtUp_i);
+        ydMy   = My_BC.Bbc*ybc;
+        if (order4==1)
+            ybc3  = kron(My_BC3.ybc1,dvdtLo_i) + kron(My_BC3.ybc2,dvdtUp_i);
+            ydMy3 = My_BC3.Bbc*ybc3;
+            ydMy  = alfa*ydMy - ydMy3;
+        end
+        
+        ydM    = ydMx + ydMy;
+        
+        options.discretization.ydM = ydM;
+    else
+        options.discretization.ydM = zeros(Np,1);
+    end
 end
-
-% My
-ybc    = kron(My_BC.ybc1,dvdtLo_i) + kron(My_BC.ybc2,dvdtUp_i);
-ydMy   = My_BC.Bbc*ybc;
-if (order4==1)
-    ybc3  = kron(My_BC3.ybc1,dvdtLo_i) + kron(My_BC3.ybc2,dvdtUp_i);
-    ydMy3 = My_BC3.Bbc*ybc3;
-    ydMy  = alfa*ydMy - ydMy3;
-end
-
-ydM    = ydMx + ydMy;
 
 % if (ibm==1)
 %     ydM = [ydM; zeros(n_ibm,1)];
 %     yM = [yM; zeros(n_ibm,1)];
 % end
-
-options.discretization.yM  = yM;
-options.discretization.ydM = ydM;
-
 
 %% boundary conditions for pressure
 
@@ -309,7 +320,7 @@ if (order4==1)
     Su_ux_BC3 = options.discretization.Su_ux_BC3;
     Su_uy_BC3 = options.discretization.Su_uy_BC3;
     Sv_vx_BC3 = options.discretization.Sv_vx_BC3;
-    Sv_vy_BC3 = options.discretization.Sv_vy_BC3;    
+    Sv_vy_BC3 = options.discretization.Sv_vy_BC3;
     Diffux_div = options.discretization.Diffux_div;
     Diffuy_div = options.discretization.Diffuy_div;
     Diffvx_div = options.discretization.Diffvx_div;
@@ -348,11 +359,11 @@ Iu_vx_BC_lr = options.discretization.Iu_vx_BC_lr;
 Iu_vx_BC_lu = options.discretization.Iu_vx_BC_lu;
 Iv_vy_BC    = options.discretization.Iv_vy_BC;
 
-if (order4 == 1)   
+if (order4 == 1)
     Iu_ux_BC3    = options.discretization.Iu_ux_BC3;
     Iv_uy_BC_lu3 = options.discretization.Iv_uy_BC_lu3;
     Iv_uy_BC_lr3 = options.discretization.Iv_uy_BC_lr3;
-    Iu_vx_BC_lu3 = options.discretization.Iu_vx_BC_lu3;    
+    Iu_vx_BC_lu3 = options.discretization.Iu_vx_BC_lu3;
     Iu_vx_BC_lr3 = options.discretization.Iu_vx_BC_lr3;
     Iv_vy_BC3    = options.discretization.Iv_vy_BC3;
 end

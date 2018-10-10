@@ -25,6 +25,15 @@ global uBC vBC;
 
 tic;
 
+%% select case file
+
+% example case names (see case_files directory):
+% LDC, BFS, doublejet
+
+folder_cases = 'case_files';
+case_name    = 'LDC_unsteady';
+
+
 %% add paths
 addpath('force/');
 addpath('functions/new/');
@@ -41,14 +50,8 @@ if (~isempty(strfind(path,'inputfiles')))
 end
 
 
-%% select case file
 
-% example case names (see case_files directory):
-% LDC, BFS, doublejet
-
-folder_cases = 'case_files';
-case_name    = 'LDC';
-
+%% loop over different meshes
 
 
 % determine dt for finest mesh
@@ -79,7 +82,7 @@ jj = 1;
 % Re = Re_list(j);
     
 %% load input parameters and constants
-disp('read input parameters...')
+disp(['read input parameters of case ' num2str(case_name)])
 % run('inputfiles/parameters');       % current parameter file
 run([folder_cases '/' case_name '/' case_name '_parameters.m']);
     
