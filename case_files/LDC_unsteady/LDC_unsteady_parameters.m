@@ -22,8 +22,8 @@ project = 'LDC_unsteady';   % project name used in filenames
     y1      = 0;
     y2      = 1;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -52,15 +52,14 @@ project = 'LDC_unsteady';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% time discretization
+%%% time and space discretization
 
     % steady or unsteady solver
     steady  = 0;         % steady(1) or unsteady(0)
 
+    % spatial accuracy: 2nd or 4th order    
     order4  = 0;
-%     alfa    = 3^4;       % richardson extrapolation factor
-%     beta    = 9/8;       % interpolation factor: (9/8 for 4th order (only effective for order4=1), 1 for 2nd order)
-    
+
     % only for steady problems:
 
         linearization = 'Newton';  % Newton or Picard linearization
@@ -71,7 +70,7 @@ project = 'LDC_unsteady';   % project name used in filenames
     
     % only for unsteady problems:
 
-        dt            = 0.01;       % time step (for explicit methods it can be
+        dt            = 0.1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 10;         % end time
@@ -110,8 +109,8 @@ project = 'LDC_unsteady';   % project name used in filenames
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
         
-        method            = 20;
-        RK                = 'Wray3';
+        method            = 21;
+        RK                = 'GL2';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up
@@ -154,15 +153,20 @@ project = 'LDC_unsteady';   % project name used in filenames
     poisson_diffusion = 1; % options like poisson pressure
     
     % accuracy for non-linear solves (method 62, 72, 9)
-    nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-8;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
-    nonlinear_build_matrix = 1;    % for small dt one can approximate
-                                   % the matrix with I/dt
-    nonlinear_Newton       = 1;    % take full Jacobian
-    simplified_Newton      = 0;    % constant matrix during nonlinear iteration
-    nonlinear_startingvalues = 0;
+    nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+                                   % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
+                                   % 2: full Newton; build Jacobian at each
+                                   % iteration
+    Jacobian_type          = 1;    % 0: Picard linearization
+                                   % 1: Newton linearization
+         
+    % for unsteady problems only:
+    nonlinear_startingvalues = 0;  % extrapolate values from last time step to get accurate initial guess
                                    
+
     % location of PETSc-matlab mex files                                    
     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

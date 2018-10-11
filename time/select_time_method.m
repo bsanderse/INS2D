@@ -88,4 +88,6 @@
           time_CN_u_linear;
       elseif (method==20)
           time_ERK;
+      elseif (method==21)
+          time_IRK;
       end

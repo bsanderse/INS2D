@@ -1,14 +1,13 @@
-% general explicit Runge-Kutta method
-% integration of boundary values
+%% general explicit Runge-Kutta method
 
+% (unsteady) Dirichlet boundary points are not part of solution vector but
+% are prescribed in a 'strong' manner via the uBC and vBC functions
+
+% grid info
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
-
 Om_inv = options.grid.Om_inv;
-
-G = options.discretization.G;
-
 
 % get coefficients of RK method
 if (isnumeric(options.time.RK))
@@ -37,16 +36,17 @@ k      = zeros(Nu+Nv,s_RK);
 % array for the pressure
 kp     = zeros(Np,s_RK);
 
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(tn,options);
+end
+
+% gradient operator
+G      = options.discretization.G;
 % divergence operator
 M      = options.discretization.M;
 % boundary condition for divergence operator (known from last time step)
 yMn    = options.discretization.yM;
 yM     = yMn;    
-
-
-if (options.BC.BC_unsteady == 1)
-    options = set_bc_vectors(tn,options);
-end
 
 ti = tn;
 
@@ -101,7 +101,7 @@ for i_RK=1:s_RK
 end
 
 
-if (options.BC.BC_unsteady == 1)
+if (options.BC.BC_unsteady == 0)
     % for steady BC we skip this step and do an additional pressure solve 
     % that saves a pressure solve for i=1 in the next time step
     

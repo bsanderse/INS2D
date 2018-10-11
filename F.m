@@ -7,6 +7,7 @@ end
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+NV = Nu+Nv;
 
 uh = V(1:Nu);
 vh = V(Nu+1:Nu+Nv);
@@ -50,6 +51,10 @@ if (getJacobian==1)
     dFv  = - dconvv + dDiffv;
     
     dF   = [dFu; dFv];
+    
+    if (options.case.steady==0) % unsteady case, solve for velocities
+        dF = spdiags(Om_inv,0,NV,NV)*dF;
+    end
     
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);

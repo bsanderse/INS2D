@@ -85,7 +85,7 @@ else
         
         % make velocity field divergence free
         Om_inv = options.grid.Om_inv;
-        G = options.discretization.G;
+        G  = options.discretization.G;
         Nu = options.grid.Nu;
         Nv = options.grid.Nv;
         
@@ -136,8 +136,12 @@ else
     % for steady problems, with Newton linearization and full Jacobian,
     % first start with nPicard Picard iterations
     if (steady==1)
-        options.solversettings.Newton_factor = 0;
-    end    
+         options.solversettings.Newton_factor = 0;
+    elseif (steady==0)
+        if (method==21) % implicit RK time integration
+            options.solversettings.Newton_factor = 1;
+        end
+    end
     
     %% residual of momentum equations at start
     if (strcmp(options.case.visc,'laminar'))
