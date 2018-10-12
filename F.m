@@ -7,12 +7,9 @@ end
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
-NV = Nu+Nv;
 
 uh = V(1:Nu);
 vh = V(Nu+1:Nu+Nv);
-
-Om_inv = options.grid.Om_inv;
 
 Gx   = options.discretization.Gx;
 Gy   = options.discretization.Gy;
@@ -28,15 +25,15 @@ y_py = options.discretization.y_py;
 % body force
 [Fx, Fy] = force(t,options);
 
-% residual
+% residual in Finite Volume form
 Fu   = - convu + d2u - Gx*p - y_px + Fx;
 Fv   = - convv + d2v - Gy*p - y_py + Fy;
 
-if (options.case.steady==0) % unsteady case, solve for velocities
-    Fres = Om_inv.*[Fu;Fv];
-else
+% if (options.case.steady==0) % unsteady case, solve for velocities
+%     Fres = Om_inv.*[Fu;Fv];
+% else
     Fres = [Fu;Fv];
-end
+% end
 
 maxres  = max(abs(Fres));
 
@@ -52,9 +49,9 @@ if (getJacobian==1)
     
     dF   = [dFu; dFv];
     
-    if (options.case.steady==0) % unsteady case, solve for velocities
-        dF = spdiags(Om_inv,0,NV,NV)*dF;
-    end
+%     if (options.case.steady==0) % unsteady case, solve for velocities
+%         dF = spdiags(Om_inv,0,NV,NV)*dF;
+%     end
     
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);

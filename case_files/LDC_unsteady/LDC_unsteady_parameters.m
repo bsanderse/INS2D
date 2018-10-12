@@ -73,7 +73,7 @@ project = 'LDC_unsteady';   % project name used in filenames
         dt            = 0.1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 10;         % end time
+        t_end         = 1;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -153,7 +153,7 @@ project = 'LDC_unsteady';   % project name used in filenames
     poisson_diffusion = 1; % options like poisson pressure
     
     % accuracy for non-linear solves (method 62, 72, 9)
-    nonlinear_acc          = 1e-8;
+    nonlinear_acc          = 1e-10;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
