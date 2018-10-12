@@ -13,7 +13,7 @@ Re = options.fluid.Re;
 % boundary conditions
 BC = options.BC;
 
-global uBC vBC;
+global uBC vBC dudtBC dvdtBC;
 
 % type of stress tensor
 visc = options.case.visc;
@@ -62,11 +62,11 @@ vLe_i    = vBC(x(1),yin,t,options);
 vRi_i    = vBC(x(end),yin,t,options);
 
 if (steady == 0 && options.BC.BC_unsteady==1)
-    dudtLe_i   = dudtBC(x(1),options.grid.yp,t,Re);
-    dudtRi_i   = dudtBC(x(end),options.grid.yp,t,Re);
+    dudtLe_i   = dudtBC(x(1),options.grid.yp,t,options);
+    dudtRi_i   = dudtBC(x(end),options.grid.yp,t,options);
     
-    dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,Re);
-    dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,Re);
+    dvdtLo_i   = dvdtBC(options.grid.xp,y(1),t,options);
+    dvdtUp_i   = dvdtBC(options.grid.xp,y(end),t,options);
 end
 
 pLe = options.BC.pLe;

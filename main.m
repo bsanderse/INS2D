@@ -19,9 +19,10 @@ clear all;
 close all;
 format compact;
 format long;
-% warning('off');
+warning('off','MATLAB:rmpath:DirNotFound');
 
-global uBC vBC;
+
+global uBC vBC dudtBC dvdtBC;
 
 tic;
 
@@ -31,7 +32,7 @@ tic;
 % LDC, BFS, doublejet
 
 folder_cases = 'case_files';
-case_name    = 'TG';
+case_name    = 'TG_shifted';
 
 
 %% add paths
@@ -45,9 +46,9 @@ addpath('time/');
 addpath('ibm/');
 
 % path for inputfiles will be determined based on the value of 'restart'
-if (~isempty(strfind(path,'inputfiles')))
-    rmpath('inputfiles/');
-end
+% if (~isempty(strfind(path,'inputfiles')))
+%     rmpath('inputfiles/');
+% end
 
 
 
@@ -92,6 +93,9 @@ for j = 1:length(mesh_list)
     % create files and directory for statistics, tecplot, restart, convergence
     % files
     create_files;
+
+    % remove other cases from the path to prevent from running 
+    rmpath(genpath(folder_cases));    
     
     if (restart.load == 0)
         

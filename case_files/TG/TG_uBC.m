@@ -1,4 +1,4 @@
-function u = LDC_unsteady_uBC(x,y,t,options)
+function u = TG_uBC(x,y,t,options)
 % boundary conditions for u for LDC
 
     y2 = options.grid.y2;

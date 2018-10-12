@@ -9,6 +9,9 @@ vh = V(Nu+1:Nu+Nv);
 global uBC vBC;
 
 BC  = options.BC;
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(t,options);
+end
 
 M   = options.discretization.M;
 yM  = options.discretization.yM;

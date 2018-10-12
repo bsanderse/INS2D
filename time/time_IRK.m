@@ -62,11 +62,13 @@ yMn    = options.discretization.yM;
 % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
 % the boundary conditions at t_(i+1)  
 if (options.BC.BC_unsteady == 1)
+    yMtot = zeros(Np,s_RK);
     for i=1:s_RK
         ti      = tj(i);
         options = set_bc_vectors(ti,options);
-        yMtot   = options.discretization.yM;            
+        yMtot(:,i) = options.discretization.yM;            
     end
+    yMtot = yMtot(:);
 else
     yMtot = kron(ones(s_RK,1),yMn);
 end

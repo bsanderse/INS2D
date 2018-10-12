@@ -59,11 +59,11 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current velocity field uh, vh at
     % level i
     % this includes force evaluation at ti 
-    % boundary conditions should have been set through set_bc_vectors
+    % boundary conditions will be set through set_bc_vectors inside F
     [~,F_rhs]  = F(V,p,ti,options);
     
     % store right-hand side of stage i
-    % we remove the pressure contribution Gx*p and Gy*p (but not the
+    % we REMOVE the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
     kV(:,i_RK)  = F_rhs + Om_inv.*(G*p);
     

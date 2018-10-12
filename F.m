@@ -11,10 +11,17 @@ Nv = options.grid.Nv;
 uh = V(1:Nu);
 vh = V(Nu+1:Nu+Nv);
 
+% unsteady BC
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(t,options);
+end
+
 Gx   = options.discretization.Gx;
 Gy   = options.discretization.Gy;
+
 y_px = options.discretization.y_px;
 y_py = options.discretization.y_py;
+
 
 % convection:
 [convu, convv, dconvu, dconvv] = convection(uh,vh,t,options,getJacobian);

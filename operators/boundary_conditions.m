@@ -50,6 +50,27 @@ end
 % vLe      = vBC(x(1),y,t,options); 
 % vRi      = vBC(x(end),y,t,options);
 
+% time derivative of boundary conditions
+file_name = [options.case.project '_dudtBC'];
+if (exist(file_name,'file'))
+    % create function handle with name dudtBC
+    dudtBC = str2func(file_name);    
+else
+    if (options.BC.BC_unsteady==1)
+        error(['BCtype file ' file_name ' not available']);
+    end
+end
+
+% time derivative of boundary conditions
+file_name = [options.case.project '_dvdtBC'];
+if (exist(file_name,'file'))
+    % create function handle with name dudtBC
+    dvdtBC = str2func(file_name);    
+else
+    if (options.BC.BC_unsteady==1)
+        error(['BCtype file ' file_name ' not available']);
+    end
+end
 
 %% pressure
 % pressure BC is only used when at the corresponding boundary 

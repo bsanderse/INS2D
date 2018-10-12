@@ -7,7 +7,7 @@ if (nargin<5)
 end
 
 s_RK = options.time.s_RK;
-c_RK = options.time.c_RK;
+% c_RK = options.time.c_RK;
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
@@ -25,7 +25,7 @@ for i=1:s_RK
     indxp = (1:Np) + Np*(i-1);
     Vi    = V(indxV);
     pi    = p(indxp);
-    ti    = c_RK(i);
+    ti    = t(i);
     
     % compute residual and Jacobian for this stage
     [maxresi,Fresi,dFi] = F(Vi,pi,ti,options,getJacobian);

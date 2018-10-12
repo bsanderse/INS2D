@@ -1,7 +1,3 @@
-% input file                
-% project = 'LDC_unsteady';   % project name used in filenames
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
 %     u_inf   = 1;
@@ -17,13 +13,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     global x1 x2 y1 y2;
-    x1      = 0;
-    x2      = 1;
-    y1      = 0;
-    y2      = 1;
+    x1      = 0.25;
+    x2      = 2.25;
+    y1      = 0.25;
+    y2      = 2.25;
 
-    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -58,7 +54,7 @@
     steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
-    order4  = 1;
+    order4  = 0;
 
     % only for steady problems:
 
