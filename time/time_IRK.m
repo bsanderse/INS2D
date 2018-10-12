@@ -76,17 +76,17 @@ Z2 = spalloc(s_RK*Np,s_RK*Np,0);
 
 % iteration counter
 i = 0;
+% iteration error
+error_nonlinear = zeros(nonlinear_maxit,1);
 
 % capital U contains all stages and is ordered as [u1;v1;w1;...;u2;v2;w2;...;us;vs;ws];
 % initialize U with the solution at tn
-Vtotn    = kron(ones(s_RK,1),Vn);
-ptotn    = kron(ones(s_RK,1),pn);
-% Qn    = kron(ones(s_RK,1),qn);
+Vtotn = kron(ones(s_RK,1),Vn);
+ptotn = kron(ones(s_RK,1),pn);
 
 % index in global solution vector
 indxV = 1:NV*s_RK;
 indxp = (NV*s_RK+1):(NV+Np)*s_RK;
-
 
 % starting guess for intermediate stages
 Vj    = Vtotn;
@@ -109,16 +109,19 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     %
     Z = [dfmom Gtot; ...
          Mtot Z2];
-    % determine LU decomposition
-    [L,U] = lu(Z);
+    % determine LU decomposition; often this is too slow
+%     [L,U] = lu(Z);
 end
 
 while (max(abs(f))> options.solversettings.nonlinear_acc)
    
     if (options.solversettings.nonlinear_Newton == 1) 
-        % approximate Newton        
-        % re-use the LU decomposition
-        dQj = U\(L\f);
+        % approximate Newton   
+        % do not rebuild Z
+        dQj = Z\f;
+        % re-use the LU decomposition (often too slow):
+%         dQj = U\(L\f);
+        
         
     elseif (options.solversettings.nonlinear_Newton == 2)
         % full Newton
@@ -154,14 +157,15 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     
 end
 
+nonlinear_its(n) = i;
+
 
 % solution at new time step with b-coefficients of RK method
 V = Vn + dt*Om_inv.*(b_RK_ext*F_rhs);
 
+% make V satisfy the incompressibility constraint at n+1; this is only
+% needed when the boundary conditions are time-dependent
 if (options.BC.BC_unsteady == 1)
-    % make V satisfy the incompressibility constraint at n+1
-%     t = tn + dt;
-
     options = set_bc_vectors(tn+dt,options);
     yM      = options.discretization.yM;
     f       = (1/dt)*(M*V + yM);

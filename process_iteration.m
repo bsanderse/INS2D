@@ -2,9 +2,7 @@
 
       % calculate mass, momentum and energy
       [maxdiv(n), umom(n), vmom(n), k(n)] = check_conservation(V,t,options);
-      
-%       check_conservation;
-            
+                 
       % residual (in Finite Volume form)
       % for ke model residual also contains k and e terms and is computed
       % in solver_unsteady_ke

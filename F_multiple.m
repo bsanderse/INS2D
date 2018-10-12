@@ -14,22 +14,25 @@ Nv = options.grid.Nv;
 NV = Nu + Nv;
 Np = options.grid.Np;
 
-maxres = [];
-Fres   = [];
+maxres = zeros(s_RK,1);
+Fres   = zeros(s_RK*NV,1);
 dF     = [];
 
 for i=1:s_RK
-    
-%     indxV = (1:NV) + (NV+Np)*(i-1);
-%     indxp = (NV+1:NV+Np) + (NV+Np)*(i-1);
+       
+    % take stage i out of total vector:
     indxV = (1:NV) + NV*(i-1);
     indxp = (1:Np) + Np*(i-1);
-    Vi = V(indxV);
-    pi = p(indxp);
-    ti = c_RK(i);
+    Vi    = V(indxV);
+    pi    = p(indxp);
+    ti    = c_RK(i);
+    
+    % compute residual and Jacobian for this stage
     [maxresi,Fresi,dFi] = F(Vi,pi,ti,options,getJacobian);
 
-    maxres = [maxres; maxresi];
-    Fres   = [Fres; Fresi];
-    dF     = blkdiag(dF,dFi);
+    maxres(i)   = maxresi;
+    Fres(indxV) = Fresi;
+    % add Jacobian in block diagonal form; this allows multiplication with A_RK
+    % later on
+    dF          = blkdiag(dF,dFi);
 end
