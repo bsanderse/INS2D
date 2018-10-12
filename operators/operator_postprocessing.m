@@ -17,6 +17,13 @@ gyi = options.grid.gyi;
 
 order4 = options.discretization.order4;
 
+if (order4==1)
+    alfa = options.discretization.alfa;
+    beta = options.discretization.beta;
+    gxi3 = options.grid.gxi3;
+    gyi3 = options.grid.gyi3;
+    Omvort3 = options.grid.Omvort3;
+end
 
 %% vorticity
 

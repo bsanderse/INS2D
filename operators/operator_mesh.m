@@ -465,6 +465,8 @@ options.grid.ypp = ypp;
 
 
 if (order4 == 1)
+    options.grid.hx3   = hx3;
+    options.grid.hy3   = hy3;    
     options.grid.hxi3  = hxi3;
     options.grid.hyi3  = hyi3;    
     options.grid.gxi3  = gxi3;
@@ -484,7 +486,9 @@ if (order4 == 1)
     options.grid.Omvx1  = Omvx1;
     options.grid.Omvx3  = Omvx3;
     options.grid.Omvy1  = Omvy1;
-    options.grid.Omvy3  = Omvy3;        
+    options.grid.Omvy3  = Omvy3;
+    options.grid.Omvort3 = Omvort3;
+    
 end
 
 % plot the grid: velocity points and pressure points

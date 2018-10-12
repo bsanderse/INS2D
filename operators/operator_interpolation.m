@@ -33,8 +33,10 @@ order4 = options.discretization.order4;
 
 if (order4 == 1)
     beta   = options.discretization.beta;
-    hxi3            = options.grid.hxi3;
-    hyi3            = options.grid.hyi3;    
+    hxi3   = options.grid.hxi3;
+    hyi3   = options.grid.hyi3;    
+    hx3    = options.grid.hx3;
+    hy3    = options.grid.hy3;
 end
 
 weight          = 1/2;

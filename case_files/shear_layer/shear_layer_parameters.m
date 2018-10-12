@@ -6,7 +6,7 @@
 %%% flow properties
 %     u_inf   = 1;
 %     delta   = 1;
-    Re      = 1e100;                  % Reynolds number
+    Re      = 10;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -18,12 +18,12 @@
 %%% domain and mesh
     global x1 x2 y1 y2;
     x1      = 0;
-    x2      = 2;
+    x2      = 2*pi;
     y1      = 0;
-    y2      = 2;
+    y2      = 2*pi;
 
-    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -70,10 +70,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.1;       % time step (for explicit methods it can be
+        dt            = 0.5;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 1;         % end time
+        t_end         = 4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 

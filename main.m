@@ -32,7 +32,7 @@ tic;
 % LDC, BFS, doublejet
 
 folder_cases = 'case_files';
-case_name    = 'TG_shifted';
+case_name    = 'shear_layer';
 
 
 %% add paths
