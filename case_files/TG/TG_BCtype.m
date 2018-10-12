@@ -1,4 +1,4 @@
-function BC = LDC_unsteady_BCtype
+function BC = TG_BCtype
 
     BC.BC_unsteady  = 0;
 
@@ -10,15 +10,15 @@ function BC = LDC_unsteady_BCtype
     % left/right: x-direction
     % low/up: y-direction
 
-    BC.u.left  = 'dir';   % valid options: dir, per, pres 
-    BC.u.right = 'dir';  % valid options: dir, per, pres
-    BC.u.low   = 'dir';   % valid options: dir, per, sym
-    BC.u.up    = 'dir';   % valid options: dir, per, sym
+    BC.u.left  = 'per';   % valid options: dir, per, pres 
+    BC.u.right = 'per';  % valid options: dir, per, pres
+    BC.u.low   = 'per';   % valid options: dir, per, sym
+    BC.u.up    = 'per';   % valid options: dir, per, sym
 
-    BC.v.left  = 'dir';   % valid options: dir, per, sym
-    BC.v.right = 'dir';   % valid options: dir, per, sym
-    BC.v.low   = 'dir';   % valid options: dir, per, pres
-    BC.v.up    = 'dir';   % valid options: dir, per, pres
+    BC.v.left  = 'per';   % valid options: dir, per, sym
+    BC.v.right = 'per';   % valid options: dir, per, sym
+    BC.v.low   = 'per';   % valid options: dir, per, pres
+    BC.v.up    = 'per';   % valid options: dir, per, pres
 
 %     BC.k.left  = 'dir';   % valid options: dir, sym, per
 %     BC.k.right = 'dir';   % valid options: dir, sym, per

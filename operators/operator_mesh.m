@@ -438,6 +438,7 @@ options.grid.Omux   = Omux;
 options.grid.Omvx   = Omvx;
 options.grid.Omuy   = Omuy;
 options.grid.Omvy   = Omvy;
+options.grid.Omvort = Omvort;
 
 options.grid.hxi = hxi;
 options.grid.hyi = hyi;
@@ -459,6 +460,8 @@ options.grid.xu  = xu;
 options.grid.yu  = yu;
 options.grid.xv  = xv;
 options.grid.yv  = yv;
+options.grid.xpp = xpp;
+options.grid.ypp = ypp;
 
 
 if (order4 == 1)

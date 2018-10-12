@@ -53,6 +53,7 @@ Wv_vx  = kron(speye(Ny-1),W1D);
 
 %% for periodic BC, such that sum(Omega_w)=L_x*L_y
 if (strcmp(BC.u.left,'per') && strcmp(BC.v.low,'per'))
+    Omvort = options.grid.Omvort;
     % du/dy, like Su_uy
     diag1  = 1./gyi;
     W1D    = spdiags([-diag1 diag1],[0 1],Ny,Ny+1);

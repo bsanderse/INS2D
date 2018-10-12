@@ -32,7 +32,7 @@ Vn     = V;
 pn     = p;
 
 % right hand side evaluations, initialized at zero
-k      = zeros(Nu+Nv,s_RK);
+kV     = zeros(Nu+Nv,s_RK);
 % array for the pressure
 kp     = zeros(Np,s_RK);
 
@@ -65,12 +65,12 @@ for i_RK=1:s_RK
     % store right-hand side of stage i
     % we remove the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
-    k(:,i_RK)  = F_rhs + Om_inv.*(G*p);
+    kV(:,i_RK)  = F_rhs + Om_inv.*(G*p);
     
     % update velocity current stage by sum of F_i's until this stage,
     % weighted with Butcher tableau coefficients
     % this gives u_(i+1), and for i=s gives u_(n+1)
-    Vtemp      = k*A_RK(i_RK,:)';
+    Vtemp      = kV*A_RK(i_RK,:)';
     
     % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
     % the boundary conditions at t_(i+1)  

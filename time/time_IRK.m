@@ -79,8 +79,8 @@ i = 0;
 % iteration error
 error_nonlinear = zeros(nonlinear_maxit,1);
 
-% capital U contains all stages and is ordered as [u1;v1;w1;...;u2;v2;w2;...;us;vs;ws];
-% initialize U with the solution at tn
+% Vtot contains all stages and is ordered as [u1;v1;u2;v2;...;us;vs];
+% initialize with the solution at tn
 Vtotn = kron(ones(s_RK,1),Vn);
 ptotn = kron(ones(s_RK,1),pn);
 

@@ -1,4 +1,4 @@
-function dudt = LDC_unsteady_dudtBC(x,y,t,Re)
+function dudt = TG_dudtBC(x,y,t,Re)
 
  dudt = zeros(length(x)*length(y),1);
 

@@ -1,12 +1,12 @@
 % input file                
-project = 'LDC_unsteady';   % project name used in filenames
+project = 'TG';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
 %     u_inf   = 1;
 %     delta   = 1;
-    Re      = 100;                  % Reynolds number
+    Re      = 1e100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -18,9 +18,9 @@ project = 'LDC_unsteady';   % project name used in filenames
 %%% domain and mesh
     global x1 x2 y1 y2;
     x1      = 0;
-    x2      = 1;
+    x2      = 2;
     y1      = 0;
-    y2      = 1;
+    y2      = 2;
 
     Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
     Ny      = 20;                   % number of volumes in the y-direction
@@ -58,7 +58,7 @@ project = 'LDC_unsteady';   % project name used in filenames
     steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
-    order4  = 1;
+    order4  = 0;
 
     % only for steady problems:
 
@@ -110,7 +110,7 @@ project = 'LDC_unsteady';   % project name used in filenames
         % method 19 : Lob IIIA (CN)
         
         method            = 21;
-        RK                = 'GL2';
+        RK                = 'GL1';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up

@@ -96,6 +96,7 @@ while(n<=nt)
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:
     t = t + dt;
+    time(n) = t;
     
     % check residuals, conservation, write output files
     process_iteration;
