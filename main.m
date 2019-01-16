@@ -32,7 +32,7 @@ tic;
 % example case names (see case_files directory):
 % LDC, BFS, shear_layer, TG
 folder_cases = 'case_files';
-case_name    = 'BFS';
+case_name    = 'actuator';
 
 
 %% add folders to path

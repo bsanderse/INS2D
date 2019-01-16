@@ -1,5 +1,5 @@
 function u = BFS_uBC(x,y,t,options)
-% boundary conditions for u for LDC
+% boundary conditions for u for BFS
 
 % coordinate left side domain:
 x1 = options.grid.x1;
