@@ -81,7 +81,7 @@ legend('x=7, current','x=15, current','x=7, Gartling', 'x=15, Gartling');
 
 
 %% velocity
-% velocity(V,
+[up,vp,qp] = get_velocity(V,t,options);
 
 
 %% pressure

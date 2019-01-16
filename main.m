@@ -3,13 +3,13 @@
 %   method.
 %   - horizontal numbering of volumes
 %   - 2nd and 4th order spatial (central) discretization convection and diffusion
-%   - general boundary conditions; switch fourth order BC by changing
-%   addpath('functions/new') to addpath('functions/verstappen'); check
+%   - general boundary conditions; different fourth order BC ('verstappen') can be used by changing
+%   addpath('spatial/boundaryconditions/proposed') to addpath('spatial/boundaryconditions/verstappen'); check
 %   operator_convection_diffusion construction of Duy and Dvx
 
 %   see readme.txt
 
-%   Benjamin Sanderse, September 2018
+%   Benjamin Sanderse, September 2018 - Jan 2019
 
 
 %% close figures and clean variables
@@ -21,21 +21,22 @@ format compact;
 format long;
 warning('off','MATLAB:rmpath:DirNotFound');
 
-
+% declare boundary conditions via globals
 global uBC vBC dudtBC dvdtBC;
 
+% start timer
 tic;
 
 %% select case file
 
 % example case names (see case_files directory):
-% LDC, BFS, doublejet
-
+% LDC, BFS, shear_layer, TG
 folder_cases = 'case_files';
 case_name    = 'BFS';
 
 
-%% add paths
+%% add folders to path
+
 addpath('bodyforce/');
 addpath('ibm/');
 addpath('postprocessing/');
@@ -52,7 +53,6 @@ addpath('unsteady/');
 % if (~isempty(strfind(path,'inputfiles')))
 %     rmpath('inputfiles/');
 % end
-
 
 
 %% loop over different meshes
@@ -96,9 +96,9 @@ for j = 1:length(mesh_list)
     % create files and directory for statistics, tecplot, restart, convergence
     % files
     create_files;
-
-    % remove other cases from the path to prevent from running 
-    rmpath(genpath(folder_cases));    
+    
+    % remove other cases from the path to prevent from running
+    rmpath(genpath(folder_cases));
     
     if (restart.load == 0)
         
@@ -139,6 +139,7 @@ for j = 1:length(mesh_list)
     fprintf(fcw,'construct mesh...\n');
     mesh_generation;
     
+    
     %% boundary conditions
     % disp('boundary conditions...')
     fprintf(fcw,'boundary conditions...\n');
@@ -162,6 +163,7 @@ for j = 1:length(mesh_list)
     options = set_bc_vectors(t,options);
     
     %% construct body force or immersed boundary method
+    % this is now done in the residual routines
     % [Fx,Fy] = force(t,options);
     
     
@@ -193,7 +195,7 @@ for j = 1:length(mesh_list)
                     end
                 elseif (order4==1)
                     disp('Steady flow with laminar viscosity model, 4th order');
-%                     solver_steady_4thorder;
+                    %                     solver_steady_4thorder;
                     solver_steady;
                 else
                     error('wrong value for order4 parameter');
@@ -204,14 +206,15 @@ for j = 1:length(mesh_list)
         
     else
         
-        if (strcmp(visc,'turbulent'))
-            disp('Unsteady flow with k-eps model, 2nd order');
-            solver_unsteady_ke;
-        elseif (strcmp(visc,'laminar') || strcmp(visc,'LES'))
-            disp('Unsteady flow with laminar or LES model');
-            solver_unsteady;
-        else
-            error('wrong value for visc parameter');
+        switch visc
+            case 'turbulent'
+                disp('Unsteady flow with k-eps model, 2nd order');
+                solver_unsteady_ke;
+            case {'laminar','LES'}
+                disp('Unsteady flow with laminar or LES model');
+                solver_unsteady;
+            otherwise
+                error('wrong value for visc parameter');
         end
         
         fprintf(fcw,['simulated time: ' num2str(t) '\n']);
@@ -231,7 +234,7 @@ for j = 1:length(mesh_list)
     
     % save all data to a matlab file
     if (save_file == 1)
-        fprintf(fcw,'saving results to Matlab file...\n');        
+        fprintf(fcw,'saving results to Matlab file...\n');
         save(file_mat);
     end
     
