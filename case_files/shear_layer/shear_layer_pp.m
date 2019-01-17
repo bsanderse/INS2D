@@ -14,5 +14,9 @@ grid
 %% vorticity
 figure
 omega = get_vorticity(V,t,options);
-omega = reshape(omega,Npx,Npy);
-contour(xp,yp,omega');
+omega = reshape(omega,Npx+1,Npy+1);
+labels = -4:0.25:4;
+contour(x,y,omega',labels);
+axis square
+colorbar
+grid

@@ -32,7 +32,7 @@ tic;
 % example case names (see case_files directory):
 % LDC, BFS, shear_layer, TG, actuator
 folder_cases = 'case_files';
-case_name    = 'LDC';
+case_name    = 'shear_layer';
 
 
 %% add folders to path
@@ -172,7 +172,7 @@ for j = 1:length(mesh_list)
     
     
     %% start the solver
-    fprintf(fcw,['setting-up simulation took ' num2str(toc) '\n']);
+    fprintf(fcw,['setting-up simulation took ' num2str(toc) ' seconds \n']);
     
     fprintf(fcw,'start solver...\n');
     tic

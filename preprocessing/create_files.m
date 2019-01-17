@@ -33,10 +33,9 @@ tab        = sprintf('\t');
 % filenames
 if (options.output.save_results == 1)
     
-    file_mat   = [path_results,'/matlab_data.mat'];
     file_pres  = [path_results,'/iterations_pressure.txt'];
-    file_conv  = [path_results,'/convergence.txt'];
-    file_cw    = [path_results,'/cw_output.txt'];
+    file_conv  = [path_results,'/convergence.txt']; % convergence / timestep information
+    file_cw    = [path_results,'/cw_output.txt']; % command window output
     
     if (restart.load == 0)
         if (steady==0)
@@ -69,13 +68,20 @@ if (options.output.save_results == 1)
 
     
 else
-    fcw = 1;
+    fcw   = 1;
     fpres = 0;
     fconv = 0;
 %     options.output.fcw = fcw;
 end
+options.output.fpres = fpres;
+options.output.fconv = fconv;
+options.output.fcw   = fcw;
 
-    options.output.fpres = fpres;
-    options.output.fconv = fconv;
-    options.output.fcw   = fcw;
+% save workspace to a .mat file at the end of simulation
+if (options.output.save_file == 1)
+    file_mat   = [path_results,'/matlab_data.mat'];
+end
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

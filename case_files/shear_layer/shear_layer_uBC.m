@@ -1,13 +1,6 @@
 function u = shear_layer_uBC(x,y,t,options)
-% boundary conditions for u for LDC
-
-    y2 = options.grid.y2;
+% boundary conditions for u for shear layer
 
     u  = zeros(length(x)*length(y),1);
-
-
-    if (length(y)==1 && abs(y-y2)<1e-10)
-        u = ones(length(x)*length(y),1);
-    end
 
 end

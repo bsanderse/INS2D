@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -179,7 +179,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 20;
+    rtp.n            = 10;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -192,7 +192,7 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 1;          % write information during iterations/timesteps
     
