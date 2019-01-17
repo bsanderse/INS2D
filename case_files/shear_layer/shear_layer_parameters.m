@@ -1,11 +1,9 @@
 % input file                
-% project = 'TG';   % project name used in filenames
+% project = 'shear_layer';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-%     u_inf   = 1;
-%     delta   = 1;
     Re      = 10;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor

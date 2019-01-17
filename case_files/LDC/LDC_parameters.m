@@ -19,8 +19,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 80; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 80;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -38,7 +38,7 @@
     steady  = 1;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order
-    order4  = 1;
+    order4  = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

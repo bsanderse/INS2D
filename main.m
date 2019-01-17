@@ -30,9 +30,9 @@ tic;
 %% select case file
 
 % example case names (see case_files directory):
-% LDC, BFS, shear_layer, TG
+% LDC, BFS, shear_layer, TG, actuator
 folder_cases = 'case_files';
-case_name    = 'actuator';
+case_name    = 'LDC';
 
 
 %% add folders to path
