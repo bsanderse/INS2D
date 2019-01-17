@@ -9,7 +9,7 @@
 
 %   see readme.txt
 
-%   Benjamin Sanderse, September 2018 - Jan 2019
+%   Benjamin Sanderse, September 2018 - January 2019
 
 
 %% close figures and clean variables

@@ -12,12 +12,13 @@ Nvy_in = options.grid.Nvy_in;
 order4 = options.discretization.order4;
 
 % actuator disk
-Ct = 0.5;   % thrust coefficient
-D  = 1;     % diameter
-%  
-% xmid = ceil(Nx/2);   % x-index of actuator disk
-xmid = find(xin==0);
-% 
+Ct = options.force.Ct;
+D  = options.force.D;
+x_c = options.force.x_c;
+
+% x-index of actuator disk
+xmid = find(xin>=x_c,1);
+ 
 % disp(['position: ' num2str(xin(xmid))])
 
 Fy = zeros(Nvx_in,Nvy_in);

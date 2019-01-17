@@ -1,4 +1,6 @@
-% accumulate object within CC structure (used in accumulate structure)
+% function options = accumulate_object(object,voi,options)
+% accumulate object within options structure (used in accumulate structure)
+% add 'object' as field to struct 'options' with values voi
 
 for i=1:size(voi,1)
     if exist(voi{i,1},'var')
@@ -14,7 +16,7 @@ for i=1:size(voi,1)
         end
         
     else
-        % not yet existing in workspace
+        % not yet existing in current workspace
         
         % check if length>0
         if ~isempty(voi{i,2})

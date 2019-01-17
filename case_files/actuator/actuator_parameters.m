@@ -35,6 +35,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% force
     % force is to be set in force.m
+    Ct = 0.01; % thrust coefficient actuator disk
+    D = 1;     % diameter actuator disk
     
     force_unsteady     = 0; % set to 1 if force is time dependent
     
@@ -44,7 +46,6 @@
     % position of body
     x_c     = 0;
     y_c     = 0;
-    D       = 1; % diameter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

@@ -6,6 +6,8 @@
 % if different parameter values are specified in casename_parameters.m,
 % then the ones in that file will be used.
 
+options = [];
+
 %% accumulate options
 % object=[];
 % 
@@ -69,6 +71,18 @@ voi = {
 
 accumulate_object;
 
+%% forcing parameters
+object = 'force';
+
+voi = {
+    'x_c',  0; ... % x-coordinate of body
+    'y_c',  0; ... % y-coordinate of body
+    'Ct',   0; ... % thrust coefficient for actuator disk computations
+    'D',    1; ... % actuator disk diameter
+};
+
+accumulate_object;
+
 %% time marching
 object = 'time';
 
@@ -79,6 +93,7 @@ voi = {
     'RK', []; ...
     };
 
+% options = accumulate_object(object,voi,options);
 accumulate_object;
 
 %% solver settings
