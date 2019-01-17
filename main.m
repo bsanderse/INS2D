@@ -228,6 +228,11 @@ for j = 1:length(mesh_list)
         close(PS);
     end
     
+    if (rtp.movie == 1)
+        close(writerObj);
+    end
+
+    
     %% post-processing
     fprintf(fcw,'post-processing...\n');
     post_processing;

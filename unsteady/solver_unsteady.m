@@ -7,6 +7,16 @@ if (restart.load == 0 && options.output.save_results==1)
         n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
 end
 
+% plot initial solution for movies
+if (rtp.movie==1 && exist(rtp.file,'file'))
+    % create function handle with name rtp
+    run(rtp.file);
+else
+    error('rtp file not available');
+end    
+frame = getframe(gcf);
+writeVideo(writerObj,frame);
+
 
 if (method==2) % the only multistep method considered sofar
     cu     = uh;

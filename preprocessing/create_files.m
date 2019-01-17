@@ -30,7 +30,7 @@ end
 nl         = sprintf('\n');
 tab        = sprintf('\t');
 
-% filenames
+% make filenames for output writing
 if (options.output.save_results == 1)
     
     file_pres  = [path_results,'/iterations_pressure.txt'];
@@ -64,14 +64,11 @@ if (options.output.save_results == 1)
     else
         fcw        = 1;
     end
-    
-
-    
+        
 else
     fcw   = 1;
     fpres = 0;
     fconv = 0;
-%     options.output.fcw = fcw;
 end
 options.output.fpres = fpres;
 options.output.fconv = fconv;
@@ -82,6 +79,15 @@ if (options.output.save_file == 1)
     file_mat   = [path_results,'/matlab_data.mat'];
 end
 
+% for real time video creation
+if (rtp.movie == 1)
+    writerObj = VideoWriter(rtp.moviename,'Motion JPEG AVI');
+    writerObj.FrameRate = rtp.movierate;
+    open(writerObj);
+    
+    rtp.file  = [folder_cases '/' case_name '/' case_name '_rtp.m'];
+        
+end 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

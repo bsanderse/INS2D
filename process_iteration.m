@@ -44,22 +44,31 @@
                    
       %for real time plotting:
       if (rtp.show==1 && rem(n-1,rtp.n) == 0)
-            switch rtp.type
-                case {'vorticity'}
-                    vorticity;
-                case {'velocity'}
-                    velocity;
-                case {'quiver'}
-                    velocity_vectors;
-                case {'streamfunction'}
-                    streamfunction;
-                case {'pressure'}
-                    pressure;
-            end
+          run(rtp.file);
+
+%             switch rtp.type
+%                 case {'vorticity'}
+%                     vorticity;
+%                 case {'velocity'}
+%                     velocity;
+%                 case {'quiver'}
+%                     velocity_vectors;
+%                 case {'streamfunction'}
+%                     streamfunction;
+%                 case {'pressure'}
+%                     pressure;
+%             end
             if (steady==0)
                 fprintf(fcw,['t=' num2str(t) '\n']);
+            end       
+        
+            if (rtp.movie == 1)
+                frame = getframe(gcf);                
+                writeVideo(writerObj,frame); 
             end
-             pause(0.01)
+            
+            pause(0.01)
+
       end
         
       % write data to Tecplot file        

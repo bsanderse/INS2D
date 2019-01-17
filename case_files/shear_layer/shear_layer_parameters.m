@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1000;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 50; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 50;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -180,6 +180,9 @@
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 20;
+    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.moviename    = 'viscous_shear_layer'; % movie name
+    rtp.movierate    = 15;         % frame rate (/s)
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -190,7 +193,7 @@
     restart.file     = 25;         % file number to load
     
     restart.write    = 0;          % write restart files 
-    restart.n        = 50;         % every restart.n iterations
+    restart.n        = 10;         % every restart.n timesteps
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
