@@ -145,7 +145,7 @@ object = 'visualization';
 voi={
     'plotgrid', 0; ...       % plot gridlines and pressure points    
     'rtp_show', 1; ...         % real time plotting 
-    'rtp_type', 'velocity'; % velocity, quiver, vorticity or pressure
+    'rtp_type', 'velocity'; ... % velocity, quiver, vorticity or pressure
     'rtp_n', 10;     
     };
 

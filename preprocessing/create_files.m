@@ -80,14 +80,17 @@ if (options.output.save_file == 1)
 end
 
 % for real time video creation
-if (rtp.movie == 1)
-    writerObj = VideoWriter(rtp.moviename,'Motion JPEG AVI');
-    writerObj.FrameRate = rtp.movierate;
-    open(writerObj);
-    
+if (rtp.show == 1)
     rtp.file  = [folder_cases '/' case_name '/' case_name '_rtp.m'];
-        
-end 
+    if (~exist(rtp.file,'file'))
+        error(['real-time plotting is on, but no file ' rtp.file ' exists']);
+    end
+    if (rtp.movie == 1)
+        writerObj = VideoWriter(rtp.moviename,'Motion JPEG AVI');
+        writerObj.FrameRate = rtp.movierate;
+        open(writerObj);        
+    end     
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

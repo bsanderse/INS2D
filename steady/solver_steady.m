@@ -67,9 +67,4 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     
     fprintf(fcw,'residual momentum equation: %16.8e \n', maxres(n));
     
-    % write convergence information to file
-    if (options.output.save_results == 1)
-        fprintf(fconv,'%-10i %16.8e %16.8e %16.8e %16.8e %16.8e \n',...
-            n,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
-    end
 end

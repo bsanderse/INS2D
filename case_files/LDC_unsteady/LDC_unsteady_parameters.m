@@ -4,9 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-%     u_inf   = 1;
-%     delta   = 1;
-    Re      = 100;                  % Reynolds number
+    Re      = 1000;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -22,8 +20,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -70,10 +68,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.1;       % time step (for explicit methods it can be
+        dt            = 0.001;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 1;         % end time
+        t_end         = 10;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -109,8 +107,8 @@
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
         
-        method            = 21;
-        RK                = 'GL2';
+        method            = 20;
+        RK                = 'RK44';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up
@@ -179,10 +177,12 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % real time plotting 
-    rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 10;
-    
+    rtp.show         = 0;          % real time plotting 
+    rtp.n            = 100;
+    rtp.movie        = 0;          % make movie based on the real time plots
+    rtp.moviename    = 'LDC_unsteady_ERK'; % movie name
+    rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
+        
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
 %     statistics.n     = 1;
@@ -194,10 +194,11 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 0;          % save all matlab data after program is completed
-    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    
+    save_results     = 1;          % write information during iterations/timesteps
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+        
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
     

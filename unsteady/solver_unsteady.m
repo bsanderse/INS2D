@@ -1,23 +1,23 @@
-%  Unsteady calculations:
+%  Main solver file for unsteady calculations
 
-
+%% load restart file if necessary
 if (restart.load == 0 && options.output.save_results==1)
     fprintf(fconv,'n            dt               t                res              maxdiv           umom             vmom             k\n');
     fprintf(fconv,'%-10i %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e\n',...
         n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
 end
 
-% plot initial solution for movies
-if (rtp.movie==1 && exist(rtp.file,'file'))
-    % create function handle with name rtp
+%% plot initial solution 
+if (rtp.show==1)
     run(rtp.file);
-else
-    error('rtp file not available');
-end    
-frame = getframe(gcf);
-writeVideo(writerObj,frame);
+    % for movies, capture this frame
+    if (rtp.movie==1)
+        frame = getframe(gcf);
+        writeVideo(writerObj,frame);
+    end
+end
 
-
+%% for multistep methods or methods that need extrapolation of previous time steps
 if (method==2) % the only multistep method considered sofar
     cu     = uh;
     cv     = vh;
@@ -25,7 +25,6 @@ if (method==2) % the only multistep method considered sofar
     Cu_old = du2dx + duvdy;
     Cv_old = duvdx + dv2dy;
 end
-
 
 % for methods that need u^(n-1)
 uh_old = uh;
@@ -37,7 +36,6 @@ if (method == 62 || method == 92 || method==142 || method==172 || method==182 ||
     V_ep(:,1) = V;
 end
 
-% p_old  = p;
 
 dtn    = dt;
 
@@ -45,6 +43,8 @@ eps    = 1e-12;
 
 method_temp = method;
 
+
+%% start time stepping
 % while (abs(t)<=(t_end-dt+eps))
 % rev = 0;
 while(n<=nt)
@@ -110,12 +110,6 @@ while(n<=nt)
     
     % check residuals, conservation, write output files
     process_iteration;
-    
-    % write convergence information to file
-    if (options.output.save_results == 1)
-        fprintf(fconv,'%-10i %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e \n',...
-            n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
-    end
     
     
 end

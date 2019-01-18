@@ -32,7 +32,7 @@ tic;
 % example case names (see case_files directory):
 % LDC, BFS, shear_layer, TG, actuator
 folder_cases = 'case_files';
-case_name    = 'shear_layer';
+case_name    = 'LDC_unsteady';
 
 
 %% add folders to path
@@ -242,6 +242,7 @@ for j = 1:length(mesh_list)
         fprintf(fcw,'saving results to Matlab file...\n');
         save(file_mat);
     end
+    
     
     clear n Fx Fy
     % clear nonlinear_its

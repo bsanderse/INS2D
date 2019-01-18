@@ -6,7 +6,7 @@
 %%% flow properties
 %     u_inf   = 1;
 %     delta   = 1;
-    Re      = 1e100;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -70,7 +70,7 @@
     
     % only for unsteady problems:
 
-        dt            = 0.1;       % time step (for explicit methods it can be
+        dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 1;         % end time
@@ -182,6 +182,9 @@
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
+    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.moviename    = 'TG'; % movie name
+    rtp.movierate    = 15;         % frame rate (/s)    
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -195,9 +198,10 @@
     restart.n        = 50;         % every restart.n iterations
     
     save_file        = 0;          % save all matlab data after program is completed
-    
     path_results     = 'results';  % path where results are stored
-    
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data (velocity + pressure)
+            
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
     

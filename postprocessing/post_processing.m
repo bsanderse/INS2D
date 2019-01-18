@@ -14,7 +14,7 @@ else
 end
 
 %% standard plots
-velocity;
+% velocity;
 % 
 % pressure;
 % 
