@@ -83,6 +83,16 @@ voi = {
 
 accumulate_object;
 
+%% rom parameters
+object = 'reducedordermodel';
+
+voi = {
+    'rom', 0;
+    };
+
+accumulate_object;
+
+
 %% time marching
 object = 'time';
 

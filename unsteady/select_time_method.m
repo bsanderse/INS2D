@@ -90,4 +90,6 @@
           time_ERK;
       elseif (method==21)
           time_IRK;
+      elseif (method==30)
+          time_ERK_ROM;          
       end

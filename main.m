@@ -32,7 +32,7 @@ tic;
 % example case names (see case_files directory):
 % LDC, BFS, shear_layer, TG, actuator
 folder_cases = 'case_files';
-case_name    = 'LDC_unsteady';
+case_name    = 'shear_layer_ROM';
 
 
 %% add folders to path
@@ -211,8 +211,16 @@ for j = 1:length(mesh_list)
                 disp('Unsteady flow with k-eps model, 2nd order');
                 solver_unsteady_ke;
             case {'laminar','LES'}
-                disp('Unsteady flow with laminar or LES model');
-                solver_unsteady;
+                if (rom==0)
+                    disp('Unsteady flow with laminar or LES model');
+                    solver_unsteady;
+                elseif (rom==1)
+                    disp('Unsteady flow with reduced order model');
+                    solver_unsteady_ROM;
+                else
+                    error('wrong value for rom parameter');
+                end
+                    
             otherwise
                 error('wrong value for visc parameter');
         end
