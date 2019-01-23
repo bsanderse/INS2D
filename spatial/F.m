@@ -16,12 +16,13 @@ if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(t,options);
 end
 
+% pressure
 Gx   = options.discretization.Gx;
 Gy   = options.discretization.Gy;
-
 y_px = options.discretization.y_px;
 y_py = options.discretization.y_py;
-
+Gpx  = Gx*p + y_px;
+Gpy  = Gy*p + y_py;
 
 % convection:
 [convu, convv, dconvu, dconvv] = convection(uh,vh,t,options,getJacobian);
@@ -33,8 +34,8 @@ y_py = options.discretization.y_py;
 [Fx, Fy] = force(t,options);
 
 % residual in Finite Volume form
-Fu   = - convu + d2u - Gx*p - y_px + Fx;
-Fv   = - convv + d2v - Gy*p - y_py + Fy;
+Fu   = - convu + d2u - Gpx + Fx;
+Fv   = - convv + d2v - Gpy + Fy;
 
 % if (options.case.steady==0) % unsteady case, solve for velocities
 %     Fres = Om_inv.*[Fu;Fv];

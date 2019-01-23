@@ -1,8 +1,12 @@
-function [convu, convv, Jacu, Jacv] = convectionROM(ru,rv,Bu,Bv,t,options,getJacobian)
+function [convu, convv, Jacu, Jacv] = convectionROM(ru,rv,t,options,getJacobian)
 % evaluate convective terms and, optionally, Jacobians
 
 order4     = options.discretization.order4;
 regularize = options.case.regularize;
+
+M = options.rom.M;
+Bu = options.rom.Bu;
+Bv = options.rom.Bv;
 
 Cux = options.discretization.Cux;
 Cuy = options.discretization.Cuy;
@@ -50,19 +54,19 @@ if (order4==0)
     if (regularize == 0)
         
         % precompute matrices
-        m = length(ru);
+%         if (
         N1 = size(Iu_ux,1);
         N2 = size(Iv_uy,1);
         N3 = size(Iu_vx,1);
         N4 = size(Iv_vy,1);        
-        Chat_ux = zeros(m,m,m); % this poses severe memory requirements (m^3)!       
-        yhat_ux = zeros(m,m); 
-        Chat_uy = zeros(m,m,m);
-        yhat_uy = zeros(m,m);         
-        Chat_vx = zeros(m,m,m); % this poses severe memory requirements (m^3)!       
-        yhat_vx = zeros(m,m); 
-        Chat_vy = zeros(m,m,m);
-        yhat_vy = zeros(m,m);     
+        Chat_ux = zeros(M,M,M); % this poses severe memory requirements (m^3)!       
+        yhat_ux = zeros(M,M); 
+        Chat_uy = zeros(M,M,M);
+        yhat_uy = zeros(M,M);         
+        Chat_vx = zeros(M,M,M); % this poses severe memory requirements (m^3)!       
+        yhat_vx = zeros(M,M); 
+        Chat_vy = zeros(M,M,M);
+        yhat_vy = zeros(M,M);     
         
         % note Bu = Nu*m
 
@@ -96,7 +100,7 @@ if (order4==0)
         B2 = Bu'*Cuy;
         B3 = Bv'*Cvx;
         B4 = Bv'*Cvy;        
-        for i=1:m
+        for i=1:M
             
             Chat_ux(i,:,:) = B1*spdiags(Iu_ux*Bu(:,i),0,N1,N1)*Au_ux*Bu;
             yhat_ux(i,:)   = B1*spdiags(Iu_ux*Bu(:,i),0,N1,N1)*yAu_ux;
@@ -110,13 +114,14 @@ if (order4==0)
             
         end
         
+        
         % evaluate convection
         convu = B1*( (yIu_ux.*(Au_ux*Bu*ru)) + (yIu_ux.*yAu_ux) ) + ...
                 B2*( (yIv_uy.*(Au_uy*Bu*ru)) + (yIv_uy.*yAu_uy) );
         convv = B3*( (yIu_vx.*(Av_vx*Bv*rv)) + (yIu_vx.*yAv_vx) ) + ...
                 B4*( (yIv_vy.*(Av_vy*Bv*rv)) + (yIv_vy.*yAv_vy) );
             
-        for i=1:m
+        for i=1:M
             convu  = convu + ru(i)*(squeeze(Chat_ux(i,:,:))*ru + yhat_ux(i,:)') + ...
                              rv(i)*(squeeze(Chat_uy(i,:,:))*ru + yhat_uy(i,:)');                     
             convv  = convv + ru(i)*(squeeze(Chat_vx(i,:,:))*rv + yhat_vx(i,:)') + ...

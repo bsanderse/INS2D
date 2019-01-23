@@ -52,7 +52,7 @@
 %%% reduced order model
 
     rom = 1;
-    snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_50x50/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_snapshotdata/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -189,7 +189,7 @@
 %     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 20;
     rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'viscous_shear_layer'; % movie name
+    rtp.moviename    = 'viscous_shear_layer_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -203,10 +203,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

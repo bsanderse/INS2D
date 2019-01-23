@@ -1,43 +1,74 @@
 %  Main solver file for unsteady calculations with reduced order model
 
 %% load snapshot data
+disp('loading data and making SVD...');
 snapshots = load(snapshot_data,'uh_total','vh_total');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 %% construct economic SVD
 % [W,S,Z] = svd(snapshots.U,'econ');
-[Wu,Su,Zu] = svd(snapshots.uh_total','econ');
-[Wv,Sv,Zv] = svd(snapshots.vh_total','econ');
-%
-N = size(snapshots.uh_total,2);
-% take first m columns of W
-m = floor(N/20);
+% note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
+% the SVD
+% [Wu,Su,Zu] = svd(snapshots.uh_total');
+% [Wv,Sv,Zv] = svd(snapshots.vh_total');
+% alernative:
+V_total = [snapshots.uh_total';snapshots.vh_total'];
+[W,S,Z] = svd(V_total,'econ');
+% 
+Nspace = size(V_total,2); % number of points in space of original model
+% take first M columns of W as a reduced basis
+% maximum:
+% M = size(Wu,2);
+% reduction:
+% M = floor(Nspace/100);
+M = 4;
+options.rom.M = M;
 % (better is to look at the decay of the singular values in S)
-Bu = Wu(:,1:m);
-Bv = Wv(:,1:m);
+B  = W(:,1:M);
+% Bu = Wu(:,1:M);
+% Bv = Wv(:,1:M);
+Nu = options.grid.Nu;
+Bu = B(1:Nu,:);
+Bv = B(Nu+1:end,:);
+options.rom.B = B;
+options.rom.Bu = Bu;
+options.rom.Bv = Bv;
+% options.rom.BuT = BuT;
+% options.rom.BvT = BvT;
+
+disp('starting time-stepping...');
 
 %% precompute matrices
-options.discretization.Diffu  = Bu'*options.discretization.Diffu*Bu;
-options.discretization.yDiffu = Bu'*options.discretization.yDiffu;
-options.discretization.Diffv  = Bv'*options.discretization.Diffv*Bv;
-options.discretization.yDiffv = Bv'*options.discretization.yDiffv;
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
+                    Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
+options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
+                    Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
+% options.rom.Diffv  = Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
+% options.rom.yDiffv = Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
 
+%% initialize
+% ru = Bu'*uh;
+% rv = Bv'*vh;
+% R  = ru + rv;
+R  = B'*V;
 
 %% reduced order solution
 
 % test implementation as follows:
-uh = rand(options.grid.Nu,1);
-vh = rand(options.grid.Nv,1);
-
-ru = Bu'*uh;
-rv = Bv'*vh;
-
-[convu_ROM,convv_ROM] = convectionROM(ru,rv,Bu,Bv,t,options,0);
-% this should equal using the original code but with B*r as input:
-[convu,convv] = convection(Bu*ru,Bv*rv,t,options,0);
-error_convu = Bu'*convu - convu_ROM;
-error_convv = Bv'*convv - convv_ROM;
-plot(error_convv)
+% uh = rand(options.grid.Nu,1);
+% vh = rand(options.grid.Nv,1);
+% 
+% ru = Bu'*uh;
+% rv = Bv'*vh;
+% 
+% [convu_ROM,convv_ROM] = convectionROM(ru,rv,Bu,Bv,t,options,0);
+% % this should equal using the original code but with B*r as input:
+% [convu,convv] = convection(Bu*ru,Bv*rv,t,options,0);
+% error_convu = Bu'*convu - convu_ROM;
+% error_convv = Bv'*convv - convv_ROM;
+% plot(error_convv)
 
 %% load restart file if necessary
 % if (restart.load == 0 && options.output.save_results==1)
@@ -139,7 +170,9 @@ while(n<=nt)
 %     end
     
     % perform one time step with the time integration method
-    select_time_method;
+    time_ERK_ROM;          
+
+%     select_time_method;
     
     
     % the velocities and pressure that are just computed are at

@@ -84,7 +84,7 @@ voi = {
 accumulate_object;
 
 %% rom parameters
-object = 'reducedordermodel';
+object = 'rom';
 
 voi = {
     'rom', 0;
