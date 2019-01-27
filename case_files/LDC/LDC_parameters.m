@@ -79,10 +79,10 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 1;
-    
+    rtp.movie        = 0;
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
 %     statistics.n     = 1;

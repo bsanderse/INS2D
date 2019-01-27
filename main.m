@@ -1,3 +1,5 @@
+function [V,p] = main(case_name,folder_cases)
+
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
 %   method.
@@ -14,8 +16,8 @@
 
 %% close figures and clean variables
 
-clc;
-clear all;
+% clc;
+% clear vars;
 close all;
 format compact;
 format long;
@@ -31,9 +33,9 @@ tic;
 
 % example case names (see case_files directory):
 % LDC, BFS, shear_layer, TG, actuator
-folder_cases = 'case_files';
-case_name    = 'shear_layer_ROM';
-
+% folder_cases = 'case_files';
+% case_name    = 'LDC_unsteady';
+% 
 
 %% add folders to path
 
@@ -48,6 +50,7 @@ addpath('spatial/boundaryconditions/');
 addpath('spatial/boundaryconditions/proposed/');
 addpath('steady/');
 addpath('unsteady/');
+addpath('testsuite/');
 
 % path for inputfiles will be determined based on the value of 'restart'
 % if (~isempty(strfind(path,'inputfiles')))
@@ -86,7 +89,7 @@ for j = 1:length(mesh_list)
     % Re = Re_list(j);
     
     %% load input parameters and constants
-    disp(['reading input parameters of case: ' num2str(case_name)])
+    disp(['reading input parameters of case: ' num2str(case_name)]);
     % run('inputfiles/parameters');       % current parameter file
     run([folder_cases '/' case_name '/' case_name '_parameters.m']);
     
@@ -97,7 +100,7 @@ for j = 1:length(mesh_list)
     % files
     create_files;
     
-    % remove other cases from the path to prevent from running
+    % remove other cases from the path to prevent them from running
     rmpath(genpath(folder_cases));
     
     if (restart.load == 0)
@@ -180,21 +183,21 @@ for j = 1:length(mesh_list)
     if (steady==1)
         switch visc
             case 'turbulent'
-                disp('Steady flow with k-epsilon model, 2nd order');
+                fprintf(fcw,'Steady flow with k-epsilon model, 2nd order\n');                
                 solver_steady_ke;
             case 'laminar'
                 if (order4==0)
                     if (ibm==0)
-                        disp('Steady flow with laminar viscosity model, 2nd order');
+                        fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order');
                         solver_steady;
                     elseif (ibm==1)
-                        disp('Steady flow with laminar viscosity model and immersed boundary method, 2nd order');
+                        fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order');
                         solver_steady_ibm;
                     else
                         error('wrong value for ibm parameter');
                     end
                 elseif (order4==1)
-                    disp('Steady flow with laminar viscosity model, 4th order');
+                    fprintf(fcw,'Steady flow with laminar viscosity model, 4th order');
                     %                     solver_steady_4thorder;
                     solver_steady;
                 else
@@ -208,14 +211,14 @@ for j = 1:length(mesh_list)
         
         switch visc
             case 'turbulent'
-                disp('Unsteady flow with k-eps model, 2nd order');
+                fprintf(fcw,'Unsteady flow with k-eps model, 2nd order');
                 solver_unsteady_ke;
             case {'laminar','LES'}
                 if (rom==0)
-                    disp('Unsteady flow with laminar or LES model');
+                    fprintf(fcw,'Unsteady flow with laminar or LES model');
                     solver_unsteady;
                 elseif (rom==1)
-                    disp('Unsteady flow with reduced order model');
+                    fprintf(fcw,'Unsteady flow with reduced order model');
                     solver_unsteady_ROM;
                 else
                     error('wrong value for rom parameter');

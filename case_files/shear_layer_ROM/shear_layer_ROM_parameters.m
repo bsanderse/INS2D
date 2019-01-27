@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 50; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 50;                   % number of volumes in the y-direction
+    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 100;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -52,7 +52,7 @@
 %%% reduced order model
 
     rom = 1;
-    snapshot_data = 'results/shear_layer_snapshotdata/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_100x100/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -79,7 +79,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 8;         % end time
+        t_end         = 16;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -187,7 +187,7 @@
     
     rtp.show         = 0;          % real time plotting 
 %     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 20;
+    rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'viscous_shear_layer_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

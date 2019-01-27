@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 50; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 50;                   % number of volumes in the y-direction
+    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 100;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -71,7 +71,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 8;         % end time
+        t_end         = 16;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -177,11 +177,11 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
 %     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 20;
+    rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'viscous_shear_layer'; % movie name
+    rtp.moviename    = 'viscous_shear_layer_N100'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -195,10 +195,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

@@ -48,6 +48,13 @@
     D       = 1; % diameter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom = 0;
+    snapshot_data = 'results/LDC_unsteady_1.000e+03_1x1_40x40_0';
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% time and space discretization
@@ -56,7 +63,7 @@
     steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
-    order4  = 1;
+    order4  = 0;
 
     % only for steady problems:
 
@@ -177,10 +184,10 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 100;
     rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'LDC_unsteady_ERK'; % movie name
+    rtp.moviename    = 'LDC_unsteady_ERK_N40'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
         
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -194,10 +201,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
         
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

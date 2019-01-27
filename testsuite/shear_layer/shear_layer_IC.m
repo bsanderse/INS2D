@@ -1,0 +1,16 @@
+function [u,v,p] = shear_layer_IC(t,options)
+% initial velocity field Taylor-Green
+
+yu = options.grid.yu;
+xv = options.grid.xv;
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;
+
+d   = pi/15;
+e   = 0.05;
+u   = tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
+v   = e*sin(xv);
+p   = zeros(Npx,Npy);
+
+    
+end

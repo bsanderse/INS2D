@@ -21,7 +21,7 @@ Nspace = size(V_total,2); % number of points in space of original model
 % M = size(Wu,2);
 % reduction:
 % M = floor(Nspace/100);
-M = 4;
+M = 16;
 options.rom.M = M;
 % (better is to look at the decay of the singular values in S)
 B  = W(:,1:M);
@@ -35,6 +35,7 @@ options.rom.Bu = Bu;
 options.rom.Bv = Bv;
 % options.rom.BuT = BuT;
 % options.rom.BvT = BvT;
+toc
 
 disp('starting time-stepping...');
 
