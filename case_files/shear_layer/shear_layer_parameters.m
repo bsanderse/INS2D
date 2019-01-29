@@ -58,14 +58,12 @@
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
 
-    % only for steady problems:
-
-        linearization = 'Newton';  % Newton or Picard linearization
-        nPicard       = 6;         % in case of Newton, first do nPicard Picard steps
-        accuracy      = 1e-8;
-        relax         = 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% solver settings    
+
     % only for unsteady problems:
 
         dt            = 0.01;       % time step (for explicit methods it can be
@@ -178,7 +176,6 @@
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
     rtp.show         = 1;          % real time plotting 
-%     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'viscous_shear_layer_N100'; % movie name

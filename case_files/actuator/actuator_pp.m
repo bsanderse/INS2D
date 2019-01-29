@@ -14,14 +14,26 @@ Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
+Nu     = options.grid.Nu;
+Nv     = options.grid.Nv;
 
 xin  = options.grid.xin;
 yin  = options.grid.yin;
 
 %% get solution variables
+uh   = V(1:Nu);
+vh   = V(Nu+1:end);
 u    = reshape(uh,Nux_in,Nuy_in);
 v    = reshape(vh,Nvx_in,Nvy_in);
 pres = reshape(p,Npx,Npy);
+[up,vp,qp] = get_velocity(V,t,options);
+
+figure
+contour(xp,yp,qp');
+
+figure
+contour(xp,yp,pres');
+
 
 %% plot settings
 line = {'r-','b-','m-','k-','g-','y-'};

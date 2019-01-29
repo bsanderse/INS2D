@@ -1,4 +1,4 @@
-% project = 'actuator';   % project name used in filenames
+% project = 'actuator_unsteady';   % project name used in filenames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,12 +14,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     global x1 x2 y1 y2;
-    x1      = -10;
+    x1      = 0;
     x2      = 10;
-    y1      = -10;
-    y2      = 10;
+    y1      = -2;
+    y2      = 2;
 
-    Nx      = 80; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 200; %mesh_list(j);         % number of volumes in the x-direction
     Ny      = 80;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
@@ -35,16 +35,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% force
     % force is to be set in force.m
-    Ct = 0.01; % thrust coefficient actuator disk
+    Ct = 0.5; % thrust coefficient actuator disk
     D = 1;     % diameter actuator disk
     
-    force_unsteady     = 0; % set to 1 if force is time dependent
+    force_unsteady     = 1; % set to 1 if force is time dependent
     
     % immersed boundary method
     ibm     = 0;
     
     % position of body
-    x_c     = 0;
+    x_c     = 2;
     y_c     = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -53,19 +53,54 @@
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 1;         % steady(1) or unsteady(0)
+    steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order
     order4  = 0;
 
+    % only for unsteady problems:
+    dt            = 4*pi/200;      % time step (for explicit methods it can be
+                               % determined during running with dynamic_dt)
+    t_start       = 0;         % start time
+    t_end         = 4*pi;        % end time
+
+    CFL           = 1;              
+    timestep.set  = 0;         % time step determined in timestep.m, 
+                               % for explicit methods
+    timestep.n    = 1;         % determine dt every timestep.n iterations
+    
+    method        = 20;
+    RK            = 'RK44P2';
+
+%     method_startup    = 61;
+%     method_startup_no = 2; % number of velocity fields necessary for start-up
+    
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% solver settings
 
-    % for steady problems or unsteady problems with implicit methods:
+    % pressure
+    poisson          = 1; % 1: direct solver, 
+                          % 2: CG with ILU (matlab), 
+                          % 3: CG mexfile, 
+                          % 4: CG with IC, own Matlab impl.
+                          % 5: Petsc
+    p_initial        = 1; % calculate pressure field compatible
+                          % with the velocity field at t=0
+    p_add_solve      = 1; % do additional pressure solve to make it same 
+                          % order as velocity
 
+    CG_acc           = 1e-8;  % accuracy for CG (if poisson=2,3,4)
+    CG_maxit         = 1000;    % maximum number of iterations for CG
+
+    % diffusion (method 2)
+    poisson_diffusion = 1; % options like poisson pressure
+    
+    
+    % for steady problems or unsteady problems with implicit methods:
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
     nonlinear_acc          = 1e-14;
@@ -98,9 +133,11 @@
     tecplot.n        = 1;         % write tecplot files every n
     
     rtp.show         = 1;          % 1: real time plotting 
-%     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 1;
+    rtp.n            = 10;
     rtp.movie        = 0;
+    rtp.moviename    = 'actuator_unsteady'; % movie name
+    rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
+    
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

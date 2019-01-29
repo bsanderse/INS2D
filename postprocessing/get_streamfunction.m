@@ -74,7 +74,7 @@ psiLo  = psiLoRi + cumsum(hx(end:-1:1).*v2(end:-1:1));
 psiLoLe= psiLo(end); 
 psiLo  = psiLo(end-1:-1:1);
 
-if (abs(psiLoLe)>1e-14)
+if (abs(psiLoLe)>1e-12)
     disp(['warning: contour integration of psi not consistent: ' num2str(abs(psiLoLe))]);
 end
 

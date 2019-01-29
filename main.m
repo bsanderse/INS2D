@@ -13,6 +13,9 @@ function [V,p] = main(case_name,folder_cases)
 
 %   Benjamin Sanderse, September 2018 - January 2019
 
+if (nargin==1) 
+   folder_cases = 'case_files'; % default folder name 
+end
 
 %% close figures and clean variables
 
@@ -22,6 +25,7 @@ close all;
 format compact;
 format long;
 warning('off','MATLAB:rmpath:DirNotFound');
+ 
 
 % declare boundary conditions via globals
 global uBC vBC dudtBC dvdtBC;
@@ -188,16 +192,16 @@ for j = 1:length(mesh_list)
             case 'laminar'
                 if (order4==0)
                     if (ibm==0)
-                        fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order');
+                        fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order\n');
                         solver_steady;
                     elseif (ibm==1)
-                        fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order');
+                        fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order\n');
                         solver_steady_ibm;
                     else
                         error('wrong value for ibm parameter');
                     end
                 elseif (order4==1)
-                    fprintf(fcw,'Steady flow with laminar viscosity model, 4th order');
+                    fprintf(fcw,'Steady flow with laminar viscosity model, 4th order\n');
                     %                     solver_steady_4thorder;
                     solver_steady;
                 else
@@ -211,14 +215,14 @@ for j = 1:length(mesh_list)
         
         switch visc
             case 'turbulent'
-                fprintf(fcw,'Unsteady flow with k-eps model, 2nd order');
+                fprintf(fcw,'Unsteady flow with k-eps model, 2nd order\n');
                 solver_unsteady_ke;
             case {'laminar','LES'}
                 if (rom==0)
-                    fprintf(fcw,'Unsteady flow with laminar or LES model');
+                    fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                     solver_unsteady;
                 elseif (rom==1)
-                    fprintf(fcw,'Unsteady flow with reduced order model');
+                    fprintf(fcw,'Unsteady flow with reduced order model\n');
                     solver_unsteady_ROM;
                 else
                     error('wrong value for rom parameter');

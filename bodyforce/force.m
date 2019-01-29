@@ -5,7 +5,7 @@ function [Fx, Fy] = force(t,options)
 force_unsteady = options.case.force_unsteady;
 
 % % only run if unsteady force or at first iteration of steady 
-if (force_unsteady == 1 || t == options.time.t_start) 
+% if (force_unsteady == 1 || t == options.time.t_start) 
 
     file_name = [options.case.project '_force'];
     
@@ -23,10 +23,10 @@ if (force_unsteady == 1 || t == options.time.t_start)
         end
     end
     
-else
-    Fx = zeros(options.grid.Nu,1);
-    Fy = zeros(options.grid.Nv,1);
-end
+% else
+%     Fx = zeros(options.grid.Nu,1);
+%     Fy = zeros(options.grid.Nv,1);
+% end
 
 %% actuator methods:
 % force_airfoil_surfaceCp;

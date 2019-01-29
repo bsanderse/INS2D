@@ -35,7 +35,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% force
-    % force is to be set in force.m
+    % force is to be set in casename_force.m
     
     force_unsteady     = 0; % set to 1 if force is time dependent
     

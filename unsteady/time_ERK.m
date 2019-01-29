@@ -23,7 +23,7 @@ s_RK = length(b_RK);
 % is always zero for explicit methods
 A_RK = [A_RK(2:end,:); b_RK'];
 
-% vector with time instances 
+% vector with time instances
 c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 
 % store variables at start of time step
@@ -46,7 +46,7 @@ G      = options.discretization.G;
 M      = options.discretization.M;
 % boundary condition for divergence operator (known from last time step)
 yMn    = options.discretization.yM;
-yM     = yMn;    
+yM     = yMn;
 
 ti = tn;
 
@@ -54,7 +54,7 @@ for i_RK=1:s_RK
     % at i=1 we calculate F_1, p_2 and u_2
     % ...
     % at i=s we calculate F_s, p_(n+1) and u_(n+1)
-        
+    
     
     % right-hand side for ti based on current velocity field uh, vh at
     % level i
@@ -72,12 +72,12 @@ for i_RK=1:s_RK
     % this gives u_(i+1), and for i=s gives u_(n+1)
     Vtemp      = kV*A_RK(i_RK,:)';
     
-    % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
-    % the boundary conditions at t_(i+1)  
+    % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need
+    % the boundary conditions at t_(i+1)
     ti         = tn + c_RK(i_RK)*dt;
     if (options.BC.BC_unsteady == 1)
         options = set_bc_vectors(ti,options);
-        yM      = options.discretization.yM;    
+        yM      = options.discretization.yM;
     end
     
     % divergence of intermediate velocity field is directly calculated with M
@@ -94,30 +94,35 @@ for i_RK=1:s_RK
     end
     % store pressure
     kp(:,i_RK) = dp;
-   
+    
     % update velocity current stage, which is now divergence free
     V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
-
+    
 end
 
 
-if (options.BC.BC_unsteady == 0)
-    % for steady BC we skip this step and do an additional pressure solve 
-    % that saves a pressure solve for i=1 in the next time step
+if (options.BC.BC_unsteady == 1)
     
-    % make a suitable combination of pressures from stages that satisfy the
-    % C(2) simplifying condition
-    % three-stage method
-%     p = -3*kp(:,2) +4*kp(:,3);
-    % four-stage method
-%     p = -2*kp(:,2) + 3*kp(:,4);
-
-    % make a suitable combination with the theory of Hairer
-%     W = inv(A_RK)*diag(c_RK);
-%     p = kp*W(end,:)';
-
-    % standard method
-    p = kp(:,end);
+    if (options.solversettings.p_add_solve == 1)
+        p = pressure_additional_solve(V,p,tn+dt,options);
+    else
+        
+        % make a suitable combination of pressures from stages that satisfy the
+        % C(2) simplifying condition
+        % three-stage method
+        %     p = -3*kp(:,2) +4*kp(:,3);
+        % four-stage method
+        %     p = -2*kp(:,2) + 3*kp(:,4);
+        
+        % make a suitable combination with the theory of Hairer
+        %     W = inv(A_RK)*diag(c_RK);
+        %     p = kp*W(end,:)';
+        
+        % standard method
+        p = kp(:,end);
+    end
 else
+    % for steady BC we do an additional pressure solve
+    % that saves a pressure solve for i=1 in the next time step
     p = pressure_additional_solve(V,p,tn+dt,options);
 end

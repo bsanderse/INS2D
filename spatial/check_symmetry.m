@@ -6,6 +6,8 @@ function [flag, symmetry_error] = check_symmetry(uh,vh,t,options)
 eps = 1e-14;
 fcw = options.output.fcw;
 
+BC  = options.BC;
+
 Cux = options.discretization.Cux;
 Cuy = options.discretization.Cuy;
 Cvx = options.discretization.Cvx;
@@ -41,12 +43,16 @@ error_v = max2d(abs(Cv+Cv'));
 
 symmetry_error = max(error_u,error_v);
 
+flag = 0;
 if (symmetry_error > eps)
-    flag  = 1;
-    fprintf(fcw,[num2str(error_u) '\n']);
-    fprintf(fcw,[num2str(error_v) '\n']);
-else
-    flag = 0;
+    if (~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres'))
+        fprintf(fcw,[num2str(error_u) '\n']);
+        flag = 1;
+    end
+    if (~strcmp(BC.v.low,'pres') && ~strcmp(BC.v.up,'pres'))
+        fprintf(fcw,[num2str(error_v) '\n']);
+        flag = 1;
+    end
 end
 
         
