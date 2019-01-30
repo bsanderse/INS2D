@@ -1,9 +1,13 @@
-function [d2u, d2v, Jacu, Jacv] = diffusion(uh,vh,t,options,getJacobian)
+function [d2u, d2v, Jacu, Jacv] = diffusion(V,t,options,getJacobian)
+% evaluate diffusive terms and optionally Jacobian
 
 visc = options.case.visc;
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+uh = V(1:Nu);
+vh = V(Nu+1:Nu+Nv);
+
 
 Diffu  = options.discretization.Diffu;
 Diffv  = options.discretization.Diffv;

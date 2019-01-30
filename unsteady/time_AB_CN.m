@@ -1,54 +1,103 @@
-% Adams-Bashforth for convection and Crank-Nicolson for diffusion
-      
-tn = t;
+%% Adams-Bashforth for convection and Crank-Nicolson for diffusion
+% formulation:
+% (u^{n+1} - u^{n})/dt  = -(alfa1*(conv^n) + alfa2*(conv^{n-1})) +
+%                           theta*diff^{n+1} + (1-theta)*diff^{n} +
+%                           theta*F^{n+1}    + (1-theta)*F^{n}
+%                           theta*bc^{n+1}   + (1-theta)*bc^{n} 
+%                           - G*p + y_p
+% where bc are boundary conditions of diffusion
 
-% evaluate BC and force at starting point for convection
-t  = tn;
-boundary_conditions;
-interpolate_bc;
-operator_bc_momentum;
-force;
+% rewrite as:
+% (I/dt - theta*D)*u^{n+1} = (I/dt - (1-theta)*D)*u^{n} + 
+%                           -(alfa1*(conv^n) + alfa2*(conv^{n-1})) +
+%                            theta*F^{n+1}    + (1-theta)*F^{n}
+%                            theta*bc^{n+1} + (1-theta)*bc^{n}
+%                           - G*p + y_p
 
-% convection
-cu     = uh;
-cv     = vh;
+% the LU decomposition of the first matrix is precomputed in
+% operator_convection_diffusion
 
-convection;
+%%
+% Adams-Bashforth coefficients
+alfa1 = 3/2;
+alfa2 = -1/2;
 
-Cu     = du2dx + duvdy;
-Cv     = duvdx + dv2dy;
+% CN coefficients
+% theta = 1/2;
+theta  = options.time.theta;
+% store variables at start of time step
+tn     = t;
+Vn     = V;
+pn     = p;
+uh     = V(1:Nu);
+vh     = V(Nu+1:end);
 
-% evaluate BC and force at midpoint for DIFFUSION; note that CN is formally combination
-% of F(n) and F(n+1), but this is the same for linear problems 
-t = tn + 0.5*dt;
-boundary_conditions;
-interpolate_bc;
-operator_bc_momentum;
-force;
-t = tn;
+% grid variables
+Omu_inv = options.grid.Omu_inv;
+Omv_inv = options.grid.Omv_inv;
+
+%% evaluate BC and force at starting point
+[Fx1,Fy1]      = force(tn,options);
+% unsteady BC at current time
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(tn,options);
+end
+
+% convection of current solution
+[convu, convv] = convection(V,tn,options,0);
+
+% diffusion of current solution
+Diffu  = options.discretization.Diffu;
+Diffv  = options.discretization.Diffv;
+yDiffu1 = options.discretization.yDiffu;
+yDiffv1 = options.discretization.yDiffv;
+
+%% evaluate BC and force at end of time step
+
+% unsteady BC at next time
+[Fx2,Fy2]      = force(tn+dt,options);
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(tn+dt,options);
+end
+% diffusion BC at new time level
+yDiffu2 = options.discretization.yDiffu;
+yDiffv2 = options.discretization.yDiffv;
+
+Gx   = options.discretization.Gx;
+Gy   = options.discretization.Gy;
+y_px = options.discretization.y_px;
+y_py = options.discretization.y_py;
+
+
+%% Crank-Nicolson weighting for force and diffusion boundary conditions
+Fx = (1-theta)*Fx1 + theta*Fx2;
+Fy = (1-theta)*Fy1 + theta*Fy2;
+yDiffu = (1-theta)*yDiffu1 + theta*yDiffu2;
+yDiffv = (1-theta)*yDiffv1 + theta*yDiffv2;
+
 
 % pressure
 % p_temp = alfa1*p + alfa2*p_old; % see paper: 'DNS at lower cost'
-p_temp = p;
+% p_temp = p;
 
+%% right hand side of the momentum equation update
+Rur = uh + Omu_inv*dt.*(- (alfa1*convu + alfa2*convu_old) + ...
+                         + (1-theta)*Diffu*uh + yDiffu + ...
+                         + Fx - Gx*p - y_px);
 
-% LU decomposition has been calculated already in
+Rvr = vh + Omv_inv*dt.*(- (alfa1*convv + alfa2*convv_old) + ...
+                         + (1-theta)*Diffv*vh + yDiffv + ...
+                         + Fy - Gy*p - y_py);        
+
+% LU decomposition of diffusion part has been calculated already in
 % operator_convection_diffusion
 
-Rur = uh + Omu_inv*dt.*(- (alfa1*Cu + alfa2*Cu_old) + ...
-                         + (1-theta)*Diffu*uh + yDiffu + ...
-                         + Fx - Gx*p_temp - y_px);
-
-Rvr = vh + Omv_inv*dt.*(- (alfa1*Cv + alfa2*Cv_old) + ...
-                         + (1-theta)*Diffv*vh + yDiffv + ...
-                         + Fy - Gy*p_temp - y_py);        
-
 if (poisson_diffusion==1)
-    b   = L_diffu\Rur;
-    Ru  = U_diffu\b;
+    b   = options.discretization.L_diffu\Rur;
+    Ru  = options.discretization.U_diffu\b;
     
-    b   = L_diffv\Rvr;
-    Rv  = U_diffv\b;
+    b   = options.discretization.L_diffv\Rvr;
+    Rv  = options.discretization.U_diffv\b;
     
 elseif (poisson_diffusion==3)
     [Ru,iter,norm1,norm2]=cg(L_diffu,int64(dia_diffu),int64(ndia_diffu),Rur,...
@@ -61,20 +110,16 @@ end
 
 R = [Ru; Rv];
 
-Cu_old = Cu;
-Cv_old = Cv;
+convu_old = convu;
+convv_old = convv;
 
 % evaluate divergence BC at endpoint, necessary for PC
-t = tn + dt;
-boundary_conditions;
-interpolate_bc;
-operator_bc_divergence;
-t = tn;
+yM      = options.discretization.yM;
 
 pressure_correction;
 
 % first order pressure:
-p_old  = p;
+% p_old  = p;
 p      = p + dp;
 
 % second order pressure:
@@ -82,10 +127,6 @@ p      = p + dp;
 % p_old  = p;
 % p      = p_new;
 
-uh_old = uh;
-vh_old = vh;
-
-uh     = V(1:Nu);
-vh     = V(Nu+1:Nu+Nv);
-
-pressure_additional_solve;
+if (options.solversettings.p_add_solve == 1)
+    p = pressure_additional_solve(V,p,tn+dt,options);
+end

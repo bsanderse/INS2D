@@ -1,5 +1,7 @@
-function [convu, convv, Jacu, Jacv] = convection(uh,vh,t,options,getJacobian)
+function [convu, convv, Jacu, Jacv] = convection(V,t,options,getJacobian)
 % evaluate convective terms and, optionally, Jacobians
+
+
 
 order4     = options.discretization.order4;
 regularize = options.case.regularize;
@@ -36,6 +38,8 @@ Jacu = spalloc(Nu,Nu+Nv,0);
 Jacv = spalloc(Nv,Nu+Nv,0);
 
 %%
+uh = V(1:Nu);
+vh = V(Nu+1:end);
 
 % assumes uh, vh, cu, cv
 % normally cu = uh, cv = vh

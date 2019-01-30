@@ -8,12 +8,14 @@ Nx = options.grid.Nx;
 Ny = options.grid.Ny;
 
 % number of interior points and boundary points
+Nu     = options.grid.Nu;
 Nux_in = options.grid.Nux_in;
 Nux_b  = options.grid.Nux_b;
 Nux_t  = options.grid.Nux_t;
 Nuy_in = options.grid.Nuy_in;
 Nuy_b  = options.grid.Nuy_b;
 Nuy_t  = options.grid.Nuy_t;
+Nv     = options.grid.Nv;
 Nvx_in = options.grid.Nvx_in;
 Nvx_b  = options.grid.Nvx_b;
 Nvx_t  = options.grid.Nvx_t;
@@ -530,22 +532,30 @@ end
     %% additional for implicit time stepping diffusion
     
     
-    if (exist('theta','var') && method==2 && strcmp(visc,'laminar'))
-        fprintf(fcw,'implicit time-stepping for diffusion\n');
+    if (options.time.method==2 && strcmp(visc,'laminar'))
+        fprintf(options.output.fcw,'implicit time-stepping for diffusion\n');
+        theta = options.time.theta;
+        dt    = options.time.dt;
+        Omu_inv = options.grid.Omu_inv;
+        Omv_inv = options.grid.Omv_inv;
         % implicit time-stepping for diffusion
         % solving (I-dt*Diffu)*uh* = ...
         
         Diffu_impl = speye(Nu,Nu) - theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu;
         Diffv_impl = speye(Nv,Nv) - theta*dt*spdiags(Omv_inv,0,Nv,Nv)*Diffv;
         
-        if (poisson_diffusion == 1)
+        if (options.solversettings.poisson_diffusion == 1)
             % LU decomposition
-            fprintf(fcw,'LU decomposition of diffusion matrices...\n');
+            fprintf(options.output.fcw,'LU decomposition of diffusion matrices...\n');
             tic;
             [L_diffu, U_diffu] = lu(Diffu_impl);
             [L_diffv, U_diffv] = lu(Diffv_impl);
             toc;
-        elseif (poisson_diffusion ==3)
+            options.discretization.L_diffu = L_diffu;
+            options.discretization.U_diffu = U_diffu;
+            options.discretization.L_diffv = L_diffv;
+            options.discretization.U_diffv = U_diffv;
+        elseif (options.solversettings.poisson_diffusion ==3)
             if (exist(['cg.' mexext],'file')==3)
                 [L_diffu, d_diffu] = spdiags(Diffu_impl);
                 ndia_diffu  = (length(d_diffu)+1)/2; % number of diagonals needed in cg
@@ -558,7 +568,7 @@ end
                 L_diffv     = L_diffv(:,ndia_diffv:-1:1);
                 
             else
-                fprintf(fcw,'No correct CG mex file available, switching to Matlab implementation\n');
+                fprintf(options.output.fcw,'No correct CG mex file available, switching to Matlab implementation\n');
                 %             poisson = 4;
             end
         end

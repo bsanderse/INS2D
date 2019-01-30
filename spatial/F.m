@@ -8,8 +8,8 @@ end
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 
-uh = V(1:Nu);
-vh = V(Nu+1:Nu+Nv);
+% uh = V(1:Nu);
+% vh = V(Nu+1:Nu+Nv);
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
@@ -25,10 +25,10 @@ Gpx  = Gx*p + y_px;
 Gpy  = Gy*p + y_py;
 
 % convection:
-[convu, convv, dconvu, dconvv] = convection(uh,vh,t,options,getJacobian);
+[convu, convv, dconvu, dconvv] = convection(V,t,options,getJacobian);
 
 % diffusion
-[d2u, d2v, dDiffu, dDiffv] = diffusion(uh,vh,t,options,getJacobian);
+[d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
 
 % body force
 [Fx, Fy] = force(t,options);

@@ -12,7 +12,7 @@ y_dp = zeros(Nu+Nv,1);
 % divergence of Ru and Rv is directly calculated with M
 f    = (1/dt)*(M*R + yM) - M*y_dp;
 
-pressure_poisson;
+dp   = pressure_poisson(f,t,options);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Update the velocity field                                        % 

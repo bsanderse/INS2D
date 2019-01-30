@@ -19,11 +19,10 @@ end
 
 %% for multistep methods or methods that need extrapolation of previous time steps
 if (method==2) % the only multistep method considered sofar
-    cu     = uh;
-    cv     = vh;
-    convection;
-    Cu_old = du2dx + duvdy;
-    Cv_old = duvdx + dv2dy;
+    if (options.BC.BC_unsteady == 1)
+        options = set_bc_vectors(t,options);
+    end
+    [convu_old,convv_old] = convection(V,t,options,0);
 end
 
 % for methods that need u^(n-1)
@@ -92,7 +91,7 @@ while(n<=nt)
             method_temp==71 || method_temp==62  || ...
             method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
             && n<=method_startup_no)
-        fprintf(fcw,['starting up with ' num2str(method_startup) '\n']);
+        fprintf(fcw,['starting up with method ' num2str(method_startup) '\n']);
         method      = method_startup;
         
     else

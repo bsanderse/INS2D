@@ -101,6 +101,8 @@ voi = {
     't_end', [];...
     'dt', []; ...
     'RK', []; ...
+    'method', 0;...
+    'theta', [];... % theta value for implicit theta method
     };
 
 % options = accumulate_object(object,voi,options);
@@ -125,10 +127,13 @@ voi = {
                                    % 2: full Newton; build Jacobian at each
                                    % iteration
     'Jacobian_type', 0; ...    % 0: Picard linearization, 1: Newton linearization
-    'nonlinear_startingvalues', 0;
+    'nonlinear_startingvalues', 0; ...
         
     % 
-    'nPicard', 5; % number of Picard steps before switching to Newton when linearization is Newton
+    'nPicard', 5; ... % number of Picard steps before switching to Newton when linearization is Newton
+    
+    %
+    'poisson_diffusion', 1;...
     
     % location of PETSc-matlab mex files                                    
 %     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';

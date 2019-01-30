@@ -181,24 +181,28 @@ if (options.BC.BC_unsteady == 1)
 end
 
 
-if (options.BC.BC_unsteady == 0)
-    % for steady BC we skip this step and do an additional pressure solve 
-    % that saves a pressure solve for i=1 in the next time step
+if (options.BC.BC_unsteady == 1)
     
-    % make a suitable combination of pressures from stages that satisfy the
-    % C(2) simplifying condition
-    % three-stage method
-%     p = -3*kp(:,2) +4*kp(:,3);
-    % four-stage method
-%     p = -2*kp(:,2) + 3*kp(:,4);
-
-    % make a suitable combination with the theory of Hairer
-%     W = inv(A_RK)*diag(c_RK);
-%     p = kp*W(end,:)';
-
-    % standard method
-%     p = kp(:,end);
-%     p = dp;
+    if (options.solversettings.p_add_solve == 1)
+        p = pressure_additional_solve(V,p,tn+dt,options);
+    else
+        
+        % make a suitable combination of pressures from stages that satisfy the
+        % C(2) simplifying condition
+        % three-stage method
+        %     p = -3*kp(:,2) +4*kp(:,3);
+        % four-stage method
+        %     p = -2*kp(:,2) + 3*kp(:,4);
+        
+        % make a suitable combination with the theory of Hairer
+        %     W = inv(A_RK)*diag(c_RK);
+        %     p = kp*W(end,:)';
+        
+        % standard method
+        p = kp(:,end);
+    end
 else
+    % for steady BC we do an additional pressure solve
+    % that saves a pressure solve for i=1 in the next time step
     p = pressure_additional_solve(V,p,tn+dt,options);
 end
