@@ -108,7 +108,7 @@
         % method 19 : Lob IIIA (CN)
         
         method            = 20;
-        RK                = 'RK44';
+        RK                = 'RK44C23';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up

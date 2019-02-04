@@ -12,12 +12,15 @@ Bv = options.rom.Bv;
 % Nu = options.grid.Nu;
 % Nv = options.grid.Nv;
 
-% ru = R(1:M);
-% rv = R(M+1:2*M);
+Om_inv = options.grid.Om_inv;
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
-    options = set_bc_vectors(t,options);
+    if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 1)
+        options = set_bc_vectors(t,options);
+    else
+        error('unsteady BC with precomputing not fully tested');
+    end
 end
 
 % Gx   = options.discretization.Gx;
@@ -28,38 +31,42 @@ Gpx  = zeros(M,1); %Gx*p + y_px;
 Gpy  = zeros(M,1); %Gy*p + y_py;
 
 % convection:
-% approach 1: (with precomputed matrices) 
-% [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
-% approach 2:
-[convu,convv] = convection(Bu*R,Bv*R,t,options,0);
-% convu = Bu'*(options.grid.Omu_inv.*convu);
-% convv = Bv'*(options.grid.Omv_inv.*convv);
-% conv  = convu+convv;
-conv  = B'*(options.grid.Om_inv.*[convu;convv]);
+if (options.rom.precompute_convection == 1)
+    % approach 1: (with precomputed matrices)
+    error('precomputed convection term not fully tested');
+%     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
+elseif (options.rom.precompute_convection == 0)
+    % approach 2:
+    [convu,convv] = convection(B*R,t,options,0);
+    conv  = B'*(Om_inv.*[convu;convv]);
+end
 
 % diffusion
-% approach 1: (with precomputed matrices) 
-[d2, dDiff] = diffusionROM(R,t,options,0);
-% approach 2:
-% [d2u,d2v] = diffusion(Bu*R,Bv*R,t,options,0);
-% d2 = B'*Om_inv.*[d2u;d2v];
+if (options.rom.precompute_diffusion == 1)
+    % approach 1: (with precomputed matrices)
+    [d2, ~] = diffusionROM(R,t,options,0);
+elseif (options.rom.precompute_diffusion == 0)
+    % approach 2:
+    [d2u,d2v] = diffusion(B*R,t,options,0);
+    d2 = B'*(Om_inv.*[d2u;d2v]);
+end
 
 % body force
-% [Fx, Fy] = force(t,options);
-% Fx = Bu'*(options.grid.Omu_inv.*Fx);
-% Fy = Bv'*(options.grid.Omv_inv.*Fy);
-% F  = Fx + Fy;
+if (options.rom.precompute_force == 1)
+    error('precomputed forcing term not implemented');
+else
+    [Fx, Fy] = force(t,options);
+%     Fx = Bu'*(options.grid.Omu_inv.*Fx);
+%     Fy = Bv'*(options.grid.Omv_inv.*Fy);
+%     F  = Fx + Fy;
+    F  = B'*(Om_inv.*[Fx;Fy]);
+end
 
 % residual of ROM
-Fres    = - conv + d2;
+Fres    = - conv + d2 + F;
 % Fu   = - convu + d2u - Gpx + Fx;
 % Fv   = - convv + d2v - Gpy + Fy;
 
-% if (options.case.steady==0) % unsteady case, solve for velocities
-%     Fres = Om_inv.*[Fu;Fv];
-% else
-%     Fres = [Fu;Fv];
-% end
 
 maxres  = max(abs(Fres));
 

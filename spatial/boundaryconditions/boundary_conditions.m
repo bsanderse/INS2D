@@ -50,25 +50,27 @@ end
 % vLe      = vBC(x(1),y,t,options); 
 % vRi      = vBC(x(end),y,t,options);
 
-% time derivative of boundary conditions
+% time derivative of boundary conditions is used for high accuracy of
+% pressure
 file_name = [options.case.project '_dudtBC'];
 if (exist(file_name,'file'))
     % create function handle with name dudtBC
     dudtBC = str2func(file_name);    
 else
-    if (options.BC.BC_unsteady==1)
-        error(['BCtype file ' file_name ' not available']);
+    if (options.BC.BC_unsteady==1 && options.solversettings.p_add_solve==1)
+        error(['Unsteady boundary conditions with additional Poisson solve requires time derivatives, but file ' file_name ' is not available']);
     end
 end
 
-% time derivative of boundary conditions
+% time derivative of boundary conditions is used for high accuracy of
+% pressure
 file_name = [options.case.project '_dvdtBC'];
 if (exist(file_name,'file'))
     % create function handle with name dudtBC
     dvdtBC = str2func(file_name);    
 else
-    if (options.BC.BC_unsteady==1)
-        error(['BCtype file ' file_name ' not available']);
+    if (options.BC.BC_unsteady==1 && options.solversettings.p_add_solve==1)
+        error(['Unsteady boundary conditions with additional Poisson solve requires time derivatives, but file ' file_name ' is not available']);
     end
 end
 
@@ -77,8 +79,7 @@ end
 % 'pres' is specified
 p_inf    = 0;
 pLe      = p_inf;
-%     lambda   = Re/2-sqrt(Re^2/4+4*pi^2);   
-pRi      = p_inf; %-0.5*exp(2*lambda*x2)+(lambda/Re)*exp(lambda*x2)*cos(2*pi*y);
+pRi      = p_inf; 
 pLo      = p_inf;
 pUp      = p_inf;
 
@@ -91,12 +92,12 @@ options.BC.pUp = pUp;
 
 kLo      = 0;
 kUp      = 0; 
-kLe      = 0;%(u_fr/U_ref)^2/sqrt(Cmu); 
+kLe      = 0;
 kRi      = 0;
 
 eLo      = 0;
 eUp      = 0;
-eLe      = 0;%kappa^2./(log((1+z0_nondim)/z0_nondim)^3*(y+z0_nondim)); 
+eLe      = 0;
 eRi      = 0;
    
 options.BC.kLe = kLe;

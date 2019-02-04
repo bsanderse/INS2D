@@ -20,7 +20,7 @@ for i=1:Ncases
 
     disp(['running case: ' case_file]);
     [V,p] = main(case_file,testsuite_folder);
-    
+
     ref_data_path = [testsuite_folder '/' case_file '/' case_file '_refdata.mat'];
     disp(['loading benchmark data: ' ref_data_path]);
     ref_data = load(ref_data_path);

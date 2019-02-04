@@ -2,32 +2,54 @@
 
 %% load snapshot data
 disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total');
+snapshots = load(snapshot_data,'uh_total','vh_total','dt');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 %% construct economic SVD
-% [W,S,Z] = svd(snapshots.U,'econ');
 % note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
 % the SVD
-% [Wu,Su,Zu] = svd(snapshots.uh_total');
-% [Wv,Sv,Zv] = svd(snapshots.vh_total');
-% alernative:
-V_total = [snapshots.uh_total';snapshots.vh_total'];
-[W,S,Z] = svd(V_total,'econ');
-% 
-Nspace = size(V_total,2); % number of points in space of original model
+ 
+% dt that was used for creating the snapshot matrix:
+dt_snapshots = snapshots.dt;
+% velocity field as snapshot matrix:
+V_total      = [snapshots.uh_total';snapshots.vh_total'];
+
+% sample dt is multiple of snapshot dt:
+if (rem(dt_sample,dt_snapshots) == 0)
+    Nskip = dt_sample/dt_snapshots;
+    % check if t_sample is multiple of dt_sample
+    if (rem(t_sample,dt_sample) == 0)
+        Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
+        snapshot_indx = 1:Nskip:Nsnapshots;
+    else
+        error('sample dt is not an integer multiple of sample time');
+    end
+else
+    error('sample dt is not an integer multiple of snapshot dt');
+end
+
+% check input dimensions
+Nspace  = size(V_total,1); % total number of unknowns (Nu+Nv) of the original model
+Nu      = options.grid.Nu;
+Nv      = options.grid.Nv;
+if (Nspace ~= Nu+Nv)
+    error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
+end
+
+% perform SVD
+[W,S,Z] = svd(V_total(:,snapshot_indx),'econ');
+
 % take first M columns of W as a reduced basis
 % maximum:
 % M = size(Wu,2);
 % reduction:
 % M = floor(Nspace/100);
-M = 16;
-options.rom.M = M;
+% M = 16;
+% options.rom.M = M;
 % (better is to look at the decay of the singular values in S)
 B  = W(:,1:M);
 % Bu = Wu(:,1:M);
 % Bv = Wv(:,1:M);
-Nu = options.grid.Nu;
 Bu = B(1:Nu,:);
 Bv = B(Nu+1:end,:);
 options.rom.B = B;
@@ -40,19 +62,16 @@ toc
 disp('starting time-stepping...');
 
 %% precompute matrices
-Nu = options.grid.Nu;
-Nv = options.grid.Nv;
-options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
-                    Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
-options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
-                    Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
-% options.rom.Diffv  = Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
-% options.rom.yDiffv = Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
+if (options.rom.precompute_diffusion == 1)
+    Nu = options.grid.Nu;
+    Nv = options.grid.Nv;
+    options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
+                        Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
+    options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
+                        Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
+end
 
-%% initialize
-% ru = Bu'*uh;
-% rv = Bv'*vh;
-% R  = ru + rv;
+%% initialize reduced order solution
 R  = B'*V;
 
 %% reduced order solution

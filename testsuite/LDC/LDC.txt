@@ -1,0 +1,8 @@
+Lid-driven cavity
+
+Test case features:
+- steady state solver
+- 2nd order spatial discretization
+- moderate Reynolds number (Re=1000)
+- no-slip boundary conditions
+

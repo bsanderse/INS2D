@@ -87,7 +87,13 @@ accumulate_object;
 object = 'rom';
 
 voi = {
-    'rom', 0;
+    'rom', 0; ... % if 1, use reduced order model
+    'M', 10; ... % number of modes for reduced order model
+    'precompute_convection', 0; ... % precomputed convection matrices
+    'precompute_diffusion', 1; ... % precomputed diffusion matrices
+    'precompute_force', 0;... % precomputed forcing term
+    't_snapshots', t_end; ... % snapshots 
+    'dt_snapshots', dt; 
     };
 
 accumulate_object;

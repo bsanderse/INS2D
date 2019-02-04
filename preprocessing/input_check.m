@@ -139,7 +139,7 @@ else
     if (steady==1)
         options.solversettings.Newton_factor = 0;
     elseif (steady==0)
-        if (method==21) % implicit RK time integration
+        if (method==21 || method_startup==21) % implicit RK time integration
             options.solversettings.Newton_factor = 1;
         end
     end

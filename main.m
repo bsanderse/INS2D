@@ -259,7 +259,7 @@ for j = 1:length(mesh_list)
     end
     
     
-    clear n Fx Fy
+    clear n Fx Fy;
     % clear nonlinear_its
     %
 end

@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 1000;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 50; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 50;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -50,6 +50,25 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom    = 0;      % set to 1 to use ROM solver
+    M      = 8;     % number of modes used
+    % the full snapshotdataset can be reduced by taking as index
+    % 1:Nskip:Nsnapshots
+    t_sample  = 8;  % part of snapshot matrix used for building SVD
+    dt_sample = 0.04; % frequency of snapshots to be used for SVD
+    precompute_convection = 0;
+    precompute_diffusion  = 1;
+    precompute_force      = 0; 
+
+    snapshot_data = 'results/shear_layer_snapshotdata/matlab_data.mat';
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% time and space discretization
 
     % steady or unsteady solver
@@ -69,7 +88,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 16;         % end time
+        t_end         = 8;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -98,12 +117,14 @@
         % method 111/112: Wray's 3rd order Runge-Kutta with (111) or without (112) Crank-Nicolson
         % method 12 : General explicit RK method (specify tableau in time_RK_gen)
         % method 13  : SDIRK 2-stage, 3rd order
-        % method 14 : ARK Radau IIA/B
-        % method 15 : Gauss 6
+        % method 14 : ARK Radau IIA/B 
         % method 16 : Lob IIIC 3-stage
         % method 17 : DIRK energy-conserving
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
+        % method 20 : generic explicit RK
+        % method 21 : generic implicit RK
+        % method 30 : generic explicit RK for ROM        
         
         method            = 20;
         RK                = 'RK44';

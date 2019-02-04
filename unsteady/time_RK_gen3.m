@@ -124,6 +124,7 @@ for i_RK=1:s_RK
     else % BC steady AND i_RK=1
         dp = pn;
     end
+    % store pressure    
     kp(:,i_RK) = dp;
    
     % update velocity current stage, which is now divergence free

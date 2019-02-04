@@ -63,7 +63,7 @@ for i_RK=1:s_RK
     [~,F_rhs]  = F(V,p,ti,options);
     
     % store right-hand side of stage i
-    % we REMOVE the pressure contribution Gx*p and Gy*p (but not the
+    % by adding G*p we effectively REMOVE the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
     kV(:,i_RK)  = Om_inv.*(F_rhs + G*p);
     
@@ -89,7 +89,7 @@ for i_RK=1:s_RK
     if (options.BC.BC_unsteady==1 || i_RK>1)
         % the time ti below is only for output writing
         dp = pressure_poisson(f,ti,options);
-    else
+    else % BC steady AND i_RK=1
         dp = pn;
     end
     % store pressure

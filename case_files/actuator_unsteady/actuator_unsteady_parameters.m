@@ -59,7 +59,7 @@
     order4  = 0;
 
     % only for unsteady problems:
-    dt            = 4*pi/800;      % time step (for explicit methods it can be
+    dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
     t_end         = 4*pi;        % end time
@@ -69,7 +69,7 @@
                                % for explicit methods
     timestep.n    = 1;         % determine dt every timestep.n iterations
     
-    method        = 2;
+    method        = 20;
     RK            = 'RK44P2';
 
     method_startup    = 20;

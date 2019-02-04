@@ -315,6 +315,12 @@ switch name
         A = [0 0 0 0; 1/4 0 0 0; 0 1/2 0 0; 1 -2 2 0];
         b = [1/6;0;2/3;1/6];
         c = [0;1/4;1/2;1];  
+
+    case 'RK44C23'
+        % RK4 satisfying C(2) for i=3 and c2=c3
+        A = [0 0 0 0; 1/2 0 0 0; 1/4 1/4 0 0; 0 -1 2 0];
+        b = [1/6;0;2/3;1/6];
+        c = [0;1/2;1/2;1];        
         
     case 'RK44P2' % RK4 satisfying the second order condition for the pressure (but not third
 % order)

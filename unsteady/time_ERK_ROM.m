@@ -58,16 +58,13 @@ for i_RK=1:s_RK
     % at i=s we calculate F_s, p_(n+1) and u_(n+1)
         
     
-    % right-hand side for ti based on current velocity field uh, vh at
-    % level i
-    % this includes force evaluation at ti and pressure gradient
+    % right-hand side for ti based on current field R at
+    % level i (this includes force evaluation at ti)
     % boundary conditions will be set through set_bc_vectors inside F
     [~,F_rhs]  = F_ROM(R,p,ti,options);
     
     % store right-hand side of stage i
-    % we REMOVE the pressure contribution Gx*p and Gy*p (but not the
-    % vectors y_px and y_py)
-    kR(:,i_RK)  = F_rhs; %Om_inv.*(F_rhs + G*p);
+    kR(:,i_RK)  = F_rhs; 
     
     % update velocity current stage by sum of F_i's until this stage,
     % weighted with Butcher tableau coefficients
@@ -102,31 +99,6 @@ for i_RK=1:s_RK
 
 end
 
-% ru = R(1:M);
-% rv = R(M+1:2*M);
+
+% map back from reduced space to full order model space
 V  = B*R;
-% uh = Bu*ru;
-% vh = Bv*rv;
-% V  = [uh;vh];
-
-
-% if (options.BC.BC_unsteady == 0)
-%     % for steady BC we skip this step and do an additional pressure solve 
-%     % that saves a pressure solve for i=1 in the next time step
-%     
-%     % make a suitable combination of pressures from stages that satisfy the
-%     % C(2) simplifying condition
-%     % three-stage method
-% %     p = -3*kp(:,2) +4*kp(:,3);
-%     % four-stage method
-% %     p = -2*kp(:,2) + 3*kp(:,4);
-% 
-%     % make a suitable combination with the theory of Hairer
-% %     W = inv(A_RK)*diag(c_RK);
-% %     p = kp*W(end,:)';
-% 
-%     % standard method
-%     p = kp(:,end);
-% else
-%     p = pressure_additional_solve(V,p,tn+dt,options);
-% end

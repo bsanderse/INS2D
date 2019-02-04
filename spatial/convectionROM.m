@@ -59,11 +59,11 @@ if (order4==0)
         N2 = size(Iv_uy,1);
         N3 = size(Iu_vx,1);
         N4 = size(Iv_vy,1);        
-        Chat_ux = zeros(M,M,M); % this poses severe memory requirements (m^3)!       
+        Chat_ux = zeros(M,M,M); % this poses severe memory requirements (M^3)!       
         yhat_ux = zeros(M,M); 
         Chat_uy = zeros(M,M,M);
         yhat_uy = zeros(M,M);         
-        Chat_vx = zeros(M,M,M); % this poses severe memory requirements (m^3)!       
+        Chat_vx = zeros(M,M,M); % this poses severe memory requirements (M^3)!       
         yhat_vx = zeros(M,M); 
         Chat_vy = zeros(M,M,M);
         yhat_vy = zeros(M,M);     

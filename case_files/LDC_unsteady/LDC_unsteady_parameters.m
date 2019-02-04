@@ -75,7 +75,7 @@
     
     % only for unsteady problems:
 
-        dt            = 0.001;       % time step (for explicit methods it can be
+        dt            = 0.005;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 10;         % end time
@@ -114,10 +114,11 @@
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
         
-        method            = 20;
-        RK                = 'RK44';
+        method            = 2;
+        theta             = 0.5;
+        RK                = 'GL2';
         
-        method_startup    = 61;
+        method_startup    = 21;
         method_startup_no = 2; % number of velocity fields necessary for start-up
                                % = equal to order of method
         % only method 2: 
@@ -185,7 +186,7 @@
     tecplot.n        = 1;         % write tecplot files every n
     
     rtp.show         = 1;          % real time plotting 
-    rtp.n            = 100;
+    rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'LDC_unsteady_ERK_N40'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

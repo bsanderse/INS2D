@@ -1,0 +1,8 @@
+Shear-layer roll-up
+
+Test case features:
+- unsteady flow with fourth order explicit Runge-Kutta
+- 2nd order spatial discretization
+- inviscid flow (infinite Reynolds number): energy conservation
+- periodic boundary conditions
+
