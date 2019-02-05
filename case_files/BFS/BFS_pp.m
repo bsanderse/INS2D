@@ -83,6 +83,20 @@ legend('x=7, current','x=15, current','x=7, Gartling', 'x=15, Gartling');
 %% velocity
 [up,vp,qp] = get_velocity(V,t,options);
 
+% BFS:
+% l = [0.05 0.1 0.15 0.2 0.4 0.6 0.8 1 1.2 1.4];
+list = 0.1:0.05:1.3;
+% list = 25;
+
+figure
+contour(xp,yp,qp',list)
+axis([x1 x2 y1 y2]);
+axis equal
+colorbar
+set(gca,'LineWidth',2)
+grid
+title('velocity');
+colorbar
 
 %% pressure
 pres = reshape(p,Npx,Npy);
@@ -107,3 +121,36 @@ grid
 title('pressure');
 colorbar
 set(gca,'LineWidth',2)
+
+%% vorticity
+omega = get_vorticity(V,t,options);
+omega = reshape(omega,Nx-1,Ny-1);
+
+figure
+labels = -8:2:10;
+contour(x(2:end-1),y(2:end-1),reshape(omega,Nx-1,Ny-1)',labels,'LineWidth',1);
+% 
+axis equal
+axis([x1 x2 y1 y2]);
+% 
+xlabeltex('x',14);
+ylabeltex('y',14);
+colorbar
+grid
+title('vorticity')
+set(gca,'LineWidth',2);
+% hold off;
+
+%% streamfunction
+psi = get_streamfunction(V,t,options);
+labels = 25;
+contour(x(2:end-1),y(2:end-1),reshape(psi,Nx-1,Ny-1)',labels,'LineWidth',2);
+axis equal
+axis([x1 x2 y1 y2]);
+xlabel('x');
+ylabel('y');
+colorbar
+grid
+title('streamfunction')
+set(gca,'LineWidth',2)
+

@@ -92,8 +92,8 @@ voi = {
     'precompute_convection', 0; ... % precomputed convection matrices
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
     'precompute_force', 0;... % precomputed forcing term
-    't_snapshots', t_end; ... % snapshots 
-    'dt_snapshots', dt; 
+    't_snapshots', 0; ... % snapshots 
+    'dt_snapshots', 0; 
     };
 
 accumulate_object;

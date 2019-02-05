@@ -96,9 +96,9 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
-    rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 5;
+    rtp.movie        = 0;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -114,6 +114,7 @@
     save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
     save_file        = 0;          % save all matlab data after program is completed
+    save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
