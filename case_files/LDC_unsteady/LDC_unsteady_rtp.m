@@ -38,9 +38,10 @@ list = linspace(0,1,20);
 % list = 20;
 figure(1)
 set(gcf,'color','w');
-% pcolor(xp,yp,qp')
-[~,c]=contour(xp,yp,qp',list);
-c.LineWidth = 1;
+pcolor(xp,yp,qp')
+shading interp
+% [~,c]=contour(xp,yp,qp',list);
+% c.LineWidth = 1;
 axis equal
 axis([x1 x2 y1 y2]);
 colorbar

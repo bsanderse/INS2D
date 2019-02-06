@@ -90,6 +90,8 @@
           time_ERK;
       elseif (method==21)
           time_IRK;
-      elseif (method==30)
-          time_ERK_ROM;          
+%       elseif (method==30)
+%           time_ERK_ROM;          
+      else
+          error('time integration method unknown');
       end

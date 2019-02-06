@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 100;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -48,11 +48,21 @@
     D       = 1; % diameter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom = 0;
-    snapshot_data = 'results/LDC_unsteady_1.000e+03_1x1_40x40_0';
+    rom    = 1;      % set to 1 to use ROM solver
+    M      = 10;     % number of modes used
+    % the full snapshotdataset can be reduced by taking as index
+    % 1:Nskip:Nsnapshots
+    t_sample  = 1;  % part of snapshot matrix used for building SVD
+    dt_sample = 0.01; % frequency of snapshots to be used for SVD
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0; 
+
+    snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t1.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -75,10 +85,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.005;       % time step (for explicit methods it can be
+        dt            = 0.02;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 10;         % end time
+        t_end         = 1;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -114,9 +124,9 @@
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
         
-        method            = 2;
+        method            = 30;
         theta             = 0.5;
-        RK                = 'GL2';
+        RK                = 'RK44';
         
         method_startup    = 21;
         method_startup_no = 2; % number of velocity fields necessary for start-up
@@ -186,7 +196,7 @@
     tecplot.n        = 1;         % write tecplot files every n
     
     rtp.show         = 1;          % real time plotting 
-    rtp.n            = 10;
+    rtp.n            = 25;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'LDC_unsteady_ERK_N40'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -205,7 +215,7 @@
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
         
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

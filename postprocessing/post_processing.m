@@ -13,6 +13,26 @@ else
     
 end
 
+%% roms
+if (options.rom.rom == 1)
+    % check if ROM simulation dt is same as FOM dt, or an integer multiple of
+    % it
+    if (rem(dt,dt_snapshots) == 0)
+        skip = dt/dt_snapshots;
+        snapshot_indx = 1:skip:size(snapshots.uh_total,1);
+        % uh_total is of size Nt*Nu
+        error_u = max(abs(uh_total - snapshots.uh_total(snapshot_indx,:)),[],2);
+        error_v = max(abs(vh_total - snapshots.vh_total(snapshot_indx,:)),[],2);
+        figure
+        plot(t_start:dt:t_end,error_u);
+        hold on
+        plot(t_start:dt:t_end,error_v);
+        legend('error in u','error in v');
+        title('error in ROM velocity components');
+    end
+    
+end
+
 %% standard plots
 % velocity;
 % 

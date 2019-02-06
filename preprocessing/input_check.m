@@ -169,7 +169,9 @@ if (rtp.show == 0 && rtp.movie==1)
     warning('real-time plotting off (rtp.show=0) but movie generation is on (rtp.movie=1). no movie will be generated.');
 end
 
-if (save_unsteady==1 && save_file==0)
-    warning('unsteady data is put in workspace (save_unsteady=1) but not saved (save_file=0)');
+if (steady==0)
+    if (save_unsteady==1 && save_file==0)
+        warning('unsteady data is stored in workspace (save_unsteady=1) but not saved to a file (save_file=0)');
+    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

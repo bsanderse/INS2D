@@ -16,7 +16,7 @@ y      = nonuniform_grid(deltay,y1,y2,sy);
 % transform uniform grid to non-uniform cosine grid
 L_x    = x2-x1;
 L_y    = y2-y1;
-x      = (L_x/2) * (1 - cos(pi*x/L_x));
-y      = (L_y/2) * (1 - cos(pi*y/L_y));
+% x      = (L_x/2) * (1 - cos(pi*x/L_x));
+% y      = (L_y/2) * (1 - cos(pi*y/L_y));
 
 end
