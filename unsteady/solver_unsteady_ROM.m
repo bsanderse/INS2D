@@ -1,8 +1,9 @@
 %  Main solver file for unsteady calculations with reduced order model
 
+
 %% load snapshot data
 disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total','dt');
+snapshots = load(snapshot_data,'uh_total','vh_total','dt','t_end','Re','k');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 %% construct economic SVD
@@ -13,6 +14,11 @@ snapshots = load(snapshot_data,'uh_total','vh_total','dt');
 dt_snapshots = snapshots.dt;
 % velocity field as snapshot matrix:
 V_total      = [snapshots.uh_total';snapshots.vh_total'];
+
+% 
+if (snapshots.Re ~= Re)
+    error('Reynolds numbers of snapshot data and current simulation do not match');
+end
 
 % sample dt is multiple of snapshot dt:
 if (rem(dt_sample,dt_snapshots) == 0)
@@ -59,6 +65,13 @@ options.rom.Bv = Bv;
 % options.rom.BvT = BvT;
 toc
 
+% relative information content:
+Sigma = diag(S);
+RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
+disp(['relative energy captured by SVD = ' num2str(RIC)]);
+figure
+semilogy(Sigma/Sigma(1));
+
 disp('starting time-stepping...');
 
 %% precompute matrices
@@ -73,6 +86,11 @@ end
 
 %% initialize reduced order solution
 R  = B'*V;
+
+% map back to velocity space to get statistics of initial velocity field
+V  = B*R;
+[maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+
 
 %% reduced order solution
 
@@ -91,11 +109,11 @@ R  = B'*V;
 % plot(error_convv)
 
 %% load restart file if necessary
-% if (restart.load == 0 && options.output.save_results==1)
-%     fprintf(fconv,'n            dt               t                res              maxdiv           umom             vmom             k\n');
-%     fprintf(fconv,'%-10i %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e\n',...
-%         n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
-% end
+if (options.output.save_results==1)
+    fprintf(fconv,'n            dt               t                res              maxdiv           umom             vmom             k\n');
+    fprintf(fconv,'%-10i %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e %16.8e\n',...
+        n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
+end
 
 %% plot initial solution 
 if (rtp.show==1)

@@ -120,7 +120,7 @@ else
     
     
     %% initialize pressure
-    if (steady==1)
+    if (steady==1 || rom==1)
         % for steady state computations, the initial guess is the provided initial condition
         p  = p_start(:);
     else

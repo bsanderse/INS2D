@@ -13,6 +13,10 @@ function [V,p] = main(case_name,folder_cases)
 
 %   Benjamin Sanderse, September 2018 - January 2019
 
+if (nargin<1)
+    error('please provide an input file');
+end
+
 if (nargin==1) 
    folder_cases = 'case_files'; % default folder name 
 end
