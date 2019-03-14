@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1e100;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -56,13 +56,13 @@
     M      = 2;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
-    t_sample  = 6;  % part of snapshot matrix used for building SVD
+    t_sample  = 8;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
     precompute_convection = 0;
     precompute_diffusion  = 1;
     precompute_force      = 0; 
 
-    snapshot_data = 'results/shear_layer_1.000e+100_6.2832x6.2832_200x200_FOM/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,7 +88,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 6;         % end time
+        t_end         = 8;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -199,7 +199,7 @@
     rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'inviscid_shear_layer_N200_ROM'; % movie name
+    rtp.moviename    = 'viscous_shear_layer_Re100_N200_ROM_M16'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
