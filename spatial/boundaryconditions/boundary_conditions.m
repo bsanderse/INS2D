@@ -13,6 +13,32 @@ else
     
 end
 
+% check types
+if ( max(strcmp(options.BC.u.left,{'dir','per','pres'}))==0)
+    error('wrong BC for u-left');
+end
+if ( max(strcmp(options.BC.u.right,{'dir','per','pres'}))==0)
+    error('wrong BC for u-right');
+end
+if ( max(strcmp(options.BC.u.low,{'dir','per','sym'}))==0)
+    error('wrong BC for u-low');
+end
+if ( max(strcmp(options.BC.u.up,{'dir','per','sym'}))==0)
+    error('wrong BC for u-up');
+end
+if ( max(strcmp(options.BC.v.left,{'dir','per','sym'}))==0)
+    error('wrong BC for v-left');
+end
+if ( max(strcmp(options.BC.v.right,{'dir','per','sym'}))==0)
+    error('wrong BC for v-right');
+end
+if ( max(strcmp(options.BC.v.low,{'dir','per','pres'}))==0)
+    error('wrong BC for v-low');
+end
+if ( max(strcmp(options.BC.v.up,{'dir','per','pres'}))==0)
+    error('wrong BC for v-up');
+end
+
 %% set BC functions
 
 % values set below can be either Dirichlet or Neumann value, 
