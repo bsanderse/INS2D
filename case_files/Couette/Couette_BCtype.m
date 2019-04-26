@@ -1,6 +1,6 @@
 function BC = Couette_BCtype
 
-    BC.BC_unsteady  = 0;
+    BC.BC_unsteady  = 1;
 
     % 'dir' : inflow, wall
     % 'sym' : symmetry

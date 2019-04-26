@@ -20,7 +20,7 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 3; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
     Ny      = 20;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
@@ -85,10 +85,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.1;       % time step (for explicit methods it can be
+        dt            = 0.05;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 10;         % end time
+        t_end         = 50;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 

@@ -71,6 +71,8 @@ RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 figure
 semilogy(Sigma/Sigma(1));
+% or alternatively
+% semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
 disp('starting time-stepping...');
 
@@ -88,6 +90,8 @@ end
 R  = B'*V;
 
 % map back to velocity space to get statistics of initial velocity field
+% note that V will not be equal to the specified initial field, because
+% B*B' does not equal identity in general
 V  = B*R;
 [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
 

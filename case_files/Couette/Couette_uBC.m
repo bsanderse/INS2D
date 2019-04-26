@@ -8,9 +8,10 @@ function u = Couette_uBC(x,y,t,options)
 
 
     if (length(y)==1 && abs(y-y2)<1e-10)
-        u = -ones(length(x)*length(y),1);
+        % accelerating lid which goes to u=1       
+        u = (1-exp(-t))*ones(length(x)*length(y),1);
     elseif (length(y)==1 && abs(y-y1)<1e-10)
-        u = ones(length(x)*length(y),1);
+        u = 0*ones(length(x)*length(y),1);
     end
 
 end

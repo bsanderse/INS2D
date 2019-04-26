@@ -17,6 +17,14 @@ poisson  = options.solversettings.poisson;
 CG_acc   = options.solversettings.CG_acc;
 CG_maxit = options.solversettings.CG_maxit;
 
+% check if a Poisson solve is necessary
+A   = options.discretization.A;
+tol = 1e-14;
+if (max(abs(A*dp-f))<tol)
+    return;
+end
+
+% choose a method to solve the Poisson equation
 if (poisson==1)
     % using pre-determined LU decomposition
     L   = options.solversettings.L;
@@ -25,7 +33,6 @@ if (poisson==1)
     dp  = U\b;
 elseif (poisson==2)
     % using preconditioned CG
-    A   = options.discretization.A;
     L   = options.solversettings.L;
     
     t_pressure = toc;
