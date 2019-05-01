@@ -21,7 +21,7 @@ if (options.rom.rom == 1)
         skip = dt/dt_snapshots;
         % final time should be smaller than FOM time
         if (t_end<=snapshots.t_end)
-            snapshot_end = t_end/dt_snapshots;
+            snapshot_end = ceil(t_end/dt_snapshots);
             snapshot_indx = 1:skip:(snapshot_end+1);
             t_vec = t_start:dt:t_end;
             
