@@ -53,7 +53,7 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 8;     % number of modes used
+    M      = 16;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 4;  % part of snapshot matrix used for building SVD
@@ -64,7 +64,7 @@
     mom_cons = 1; % momentum conserving SVD
 
 %     snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
-    snapshot_data = 'results/shear_layer_1.000e+100_6.2832x6.2832_40x40_momcons_FOM/matlab_data.mat';
+    snapshot_data = 'results/shear_layer01/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -198,7 +198,7 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'viscous_shear_layer_Re100_N200_ROM_M16'; % movie name

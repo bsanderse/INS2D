@@ -1,5 +1,5 @@
 %
-fig_name = 'cospolyadv_average_time';
+fig_name = 'energy_error_ROM_inviscid_momcons';
 
 addpath('/Users/sanderse/Dropbox/work/Programming/libs/altmany-export_fig-cafc7c5/')
 

@@ -3,7 +3,7 @@
 
 %% load snapshot data
 disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total','dt','t_end','Re','k');
+snapshots = load(snapshot_data,'uh_total','vh_total','dt','t_end','Re','k','umom','vmom');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 %% construct economic SVD
