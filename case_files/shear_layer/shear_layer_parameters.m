@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 1e100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -20,8 +20,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 200; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 200;                   % number of volumes in the y-direction
+    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     L_x     = x2-x1;
     L_y     = y2-y1;
@@ -53,16 +53,18 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 2;     % number of modes used
+    M      = 8;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
-    t_sample  = 8;  % part of snapshot matrix used for building SVD
+    t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
     precompute_convection = 0;
     precompute_diffusion  = 1;
     precompute_force      = 0; 
+    mom_cons = 1; % momentum conserving SVD
 
-    snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
+%     snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_1.000e+100_6.2832x6.2832_40x40_momcons_FOM/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,7 +90,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 8;         % end time
+        t_end         = 4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -126,8 +128,8 @@
         % method 21 : generic implicit RK
         % method 30 : generic explicit RK for ROM        
         
-        method            = 20;
-        RK                = 'RK44';
+        method            = 21;
+        RK                = 'GL1';
         
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up
@@ -170,7 +172,7 @@
     poisson_diffusion = 1; % options like poisson pressure
     
     % accuracy for non-linear solves (method 62, 72, 9)
-    nonlinear_acc          = 1e-10;
+    nonlinear_acc          = 1e-12;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
@@ -215,9 +217,10 @@
     
     save_file        = 0;          % save all matlab data after program is completed (e.g. necessary for running ROM afterwards)
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
-                                   % can be useful in postprocessing studies 
+    save_results     = 1;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
+                                   % can be useful in postprocessing
+                                   % studies and ROM construction
                                    % requires save_file=1 to be written to a datafile
     
     cw_output        = 1;          % command window output; 

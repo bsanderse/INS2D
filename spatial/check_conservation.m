@@ -34,7 +34,7 @@ vUp_i = vBC(xp,y(end),t,options);
 
 
 %% check if new velocity field is divergence free (mass conservation)
-maxdiv  = max(abs( M*[uh;vh] + yM));
+maxdiv  = max(abs( M*V + yM ));
 
 
 %% calculate total momentum
@@ -59,7 +59,7 @@ end
 
 
 %% calculate total kinetic energy
-k     = 0.5*sum(Omu.*uh.^2) + 0.5*sum(Omv.*vh.^2);
+k     = 0.5*sum(Omu.*uh.^2) + 0.5*sum(Omv.*vh.^2); % this equals 0.5*(V')*(Omega.*V);
 
 % add boundary contributions in case of Dirichlet BC
 if (strcmp(BC.u.left,'dir'))

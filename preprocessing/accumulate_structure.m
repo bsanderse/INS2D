@@ -93,7 +93,8 @@ voi = {
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
     'precompute_force', 0;... % precomputed forcing term
     't_snapshots', 0; ... % snapshots 
-    'dt_snapshots', 0; 
+    'dt_snapshots', 0; ...
+    'mom_cons', 0; ... % momentum conserving SVD
     };
 
 accumulate_object;

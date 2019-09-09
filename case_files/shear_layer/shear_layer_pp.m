@@ -7,6 +7,12 @@ figure
 plot(time,k/k(1),'s-')
 grid
 
+%% momentum
+figure
+plot(time,umom,'s-')
+hold on
+plot(time,vmom,'o-')
+
 %% vorticity
 % compare e.g. with PhD thesis figure 3.4
 

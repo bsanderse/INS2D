@@ -3,7 +3,7 @@
 % (unsteady) Dirichlet boundary points are not part of solution vector but
 % are prescribed in a 'strong' manner via the uBC and vBC functions
 
-% grid info
+% number of unknowns (modes) in ROM
 M  = options.rom.M;
 % Nu = options.grid.Nu;
 % Nv = options.grid.Nv;

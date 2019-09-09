@@ -36,7 +36,7 @@ if (options.rom.rom == 1)
             
             figure
             plot(t_vec,abs(k - snapshots.k(snapshot_indx)));
-            title('error in ROM kinetic energy');
+            title('error in kinetic energy ROM wrt FOM');
     %         hold on
     %         plot(t_start:dt:t_end,error_v);
     %         legend('error in u','error in v');

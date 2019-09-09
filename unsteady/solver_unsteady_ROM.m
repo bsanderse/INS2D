@@ -42,8 +42,39 @@ if (Nspace ~= Nu+Nv)
     error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
 end
 
-% perform SVD
-[W,S,Z] = svd(V_total(:,snapshot_indx),'econ');
+V_svd = V_total(:,snapshot_indx);
+
+if (options.rom.mom_cons == 1)
+
+    e_u = zeros(Nspace,1);
+    e_v = zeros(Nspace,1);
+    e_u(1:Nu)     = 1;
+    e_v(Nu+1:end) = 1;
+    e = [e_u e_v];
+    e = e / norm(e);
+    
+    % 1) take SVD of (I-yy')*V_svd
+    Vmod = V_svd - e*(e'*V_svd);
+    [W,S,Z] = svd(Vmod,'econ');
+    % 2) add y
+    W = [e W];
+
+%     disp('error in representing vector y before truncating:');
+%     norm(Wext*Wext'*y - y,'inf')
+
+    % 3) truncate:
+%     Wextk = Vext(:,1:k);
+%     Wmodk = Wmod(:,1:k);
+%     Smodk = Smod(1:k,1:k);
+%     disp('error in representing vector y after truncating:');
+%     norm(Vextk*Vextk'*y - y,'inf')
+% 
+%     Umodk = Vextk*Smodk*Wmodk';
+else
+    % perform SVD
+    [W,S,Z] = svd(V_svd,'econ');
+
+end
 
 % take first M columns of W as a reduced basis
 % maximum:
@@ -70,7 +101,7 @@ Sigma = diag(S);
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 figure
-semilogy(Sigma/Sigma(1));
+semilogy(Sigma/Sigma(1),'s');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
@@ -211,8 +242,13 @@ while(n<=nt)
 %         method      = method_temp;
 %     end
     
+    
     % perform one time step with the time integration method
-    time_ERK_ROM;          
+    if (method == 20)
+        time_ERK_ROM;          
+    elseif (method == 21)
+        time_IRK_ROM;
+    end
 
 %     select_time_method;
     

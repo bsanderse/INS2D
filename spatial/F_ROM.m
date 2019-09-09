@@ -1,4 +1,4 @@
-function [maxres,Fres,dF] = F_ROM(R,p,t,options,getJacobian)
+function [maxres,Fres,dF] = F_ROM(R,~,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 if (nargin<5)
@@ -37,18 +37,21 @@ if (options.rom.precompute_convection == 1)
 %     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
 elseif (options.rom.precompute_convection == 0)
     % approach 2:
-    [convu,convv] = convection(B*R,t,options,0);
+    [convu, convv, dconvu, dconvv] = convection(B*R,t,options,getJacobian);
     conv  = B'*(Om_inv.*[convu;convv]);
+    dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
+
 end
 
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
-    [d2, ~] = diffusionROM(R,t,options,0);
+    [d2, dDiff] = diffusionROM(R,t,options,getJacobian);
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2:
-    [d2u,d2v] = diffusion(B*R,t,options,0);
-    d2 = B'*(Om_inv.*[d2u;d2v]);
+    [d2u,d2v,dDiffu,dDiffv] = diffusion(B*R,t,options,getJacobian);
+    d2    = B'*(Om_inv.*[d2u;d2v]);
+    dDiff = B'*(Om_inv.*[dDiffu;dDiffv]);
 end
 
 % body force
@@ -77,11 +80,12 @@ if (getJacobian==1)
     % solution u,v
     % so we only have convection and diffusion in the Jacobian
     
-    dFu  = - dconvu + dDiffu;
-    dFv  = - dconvv + dDiffv;
+%     dFu  = - dconvu + dDiffu;
+%     dFv  = - dconvv + dDiffv;
+%     
+%     dF   = [dFu; dFv];
     
-    dF   = [dFu; dFv];
-    
+    dF   = -dconv + dDiff;
 %     if (options.case.steady==0) % unsteady case, solve for velocities
 %         dF = spdiags(Om_inv,0,NV,NV)*dF;
 %     end
