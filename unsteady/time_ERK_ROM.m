@@ -99,6 +99,5 @@ for i_RK=1:s_RK
 
 end
 
-
 % map back from reduced space to full order model space
-V  = B*R;
+V = B*R + Vbc;

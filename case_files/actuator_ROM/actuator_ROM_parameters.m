@@ -48,6 +48,25 @@
     y_c     = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom    = 1;      % set to 1 to use ROM solver
+    M      = 10;     % number of modes used
+    % the full snapshotdataset can be reduced by taking as index
+    % 1:Nskip:Nsnapshots
+    t_sample  = 10;  % part of snapshot matrix used for building SVD
+    dt_sample = 10/200; % frequency of snapshots to be used for SVD
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0; 
+
+    rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
+                % 1: non-homogeneous, time-independent;
+                % 2: non-homogeneous, time-dependent
+    snapshot_data = 'results/actuator_unsteady01/matlab_data.mat';
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% time and space discretization
@@ -86,7 +105,7 @@
 
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-12;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
         

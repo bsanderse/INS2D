@@ -191,7 +191,12 @@ end
 %% Pressure matrix for pressure correction method;
 % also used to make initial data divergence free or compute additional poisson solve
 
-if (steady == 0 && ~strcmp(visc,'turbulent') && options.rom.rom == 0)
+if (steady == 0 && ~strcmp(visc,'turbulent'))
+    
+    % ROM does not require Poisson solve for simple BC
+    if (options.rom.rom == 1 && options.rom.rom_bc == 0) 
+        return;
+    end
         
     fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;

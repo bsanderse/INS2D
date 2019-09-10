@@ -173,8 +173,8 @@ nonlinear_its(n) = i;
 % solution at new time step with b-coefficients of RK method
 R = Rn + dt*(b_RK_ext*F_rhs);
 
-%
-V = B*R;
+% map back from reduced space to full order model space
+V = B*R + Vbc;
 
 % make V satisfy the incompressibility constraint at n+1; this is only
 % needed when the boundary conditions are time-dependent

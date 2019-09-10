@@ -1,0 +1,3 @@
+actuator_ROM 80 40 1.000e+02
+convergence information pressure solve
+n          iter.        norm             cpu-time

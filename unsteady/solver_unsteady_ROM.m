@@ -2,23 +2,45 @@
 
 
 %% load snapshot data
+
 disp('loading data and making SVD...');
 snapshots = load(snapshot_data,'uh_total','vh_total','dt','t_end','Re','k','umom','vmom');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
-%% construct economic SVD
-% note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
-% the SVD
- 
 % dt that was used for creating the snapshot matrix:
 dt_snapshots = snapshots.dt;
 % velocity field as snapshot matrix:
 V_total      = [snapshots.uh_total';snapshots.vh_total'];
 
-% 
+% check input dimensions
+Nspace  = size(V_total,1); % total number of unknowns (Nu+Nv) of the original model
+Nu      = options.grid.Nu;
+Nv      = options.grid.Nv;
+if (Nspace ~= Nu+Nv)
+    error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
+end
+ 
 if (snapshots.Re ~= Re)
     error('Reynolds numbers of snapshot data and current simulation do not match');
 end
+
+
+%% construct economic SVD
+% note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
+% the SVD
+
+% subtract non-homogeneous BC contribution
+if (options.rom.rom_bc == 1)
+    f       = options.discretization.yM;
+    dp      = pressure_poisson(f,t,options);
+    Vbc     = - options.grid.Om_inv.*(options.discretization.G*dp);
+    V_total = V_total - Vbc; % this velocity field satisfies M*V_total = 0
+else
+    Vbc = zeros(Nu+Nv,1);
+end
+options.rom.Vbc = Vbc;
+    
+    
 
 % sample dt is multiple of snapshot dt:
 if (rem(dt_sample,dt_snapshots) == 0)
@@ -34,16 +56,11 @@ else
     error('sample dt is not an integer multiple of snapshot dt');
 end
 
-% check input dimensions
-Nspace  = size(V_total,1); % total number of unknowns (Nu+Nv) of the original model
-Nu      = options.grid.Nu;
-Nv      = options.grid.Nv;
-if (Nspace ~= Nu+Nv)
-    error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
-end
 
+% select snapshots
 V_svd = V_total(:,snapshot_indx);
 
+% enforce momentum conservation (works for periodic domains)
 if (options.rom.mom_cons == 1)
 
     e_u = zeros(Nspace,1);
@@ -118,12 +135,15 @@ if (options.rom.precompute_diffusion == 1)
 end
 
 %% initialize reduced order solution
+V  = V - Vbc; % subtract boundary condition contribution
+
 R  = B'*V;
 
 % map back to velocity space to get statistics of initial velocity field
 % note that V will not be equal to the specified initial field, because
 % B*B' does not equal identity in general
-V  = B*R;
+V  = B*R + Vbc; % add boundary condition contribution
+
 [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
 
 
@@ -250,6 +270,7 @@ while(n<=nt)
         time_IRK_ROM;
     end
 
+    
 %     select_time_method;
     
     

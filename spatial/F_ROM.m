@@ -14,6 +14,9 @@ Bv = options.rom.Bv;
 
 Om_inv = options.grid.Om_inv;
 
+% steady inhomogeneous BC
+Vbc = options.rom.Vbc;
+
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
     if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0)
@@ -37,7 +40,7 @@ if (options.rom.precompute_convection == 1)
 %     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
 elseif (options.rom.precompute_convection == 0)
     % approach 2:
-    [convu, convv, dconvu, dconvv] = convection(B*R,t,options,getJacobian);
+    [convu, convv, dconvu, dconvv] = convection(B*R+Vbc,t,options,getJacobian);
     conv  = B'*(Om_inv.*[convu;convv]);
     dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
 
@@ -46,12 +49,15 @@ end
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
+    if (options.rom.rom_bc == 1)
+        error('precomputing with boundary conditions not tested');
+    end
     [d2, dDiff] = diffusionROM(R,t,options,getJacobian);
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2:
-    [d2u,d2v,dDiffu,dDiffv] = diffusion(B*R,t,options,getJacobian);
+    [d2u,d2v,dDiffu,dDiffv] = diffusion(B*R+Vbc,t,options,getJacobian);
     d2    = B'*(Om_inv.*[d2u;d2v]);
-    dDiff = B'*(Om_inv.*[dDiffu;dDiffv]);
+    dDiff = B'*(Om_inv.*[dDiffu;dDiffv])*B;
 end
 
 % body force

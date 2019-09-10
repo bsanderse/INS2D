@@ -95,6 +95,7 @@ voi = {
     't_snapshots', 0; ... % snapshots 
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD
+    'rom_bc', 0; ... % 0: homogeneous (no-slip, periodic); 1: non-homogeneous, time-independent; 2: non-homogeneous, time-dependent
     };
 
 accumulate_object;
