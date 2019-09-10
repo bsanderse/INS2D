@@ -31,7 +31,7 @@ end
 
 %% velocity
 [up,vp,qp] = get_velocity(V,t,options);
-list = linspace(0.75,1.05,20);
+list = linspace(0.7,1.15,20);
 % list = 20;
 figure(1)
 set(gcf,'color','w');
