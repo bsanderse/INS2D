@@ -1,4 +1,4 @@
-%% real-time plotting lid-driven cavity 
+%% real-time plotting unsteady actuator
 
 line  = {'r-','b-','k-','m-','g-'};
 color = char(line(j));
