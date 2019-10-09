@@ -458,9 +458,9 @@ switch visc
             Diffvx_div = (alfa*Dvx - Dvx3)*spdiags(1./Omvx,0,length(Omvx),length(Omvx));
             Diffvy_div = (alfa*Dvy - Dvy3)*spdiags(1./Omvy,0,length(Omvy),length(Omvy));
             Diffu  = (1/Re)*Diffux_div*(alfa*Su_ux-Su_ux3) + ...
-                (1/Re)*Diffuy_div*(alfa*Su_uy-Su_uy3);
+                     (1/Re)*Diffuy_div*(alfa*Su_uy-Su_uy3);
             Diffv  = (1/Re)*Diffvx_div*(alfa*Sv_vx-Sv_vx3) + ...
-                (1/Re)*Diffvy_div*(alfa*Sv_vy-Sv_vy3);
+                     (1/Re)*Diffvy_div*(alfa*Sv_vy-Sv_vy3);
             
         end
         

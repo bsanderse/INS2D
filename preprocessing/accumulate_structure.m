@@ -35,7 +35,10 @@ accumulate_object;
 object='fluid';
 
 voi={
-        'Re',      [];
+        'Re',      [];... % Reynolds number
+        'U1',      [];... % velocity scales
+        'U2',      [];... % velocity scales
+        'd_layer',   [];
     };
     
 accumulate_object;

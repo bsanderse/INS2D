@@ -101,7 +101,7 @@ for j = 1:length(mesh_list)
     % run('inputfiles/parameters');       % current parameter file
     run([folder_cases '/' case_name '/' case_name '_parameters.m']);
     
-    % save into structure 'options'
+    % save into a structure called 'options'
     accumulate_structure;
     
     % create files and directory for statistics, tecplot, restart, convergence
