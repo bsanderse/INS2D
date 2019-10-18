@@ -1,4 +1,4 @@
-function [u,v,p] = shear_layer_IC(t,options)
+function [u,v,p,options] = shear_layer_IC(t,options)
 % initial velocity field
 
 yu = options.grid.yu;

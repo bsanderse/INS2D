@@ -1,4 +1,4 @@
-function [u,v,p] = TG_shifted_IC(t,options)
+function [u,v,p,options] = TG_shifted_IC(t,options)
 % initial velocity field Taylor-Green
 
 xu = options.grid.xu;

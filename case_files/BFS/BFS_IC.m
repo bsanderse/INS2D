@@ -1,4 +1,4 @@
-function [u,v,p] = BFS_IC(t,options)
+function [u,v,p,options] = BFS_IC(t,options)
 % initial velocity field LDC
 
 Npx = options.grid.Npx;

@@ -31,32 +31,39 @@ psi = get_streamfunction(V,t,options);
 %% create 2D plots
 
 %% velocity
+figure(1)
+clf
 Axes = zeros(2);
 [up,vp,qp] = get_velocity(V,t,options);
-% list = linspace(0,1,20);
-list = 20;
+% list = 20;
 figure(1)
 set(gcf,'color','w');
-
 Axes(1) = axes;
 contour(Axes(1),x(2:end-1),y(2:end-1),reshape(psi,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
 axis equal
 axis([x1 x2 y1 y2]);
+xlabel('x/D')
+ylabel('y/D')
+title('velocity field')
+set(gca,'FontSize',12);
+
 hold off
 
 Axes(2) = axes;
 % pcolor(xp,yp,qp')
+list = linspace(0.6,1.1,20);
 [~,c]=contour(Axes(2),xp,yp,qp',list);
 c.LineWidth = 1;
 axis equal
 axis([x1 x2 y1 y2]);
-% colorbar
+colorbar('Location','east')
 % caxis([0 1])
 % grid
-% title('velocity')
 % set(gca,'LineWidth',1);
 % hold on
 % labels=20;
+hold on
+plot([2,2],[-0.5,0.5],'k-','LineWidth',3) % actuator disk
 hold off
 set(Axes(2), 'visible', 'off');
 
@@ -106,3 +113,9 @@ set(gca,'LineWidth',1)
 %% kinetic energy
 figure
 plot(0:dt:t_end,k/k(1));
+title('normalised kinetic energy')
+
+%% divergence of velocity field
+figure
+semilogy(0:dt:t_end,maxdiv);
+title('divergence of velocity field')

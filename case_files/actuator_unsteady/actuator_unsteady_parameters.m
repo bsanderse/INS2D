@@ -48,6 +48,25 @@
     y_c     = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom    = 0;      % set to 1 to use ROM solver
+    M      = 50;     % number of modes used
+    % the full snapshotdataset can be reduced by taking as index
+    % 1:Nskip:Nsnapshots
+    t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
+    dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0; 
+
+    snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% time and space discretization
@@ -62,7 +81,7 @@
     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
-    t_end         = 4*pi;        % end time
+    t_end         = 10; %4*pi;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -150,10 +169,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
-    save_unsteady    = 0;
+    save_results     = 0;          % create folder with results files and input files
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

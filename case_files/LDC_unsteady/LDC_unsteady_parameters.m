@@ -53,16 +53,16 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 10;     % number of modes used
+    M      = 20;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
-    t_sample  = 1;  % part of snapshot matrix used for building SVD
+    t_sample  = 10;  % [0,t_sample]: temporal domain of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
     precompute_convection = 0;
     precompute_diffusion  = 0;
     precompute_force      = 0; 
 
-    snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t1.mat';
+    snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t10.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -85,10 +85,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.02;       % time step (for explicit methods it can be
+        dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 1;         % end time
+        t_end         = 10;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -195,8 +195,8 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % real time plotting 
-    rtp.n            = 25;
+    rtp.show         = 0;          % real time plotting 
+    rtp.n            = 50;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'LDC_unsteady_ERK_N40'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -215,7 +215,8 @@
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
+                                   % -> requires save_file=1 to get saved into output file
         
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

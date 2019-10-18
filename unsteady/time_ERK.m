@@ -82,8 +82,8 @@ for i_RK=1:s_RK
     
     % divergence of intermediate velocity field is directly calculated with M
     f       = (M*Vtemp + (yM-yMn)/dt)/c_RK(i_RK);
+    % note: we should have sum(f) = 0 for periodic and no-slip BC
     
-    % we should have sum(f) = 0 for periodic and no-slip BC
     % solve the Poisson equation for the pressure, but not for the first
     % step if the boundary conditions are steady
     if (options.BC.BC_unsteady==1 || i_RK>1)

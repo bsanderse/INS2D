@@ -88,6 +88,7 @@ if (options.rom.mom_cons == 1)
 % 
 %     Umodk = Vextk*Smodk*Wmodk';
 else
+    
     % perform SVD
     [W,S,Z] = svd(V_svd,'econ');
 
@@ -125,6 +126,8 @@ semilogy(Sigma/Sigma(1),'s');
 disp('starting time-stepping...');
 
 %% precompute matrices
+% maybe move this to a file operator_rom?
+
 if (options.rom.precompute_diffusion == 1)
     Nu = options.grid.Nu;
     Nv = options.grid.Nv;
@@ -268,6 +271,8 @@ while(n<=nt)
         time_ERK_ROM;          
     elseif (method == 21)
         time_IRK_ROM;
+    else
+        error('time integration method unknown');
     end
 
     

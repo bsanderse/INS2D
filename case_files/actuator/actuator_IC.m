@@ -1,4 +1,4 @@
-function [u,v,p] = actuator_IC(t,options)
+function [u,v,p,options] = actuator_IC(t,options)
 % initial velocity field actuator
 
 Npx = options.grid.Npx;

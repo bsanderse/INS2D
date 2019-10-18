@@ -1,4 +1,4 @@
-function [u,v,p] = Couette_IC(t,options)
+function [u,v,p,options] = Couette_IC(t,options)
     % initial velocity field LDC
 
     Npx = options.grid.Npx;

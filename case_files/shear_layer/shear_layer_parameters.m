@@ -61,10 +61,10 @@
     precompute_convection = 0;
     precompute_diffusion  = 1;
     precompute_force      = 0; 
-    mom_cons = 1; % momentum conserving SVD
+    mom_cons = 0; % momentum conserving SVD
 
 %     snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
-    snapshot_data = 'results/shear_layer01/matlab_data.mat';
+    snapshot_data = 'results/shear_layer04/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -124,9 +124,9 @@
         % method 17 : DIRK energy-conserving
         % method 18 : Lob IIICE
         % method 19 : Lob IIIA (CN)
-        % method 20 : generic explicit RK
-        % method 21 : generic implicit RK
-        % method 30 : generic explicit RK for ROM        
+        % method 20 : generic explicit RK, also for ROM
+        % method 21 : generic implicit RK, also for ROM
+
         
         method            = 21;
         RK                = 'GL1';
@@ -215,10 +215,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed (e.g. necessary for running ROM afterwards)
+    save_file        = 1;          % save all matlab data after program is completed (e.g. necessary for running ROM afterwards)
     path_results     = 'results';  % path where results are stored
     save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 0;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
+    save_unsteady    = 1;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
                                    % can be useful in postprocessing
                                    % studies and ROM construction
                                    % requires save_file=1 to be written to a datafile
