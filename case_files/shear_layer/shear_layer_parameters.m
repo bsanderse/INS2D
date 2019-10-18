@@ -61,7 +61,8 @@
     precompute_convection = 0;
     precompute_diffusion  = 1;
     precompute_force      = 0; 
-    mom_cons = 0; % momentum conserving SVD
+    mom_cons = 1; % momentum conserving SVD
+    weighted_norm = 1; % use norm weighted with finite volumes
 
 %     snapshot_data = 'results/shear_layer_1.000e+02_6.2832x6.2832_200x200_FOM/matlab_data.mat';
     snapshot_data = 'results/shear_layer04/matlab_data.mat';

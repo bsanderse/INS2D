@@ -17,6 +17,9 @@ Om_inv = options.grid.Om_inv;
 % steady inhomogeneous BC
 Vbc = options.rom.Vbc;
 
+% FOM velocity field:
+V = B*R + Vbc;
+
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
     if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0)
@@ -37,13 +40,18 @@ Gpy  = zeros(M,1); %Gy*p + y_py;
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
     error('precomputed convection term not fully tested');
-%     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
+    %     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
 elseif (options.rom.precompute_convection == 0)
     % approach 2:
-    [convu, convv, dconvu, dconvv] = convection(B*R+Vbc,t,options,getJacobian);
-    conv  = B'*(Om_inv.*[convu;convv]);
-    dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
-
+    [convu, convv, dconvu, dconvv] = convection(V,t,options,getJacobian);
+    if (options.rom.weighted_norm == 0)
+        conv  = B'*(Om_inv.*[convu;convv]);
+        dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
+    elseif (options.rom.weighted_norm == 1)
+        conv  = B'*[convu;convv];
+        dconv = B'*[dconvu;dconvv]*B;
+    end
+    
 end
 
 % diffusion
@@ -55,9 +63,14 @@ if (options.rom.precompute_diffusion == 1)
     [d2, dDiff] = diffusionROM(R,t,options,getJacobian);
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2:
-    [d2u,d2v,dDiffu,dDiffv] = diffusion(B*R+Vbc,t,options,getJacobian);
-    d2    = B'*(Om_inv.*[d2u;d2v]);
-    dDiff = B'*(Om_inv.*[dDiffu;dDiffv])*B;
+    [d2u,d2v,dDiffu,dDiffv] = diffusion(V,t,options,getJacobian);
+    if (options.rom.weighted_norm == 0)   
+        d2    = B'*(Om_inv.*[d2u;d2v]);
+        dDiff = B'*(Om_inv.*[dDiffu;dDiffv])*B;
+    elseif (options.rom.weighted_norm == 1)
+        d2    = B'*[d2u;d2v];
+        dDiff = B'*[dDiffu;dDiffv]*B;
+    end
 end
 
 % body force
@@ -65,10 +78,14 @@ if (options.rom.precompute_force == 1)
     error('precomputed forcing term not implemented');
 else
     [Fx, Fy] = force(t,options);
-%     Fx = Bu'*(options.grid.Omu_inv.*Fx);
-%     Fy = Bv'*(options.grid.Omv_inv.*Fy);
-%     F  = Fx + Fy;
-    F  = B'*(Om_inv.*[Fx;Fy]);
+    %     Fx = Bu'*(options.grid.Omu_inv.*Fx);
+    %     Fy = Bv'*(options.grid.Omv_inv.*Fy);
+    %     F  = Fx + Fy;
+    if (options.rom.weighted_norm == 0)   
+        F  = B'*(Om_inv.*[Fx;Fy]);
+    elseif (options.rom.weighted_norm == 1)
+        F  = B'*[Fx;Fy];
+    end
 end
 
 % residual of ROM
@@ -81,20 +98,20 @@ maxres  = max(abs(Fres));
 
 if (getJacobian==1)
     % Jacobian requested
-        
+    
     % we assume here that the body force Fx, Fy is not depending on the
     % solution u,v
     % so we only have convection and diffusion in the Jacobian
     
-%     dFu  = - dconvu + dDiffu;
-%     dFv  = - dconvv + dDiffv;
-%     
-%     dF   = [dFu; dFv];
+    %     dFu  = - dconvu + dDiffu;
+    %     dFv  = - dconvv + dDiffv;
+    %
+    %     dF   = [dFu; dFv];
     
     dF   = -dconv + dDiff;
-%     if (options.case.steady==0) % unsteady case, solve for velocities
-%         dF = spdiags(Om_inv,0,NV,NV)*dF;
-%     end
+    %     if (options.case.steady==0) % unsteady case, solve for velocities
+    %         dF = spdiags(Om_inv,0,NV,NV)*dF;
+    %     end
     
 else
     dF = spalloc(2*M,2*M,0);

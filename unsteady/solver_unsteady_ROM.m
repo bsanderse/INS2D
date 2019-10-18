@@ -19,7 +19,7 @@ Nv      = options.grid.Nv;
 if (Nspace ~= Nu+Nv)
     error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
 end
- 
+
 if (snapshots.Re ~= Re)
     error('Reynolds numbers of snapshot data and current simulation do not match');
 end
@@ -28,19 +28,21 @@ end
 %% construct economic SVD
 % note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
 % the SVD
+Om     = options.grid.Om;
+Om_inv = options.grid.Om_inv;
 
 % subtract non-homogeneous BC contribution
 if (options.rom.rom_bc == 1)
     f       = options.discretization.yM;
     dp      = pressure_poisson(f,t,options);
-    Vbc     = - options.grid.Om_inv.*(options.discretization.G*dp);
+    Vbc     = - Om_inv.*(options.discretization.G*dp);
     V_total = V_total - Vbc; % this velocity field satisfies M*V_total = 0
 else
     Vbc = zeros(Nu+Nv,1);
 end
 options.rom.Vbc = Vbc;
-    
-    
+
+
 
 % sample dt is multiple of snapshot dt:
 if (rem(dt_sample,dt_snapshots) == 0)
@@ -61,8 +63,8 @@ end
 V_svd = V_total(:,snapshot_indx);
 
 % enforce momentum conservation (works for periodic domains)
-if (options.rom.mom_cons == 1)
-
+if (options.rom.mom_cons == 1 && options.rom.weighted_norm == 0)
+    
     e_u = zeros(Nspace,1);
     e_v = zeros(Nspace,1);
     e_u(1:Nu)     = 1;
@@ -70,28 +72,61 @@ if (options.rom.mom_cons == 1)
     e = [e_u e_v];
     e = e / norm(e);
     
-    % 1) take SVD of (I-yy')*V_svd
+    % 1) construct (I-ee')*V_svd
     Vmod = V_svd - e*(e'*V_svd);
+    % 2) take SVD
     [W,S,Z] = svd(Vmod,'econ');
-    % 2) add y
+    % 3) add e
     W = [e W];
-
-%     disp('error in representing vector y before truncating:');
-%     norm(Wext*Wext'*y - y,'inf')
-
-    % 3) truncate:
-%     Wextk = Vext(:,1:k);
-%     Wmodk = Wmod(:,1:k);
-%     Smodk = Smod(1:k,1:k);
-%     disp('error in representing vector y after truncating:');
-%     norm(Vextk*Vextk'*y - y,'inf')
-% 
-%     Umodk = Vextk*Smodk*Wmodk';
-else
     
+    %     disp('error in representing vector y before truncating:');
+    %     norm(Wext*Wext'*e - e,'inf')
+    
+elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
+    
+    Om_mat     = spdiags(Om,0,Nu+Nv,Nu+Nv);
+    Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
+    Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
+    
+    e_u = zeros(Nspace,1);
+    e_v = zeros(Nspace,1);
+    e_u(1:Nu)     = 1;
+    e_v(Nu+1:end) = 1;
+    e = [e_u e_v];
+    % scale e such that e'*Om*e = I
+    e = e / sqrt(norm(e'*(Om_mat*e)));
+        
+    % 1) construct (I-ee')*Om*V_svd
+    Vmod = V_svd - e*(e'*(Om_mat*V_svd));
+    % 2) apply weighting
+    Vmod = Om_sqrt*Vmod;
+    % 3) perform SVD
+    [W,S,Z] = svd(Vmod,'econ');
+    % 4) transform back
+    W = Om_invsqrt*W;
+    % 5) add e
+    W = [e W];
+    
+elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
+
     % perform SVD
     [W,S,Z] = svd(V_svd,'econ');
+    
+elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
+    
+    Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
+    Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
+    
+    % make weighted snapshot matrix
+    Vmod = Om_sqrt*V_svd;
+    % perform SVD
+    [W,S,Z] = svd(Vmod,'econ');
+    % transform back
+    W = Om_invsqrt*W;
 
+else
+    error('wrong option for weighted norm or momentum conservation');
+    
 end
 
 % take first M columns of W as a reduced basis
@@ -100,7 +135,7 @@ end
 % reduction:
 % M = floor(Nspace/100);
 % M = 16;
-% options.rom.M = M;
+M = options.rom.M;
 % (better is to look at the decay of the singular values in S)
 B  = W(:,1:M);
 % Bu = Wu(:,1:M);
@@ -129,18 +164,28 @@ disp('starting time-stepping...');
 % maybe move this to a file operator_rom?
 
 if (options.rom.precompute_diffusion == 1)
-    Nu = options.grid.Nu;
-    Nv = options.grid.Nv;
-    options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
-                        Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
-    options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
-                        Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
+    if (options.rom.weighted_norm == 0)
+        options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
+            Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
+        options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
+            Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
+    elseif (options.rom.weighted_norm == 1)
+        options.rom.Diff  = Bu'*options.discretization.Diffu*Bu + ...
+            Bv'*options.discretization.Diffv*Bv;
+        options.rom.yDiff = Bu'*options.discretization.yDiffu + ...
+            Bv'*options.discretization.yDiffv;
+        
+    end
 end
 
 %% initialize reduced order solution
 V  = V - Vbc; % subtract boundary condition contribution
 
-R  = B'*V;
+if (options.rom.weighted_norm == 0)
+    R  = B'*V;
+elseif (options.rom.weighted_norm == 1)   
+    R  = B'*(Om.*V);
+end
 
 % map back to velocity space to get statistics of initial velocity field
 % note that V will not be equal to the specified initial field, because
@@ -155,10 +200,10 @@ V  = B*R + Vbc; % add boundary condition contribution
 % test implementation as follows:
 % uh = rand(options.grid.Nu,1);
 % vh = rand(options.grid.Nv,1);
-% 
+%
 % ru = Bu'*uh;
 % rv = Bv'*vh;
-% 
+%
 % [convu_ROM,convv_ROM] = convectionROM(ru,rv,Bu,Bv,t,options,0);
 % % this should equal using the original code but with B*r as input:
 % [convu,convv] = convection(Bu*ru,Bv*rv,t,options,0);
@@ -173,7 +218,7 @@ if (options.output.save_results==1)
         n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
 end
 
-%% plot initial solution 
+%% plot initial solution
 if (rtp.show==1)
     run(rtp.file);
     % for movies, capture this frame
@@ -191,11 +236,11 @@ end
 %     Cu_old = du2dx + duvdy;
 %     Cv_old = duvdx + dv2dy;
 % end
-% 
+%
 % % for methods that need u^(n-1)
 % uh_old = uh;
 % vh_old = vh;
-% 
+%
 % % for methods that need extrapolation of convective terms
 % if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
 %     V_ep      = zeros(Nu+Nv,method_startup_no);
@@ -254,29 +299,29 @@ while(n<=nt)
     % for methods that need a velocity field at n-1 the first time step
     % use RK4 or FC2: one-leg, AB, CN, FC1, IM
     % CN needs start-up for extrapolated Picard linearization
-%     if ((method_temp==2 || method_temp==4 || method_temp==5 || ...
-%             method_temp==71 || method_temp==62  || ...
-%             method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
-%             && n<=method_startup_no)
-%         fprintf(fcw,['starting up with ' num2str(method_startup) '\n']);
-%         method      = method_startup;
-%         
-%     else
-%         method      = method_temp;
-%     end
+    %     if ((method_temp==2 || method_temp==4 || method_temp==5 || ...
+    %             method_temp==71 || method_temp==62  || ...
+    %             method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
+    %             && n<=method_startup_no)
+    %         fprintf(fcw,['starting up with ' num2str(method_startup) '\n']);
+    %         method      = method_startup;
+    %
+    %     else
+    %         method      = method_temp;
+    %     end
     
     
     % perform one time step with the time integration method
     if (method == 20)
-        time_ERK_ROM;          
+        time_ERK_ROM;
     elseif (method == 21)
         time_IRK_ROM;
     else
         error('time integration method unknown');
     end
-
     
-%     select_time_method;
+    
+    %     select_time_method;
     
     
     % the velocities and pressure that are just computed are at
