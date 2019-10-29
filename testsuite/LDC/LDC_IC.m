@@ -1,4 +1,4 @@
-function [u,v,p] = LDC_IC(t,options)
+function [u,v,p,options] = LDC_IC(t,options)
 % initial velocity field LDC
 
 Npx = options.grid.Npx;
