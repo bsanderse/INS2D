@@ -1,3 +1,0 @@
-shear_layer 100 100 1.000e+100
-convergence information pressure solve
-n          iter.        norm             cpu-time
