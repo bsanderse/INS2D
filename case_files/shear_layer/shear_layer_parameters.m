@@ -100,7 +100,7 @@
         % timestepping method
 
         % method 1 : Forward Euler: explicit convection and diffusion, 1st order
-        % method 2 : IMEX: implicit diffusion (Crank-Nicolson),
+        % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
         %            explicit convection (Adams-Bashforth),
         %            second order for theta=1/2
         % method 3 : Backward Euler: implicit convection and diffusion, 1st order
@@ -128,7 +128,7 @@
         % method 21 : generic implicit RK, also for ROM
 
         
-        method            = 5;
+        method            = 2;
         RK                = 'RK44';
         
         method_startup    = 21;
@@ -136,14 +136,14 @@
                                % = equal to order of method
         % only method 2: 
             % theta for diffusion:
-%             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
+            theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
             % coefficients for explicit convection
             % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
             % Forward Euler alfa1=1, alfa2=0
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
         % only method 5:
-            beta    = 0.5; % should be Reynolds dependent
+%             beta    = 0.5; % should be Reynolds dependent
         % only method 61 and 62
             use_Schur = 0; % solve using Schur complement (pressure correction like)
         % Picard (0) or extrapolated Picard (1) (method 61)

@@ -1,5 +1,11 @@
-% one-leg beta method following Verstappen and Veldman (JCP 2003)
+% one-leg beta method following 
+% Symmetry-preserving discretization of turbulent flow, Verstappen and Veldman (JCP 2003)
+% or:﻿Direct numerical simulation of turbulence at lower costs (Journal of
+% Engineering Mathematics 1997)
 
+% formulation:
+% ((beta+1/2)*u^{n+1} -2*beta*u^{n} + (beta-1/2)*u^{n-1})/dt  = 
+%  F((1+beta)*u^n - beta*u^{n-1})
 
 % store variables at start of time step
 tn     = t;

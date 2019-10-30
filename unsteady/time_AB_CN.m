@@ -25,16 +25,30 @@ alfa2 = -1/2;
 % CN coefficients
 % theta = 1/2;
 theta  = options.time.theta;
+
 % store variables at start of time step
 tn     = t;
 Vn     = V;
 pn     = p;
+
+% gradient operator
+G      = options.discretization.G;
+% divergence operator
+M      = options.discretization.M;
+
+% grid variables
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+
+Omu_inv = options.grid.Omu_inv;
+Omv_inv = options.grid.Omv_inv;
+Om_inv  = options.grid.Om_inv;
+
+
 uh     = V(1:Nu);
 vh     = V(Nu+1:end);
 
-% grid variables
-Omu_inv = options.grid.Omu_inv;
-Omv_inv = options.grid.Omv_inv;
+
 
 %% evaluate BC and force at starting point
 [Fx1,Fy1]      = force(tn,options);
