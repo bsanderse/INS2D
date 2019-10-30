@@ -60,7 +60,9 @@ for i_RK=1:s_RK
     % level i
     % this includes force evaluation at ti and pressure gradient
     % boundary conditions will be set through set_bc_vectors inside F
-    [~,F_rhs]  = F(V,p,ti,options);
+    % the pressure p is not important here, it will be removed again in the
+    % next step
+    [~,F_rhs]  = F(V,V,p,ti,options);
     
     % store right-hand side of stage i
     % by adding G*p we effectively REMOVE the pressure contribution Gx*p and Gy*p (but not the

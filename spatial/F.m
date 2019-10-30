@@ -1,15 +1,17 @@
-function [maxres,Fres,dF] = F(V,p,t,options,getJacobian)
+function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
-if (nargin<5)
+% V: velocity field
+% C: 'convection' field: e.g. d(c_x u)/dx + d(c_y u)/dy; usually c_x = u,
+% c_y=v
+% p: pressure
+
+if (nargin<6)
     getJacobian = 0;
 end
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
-
-% uh = V(1:Nu);
-% vh = V(Nu+1:Nu+Nv);
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
@@ -25,7 +27,7 @@ Gpx  = Gx*p + y_px;
 Gpy  = Gy*p + y_py;
 
 % convection:
-[convu, convv, dconvu, dconvv] = convection(V,t,options,getJacobian);
+[convu, convv, dconvu, dconvv] = convection(V,C,t,options,getJacobian);
 
 % diffusion
 [d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
@@ -33,16 +35,13 @@ Gpy  = Gy*p + y_py;
 % body force
 [Fx, Fy] = force(t,options);
 
-% residual in Finite Volume form
+% residual in Finite Volume form, including the pressure contribution
 Fu   = - convu + d2u - Gpx + Fx;
 Fv   = - convv + d2v - Gpy + Fy;
 
-% if (options.case.steady==0) % unsteady case, solve for velocities
-%     Fres = Om_inv.*[Fu;Fv];
-% else
-    Fres = [Fu;Fv];
-% end
+Fres = [Fu;Fv];
 
+% norm of residual
 maxres  = max(abs(Fres));
 
 if (getJacobian==1)
@@ -56,10 +55,6 @@ if (getJacobian==1)
     dFv  = - dconvv + dDiffv;
     
     dF   = [dFu; dFv];
-    
-%     if (options.case.steady==0) % unsteady case, solve for velocities
-%         dF = spdiags(Om_inv,0,NV,NV)*dF;
-%     end
     
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);

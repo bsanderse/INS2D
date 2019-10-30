@@ -10,6 +10,7 @@ Finite Volume method for Incompressible Navier-Stokes equations
   moving actuators and adapted RK time integration
 - turbulence with RANS k-epsilon model
 - turbulence with regularization modeling
+- reduced order modeling (ROM) in POD-Galerkin framework
 
 - steady solver: mixed Picard / Newton; for turbulent flow solution of
   fully coupled system (u,v,p,k,e). this is in general slow and convergence 

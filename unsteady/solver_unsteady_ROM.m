@@ -279,19 +279,9 @@ while(n<=nt)
     %           rev = 1;
     %       end
     
-    %%
-    %         Cu = Cux*spdiags(Iu_ux*uh+yIu_ux,0,N1,N1)*Au_ux + ...
-    %              Cuy*spdiags(Iv_uy*vh+yIv_uy,0,N2,N2)*Au_uy;
-    %         Cv = Cvx*spdiags(Iu_vx*uh+yIu_vx,0,N3,N3)*Av_vx + ...
-    %              Cvy*spdiags(Iv_vy*vh+yIv_vy,0,N4,N4)*Av_vy;
-    %
-    %         Eu = eig(full(spdiags(Omu_inv,0,Nu,Nu)*Cu));
-    %         Ev = eig(full(spdiags(Omv_inv,0,Nv,Nv)*Cv));
-    %         max_eig(n) = max(abs([Eu;Ev]))*dt;
-    %         dtn = dt;
-    %         set_timestep;
-    %         dt  = dtn;
-    %         max_eig_G(n) = labda_conv*dt;
+    %% dynamic timestepping:
+    % set_timestep;
+
     %%
     
     n = n+1;
@@ -319,10 +309,7 @@ while(n<=nt)
     else
         error('time integration method unknown');
     end
-    
-    
-    %     select_time_method;
-    
+        
     
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:

@@ -35,8 +35,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% force
-    % force is to be set in force.m
-    
+    % force is to be set in force.m  
     force_unsteady     = 0; % set to 1 if force is time dependent
     
     % immersed boundary method
@@ -52,7 +51,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = 16;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -129,11 +128,11 @@
         % method 21 : generic implicit RK, also for ROM
 
         
-        method            = 21;
-        RK                = 'GL1';
+        method            = 5;
+        RK                = 'RK44';
         
-        method_startup    = 61;
-        method_startup_no = 2; % number of velocity fields necessary for start-up
+        method_startup    = 21;
+        method_startup_no = 1; % number of velocity fields necessary for start-up
                                % = equal to order of method
         % only method 2: 
             % theta for diffusion:
@@ -144,7 +143,7 @@
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
         % only method 5:
-%             beta    = 0.1; % should be Reynolds dependent
+            beta    = 0.5; % should be Reynolds dependent
         % only method 61 and 62
             use_Schur = 0; % solve using Schur complement (pressure correction like)
         % Picard (0) or extrapolated Picard (1) (method 61)

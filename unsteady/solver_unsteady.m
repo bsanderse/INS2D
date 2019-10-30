@@ -22,12 +22,14 @@ if (method==2) % the only multistep method considered sofar
     if (options.BC.BC_unsteady == 1)
         options = set_bc_vectors(t,options);
     end
-    [convu_old,convv_old] = convection(V,t,options,0);
+    [convu_old,convv_old] = convection(V,V,t,options,0);
 end
 
 % for methods that need u^(n-1)
 uh_old = uh;
 vh_old = vh;
+V_old  = V;
+p_old  = p;
 
 % for methods that need extrapolation of convective terms
 if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
@@ -67,19 +69,9 @@ while(n<=nt)
     %           rev = 1;
     %       end
     
-    %%
-    %         Cu = Cux*spdiags(Iu_ux*uh+yIu_ux,0,N1,N1)*Au_ux + ...
-    %              Cuy*spdiags(Iv_uy*vh+yIv_uy,0,N2,N2)*Au_uy;
-    %         Cv = Cvx*spdiags(Iu_vx*uh+yIu_vx,0,N3,N3)*Av_vx + ...
-    %              Cvy*spdiags(Iv_vy*vh+yIv_vy,0,N4,N4)*Av_vy;
-    %
-    %         Eu = eig(full(spdiags(Omu_inv,0,Nu,Nu)*Cu));
-    %         Ev = eig(full(spdiags(Omv_inv,0,Nv,Nv)*Cv));
-    %         max_eig(n) = max(abs([Eu;Ev]))*dt;
-    %         dtn = dt;
-    %         set_timestep;
-    %         dt  = dtn;
-    %         max_eig_G(n) = labda_conv*dt;
+    %% dynamic timestepping:
+    % set_timestep;
+    
     %%
     
     n = n+1;

@@ -44,7 +44,7 @@ if (options.BC.BC_unsteady == 1)
 end
 
 % convection of current solution
-[convu, convv] = convection(V,tn,options,0);
+[convu, convv] = convection(V,V,tn,options,0);
 
 % diffusion of current solution
 Diffu  = options.discretization.Diffu;
@@ -114,9 +114,23 @@ convu_old = convu;
 convv_old = convv;
 
 % evaluate divergence BC at endpoint, necessary for PC
-yM      = options.discretization.yM;
+if (options.BC.BC_unsteady == 1)
+    options = set_bc_vectors(tn + dt,options);
+end
+yM = options.discretization.yM;
 
-pressure_correction;
+% boundary condition for the difference in pressure between time
+% steps; only non-zero in case of fluctuating outlet pressure
+y_dp = zeros(Nu+Nv,1);
+
+% divergence of Ru and Rv is directly calculated with M
+f    = (M*R + yM)/dt - M*y_dp;
+
+% solve the Poisson equation for the pressure
+dp   = pressure_poisson(f,t,options);
+
+% update velocity field
+V   = R - dt*Om_inv.*(G*dp + y_dp);   
 
 % first order pressure:
 % p_old  = p;

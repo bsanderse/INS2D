@@ -16,7 +16,7 @@ function p = pressure_additional_solve(V,p,t,options)
     
     % note: F already contains G*p with the current p
     % we therefore effectively solve for the pressure difference
-    [~,R,~] = F(V,p,t,options);
+    [~,R,~] = F(V,V,p,t,options);
         
     f  = M*(Om_inv.*R) + ydM;
     

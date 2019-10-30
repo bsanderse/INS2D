@@ -50,3 +50,18 @@ if (method==1 || method==2 || method==5 || method==81 || method==82)
     dt = CFL*min(dt_conv,dt_diff);
     
 end
+
+% alternative: full eigenvalue analysis:
+
+%         Cu = Cux*spdiags(Iu_ux*uh+yIu_ux,0,N1,N1)*Au_ux + ...
+%              Cuy*spdiags(Iv_uy*vh+yIv_uy,0,N2,N2)*Au_uy;
+%         Cv = Cvx*spdiags(Iu_vx*uh+yIu_vx,0,N3,N3)*Av_vx + ...
+%              Cvy*spdiags(Iv_vy*vh+yIv_vy,0,N4,N4)*Av_vy;
+%
+%         Eu = eig(full(spdiags(Omu_inv,0,Nu,Nu)*Cu));
+%         Ev = eig(full(spdiags(Omv_inv,0,Nv,Nv)*Cv));
+%         max_eig(n) = max(abs([Eu;Ev]))*dt;
+%         dtn = dt;
+%         set_timestep;
+%         dt  = dtn;
+%         max_eig_G(n) = labda_conv*dt;

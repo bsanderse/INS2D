@@ -1,6 +1,8 @@
-function [convu, convv, Jacu, Jacv] = convection(V,t,options,getJacobian)
+function [convu, convv, Jacu, Jacv] = convection(V,C,t,options,getJacobian)
 % evaluate convective terms and, optionally, Jacobians
-
+% V: velocity field
+% C: 'convection' field: e.g. d(c_x u)/dx + d(c_y u)/dy; usually c_x = u,
+% c_y=v
 
 
 order4     = options.discretization.order4;
@@ -41,16 +43,17 @@ Jacv = spalloc(Nv,Nu+Nv,0);
 uh = V(1:Nu);
 vh = V(Nu+1:end);
 
-% assumes uh, vh, cu, cv
-% normally cu = uh, cv = vh
+cu = C(1:Nu);
+cv = C(Nu+1:end);
+
 
 if (order4==0)
     
     %% no regularization
     if (regularize == 0)
         
-        cu     = uh;
-        cv     = vh;
+%         cu     = uh;
+%         cv     = vh;
         
         u_ux   = Au_ux*uh+yAu_ux;                 % u at ux
         uf_ux  = Iu_ux*cu+yIu_ux;                 % ubar at ux
@@ -287,8 +290,8 @@ elseif (order4==1)
     Cvx3 = options.discretization.Cvx3;
     Cvy3 = options.discretization.Cvy3;
     
-    cu     = uh;
-    cv     = vh;
+%     cu     = uh;
+%     cv     = vh;
     
     u_ux   = Au_ux*uh+yAu_ux;                 % u at ux
     uf_ux  = Iu_ux*cu+yIu_ux;                 % ubar at ux

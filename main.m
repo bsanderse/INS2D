@@ -37,16 +37,8 @@ global uBC vBC dudtBC dvdtBC;
 % start timer
 tic;
 
-%% select case file
-
-% example case names (see case_files directory):
-% LDC, BFS, shear_layer, TG, actuator
-% folder_cases = 'case_files';
-% case_name    = 'LDC_unsteady';
-% 
 
 %% add folders to path
-
 addpath('bodyforce/');
 addpath('ibm/');
 addpath('postprocessing/');
@@ -68,7 +60,6 @@ addpath('testsuite/');
 
 %% loop over different meshes
 
-
 % determine dt for finest mesh
 % mesh_list = [40 80];% [160 80 40 20 10];% 20 40 80 160];
 % mesh_list = [160 80 40 20 10];
@@ -79,22 +70,9 @@ mesh_list = 64;
 %
 for j = 1:length(mesh_list)
     %     Nx = mesh_list(jj);
-    
-    %     if (jj>1)
-    %     dt_list(end+1) = 1/(round(1/(dt_list(end)*2)));
-    %     end
-    %     dt_list = 0.5*[dt_min dt_min/2 dt_min/10];
+
     jj = 1;
-    % for j = 1:length(dt_list)
-    % %     tic;
-    %     Nx
-    %     dt = dt_list(j)
-    %     dt = dt*2
-    %     j=1;
-    
-    % relax = relax_list(j);
-    % relax = 0;
-    % Re = Re_list(j);
+
     
     %% load input parameters and constants
     disp(['reading input parameters of case: ' num2str(case_name)]);
@@ -113,7 +91,6 @@ for j = 1:length(mesh_list)
     
     if (restart.load == 0)
         
-        %     addpath('inputfiles');
         addpath([folder_cases '/' case_name]);
         
     elseif (restart.load ==1)
@@ -174,8 +151,7 @@ for j = 1:length(mesh_list)
     options = set_bc_vectors(t,options);
     
     %% construct body force or immersed boundary method
-    % this is now done in the residual routines
-    % [Fx,Fy] = force(t,options);
+    % is done in the residual routines e.g. F.m
     
     
     %% input checking

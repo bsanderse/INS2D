@@ -96,7 +96,7 @@ pj    = ptotn;
 Qj    = [Vj;pj];
 
 % initialize right-hand side for all stages
-[~,F_rhs,~]  = F_multiple(Vj,pj,tj,options,0);
+[~,F_rhs,~]  = F_multiple(Vj,Vj,pj,tj,options,0);
 % initialize momentum residual
 fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
 % initialize mass residual
@@ -105,7 +105,7 @@ f      = [fmom;fmass];
 
 if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % Jacobian based on current solution un 
-    [~,~,Jn] = F(Vn,pn,tn,options,1);
+    [~,~,Jn] = F(Vn,Vn,pn,tn,options,1);
     % form iteration matrix, which is now fixed during iterations
     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     %
@@ -127,7 +127,7 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
         
     elseif (options.solversettings.nonlinear_Newton == 2)
         % full Newton
-        [~,~,J] = F_multiple(Vj,pj,tj,options,1);
+        [~,~,J] = F_multiple(Vj,Vj,pj,tj,options,1);
         % form iteration matrix
         dfmom   = Om_sNV/dt-A_RK_ext*J;
         Z   = [dfmom Gtot; ...
@@ -146,7 +146,7 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     
     % evaluate rhs for next iteration and check residual based on
     % computed Vj, pj
-    [~,F_rhs,~] = F_multiple(Vj,pj,tj,options,0);
+    [~,F_rhs,~] = F_multiple(Vj,Vj,pj,tj,options,0);
     fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
     fmass  = - (Mtot*Vj + yMtot);
     

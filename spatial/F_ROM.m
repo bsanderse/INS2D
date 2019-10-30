@@ -43,7 +43,7 @@ if (options.rom.precompute_convection == 1)
     %     [convu, convv, dconvu, dconvv] = convectionROM(ru,rv,t,options,getJacobian);
 elseif (options.rom.precompute_convection == 0)
     % approach 2:
-    [convu, convv, dconvu, dconvv] = convection(V,t,options,getJacobian);
+    [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
     if (options.rom.weighted_norm == 0)
         conv  = B'*(Om_inv.*[convu;convv]);
         dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
