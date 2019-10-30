@@ -78,40 +78,22 @@
 
         % timestepping method
 
-        % method 1 : Forward Euler: explicit convection and diffusion, 1st order
-        % method 2 : IMEX: implicit diffusion (Crank-Nicolson),
+        % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
         %            explicit convection (Adams-Bashforth),
         %            second order for theta=1/2
-        % method 3 : Backward Euler: implicit convection and diffusion, 1st order
-        % method 4 : Crank-Nicolson: implicit convection and diffusion,
-        %            extrapolated Picard for c^(n+1), 2nd order, almost same as IM1
         % method 5 : explicit one leg beta; 2nd order
-        % method 61/62 : Implicit Midpoint: fully conservative
-        %                (saddlepoint-system, no pressure correction), 
-        %                with (61) or without (62) linearization error
-        % method 71/72 : Implicit Midpoint (pressure correction),
-        %                with (71) or without (72) linearization error
-        % method 81/82 : Explicit Runge-Kutta 4, 
-        %                with 1 (81) or 4 (82) pressure-correction steps
-        % method 9     : Implicit Runge-Kutta 4 (Gauss 4)
-        % method 101/102: Explicit Runge-Kutta 2, Heun (102: pc at each stage)
-        % method 111/112: Wray's 3rd order Runge-Kutta with (111) or without (112) Crank-Nicolson
-        % method 12 : General explicit RK method (specify tableau in time_RK_gen)
-        % method 13  : SDIRK 2-stage, 3rd order
-        % method 14 : ARK Radau IIA/B
-        % method 15 : Gauss 6
-        % method 16 : Lob IIIC 3-stage
-        % method 17 : DIRK energy-conserving
-        % method 18 : Lob IIICE
-        % method 19 : Lob IIIA (CN)
-        
+        % method 20 : generic explicit RK, can also be used for ROM        
         method            = 21;
         RK                = 'GL2';
         
-        method_startup    = 61;
+        % for methods that are not self-starting, e.g. AB-CN or one-leg
+        % beta, we need a startup method.
+        % a good choice is for example explicit RK        
+        method_startup    = 20;
         method_startup_no = 2; % number of velocity fields necessary for start-up
-                               % = equal to order of method
-        % only method 2: 
+
+        % parameters for time integration methods:
+        % Adams Bashforth - Crank Nicolson (method 2):
             % theta for diffusion:
 %             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
             % coefficients for explicit convection
@@ -119,12 +101,8 @@
             % Forward Euler alfa1=1, alfa2=0
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
-        % only method 5:
-%             beta    = 0.1; % should be Reynolds dependent
-        % only method 61 and 62
-            use_Schur = 0; % solve using Schur complement (pressure correction like)
-        % Picard (0) or extrapolated Picard (1) (method 61)
-%             EP      = 0;
+        % one-leg beta (method 5):
+%             beta    = 0.5; % in fact, this should be Reynolds dependent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -178,6 +156,9 @@
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
+    rtp.movie        = 0;          % make movie based on the real time plots
+    rtp.moviename    = 'TG';       % movie name
+    rtp.movierate    = 15;         % frame rate (/s)       
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -190,9 +171,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 0;          % save all matlab data after program is completed
-    
+    save_file        = 0;          % save all matlab data after program is completed   
     path_results     = 'results';  % path where results are stored
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data (velocity + pressure)        
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

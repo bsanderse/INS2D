@@ -87,13 +87,21 @@
     timestep.set  = 0;         % time step determined in timestep.m, 
                                % for explicit methods
     timestep.n    = 1;         % determine dt every timestep.n iterations
-    
+
+    % timestepping method
+
+    % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
+    %            explicit convection (Adams-Bashforth),
+    %            second order for theta=1/2
+    % method 5 : explicit one leg beta; 2nd order
+    % method 20 : generic explicit RK, can also be used for ROM
+    % method 21 : generic implicit RK, can also be used for ROM    
     method        = 20;
     RK            = 'RK44P2';
 
-    method_startup    = 20;
-    method_startup_no = 2; % number of velocity fields necessary for start-up
-    theta = 0.5;    
+%     method_startup    = 20;
+%     method_startup_no = 2; % number of velocity fields necessary for start-up
+%     theta = 0.5;    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

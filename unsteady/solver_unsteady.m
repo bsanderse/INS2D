@@ -7,7 +7,7 @@ if (restart.load == 0 && options.output.save_results==1)
         n,dt,t,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
 end
 
-%% plot initial solution 
+%% plot initial solution
 if (rtp.show==1)
     run(rtp.file);
     % for movies, capture this frame
@@ -40,7 +40,7 @@ end
 
 dtn    = dt;
 
-eps    = 1e-12;
+% eps    = 1e-12;
 
 method_temp = method;
 
@@ -69,16 +69,14 @@ while(n<=nt)
     %           rev = 1;
     %       end
     
-    %% dynamic timestepping:
-    % set_timestep;
     
     %%
     
     n = n+1;
     
     % for methods that need a velocity field at n-1 the first time step
-    % use RK4 or FC2: one-leg, AB, CN, FC1, IM
-    % CN needs start-up for extrapolated Picard linearization
+    % (e.g. AB-CN, oneleg beta) use ERK or IRK 
+
     if ((method_temp==2 || method_temp==4 || method_temp==5 || ...
             method_temp==71 || method_temp==62  || ...
             method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
@@ -91,7 +89,17 @@ while(n<=nt)
     end
     
     % perform one time step with the time integration method
-    select_time_method;
+    if (method==2)
+        time_AB_CN;
+    elseif (method==5)
+        time_oneleg;
+    elseif (method==20)
+        time_ERK;
+    elseif (method==21)
+        time_IRK;
+    else
+        error('time integration method unknown');
+    end
     
     
     % the velocities and pressure that are just computed are at
@@ -99,7 +107,7 @@ while(n<=nt)
     t = t + dt;
     time(n) = t;
     
-    % check residuals, conservation, write output files
+    % check residuals, conservation, set timestep, write output files
     process_iteration;
     
     

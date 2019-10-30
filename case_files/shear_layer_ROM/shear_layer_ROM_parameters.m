@@ -53,8 +53,15 @@
 
     rom    = 1;      % set to 1 to use ROM solver
     M      = 16;     % number of modes used
+    t_sample  = 8;  % part of snapshot matrix used for building SVD
+    dt_sample = 0.01; % frequency of snapshots to be used for SVD
+
     precompute_convection = 0;
     precompute_diffusion  = 1;
+    precompute_force      = 0; 
+    rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
+                % 1: non-homogeneous, time-independent;
+                % 2: non-homogeneous, time-dependent   
 
     snapshot_data = 'results/shear_layer_snapshotdata/matlab_data.mat';
     
@@ -92,56 +99,32 @@
 
         % timestepping method
 
-        % method 1 : Forward Euler: explicit convection and diffusion, 1st order
-        % method 2 : IMEX: implicit diffusion (Crank-Nicolson),
+        % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
         %            explicit convection (Adams-Bashforth),
         %            second order for theta=1/2
-        % method 3 : Backward Euler: implicit convection and diffusion, 1st order
-        % method 4 : Crank-Nicolson: implicit convection and diffusion,
-        %            extrapolated Picard for c^(n+1), 2nd order, almost same as IM1
         % method 5 : explicit one leg beta; 2nd order
-        % method 61/62 : Implicit Midpoint: fully conservative
-        %                (saddlepoint-system, no pressure correction), 
-        %                with (61) or without (62) linearization error
-        % method 71/72 : Implicit Midpoint (pressure correction),
-        %                with (71) or without (72) linearization error
-        % method 81/82 : Explicit Runge-Kutta 4, 
-        %                with 1 (81) or 4 (82) pressure-correction steps
-        % method 9     : Implicit Runge-Kutta 4 (Gauss 4)
-        % method 101/102: Explicit Runge-Kutta 2, Heun (102: pc at each stage)
-        % method 111/112: Wray's 3rd order Runge-Kutta with (111) or without (112) Crank-Nicolson
-        % method 12 : General explicit RK method (specify tableau in time_RK_gen)
-        % method 13  : SDIRK 2-stage, 3rd order
-        % method 14 : ARK Radau IIA/B
-        % method 15 : Gauss 6
-        % method 16 : Lob IIIC 3-stage
-        % method 17 : DIRK energy-conserving
-        % method 18 : Lob IIICE
-        % method 19 : Lob IIIA (CN)
-        % method 20 : generic explicit RK
-        % method 21 : generic implicit RK
-        % method 30 : generic explicit RK for ROM
-        
-        method            = 30;
+        % method 20 : generic explicit RK, can also be used for ROM
+        % method 21 : generic implicit RK, can also be used for ROM            
+        method            = 20;
         RK                = 'RK44';
-        
+
+        % for methods that are not self-starting, e.g. AB-CN or one-leg
+        % beta, we need a startup method.
+        % a good choice is for example explicit RK        
         method_startup    = 61;
         method_startup_no = 2; % number of velocity fields necessary for start-up
                                % = equal to order of method
-        % only method 2: 
-            % theta for diffusion:
+        % parameters for time integration methods:
+        % Adams Bashforth - Crank Nicolson (method 2):
+        % theta for diffusion:
 %             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
             % coefficients for explicit convection
             % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
             % Forward Euler alfa1=1, alfa2=0
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
-        % only method 5:
+        % one-leg beta (method 5):
 %             beta    = 0.1; % should be Reynolds dependent
-        % only method 61 and 62
-            use_Schur = 0; % solve using Schur complement (pressure correction like)
-        % Picard (0) or extrapolated Picard (1) (method 61)
-%             EP      = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

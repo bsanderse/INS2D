@@ -32,6 +32,7 @@ alpha  = 0.4070-0.0845*I; % see paper Noack, JFM 2005
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get Orr-Sommerfeld eigenmodes as chebfuns
+disp('determine initial condition from Orr-Sommerfeld analysis...')
 [ mode_u, mode_v, omega ] = shear_layer_OrrSommerfeld( alpha, t ,options );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
