@@ -1,3 +1,5 @@
+function [Vnew,pnew] = time_ERK(Vn,pn,tn,dt,options)
+
 %% general explicit Runge-Kutta method
 
 % (unsteady) Dirichlet boundary points are not part of solution vector but
@@ -10,6 +12,7 @@ Np = options.grid.Np;
 Om_inv = options.grid.Om_inv;
 
 % get coefficients of RK method
+% make character string if necessary
 if (isnumeric(options.time.RK))
     options.time.RK = num2str(options.time.RK);
 end
@@ -27,9 +30,11 @@ A_RK = [A_RK(2:end,:); b_RK'];
 c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 
 % store variables at start of time step
-tn     = t;
-Vn     = V;
-pn     = p;
+% tn     = t;
+% Vn     = V;
+% pn     = p;
+V = Vn;
+p = pn;
 
 % right hand side evaluations, initialized at zero
 kV     = zeros(Nu+Nv,s_RK);
@@ -128,3 +133,6 @@ else
     % that saves a pressure solve for i=1 in the next time step
     p = pressure_additional_solve(V,p,tn+dt,options);
 end
+
+Vnew = V;
+pnew = p;

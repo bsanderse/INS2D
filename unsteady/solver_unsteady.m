@@ -31,6 +31,10 @@ vh_old = vh;
 V_old  = V;
 p_old  = p;
 
+Vn = V;
+pn = p;
+tn = t;
+
 % for methods that need extrapolation of convective terms
 if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
     V_ep      = zeros(Nu+Nv,method_startup_no);
@@ -84,13 +88,13 @@ while(n<=nt)
         method      = method_temp;
     end
     
-    % perform one time step with the time integration method
+    % perform a single time step with the time integration method
     if (method==2)
         time_AB_CN;
     elseif (method==5)
         time_oneleg;
     elseif (method==20)
-        time_ERK;
+        [V,p] = time_ERK(Vn,pn,tn,dt,options);
     elseif (method==21)
         time_IRK;
     else
@@ -100,8 +104,13 @@ while(n<=nt)
     
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:
-    t = t + dt;
+    t = tn + dt;
     time(n) = t;
+                
+    % update old solution and time level
+    Vn = V;
+    pn = p;
+    tn = t;        
     
     % check residuals, conservation, set timestep, write output files
     process_iteration;
