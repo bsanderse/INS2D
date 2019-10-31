@@ -90,7 +90,7 @@ if (floor(Nx/2)==Nx/2) % Nx even
 %     disp('min u along vertical centerline');
     
     umid = u(Nx/2,:);
-    [umin pos] = min(umid);
+    [umin, pos] = min(umid);
 %     disp(umin);
 %     disp(yp(pos));  
     
@@ -101,9 +101,10 @@ if (floor(Nx/2)==Nx/2) % Nx even
         min_y = min(hy);
     end
     cs = spline(yp,umid);
+    L_y = y2 - y1;
     yfine = linspace(yp(1),yp(end),L_y/min_y); % linear distribution with minimum grid size
     ufine = ppval(cs,yfine);
-    [umin pos] = min(ufine);
+    [umin, pos] = min(ufine);
     umax_list(j) = umin;
     ymax_list(j) = yfine(pos);
     
@@ -144,7 +145,7 @@ if (floor(Nx/2)==Nx/2) % Nx even
     title('pressure at vertical centerline');
 
 else
-    [umin pos] = min((u(ceil(Nx/2),:)+u(floor(Nx/2),:))/2);
+    [umin, pos] = min((u(ceil(Nx/2),:)+u(floor(Nx/2),:))/2);
 %     disp(umin);
 %     disp(yp(pos));
 end
@@ -153,7 +154,7 @@ if (floor(Ny/2)==Ny/2) % Ny even
 %     disp('max and min v along horizontal centerline');
     
     vmid  = v(:,Ny/2);      
-    [vmax pos] = max(vmid);
+    [vmax, pos] = max(vmid);
 %     disp(vmax);
 %     disp(xp(pos));   %    disp(1-xp(pos));   
     
@@ -164,17 +165,18 @@ if (floor(Ny/2)==Ny/2) % Ny even
         min_x = min(hx);
     end    
     cs = spline(xp,vmid);
+    L_x = x2-x1;
     xfine = linspace(xp(1),xp(end),L_x/min_x); % linear distribution with minimum grid size
     vfine = ppval(cs,xfine);
-    [vmax pos] = max(vfine);
+    [vmax, pos] = max(vfine);
     vmax_list(j) = vmax;
     xmax_list(j) = xfine(pos); %1-xfine(pos);
     
     
-    [vmin pos] = min(vmid);
+    [vmin, pos] = min(vmid);
 %     disp(vmin);
 %     disp(xp(pos));   %    disp(1-xp(pos));       
-    [vmin pos] = min(vfine);
+    [vmin, pos] = min(vfine);
     vmin_list(j) = vmin;
     xmin_list(j) = 1-xfine(pos);
    
@@ -211,10 +213,10 @@ if (floor(Ny/2)==Ny/2) % Ny even
     title('pressure at horizontal centerline');
 
 else
-    [vmax pos] = max((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
+    [vmax, pos] = max((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
 %     disp(vmax);
 %     disp(xp(pos)); %disp(1-xp(pos));
-    [vmin pos] = min((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
+    [vmin, pos] = min((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
 %     disp(vmin);
 %     disp(xp(pos)); %disp(1-xp(pos));
 end
@@ -222,7 +224,7 @@ end
 
 %% convergence graphs
 
-if (j==length(mesh_list) && length(mesh_list)>1)    
+if (j==Nsim && Nsim>1)    
     
     figure
     if (Re==1000)

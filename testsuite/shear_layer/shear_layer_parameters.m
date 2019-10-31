@@ -14,19 +14,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0;
     x2      = 2*pi;
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 100; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 100;                   % number of volumes in the x-direction
     Ny      = 100;                   % number of volumes in the y-direction
-
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -179,7 +173,7 @@
     save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
-    cw_output        = 1;          % command window output; 
+    cw_output        = 0;          % command window output; 
                                    % 0: output file, 1: local command window;
     
     filelen          = 8;          % number of characters for output files

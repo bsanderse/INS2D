@@ -1,5 +1,7 @@
 % input file                
 % project = 'TG';   % project name used in filenames
+run_multiple = 1;
+mesh_list    = [10 20 40 80];
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,7 +9,7 @@
 %     u_inf   = 1;
 %     delta   = 1;
     Re      = 100;                  % Reynolds number
-    visc    = 'laminar';              % laminar or turbulent; 
+    visc    = 'laminar';            % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
     regularize = 0; %0: no regularization; 1: Leray; 2: C2
@@ -16,21 +18,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0;
     x2      = 2;
     y1      = 0;
     y2      = 2;
 
-    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = mesh_list(j);         % number of volumes in the x-direction
+    Ny      = mesh_list(j);         % number of volumes in the y-direction
 
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
-
-    sx      = 1;                  % stretch factor
+    sx      = 1;                    % stretch factor
     sy      = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,8 +84,8 @@
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 21;
-        RK                = 'GL1';
+        method            = 20;
+        RK                = 'RK44';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.

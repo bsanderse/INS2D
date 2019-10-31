@@ -13,19 +13,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = -10;
     x2      = 10;
     y1      = -10;
     y2      = 10;
 
-    Nx      = 80; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 80;                   % number of volumes in the x-direction
     Ny      = 80;                   % number of volumes in the y-direction
-
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;

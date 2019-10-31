@@ -1,7 +1,3 @@
-% input file                
-% project = 'LDC_inviscid';   % project name used in filenames
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 100;                  % Reynolds number
@@ -14,21 +10,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0;
     x2      = 1;
     y1      = 0;
     y2      = 1;
 
-    Nx      = 20; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 20;                   % number of volumes in the x-direction
     Ny      = 20;                   % number of volumes in the y-direction
 
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
-
-    sx      = 1;                  % stretch factor
+    sx      = 1;                    % stretch factor
     sy      = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

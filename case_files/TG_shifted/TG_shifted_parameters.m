@@ -1,3 +1,6 @@
+run_multiple = 1;
+mesh_list    = [10 20 40 80];
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
 %     u_inf   = 1;
@@ -12,19 +15,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0.25;
     x2      = 2.25;
     y1      = 0.25;
     y2      = 2.25;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
-
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
+    Nx      = mesh_list(j);         % number of volumes in the x-direction
+    Ny      = mesh_list(j);         % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -66,7 +63,7 @@
     
     % only for unsteady problems:
 
-        dt            = 0.1;       % time step (for explicit methods it can be
+        dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 1;         % end time
@@ -83,8 +80,8 @@
         %            second order for theta=1/2
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM        
-        method            = 21;
-        RK                = 'GL2';
+        method            = 20;
+        RK                = 'RK44';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.

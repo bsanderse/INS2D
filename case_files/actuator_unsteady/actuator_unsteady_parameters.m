@@ -13,19 +13,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0;
     x2      = 10;
     y1      = -2;
     y2      = 2;
 
-    Nx      = 200; %mesh_list(j);         % number of volumes in the x-direction
+    Nx      = 200;                  % number of volumes in the x-direction
     Ny      = 80;                   % number of volumes in the y-direction
-
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -97,8 +91,23 @@
     method        = 20;
     RK            = 'RK44P2';
 
+    % for methods that are not self-starting, e.g. AB-CN or one-leg
+    % beta, we need a startup method.
+    % a good choice is for example explicit RK
 %     method_startup    = 20;
 %     method_startup_no = 2; % number of velocity fields necessary for start-up
+
+    % parameters for time integration methods:
+    % Adams Bashforth - Crank Nicolson (method 2):
+        % theta for diffusion:
+%             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
+        % coefficients for explicit convection
+        % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
+        % Forward Euler alfa1=1, alfa2=0
+%             alfa1   = 3/2;
+%             alfa2   = -1/2;
+    % one-leg beta (method 5):
+%             beta    = 0.5; % in fact, this should be Reynolds dependent    
 %     theta = 0.5;
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

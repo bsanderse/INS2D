@@ -1,7 +1,6 @@
 % input file                
 % project = 'shear_layer';   % project name used in filenames
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1e100;                  % Reynolds number
@@ -14,19 +13,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-    global x1 x2 y1 y2;
     x1      = 0;
     x2      = 2*pi;
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 40; %mesh_list(j);         % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
-
-    L_x     = x2-x1;
-    L_y     = y2-y1;
-    deltax  = L_x/Nx;               % uniform mesh size x-direction                                   
-    deltay  = L_y/Ny;               % uniform mesh size y-direction
+    Nx      = 40;          % number of volumes in the x-direction
+    Ny      = 40;          % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;

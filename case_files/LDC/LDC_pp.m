@@ -166,15 +166,15 @@ if (floor(Ny/2)==Ny/2) % Ny even
     cs = spline(xp,vmid);
     xfine = linspace(xp(1),xp(end),L_x/min_x); % linear distribution with minimum grid size
     vfine = ppval(cs,xfine);
-    [vmax pos] = max(vfine);
+    [vmax, pos] = max(vfine);
     vmax_list(j) = vmax;
     xmax_list(j) = xfine(pos); %1-xfine(pos);
     
     
-    [vmin pos] = min(vmid);
+    [vmin, pos] = min(vmid);
     disp(vmin);
     disp(xp(pos));   %    disp(1-xp(pos));       
-    [vmin pos] = min(vfine);
+    [vmin, pos] = min(vfine);
     vmin_list(j) = vmin;
     xmin_list(j) = 1-xfine(pos);
    
@@ -211,10 +211,10 @@ if (floor(Ny/2)==Ny/2) % Ny even
     title('pressure at horizontal centerline');
 
 else
-    [vmax pos] = max((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
+    [vmax, pos] = max((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
     disp(vmax);
     disp(xp(pos)); %disp(1-xp(pos));
-    [vmin pos] = min((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
+    [vmin, pos] = min((v(:,ceil(Ny/2))+v(:,ceil(Ny/2)))/2);
     disp(vmin);
     disp(xp(pos)); %disp(1-xp(pos));
 end
@@ -222,7 +222,7 @@ end
 
 %% convergence graphs
 
-if (j==length(mesh_list) && length(mesh_list)>1)    
+if (j==Nsim && Nsim>1)    
     
     figure
     if (Re==1000)

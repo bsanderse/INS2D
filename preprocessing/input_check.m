@@ -102,23 +102,6 @@ else
     end
     
     
-    %% body forces
-    
-    % set body force if not set
-    %     if (exist('Fx','var')~=1)
-    %         Fx    = zeros(Nu,1);
-    %     end
-    %     if (exist('Fy','var')~=1)
-    %         Fy    = zeros(Nv,1);
-    %     end
-    
-    %     if (strcmp(options.case.visc,'turbulent'))
-    %         % initialize body forces k and epsilon equation
-    %         Fk  = zeros(Np,1);
-    %         Fe  = zeros(Np,1);
-    %     end
-    
-    
     %% initialize pressure
     if (steady==1 || rom==1)
         % for steady state computations, the initial guess is the provided initial condition
@@ -139,7 +122,7 @@ else
     if (steady==1)
         options.solversettings.Newton_factor = 0;
     elseif (steady==0)
-        if (method==21 || method_startup==21) % implicit RK time integration
+        if (method==21 || (exist('method_startup','var') && method_startup==21)) % implicit RK time integration
             options.solversettings.Newton_factor = 1;
         end
     end

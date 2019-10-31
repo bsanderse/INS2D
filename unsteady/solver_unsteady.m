@@ -77,13 +77,9 @@ while(n<=nt)
     % for methods that need a velocity field at n-1 the first time step
     % (e.g. AB-CN, oneleg beta) use ERK or IRK 
 
-    if ((method_temp==2 || method_temp==4 || method_temp==5 || ...
-            method_temp==71 || method_temp==62  || ...
-            method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
-            && n<=method_startup_no)
+    if ((method_temp==2 || method_temp==5) && n<=method_startup_no)
         fprintf(fcw,['starting up with method ' num2str(method_startup) '\n']);
-        method      = method_startup;
-        
+        method      = method_startup;        
     else
         method      = method_temp;
     end

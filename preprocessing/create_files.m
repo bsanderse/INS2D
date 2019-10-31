@@ -2,8 +2,9 @@
 %%% create files and directories
 
 if (restart.load==0 && options.output.save_results==1)
-    file         = [project,'_',num2str(Re,'%10.3e'),'_',num2str(L_x),'x',num2str(L_y),...
-        '_',num2str(Nx),'x',num2str(Ny)];
+%     file         = [project,'_',num2str(Re,'%10.3e'),'_',num2str(L_x),'x',num2str(L_y),...
+%         '_',num2str(Nx),'x',num2str(Ny)];
+    file         = [project,'_',num2str(Re,'%10.3e'),'_',num2str(Nx),'x',num2str(Ny)];
     
     % create results directory if not present
     if (~isdir(path_results))

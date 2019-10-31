@@ -57,27 +57,27 @@ addpath('testsuite/');
 %     rmpath('inputfiles/');
 % end
 
+   
+%% load input parameters and constants
+disp(['reading input parameters of case: ' num2str(case_name)]);
+j = 1; % simulation index counter
+run([folder_cases '/' case_name '/' case_name '_parameters.m']);
 
-%% loop over different meshes
-
-% determine dt for finest mesh
-% mesh_list = [40 80];% [160 80 40 20 10];% 20 40 80 160];
-% mesh_list = [160 80 40 20 10];
-% mesh_list = [5 10 20 40 80];
-mesh_list = 64;
-% mesh_list = [16 32 64 128];
-% dt_list = 0.01; %0.002*pi;
-%
-for j = 1:length(mesh_list)
-    %     Nx = mesh_list(jj);
-
-    jj = 1;
-
+% check if multiple simulations should be ran
+if (~exist('run_multiple','var') || run_multiple == 0)
+    Nsim = 1;
+else
+    Nsim = length(mesh_list);
+end
     
-    %% load input parameters and constants
-    disp(['reading input parameters of case: ' num2str(case_name)]);
-    % run('inputfiles/parameters');       % current parameter file
-    run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+% loop over multiple simulations (e.g. different meshes or time steps)
+for j=1:Nsim
+    
+    
+    if (j>1)
+        % run parameter file again in case we are doing a mesh study
+        run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+    end
     
     % save into a structure called 'options'
     accumulate_structure;
@@ -216,7 +216,7 @@ for j = 1:length(mesh_list)
         
     end
     
-    cpu(j,jj) = toc;
+    cpu(j,1) = toc;
     fprintf(fcw,['total elapsed CPU time: ' num2str(toc) '\n']);
     
     if (poisson==5)
@@ -239,7 +239,6 @@ for j = 1:length(mesh_list)
     end
     
     
-    clear n Fx Fy;
-    % clear nonlinear_its
-    %
+%     clearvars -except folder_cases case_name j Nsim u_error_i v_error_i ...
+%         u_error_2 v_error_2 k_error_i p_error_i p_error_2;
 end

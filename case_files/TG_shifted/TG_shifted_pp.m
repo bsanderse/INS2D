@@ -5,6 +5,10 @@ xv = options.grid.xv;
 yv = options.grid.yv;
 xpp = options.grid.xpp;
 ypp = options.grid.ypp;
+
+uh = V(1:Nu);
+vh = V(Nu+1:end);
+
 % temporal = 0;
 % % keyboard;
 % if (temporal==1)
@@ -33,13 +37,13 @@ u_exact = -sin(pi*xu).*cos(pi*yu)*t_factor2;
 v_exact = cos(pi*xv).*sin(pi*yv)*t_factor2;
 u_error = uh-u_exact(:);
 v_error = vh-v_exact(:);
-u_error_i(j) = max(abs(u_error))
-v_error_i(j) = max(abs(v_error))
-u_error_2(j) = sqrt( sum(u_error.^2)/Nu )
-v_error_2(j) = sqrt( sum(v_error.^2)/Nv )
+u_error_i(j) = max(abs(u_error));
+v_error_i(j) = max(abs(v_error));
+u_error_2(j) = sqrt( sum(u_error.^2)/Nu );
+v_error_2(j) = sqrt( sum(v_error.^2)/Nv );
 
 k_exact = t_factor1;
-k_error_i(j) = abs(k_exact(end)-k(end))
+k_error_i(j) = abs(k_exact(end)-k(end));
 
 
 % Gpx_exact = -0.5*pi*sin(2*pi*xu)*t_factor1;
@@ -63,9 +67,21 @@ k_error_i(j) = abs(k_exact(end)-k(end))
 p_exact = 0.25*(cos(2*pi*xpp)+cos(2*pi*ypp))*t_factor1;
 p       = p - mean(p(:));
 p_error      = p(:)-p_exact(:);
-p_error_i(j) = max(abs(p_error))
-p_error_2(j) = sqrt( sum(p_error.^2)/Np)
+p_error_i(j) = max(abs(p_error));
+p_error_2(j) = sqrt( sum(p_error.^2)/Np);
 
+
+if (j==Nsim && Nsim>1)    
+    
+    figure    
+    loglog(1./mesh_list,u_error_i,'x-')
+    hold on
+    loglog(1./mesh_list,v_error_i,'s-')
+    loglog(1./mesh_list,k_error_i,'o-')
+    loglog(1./mesh_list,p_error_i,'d-');
+    legend('u','v','k','p');
+    grid on
+end
 
 % % convection
 % cu     = uh;
