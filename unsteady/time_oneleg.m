@@ -58,15 +58,16 @@ V  = Vtemp - dt_beta*Om_inv.*G*dp;
 % update pressure (second order)
 p_new  = 2*p - p_old + (4/3)*dp;
 
+% alternatively, do an additional Poisson solve:
 if (options.solversettings.p_add_solve == 1)
     p_new = pressure_additional_solve(V,p,tn+dt,options);
 end
 
 % store variables
-p_old  = p;
+p_old  = pn;
 p      = p_new;
                  
-V_old = V;
+V_old  = Vn;
 
 
 %%
