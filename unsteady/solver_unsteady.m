@@ -17,20 +17,22 @@ if (rtp.show==1)
     end
 end
 
-%% for multistep methods or methods that need extrapolation of previous time steps
-if (method==2) % the only multistep method considered sofar
+%% start-up of multistep methods
+
+% for methods that need convection from previous time step
+if (method==2)
     if (options.BC.BC_unsteady == 1)
         options = set_bc_vectors(t,options);
     end
     [convu_old,convv_old] = convection(V,V,t,options,0);
+    conv_old = [convu_old;convv_old];
 end
 
 % for methods that need u^(n-1)
-uh_old = uh;
-vh_old = vh;
 V_old  = V;
 p_old  = p;
 
+% set current velocity and pressure
 Vn = V;
 pn = p;
 tn = t;
@@ -90,13 +92,14 @@ while(n<=nt)
     
     % perform a single time step with the time integration method
     if (method==2)
-        time_AB_CN;
+        [V,p,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options);
+        conv_old = conv;
     elseif (method==5)
-        time_oneleg;
+        [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
     elseif (method==20)
         [V,p] = time_ERK(Vn,pn,tn,dt,options);
     elseif (method==21)
-        time_IRK;
+        [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
     else
         error('time integration method unknown');
     end
@@ -107,7 +110,11 @@ while(n<=nt)
     t = tn + dt;
     time(n) = t;
                 
-    % update old solution and time level
+    % update old solution (used for multistep methods)
+    V_old = Vn;
+    p_old = pn;    
+    
+    % update solution
     Vn = V;
     pn = p;
     tn = t;        

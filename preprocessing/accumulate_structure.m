@@ -114,7 +114,8 @@ voi = {
     'dt', []; ...
     'RK', []; ...
     'method', 0;...
-    'theta', [];... % theta value for implicit theta method
+    'theta', 0.5;... % theta value for implicit theta method
+    'beta', [];... % beta value for oneleg beta method
     };
 
 % options = accumulate_object(object,voi,options);

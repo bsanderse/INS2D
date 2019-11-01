@@ -71,6 +71,7 @@ else
         umom   = zeros(nt,1);
         vmom   = zeros(nt,1);
         time   = zeros(nt,1);
+        nonlinear_its = zeros(nt,1);
         
     end
     

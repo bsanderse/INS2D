@@ -5,13 +5,13 @@ function [Vnew,pnew] = time_ERK(Vn,pn,tn,dt,options)
 % (unsteady) Dirichlet boundary points are not part of solution vector but
 % are prescribed in a 'strong' manner via the uBC and vBC functions
 
-% grid info
+%% grid info
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
 Om_inv = options.grid.Om_inv;
 
-% get coefficients of RK method
+%% get coefficients of RK method
 % make character string if necessary
 if (isnumeric(options.time.RK))
     options.time.RK = num2str(options.time.RK);
@@ -29,6 +29,7 @@ A_RK = [A_RK(2:end,:); b_RK'];
 % vector with time instances
 c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 
+%% preprocessing
 % store variables at start of time step
 % tn     = t;
 % Vn     = V;

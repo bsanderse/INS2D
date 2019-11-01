@@ -1,3 +1,9 @@
+function [Vnew,pnew,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options)
+% conv_old are the convection terms of t^(n-1)
+% output includes convection terms at t^(n), which will be used in next time step in
+% the Adams-Bashforth part of the method
+
+
 %% Adams-Bashforth for convection and Crank-Nicolson for diffusion
 % formulation:
 % (u^{n+1} - u^{n})/dt  = -(alfa1*(conv^n) + alfa2*(conv^{n-1})) +
@@ -17,7 +23,19 @@
 % the LU decomposition of the first matrix is precomputed in
 % operator_convection_diffusion
 
-%%
+% note that, in constrast to explicit methods, the pressure from previous
+% time steps has an influence on the accuracy of the velocity
+
+%% grid info
+
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+
+Omu_inv = options.grid.Omu_inv;
+Omv_inv = options.grid.Omv_inv;
+Om_inv  = options.grid.Om_inv;
+
+%% coefficients of the method
 % Adams-Bashforth coefficients
 alfa1 = 3/2;
 alfa2 = -1/2;
@@ -26,29 +44,24 @@ alfa2 = -1/2;
 % theta = 1/2;
 theta  = options.time.theta;
 
+%% preprocessing
 % store variables at start of time step
-tn     = t;
-Vn     = V;
-pn     = p;
+% tn     = t;
+% Vn     = V;
+% pn     = p;
 
 % gradient operator
 G      = options.discretization.G;
 % divergence operator
 M      = options.discretization.M;
 
-% grid variables
-Nu = options.grid.Nu;
-Nv = options.grid.Nv;
-
-Omu_inv = options.grid.Omu_inv;
-Omv_inv = options.grid.Omv_inv;
-Om_inv  = options.grid.Om_inv;
+uh     = Vn(1:Nu);
+vh     = Vn(Nu+1:end);
 
 
-uh     = V(1:Nu);
-vh     = V(Nu+1:end);
-
-
+%% convection from previous time step
+convu_old = conv_old(1:Nu);
+convv_old = conv_old(Nu+1:end);
 
 %% evaluate BC and force at starting point
 [Fx1,Fy1]      = force(tn,options);
@@ -58,7 +71,7 @@ if (options.BC.BC_unsteady == 1)
 end
 
 % convection of current solution
-[convu, convv] = convection(V,V,tn,options,0);
+[convu, convv] = convection(Vn,Vn,tn,options,0);
 
 % diffusion of current solution
 Diffu  = options.discretization.Diffu;
@@ -97,23 +110,23 @@ yDiffv = (1-theta)*yDiffv1 + theta*yDiffv2;
 %% right hand side of the momentum equation update
 Rur = uh + Omu_inv*dt.*(- (alfa1*convu + alfa2*convu_old) + ...
                          + (1-theta)*Diffu*uh + yDiffu + ...
-                         + Fx - Gx*p - y_px);
+                         + Fx - Gx*pn - y_px);
 
 Rvr = vh + Omv_inv*dt.*(- (alfa1*convv + alfa2*convv_old) + ...
                          + (1-theta)*Diffv*vh + yDiffv + ...
-                         + Fy - Gy*p - y_py);        
+                         + Fy - Gy*pn - y_py);        
 
 % LU decomposition of diffusion part has been calculated already in
 % operator_convection_diffusion
 
-if (poisson_diffusion==1)
+if (options.solversettings.poisson_diffusion==1)
     b   = options.discretization.L_diffu\Rur;
     Ru  = options.discretization.U_diffu\b;
     
     b   = options.discretization.L_diffv\Rvr;
     Rv  = options.discretization.U_diffv\b;
     
-elseif (poisson_diffusion==3)
+elseif (options.solversettings.poisson_diffusion==3)
     [Ru,iter,norm1,norm2]=cg(L_diffu,int64(dia_diffu),int64(ndia_diffu),Rur,...
                             CG_acc,int64(Nu),Ru,int64(CG_maxit));
 %                         iter
@@ -122,12 +135,10 @@ elseif (poisson_diffusion==3)
 %                         iter
 end
 
-R = [Ru; Rv];
+Vtemp = [Ru; Rv];
 
-convu_old = convu;
-convv_old = convv;
-
-% evaluate divergence BC at endpoint, necessary for PC
+% to make the velocity field u(n+1) at t(n+1) divergence-free we need
+% the boundary conditions at t(n+1)
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn + dt,options);
 end
@@ -138,17 +149,17 @@ yM = options.discretization.yM;
 y_dp = zeros(Nu+Nv,1);
 
 % divergence of Ru and Rv is directly calculated with M
-f    = (M*R + yM)/dt - M*y_dp;
+f    = (M*Vtemp + yM)/dt - M*y_dp;
 
 % solve the Poisson equation for the pressure
-dp   = pressure_poisson(f,t,options);
+dp   = pressure_poisson(f,tn + dt,options);
 
 % update velocity field
-V   = R - dt*Om_inv.*(G*dp + y_dp);   
+Vnew = Vtemp - dt*Om_inv.*(G*dp + y_dp);   
 
 % first order pressure:
 % p_old  = p;
-p      = p + dp;
+pnew = pn + dp;
 
 % second order pressure:
 % p_new  = 2*p - p_old + (4/3)*dp;
@@ -156,5 +167,8 @@ p      = p + dp;
 % p      = p_new;
 
 if (options.solversettings.p_add_solve == 1)
-    p = pressure_additional_solve(V,p,tn+dt,options);
+    pnew = pressure_additional_solve(Vnew,pn,tn+dt,options);
 end
+
+% output convection at t^(n), to be used in next time step
+conv = [convu;convv];

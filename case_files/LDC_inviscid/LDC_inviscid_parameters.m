@@ -128,7 +128,7 @@
                           % 5: Petsc
     p_initial        = 1; % calculate pressure field compatible
                           % with the velocity field at t=0
-    p_add_solve      = 1; % do additional pressure solve to make it same 
+    p_add_solve      = 0; % do additional pressure solve to make it same 
                           % order as velocity
 
     CG_acc           = 1e-8;  % accuracy for CG (if poisson=2,3,4)

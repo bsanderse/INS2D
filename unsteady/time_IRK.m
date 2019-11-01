@@ -1,3 +1,5 @@
+function [Vnew,pnew,iterations] = time_IRK(Vn,pn,tn,dt,options)
+
 %% general implicit Runge-Kutta method
 
 % (unsteady) Dirichlet boundary points are not part of solution vector but
@@ -36,10 +38,11 @@ c_RK_ext  = spdiags(c_RK,0,s_RK,s_RK);
 %% preprocessing
 
 % store variables at start of time step
-tn     = t;
-Vn     = V;
-pn     = p;
-qn     = [Vn; pn];
+% tn     = t;
+% Vn     = V;
+% pn     = p;
+% qn     = [Vn; pn];
+p  = pn;
 
 % tj contains the time instances at all stages, tj = [t1;t2;...;ts]
 tj    = tn + c_RK*dt;
@@ -79,6 +82,7 @@ Z2 = spalloc(s_RK*Np,s_RK*Np,0);
 % iteration counter
 i = 0;
 % iteration error
+nonlinear_maxit = options.solversettings.nonlinear_maxit;
 error_nonlinear = zeros(nonlinear_maxit,1);
 
 % Vtot contains all stages and is ordered as [u1;v1;u2;v2;...;us;vs];
@@ -90,7 +94,8 @@ ptotn = kron(ones(s_RK,1),pn);
 indxV = 1:NV*s_RK;
 indxp = (NV*s_RK+1):(NV+Np)*s_RK;
 
-% starting guess for intermediate stages
+% starting guess for intermediate stages => this can be improved, see e.g.
+% the Radau,Gauss4, or Lobatto scripts
 Vj    = Vtotn;
 pj    = ptotn;
 Qj    = [Vj;pj];
@@ -159,14 +164,17 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     
 end
 
-nonlinear_its(n) = i;
-
+% store number of iterations
+iterations = i;
 
 % solution at new time step with b-coefficients of RK method
 V = Vn + dt*Om_inv.*(b_RK_ext*F_rhs);
 
 % make V satisfy the incompressibility constraint at n+1; this is only
 % needed when the boundary conditions are time-dependent
+% for stiffly accurate methods, this can also be skipped (e.g. Radau IIA) -
+% this still needs to be implemented
+
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn+dt,options);
     yM      = options.discretization.yM;
@@ -175,8 +183,6 @@ if (options.BC.BC_unsteady == 1)
     dp      = pressure_poisson(f,tn+dt,options);
 
     V       = V - dt*Om_inv.*(G*dp);
-    uh      = V(1:Nu);
-    vh      = V(Nu+1:Nu+Nv);
 
 end
 
@@ -198,11 +204,18 @@ if (options.BC.BC_unsteady == 1)
         %     W = inv(A_RK)*diag(c_RK);
         %     p = kp*W(end,:)';
         
-        % standard method
-        p = kp(:,end);
+        % standard method; take last pressure
+        p = pj(end-Np+1:end);
     end
 else
     % for steady BC we do an additional pressure solve
     % that saves a pressure solve for i=1 in the next time step
-    p = pressure_additional_solve(V,p,tn+dt,options);
+%     p = pressure_additional_solve(V,p,tn+dt,options);
+
+    % standard method; take pressure of last stage
+    p = pj(end-Np+1:end);
+
 end
+
+Vnew = V;
+pnew = p;

@@ -1,4 +1,6 @@
-% one-leg beta method following 
+function [Vnew,pnew] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options)
+
+%% one-leg beta method following 
 % Symmetry-preserving discretization of turbulent flow, Verstappen and Veldman (JCP 2003)
 % or:﻿Direct numerical simulation of turbulence at lower costs (Journal of
 % Engineering Mathematics 1997)
@@ -7,32 +9,43 @@
 % ((beta+1/2)*u^{n+1} -2*beta*u^{n} + (beta-1/2)*u^{n-1})/dt  = 
 %  F((1+beta)*u^n - beta*u^{n-1})
 
+%% grid info
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+Om_inv = options.grid.Om_inv;
+
+%% coefficients of oneleg method
+beta = options.time.beta;
+
+
+%% preprocessing
+
 % store variables at start of time step
-tn     = t;
-Vn     = V;
-pn     = p;
+% tn     = t;
+% Vn     = V;
+% pn     = p;
+% V = Vn;
+% p = pn;
 
 % gradient operator
 G      = options.discretization.G;
 % divergence operator
 M      = options.discretization.M;
-% grid info
-Nu = options.grid.Nu;
-Nv = options.grid.Nv;
-Om_inv = options.grid.Om_inv;
 
+
+%% take time step
 
 % intermediate ('offstep') velocities
 t_int  = tn + beta*dt;
-V_int  = (1+beta)*V - beta*V_old;
-p_int  = (1+beta)*p - beta*p_old; % see paper: 'DNS at lower cost'
+V_int  = (1+beta)*Vn - beta*V_old;
+p_int  = (1+beta)*pn - beta*p_old; % see paper: 'DNS at lower cost'
 %p_temp = p;
-
 
 % right-hand side of the momentum equation
 [~,F_rhs]  = F(V_int,V_int,p_int,t_int,options);
 
-% intermediate velocity field, not divergence free
+% take a time step with this right-hand side, this gives an 
+% intermediate velocity field (not divergence free)
 Vtemp = (2*beta*Vn - (beta-0.5)*V_old + dt*Om_inv.*F_rhs)/(beta+0.5);
 
 % to make the velocity field u(n+1) at t(n+1) divergence-free we need
@@ -53,21 +66,17 @@ f = (M*Vtemp + yM)/dt_beta;
 dp = pressure_poisson(f,tn + dt,options);
 
 % update velocity field
-V  = Vtemp - dt_beta*Om_inv.*G*dp;
+Vnew  = Vtemp - dt_beta*Om_inv.*G*dp;
 
 % update pressure (second order)
-p_new  = 2*p - p_old + (4/3)*dp;
+pnew  = 2*pn - p_old + (4/3)*dp;
 
 % alternatively, do an additional Poisson solve:
 if (options.solversettings.p_add_solve == 1)
-    p_new = pressure_additional_solve(V,p,tn+dt,options);
+    pnew = pressure_additional_solve(Vnew,pn,tn+dt,options);
 end
 
-% store variables
-p_old  = pn;
-p      = p_new;
-                 
-V_old  = Vn;
+
 
 
 %%

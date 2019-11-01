@@ -81,7 +81,7 @@ dt_list      = [0.1 0.05 0.025 0.0125];
         %            second order for theta=1/2
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM        
-        method            = 20;
+        method            = 2;
         RK                = 'RK44';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -115,7 +115,7 @@ dt_list      = [0.1 0.05 0.025 0.0125];
                           % 5: Petsc
     p_initial        = 1; % calculate pressure field compatible
                           % with the velocity field at t=0
-    p_add_solve      = 1; % do additional pressure solve to make it same 
+    p_add_solve      = 0; % do additional pressure solve to make it same 
                           % order as velocity
 
     CG_acc           = 1e-8;  % accuracy for CG (if poisson=2,3,4)
