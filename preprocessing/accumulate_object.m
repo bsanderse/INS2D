@@ -29,7 +29,9 @@ for i=1:size(voi,1)
                 options.(sprintf(voi{i,1}))=voi{i,2};
             end
             % put the variable also in the current workspace
-            evalc([sprintf(voi{i,1}) '=voi{i,2}']);
+            % (this can be dangerous if the same name is used in different
+            % substructures)
+%             evalc([sprintf(voi{i,1}) '=voi{i,2}']);
         end
 
     end

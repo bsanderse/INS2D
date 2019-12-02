@@ -29,8 +29,10 @@ if (method==2)
 end
 
 % for methods that need u^(n-1)
-V_old  = V;
-p_old  = p;
+if (method == 5)
+    V_old  = V;
+    p_old  = p;
+end
 
 % set current velocity and pressure
 Vn = V;
@@ -56,28 +58,7 @@ method_temp = method;
 % rev = 0;
 while(n<=nt)
     
-    % time reversal
-    %       if (n==nt/2+1)
-    %           fprintf(fcw,['reversing time at t=' num2str(t) '\n']);
-    %           dt=-dt;
-    %       end
-    % time reversal for linearized methods
-    %       if (n==nt/2+2 && rev==0)
-    %           n = n-1;
-    %           dt=-dt;
-    %           t = t+dt;
-    %           uh = uhn;
-    %           vh = vhn;
-    %           V  = [uh;vh];
-    %           p  = pn;
-    %           fprintf(fcw,['reversing time at t=' num2str(t) '\n']);
-    %
-    %           rev = 1;
-    %       end
-    
-    
-    %%
-    
+    % time step counter
     n = n+1;
     
     % for methods that need a velocity field at n-1 the first time step
@@ -96,6 +77,7 @@ while(n<=nt)
         conv_old = conv;
     elseif (method==5)
         [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
+
     elseif (method==20)
         [V,p] = time_ERK(Vn,pn,tn,dt,options);
     elseif (method==21)
@@ -109,12 +91,10 @@ while(n<=nt)
     % the new time level t+dt:
     t = tn + dt;
     time(n) = t;
-                
-    % update old solution (used for multistep methods)
-    V_old = Vn;
-    p_old = pn;    
     
     % update solution
+    V_old = Vn;
+    p_old = pn;                
     Vn = V;
     pn = p;
     tn = t;        

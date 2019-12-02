@@ -63,7 +63,7 @@ else
             set_timestep;
         end
         % estimate number of time steps
-        nt     = ceil((t_end-t)/dt);
+        nt     = ceil((t_end-t_start)/dt);
         
         maxres = zeros(nt,1);
         maxdiv = zeros(nt,1);
@@ -104,7 +104,7 @@ else
     
     
     %% initialize pressure
-    if (steady==1 || rom==1)
+    if (steady==1 || options.rom.rom==1)
         % for steady state computations, the initial guess is the provided initial condition
         p  = p_start(:);
     else

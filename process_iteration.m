@@ -73,8 +73,8 @@ end
 
 % store unsteady data in an array
 if (steady==0 && save_unsteady == 1)
-    uh_total(n,:) = V(1:Nu);
-    vh_total(n,:) = V(Nu+1:end);
+    uh_total(n,:) = V(1:options.grid.Nu);
+    vh_total(n,:) = V(options.grid.Nu+1:end);
     p_total(n,:)  = p;
 end
 
@@ -82,15 +82,17 @@ end
 if (tecplot.write==1 && rem(n,tecplot.n)==0)
     
     fprintf(fcw,'writing data to tecplot file... \n');
-    up    = reshape( Bup*(Au_ux * uh + yAu_ux), Npx, Npy);
-    vp    = reshape( Bvp*(Av_vy * vh + yAv_vy), Npx, Npy);
+    Npx = options.grid.Npx;
+    Npy = options.grid.Npy;
+    up  = reshape( Bup*(Au_ux * uh + yAu_ux), Npx, Npy);
+    vp  = reshape( Bvp*(Av_vy * vh + yAv_vy), Npx, Npy);
     
     %             up = up - cos(t);
     
-    pp    = reshape(p,Npx,Npy);
+    pp  = reshape(p,Npx,Npy);
     %             Tp    = reshape(Tp,Nx,Ny);
     %             Tp    = zeros(Nx,Ny);
-    Tp    = atand(vp./up); % local flow angle in degrees
+    Tp  = atand(vp./up); % local flow angle in degrees
     
     nzeros= filelen-length(num2str(n));
     n_new = num2str(10^nzeros);

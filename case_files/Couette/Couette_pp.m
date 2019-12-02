@@ -10,6 +10,8 @@ Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 Npx    = options.grid.Npx;
 Npy    = options.grid.Npy;    
+Nu   = options.grid.Nu;
+Nv   = options.grid.Nv;
 
 uh   = V(1:Nu);
 vh   = V(Nu+1:Nu+Nv);

@@ -1,4 +1,4 @@
-function [V,p] = main(case_name,folder_cases)
+function [V,p,options] = main(case_name,folder_cases)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
@@ -112,7 +112,7 @@ for j=1:Nsim
     addpath(library_path);
     
     % add PETSc path (defined in parameters.m)
-    if (poisson == 5)
+    if (options.solversettings.poisson == 5)
         addpath(petsc_mex);
     end
     
@@ -164,23 +164,23 @@ for j=1:Nsim
     fprintf(fcw,'start solver...\n');
     tic
     
-    if (steady==1)
-        switch visc
+    if (options.case.steady==1)
+        switch options.case.visc
             case 'turbulent'
                 fprintf(fcw,'Steady flow with k-epsilon model, 2nd order\n');                
                 solver_steady_ke;
             case 'laminar'
-                if (order4==0)
-                    if (ibm==0)
+                if (options.discretization.order4==0)
+                    if (options.ibm.ibm==0)
                         fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order\n');
                         solver_steady;
-                    elseif (ibm==1)
+                    elseif (options.ibm.ibm==1)
                         fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order\n');
                         solver_steady_ibm;
                     else
                         error('wrong value for ibm parameter');
                     end
-                elseif (order4==1)
+                elseif (options.discretization.order4==1)
                     fprintf(fcw,'Steady flow with laminar viscosity model, 4th order\n');
                     %                     solver_steady_4thorder;
                     solver_steady;
@@ -193,15 +193,15 @@ for j=1:Nsim
         
     else
         
-        switch visc
+        switch options.case.visc
             case 'turbulent'
                 fprintf(fcw,'Unsteady flow with k-eps model, 2nd order\n');
                 solver_unsteady_ke;
             case {'laminar','LES'}
-                if (rom==0)
+                if (options.rom.rom==0)
                     fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                     solver_unsteady;
-                elseif (rom==1)
+                elseif (options.rom.rom==1)
                     fprintf(fcw,'Unsteady flow with reduced order model\n');
                     solver_unsteady_ROM;
                 else
@@ -219,7 +219,7 @@ for j=1:Nsim
     cpu(j,1) = toc;
     fprintf(fcw,['total elapsed CPU time: ' num2str(toc) '\n']);
     
-    if (poisson==5)
+    if (options.solversettings.poisson==5)
         close(PS);
     end
     
@@ -238,7 +238,4 @@ for j=1:Nsim
         save(file_mat);
     end
     
-    
-%     clearvars -except folder_cases case_name j Nsim u_error_i v_error_i ...
-%         u_error_2 v_error_2 k_error_i p_error_i p_error_2;
 end

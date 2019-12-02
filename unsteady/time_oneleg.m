@@ -10,8 +10,8 @@ function [Vnew,pnew] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options)
 %  F((1+beta)*u^n - beta*u^{n-1})
 
 %% grid info
-Nu = options.grid.Nu;
-Nv = options.grid.Nv;
+% Nu = options.grid.Nu;
+% Nv = options.grid.Nv;
 Om_inv = options.grid.Om_inv;
 
 %% coefficients of oneleg method

@@ -101,6 +101,7 @@ if (floor(Nx/2)==Nx/2) % Nx even
         min_y = min(hy);
     end
     cs = spline(yp,umid);
+    L_y   = options.grid.y2 - options.grid.y1;
     yfine = linspace(yp(1),yp(end),L_y/min_y); % linear distribution with minimum grid size
     ufine = ppval(cs,yfine);
     [umin pos] = min(ufine);
@@ -164,6 +165,7 @@ if (floor(Ny/2)==Ny/2) % Ny even
         min_x = min(hx);
     end    
     cs = spline(xp,vmid);
+    L_x   = options.grid.x2 - options.grid.x1;
     xfine = linspace(xp(1),xp(end),L_x/min_x); % linear distribution with minimum grid size
     vfine = ppval(cs,xfine);
     [vmax, pos] = max(vfine);

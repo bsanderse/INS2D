@@ -75,7 +75,7 @@
     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
-    t_end         = 10; %4*pi;        % end time
+    t_end         = 4*pi;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -148,9 +148,7 @@
     Jacobian_type          = 1;    % 0: Picard linearization
                                    % 1: Newton linearization
                                    
-    % for steady problems only:
-    nPicard                = 10;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
-    
+
     % for unsteady problems only:
     nonlinear_startingvalues = 0;  % extrapolate values from last time step to get accurate initial guess
                                    

@@ -104,6 +104,15 @@ voi = {
 
 accumulate_object;
 
+%% immersed boundary method
+object = 'ibm';
+
+voi = {
+     'ibm', 0; % if 1, use immersed boundary method
+};
+
+accumulate_object;
+
 
 %% time marching
 object = 'time';

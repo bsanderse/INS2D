@@ -72,51 +72,44 @@
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% solver settings    
-
     % only for unsteady problems:
+    dt            = 0.01;       % time step (for explicit methods it can be
+                               % determined during running with dynamic_dt)
+    t_start       = 0;        % start time
+    t_end         = 4;         % end time
 
-        dt            = 0.01;       % time step (for explicit methods it can be
-                                   % determined during running with dynamic_dt)
-        t_start       = 0;        % start time
-        t_end         = 4;         % end time
+    CFL           = 1;              
+    timestep.set  = 0;         % time step determined in timestep.m, 
+                               % for explicit methods
+    timestep.n    = 1;         % determine dt every timestep.n iterations
 
-        CFL           = 1;              
-        timestep.set  = 0;         % time step determined in timestep.m, 
-                                   % for explicit methods
-        timestep.n    = 1;         % determine dt every timestep.n iterations
+    % timestepping method
 
-        % timestepping method
+    % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
+    %            explicit convection (Adams-Bashforth),
+    %            second order for theta=1/2
+    % method 5 : explicit one leg beta; 2nd order
+    % method 20 : generic explicit RK, can also be used for ROM
+    % method 21 : generic implicit RK, can also be used for ROM    
+    method            = 2;
+    RK                = 'RK44';
 
-        % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
-        %            explicit convection (Adams-Bashforth),
-        %            second order for theta=1/2
-        % method 5 : explicit one leg beta; 2nd order
-        % method 20 : generic explicit RK, can also be used for ROM
-        % method 21 : generic implicit RK, can also be used for ROM    
-        method            = 2;
-        RK                = 'RK44';
+    % for methods that are not self-starting, e.g. AB-CN or one-leg
+    % beta, we need a startup method.
+    % a good choice is for example explicit RK
+    method_startup    = 20;
+    method_startup_no = 2; % number of velocity fields necessary for start-up
 
-        % for methods that are not self-starting, e.g. AB-CN or one-leg
-        % beta, we need a startup method.
-        % a good choice is for example explicit RK
-        method_startup    = 20;
-        method_startup_no = 2; % number of velocity fields necessary for start-up
-
-        % parameters for time integration methods:
-        % Adams Bashforth - Crank Nicolson (method 2):
-            % theta for diffusion:
-            theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
-            % coefficients for explicit convection
-            % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
-            % Forward Euler alfa1=1, alfa2=0
+    % parameters for time integration methods:
+    % Adams Bashforth - Crank Nicolson (method 2):
+        % theta for diffusion:
+        theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
+        % coefficients for explicit convection
+        % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
+        % Forward Euler alfa1=1, alfa2=0
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
-        % one-leg beta (method 5):
+    % one-leg beta (method 5):
 %             beta    = 0.5; % in fact, this should be Reynolds dependent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
