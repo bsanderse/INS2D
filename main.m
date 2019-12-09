@@ -41,6 +41,7 @@ tic;
 %% add folders to path
 addpath('bodyforce/');
 addpath('ibm/');
+addpath('libs/');
 addpath('postprocessing/');
 addpath('preprocessing/');
 addpath('solvers/pressure/');
