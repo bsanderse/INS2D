@@ -63,7 +63,7 @@ disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
 run([folder_cases '/' case_name '/' case_name '_parameters.m']);
 
-% check if multiple simulations should be ran
+% check if multiple simulations should be run
 if (~exist('run_multiple','var') || run_multiple == 0)
     Nsim = 1;
 else
