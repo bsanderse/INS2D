@@ -46,18 +46,6 @@ end
 if (rtp.show==1 && rem(n-1,rtp.n) == 0)
     run(rtp.file);
     
-    %             switch rtp.type
-    %                 case {'vorticity'}
-    %                     vorticity;
-    %                 case {'velocity'}
-    %                     velocity;
-    %                 case {'quiver'}
-    %                     velocity_vectors;
-    %                 case {'streamfunction'}
-    %                     streamfunction;
-    %                 case {'pressure'}
-    %                     pressure;
-    %             end
     if (steady==0)
         fprintf(fcw,['t=' num2str(t) '\n']);
     end
@@ -84,10 +72,8 @@ if (tecplot.write==1 && rem(n,tecplot.n)==0)
     fprintf(fcw,'writing data to tecplot file... \n');
     Npx = options.grid.Npx;
     Npy = options.grid.Npy;
-    up  = reshape( Bup*(Au_ux * uh + yAu_ux), Npx, Npy);
-    vp  = reshape( Bvp*(Av_vy * vh + yAv_vy), Npx, Npy);
-    
-    %             up = up - cos(t);
+
+    [up,vp,qp] = get_velocity(V,t,options);
     
     pp  = reshape(p,Npx,Npy);
     %             Tp    = reshape(Tp,Nx,Ny);

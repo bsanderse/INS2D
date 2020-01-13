@@ -503,6 +503,12 @@ switch visc
     case {'turbulent','LES'}
         options.discretization.Sv_uy = Sv_uy;
         options.discretization.Su_vx = Su_vx;
+        
+        options.discretization.Diffu_u = Diffu_u;
+        options.discretization.Diffu_v = Diffu_v;       
+        options.discretization.Diffv_u = Diffv_u;
+        options.discretization.Diffv_v = Diffv_v;
+     
 end
 
 

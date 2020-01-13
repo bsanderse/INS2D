@@ -18,8 +18,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 40;          % number of volumes in the x-direction
-    Ny      = 40;          % number of volumes in the y-direction
+    Nx      = 20;          % number of volumes in the x-direction
+    Ny      = 20;          % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -70,10 +70,10 @@
     steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
-    order4  = 0;
+    order4  = 1;
 
     % only for unsteady problems:
-    dt            = 0.01;       % time step (for explicit methods it can be
+    dt            = 0.1;       % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;        % start time
     t_end         = 4;         % end time
@@ -91,8 +91,8 @@
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method            = 2;
-    RK                = 'RK44';
+    method            = 21;
+    RK                = 'GL1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.
@@ -134,8 +134,8 @@
     % diffusion (method 2)
     poisson_diffusion = 1; % options like poisson pressure
     
-    % accuracy for non-linear solves (method 62, 72, 9)
-    nonlinear_acc          = 1e-12;
+    % accuracy for non-linear solves
+    nonlinear_acc          = 1e-10;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
@@ -161,7 +161,7 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'viscous_shear_layer_Re100_N200_ROM_M16'; % movie name

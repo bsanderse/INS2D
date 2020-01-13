@@ -15,6 +15,7 @@ else
 end
 % hold on
 semilogy(time,abs(k-k0)/k0,'s--')
+title('energy error');
 % saveas(gcf,'results/shear_layer_ROM/energy_error_ROM_inviscid_momcons.fig');
 
 
@@ -31,6 +32,7 @@ end
 % open('results/shear_layer_ROM/mom_error_ROM_inviscid_momcons.fig');
 hold on
 semilogy(time,abs(umom-umom0)/umom0,'s--')
+title('u-momentum error');
 % saveas(gcf,'results/shear_layer_ROM/mom_error_ROM_inviscid_momcons.fig');
 
 %% vorticity

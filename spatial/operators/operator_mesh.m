@@ -88,6 +88,11 @@ Nvy_t       = Nvy_in + Nvy_b;  % total number
 % total number
 Nv          = Nvx_in*Nvy_in;
 
+% total number of velocity points
+NV = Nu + Nv;
+
+% total number of unknowns
+Ntot = NV + Np;
 
 %% extra variables
 N1 = (Nux_in+1)*Nuy_in; %size(Iu_ux,1);
@@ -399,8 +404,13 @@ ypp = kron(yp,ones(Nx,1));
 xpp = reshape(xpp,Nx,Ny);
 ypp = reshape(ypp,Nx,Ny);
 
+% indices of unknowns in velocity vector
+indu = (1:Nu)';
+indv = (Nu+1:Nu+Nv)';
+indV = [indu;indv];
+indp = (NV+1:NV+Np)';
 
-% store quantities in the structure
+%% store quantities in the structure
 options.grid.Npx = Npx;
 options.grid.Npy = Npy;
 options.grid.Np  = Np;
@@ -423,6 +433,9 @@ options.grid.Nvy_t  = Nvy_t;
 
 options.grid.Nu     = Nu;
 options.grid.Nv     = Nv;
+options.grid.NV     = NV;
+options.grid.Ntot   = Ntot;
+
 options.grid.N1     = N1;
 options.grid.N2     = N2;
 options.grid.N3     = N3;
@@ -463,6 +476,10 @@ options.grid.yv  = yv;
 options.grid.xpp = xpp;
 options.grid.ypp = ypp;
 
+options.grid.indu = indu;
+options.grid.indv = indv;
+options.grid.indV = indV;
+options.grid.indp = indp;
 
 if (order4 == 1)
     options.grid.hx3   = hx3;

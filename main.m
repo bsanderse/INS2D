@@ -110,7 +110,7 @@ for j=1:Nsim
     
     
     % add own matlab libraries
-    addpath(library_path);
+    % addpath(library_path);
     
     % add PETSc path (defined in parameters.m)
     if (options.solversettings.poisson == 5)
