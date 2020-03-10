@@ -6,6 +6,10 @@ yv = options.grid.yv;
 xpp = options.grid.xpp;
 ypp = options.grid.ypp;
 
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
+Np = options.grid.Np;
+
 uh = V(options.grid.indu);
 vh = V(options.grid.indv);
 

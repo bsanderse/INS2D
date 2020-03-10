@@ -10,8 +10,8 @@ Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
 
-uh = V(1:Nu);
-vh = V(Nu+1:end);
+uh = V(options.grid.indu);
+vh = V(options.grid.indv);
 
 % temporal = 0;
 % % keyboard;
