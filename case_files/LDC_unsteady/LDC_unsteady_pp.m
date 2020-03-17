@@ -3,6 +3,8 @@
 line  = {'r-','b-','k-','m-','g-'};
 color = char(line(j));
 
+write_files = 1;
+
 %load Botella-Peyret data
 % run('results/LDC/BP.m');
 
@@ -13,8 +15,9 @@ Nvy_in = options.grid.Nvy_in;
 Npx    = options.grid.Npx;
 Npy    = options.grid.Npy;    
 
-uh   = V(1:Nu);
-vh   = V(Nu+1:Nu+Nv);
+
+uh   = V(options.grid.indu);
+vh   = V(options.grid.indv);
 u    = reshape(uh,Nux_in,Nuy_in);
 v    = reshape(vh,Nvx_in,Nvy_in);
 pres = reshape(p,Npx,Npy);
@@ -138,7 +141,8 @@ if (floor(Nx/2)==Nx/2) % Nx even
 %     if (j==1)    
 %     plot(pvBP,yBP,'bx');
 %     end
-    plot((pres_(Nx/2,:)+pres_(Nx/2+1,:))/2,yp,color) 
+    py = (pres_(Nx/2,:)+pres_(Nx/2+1,:))/2;
+    plot(py,yp,color) 
     xlabel('p')
     ylabel('y')
     box
@@ -206,7 +210,8 @@ if (floor(Ny/2)==Ny/2) % Ny even
 %     if (j==1)
 %     plot(xBP,phBP,'bx');
 %     end
-    plot(xp,(pres_(:,Ny/2)+pres_(:,Ny/2+1))/2,color)
+    px = (pres_(:,Ny/2)+pres_(:,Ny/2+1))/2;
+    plot(xp,px,color)
     xlabel('x')
     ylabel('p')
     box
@@ -245,5 +250,40 @@ if (j==Nsim && Nsim>1)
     hold on
     loglog(1./mesh_list,error_vmin,'ks-')
     loglog(1./mesh_list,error_vmax,'ko-')
+end
+
+%% write output
+if (write_files == 1 && save_results == 1)
+    
+file_uy  = ['../../' path_results,'/u_y_t1_Re100.txt'];
+data = [yp u(Nx/2,:)'];
+% fid = fopen(file_uy,'wt');
+% fprintf(fid,'%.8f\n',data);
+% fclose(fid);
+save(file_uy, 'data', '-ascii', '-double', '-tabs')
+
+
+file_vx  = ['../../' path_results,'/v_x_t1_Re100.txt'];
+data = [xp v(:,Ny/2)];
+% fid = fopen(file_uy,'wt');
+% fprintf(fid,'%.8f\n',data);
+% fclose(fid);
+save(file_vx, 'data', '-ascii', '-double', '-tabs')
+
+file_py  = ['../../' path_results,'/p_y_t1_Re100.txt'];
+data = [yp py'];
+% fid = fopen(file_uy,'wt');
+% fprintf(fid,'%.8f\n',data);
+% fclose(fid);
+save(file_py, 'data', '-ascii', '-double', '-tabs')
+
+file_px  = ['../../' path_results,'/p_x_t1_Re100.txt'];
+data = [xp px];
+% fid = fopen(file_uy,'wt');
+% fprintf(fid,'%.8f\n',data);
+% fclose(fid);
+save(file_px, 'data', '-ascii', '-double', '-tabs')
+
+
 end
 

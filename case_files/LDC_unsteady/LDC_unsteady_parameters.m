@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1000;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -19,8 +19,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 100;                   % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 20;                   % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -46,7 +46,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = 20;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -82,7 +82,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 10;         % end time
+        t_end         = 1;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -98,7 +98,7 @@
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
         method            = 20;
-        RK                = 'RK44';
+        RK                = 'RK33P2';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -186,8 +186,8 @@
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
+    save_results     = 1;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
                                    % -> requires save_file=1 to get saved into output file
         
     cw_output        = 1;          % command window output; 
