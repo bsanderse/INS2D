@@ -101,3 +101,7 @@ end
 
 % map back from reduced space to full order model space
 V = B*R + Vbc;
+
+if (options.rom.pressure_recovery == 1)
+    p = pressure_additional_solve_ROM(V,t,options);
+end

@@ -4,16 +4,16 @@
 %% load snapshot data
 
 disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total','dt','t_end','Re','k','umom','vmom');
+snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 % dt that was used for creating the snapshot matrix:
 dt_snapshots = snapshots.dt;
 % velocity field as snapshot matrix:
-V_total      = [snapshots.uh_total';snapshots.vh_total'];
+V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
 
 % check input dimensions
-Nspace  = size(V_total,1); % total number of unknowns (Nu+Nv) of the original model
+Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
 Nu      = options.grid.Nu;
 Nv      = options.grid.Nv;
 if (Nspace ~= Nu+Nv)
@@ -36,7 +36,7 @@ if (options.rom.rom_bc == 1)
     f       = options.discretization.yM;
     dp      = pressure_poisson(f,t,options);
     Vbc     = - Om_inv.*(options.discretization.G*dp);
-    V_total = V_total - Vbc; % this velocity field satisfies M*V_total = 0
+    V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
 else
     Vbc = zeros(Nu+Nv,1);
 end
@@ -60,7 +60,7 @@ end
 
 
 % select snapshots
-V_svd = V_total(:,snapshot_indx);
+V_svd = V_total_snapshots(:,snapshot_indx);
 
 % enforce momentum conservation (works for periodic domains)
 if (options.rom.mom_cons == 1 && options.rom.weighted_norm == 0)
@@ -95,7 +95,7 @@ elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
     e = [e_u e_v];
     % scale e such that e'*Om*e = I
     e = e / sqrt(norm(e'*(Om_mat*e)));
-        
+    
     % 1) construct (I-ee')*Om*V_svd
     Vmod = V_svd - e*(e'*(Om_mat*V_svd));
     % 2) apply weighting
@@ -108,7 +108,7 @@ elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
     W = [e W];
     
 elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
-
+    
     % perform SVD
     [W,S,Z] = svd(V_svd,'econ');
     
@@ -123,7 +123,7 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     [W,S,Z] = svd(Vmod,'econ');
     % transform back
     W = Om_invsqrt*W;
-
+    
 else
     error('wrong option for weighted norm or momentum conservation');
     
@@ -158,7 +158,34 @@ semilogy(Sigma/Sigma(1),'s');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
-disp('starting time-stepping...');
+%% pressure recovery
+if (options.rom.pressure_recovery == 1)
+    % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
+    % the SVD
+    % use same snapshot_indx that was determined for velocity
+    
+    % select snapshots
+    p_total_snapshots = snapshots.p_total';
+    p_svd  = p_total_snapshots(:,snapshot_indx);
+    
+    % perform SVD
+    [Wp,Sp,Zp] = svd(p_svd,'econ');
+    
+    % take first M columns of Wp as a reduced basis
+    % (better is to look at the decay of the singular values in Sp to determine M)
+    M = options.rom.M;
+    Bp = Wp(:,1:M);
+    options.rom.Bp = Bp;
+    
+    % generate Poisson matrix on ROM level
+    A_ROM = Bp'*options.discretization.A*Bp;
+    % get LU decomposition
+    [L,U] = lu(A_ROM);
+    options.rom.L = L;
+    options.rom.U = U;
+    toc
+       
+end
 
 %% precompute matrices
 % maybe move this to a file operator_rom?
@@ -181,9 +208,10 @@ end
 %% initialize reduced order solution
 V  = V - Vbc; % subtract boundary condition contribution
 
+% get the coefficients of the ROM
 if (options.rom.weighted_norm == 0)
     R  = B'*V;
-elseif (options.rom.weighted_norm == 1)   
+elseif (options.rom.weighted_norm == 1)
     R  = B'*(Om.*V);
 end
 
@@ -194,6 +222,17 @@ V  = B*R + Vbc; % add boundary condition contribution
 
 [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
 
+if (options.rom.pressure_recovery == 1)
+    % get initial pressure
+    p = pressure_additional_solve_ROM(V,t,options);
+end
+
+% overwrite the arrays with total solutions
+if (steady==0 && save_unsteady == 1)
+    uh_total(n,:) = V(1:options.grid.Nu);
+    vh_total(n,:) = V(options.grid.Nu+1:end);
+    p_total(n,:)  = p;
+end
 
 %% reduced order solution
 
@@ -255,52 +294,20 @@ eps    = 1e-12;
 method_temp = method;
 
 
+disp('starting time-stepping...');
+
 %% start time stepping
 % while (abs(t)<=(t_end-dt+eps))
 % rev = 0;
 while(n<=nt)
     
-    % time reversal
-    %       if (n==nt/2+1)
-    %           fprintf(fcw,['reversing time at t=' num2str(t) '\n']);
-    %           dt=-dt;
-    %       end
-    % time reversal for linearized methods
-    %       if (n==nt/2+2 && rev==0)
-    %           n = n-1;
-    %           dt=-dt;
-    %           t = t+dt;
-    %           uh = uhn;
-    %           vh = vhn;
-    %           V  = [uh;vh];
-    %           p  = pn;
-    %           fprintf(fcw,['reversing time at t=' num2str(t) '\n']);
-    %
-    %           rev = 1;
-    %       end
-    
     %% dynamic timestepping:
     % set_timestep;
-
+    
     %%
     
     n = n+1;
-    
-    % for methods that need a velocity field at n-1 the first time step
-    % use RK4 or FC2: one-leg, AB, CN, FC1, IM
-    % CN needs start-up for extrapolated Picard linearization
-    %     if ((method_temp==2 || method_temp==4 || method_temp==5 || ...
-    %             method_temp==71 || method_temp==62  || ...
-    %             method_temp==92 || method_temp==142 || method_temp==172  || method==182 || method==192)...
-    %             && n<=method_startup_no)
-    %         fprintf(fcw,['starting up with ' num2str(method_startup) '\n']);
-    %         method      = method_startup;
-    %
-    %     else
-    %         method      = method_temp;
-    %     end
-    
-    
+       
     % perform one time step with the time integration method
     if (method == 20)
         time_ERK_ROM;
@@ -309,7 +316,7 @@ while(n<=nt)
     else
         error('time integration method unknown');
     end
-        
+    
     
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:

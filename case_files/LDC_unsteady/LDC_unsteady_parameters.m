@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 1000;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -19,8 +19,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 20;                   % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 100;                   % number of volumes in the x-direction
+    Ny      = 100;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -46,7 +46,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
     M      = 20;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -56,6 +56,11 @@
     precompute_diffusion  = 0;
     precompute_force      = 0; 
 
+    rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
+                % 1: non-homogeneous, time-independent;
+                % 2: non-homogeneous, time-dependent    
+    pressure_recovery = 1; % compute pressure on ROM level with ROM-PPE
+    
     snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t10.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,7 +192,7 @@
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
                                    % -> requires save_file=1 to get saved into output file
         
     cw_output        = 1;          % command window output; 

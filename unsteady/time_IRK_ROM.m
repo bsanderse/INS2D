@@ -176,44 +176,6 @@ R = Rn + dt*(b_RK_ext*F_rhs);
 % map back from reduced space to full order model space
 V = B*R + Vbc;
 
-% make V satisfy the incompressibility constraint at n+1; this is only
-% needed when the boundary conditions are time-dependent
-% if (options.BC.BC_unsteady == 1)
-%     options = set_bc_vectors(tn+dt,options);
-%     yM      = options.discretization.yM;
-%     f       = (1/dt)*(M*V + yM);
-% 
-%     dp      = pressure_poisson(f,tn+dt,options);
-% 
-%     V       = V - dt*Om_inv.*(G*dp);
-%     uh      = V(1:Nu);
-%     vh      = V(Nu+1:Nu+Nv);
-% 
-% end
-
-
-% if (options.BC.BC_unsteady == 1)
-%     
-%     if (options.solversettings.p_add_solve == 1)
-%         p = pressure_additional_solve(V,p,tn+dt,options);
-%     else
-%         
-%         % make a suitable combination of pressures from stages that satisfy the
-%         % C(2) simplifying condition
-%         % three-stage method
-%         %     p = -3*kp(:,2) +4*kp(:,3);
-%         % four-stage method
-%         %     p = -2*kp(:,2) + 3*kp(:,4);
-%         
-%         % make a suitable combination with the theory of Hairer
-%         %     W = inv(A_RK)*diag(c_RK);
-%         %     p = kp*W(end,:)';
-%         
-%         % standard method
-%         p = kp(:,end);
-%     end
-% else
-%     % for steady BC we do an additional pressure solve
-%     % that saves a pressure solve for i=1 in the next time step
-%     p = pressure_additional_solve(V,p,tn+dt,options);
-% end
+if (options.rom.pressure_recovery == 1)
+    p = pressure_additional_solve_ROM(V,t,options);
+end

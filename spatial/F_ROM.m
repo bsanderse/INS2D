@@ -33,8 +33,8 @@ end
 % Gy   = options.discretization.Gy;
 % y_px = options.discretization.y_px;
 % y_py = options.discretization.y_py;
-Gpx  = zeros(M,1); %Gx*p + y_px;
-Gpy  = zeros(M,1); %Gy*p + y_py;
+% Gpx  = zeros(M,1); %Gx*p + y_px;
+% Gpy  = zeros(M,1); %Gy*p + y_py;
 
 % convection:
 if (options.rom.precompute_convection == 1)

@@ -104,17 +104,25 @@ else
     
     
     %% initialize pressure
-    if (steady==1 || options.rom.rom==1)
-        % for steady state computations, the initial guess is the provided initial condition
-        p  = p_start(:);
-    else
-        if (p_initial == 1)
-            % calculate initial pressure from a Poisson equation
-            p = pressure_additional_solve(V,p_start(:),t,options);
+    if (options.rom.rom == 0)
+        if (steady==1)
+            % for steady state computations, the initial guess is the provided initial condition
+            p  = p_start(:);
         else
-            % use provided initial condition (not recommended)
-            p = p_start(:);
+            if (p_initial == 1)
+                % calculate initial pressure from a Poisson equation
+                p = pressure_additional_solve(V,p_start(:),t,options);
+            else
+                % use provided initial condition (not recommended)
+                p = p_start(:);
+            end
         end
+    end
+    
+    % ROM: uses the IC for the pressure; note that in solver_unsteady the pressure will be
+    % computed from the ROM PPE
+    if (options.rom.rom==1)
+         p = p_start(:); 
     end
     
     %%

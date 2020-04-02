@@ -1,11 +1,17 @@
-function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian)
+function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian,nopressure)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 % V: velocity field
 % C: 'convection' field: e.g. d(c_x u)/dx + d(c_y u)/dy; usually c_x = u,
-% c_y=v
+% c_y=v, so C=V
 % p: pressure
 
+% getJacobian = 1: return dFdV
+% nopressure = 1: exclude pressure gradient; in this case input argument p is not used
+
+if (nargin<7)
+    nopressure = 0;    
+end
 if (nargin<6)
     getJacobian = 0;
 end
@@ -18,13 +24,15 @@ if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(t,options);
 end
 
-% pressure
-Gx   = options.discretization.Gx;
-Gy   = options.discretization.Gy;
-y_px = options.discretization.y_px;
-y_py = options.discretization.y_py;
-Gpx  = Gx*p + y_px;
-Gpy  = Gy*p + y_py;
+if (nopressure == 0)
+    % pressure
+    Gx   = options.discretization.Gx;
+    Gy   = options.discretization.Gy;
+    y_px = options.discretization.y_px;
+    y_py = options.discretization.y_py;
+    Gpx  = Gx*p + y_px;
+    Gpy  = Gy*p + y_py;
+end
 
 % convection:
 [convu, convv, dconvu, dconvv] = convection(V,C,t,options,getJacobian);
@@ -36,8 +44,15 @@ Gpy  = Gy*p + y_py;
 [Fx, Fy] = force(t,options);
 
 % residual in Finite Volume form, including the pressure contribution
-Fu   = - convu + d2u - Gpx + Fx;
-Fv   = - convv + d2v - Gpy + Fy;
+Fu   = - convu + d2u + Fx;
+Fv   = - convv + d2v + Fy;
+
+% nopressure=0 is the most common situation, in which we return the entire 
+% right-hand side vector
+if (nopressure == 0) 
+    Fu = Fu - Gpx;
+    Fv = Fv - Gpy;
+end
 
 Fres = [Fu;Fv];
 
@@ -46,6 +61,7 @@ maxres  = max(abs(Fres));
 
 if (getJacobian==1)
     % Jacobian requested
+    % we return only the Jacobian with respect to V (not p)
         
     % we assume here that the body force Fx, Fy is not depending on the
     % solution u,v

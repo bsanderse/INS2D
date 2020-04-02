@@ -31,8 +31,20 @@ if (options.rom.rom == 1)
                 error_v = max(abs(vh_total - snapshots.vh_total(snapshot_indx,:)),[],2);
                 figure
                 plot(t_vec,max(error_u,error_v));
-                title('error in ROM velocity');
+                legend('error in ROM velocity')
+                if (options.rom.pressure_recovery == 1)
+%                     error_p = max(abs(p_total - snapshots.p_total(snapshot_indx,:)),[],2);
+                    % correct mean of both to be zero
+                    mean_ROM = mean(p_total,2);
+                    mean_FOM = mean(snapshots.p_total(snapshot_indx,:),2);
+                    error_p = max(abs((p_total - mean_ROM) - ...
+                        (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+                    hold on
+                    plot(t_vec,error_p);
+                    legend('error in ROM velocity','error in ROM pressure');
+                end
             end          
+            
             
             figure
             plot(t_vec,abs(k - snapshots.k(snapshot_indx)));

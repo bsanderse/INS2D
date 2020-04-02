@@ -56,6 +56,8 @@ yM     = yMn;
 
 ti = tn;
 
+%% start looping over stages
+
 for i_RK=1:s_RK
     % at i=1 we calculate F_1, p_2 and u_2
     % ...
