@@ -187,26 +187,12 @@ if (options.rom.pressure_recovery == 1)
        
 end
 
-%% precompute matrices
-% maybe move this to a file operator_rom?
+%% precompute ROM matrices
+options = operator_rom(Vbc,options);
 
-if (options.rom.precompute_diffusion == 1)
-    if (options.rom.weighted_norm == 0)
-        options.rom.Diff  = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.Diffu*Bu + ...
-            Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.Diffv*Bv;
-        options.rom.yDiff = Bu'*spdiags(options.grid.Omu_inv,0,Nu,Nu)*options.discretization.yDiffu + ...
-            Bv'*spdiags(options.grid.Omv_inv,0,Nv,Nv)*options.discretization.yDiffv;
-    elseif (options.rom.weighted_norm == 1)
-        options.rom.Diff  = Bu'*options.discretization.Diffu*Bu + ...
-            Bv'*options.discretization.Diffv*Bv;
-        options.rom.yDiff = Bu'*options.discretization.yDiffu + ...
-            Bv'*options.discretization.yDiffv;
-        
-    end
-end
 
 %% initialize reduced order solution
-V  = V - Vbc; % subtract boundary condition contribution
+V  = V - Vbc; % subtract boundary condition contribution (zero if not used)
 
 % get the coefficients of the ROM
 if (options.rom.weighted_norm == 0)
@@ -234,21 +220,28 @@ if (steady==0 && save_unsteady == 1)
     p_total(n,:)  = p;
 end
 
-%% reduced order solution
+%% reduced order solution tests
 
-% test implementation as follows:
-% uh = rand(options.grid.Nu,1);
-% vh = rand(options.grid.Nv,1);
-%
-% ru = Bu'*uh;
-% rv = Bv'*vh;
-%
-% [convu_ROM,convv_ROM] = convectionROM(ru,rv,Bu,Bv,t,options,0);
-% % this should equal using the original code but with B*r as input:
-% [convu,convv] = convection(Bu*ru,Bv*rv,t,options,0);
-% error_convu = Bu'*convu - convu_ROM;
-% error_convv = Bv'*convv - convv_ROM;
-% plot(error_convv)
+% % test the offline implementation as follows:
+% Rtest = rand(options.rom.M,1);
+% Vtest = B*Rtest;
+% 
+% % with precomputing:
+% conv_ROM_pre = convectionROM(Rtest,t,options,0);
+% diff_ROM_pre = diffusionROM(Rtest,t,options,0);
+% 
+% % without precomputing:
+% [convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
+% conv_ROM  = B'*([convu;convv]);
+% [d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
+% diff_ROM  = B'*[d2u;d2v];
+% 
+% % compute error between the two versions
+% error_conv_ROM = conv_ROM_pre - conv_ROM;
+% error_diff_ROM = diff_ROM_pre - diff_ROM;
+% plot(error_conv_ROM)
+% hold on
+% plot(error_diff_ROM);
 
 %% load restart file if necessary
 if (options.output.save_results==1)
@@ -267,36 +260,15 @@ if (rtp.show==1)
     end
 end
 
-%% for multistep methods or methods that need extrapolation of previous time steps
-% if (method==2) % the only multistep method considered sofar
-%     cu     = uh;
-%     cv     = vh;
-%     convection;
-%     Cu_old = du2dx + duvdy;
-%     Cv_old = duvdx + dv2dy;
-% end
-%
-% % for methods that need u^(n-1)
-% uh_old = uh;
-% vh_old = vh;
-%
-% % for methods that need extrapolation of convective terms
-% if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
-%     V_ep      = zeros(Nu+Nv,method_startup_no);
-%     V_ep(:,1) = V;
-% end
 
+%% start time stepping
 
 dtn    = dt;
 
 eps    = 1e-12;
 
-method_temp = method;
-
-
 disp('starting time-stepping...');
 
-%% start time stepping
 % while (abs(t)<=(t_end-dt+eps))
 % rev = 0;
 while(n<=nt)

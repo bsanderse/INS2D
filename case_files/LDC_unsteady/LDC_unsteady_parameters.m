@@ -47,13 +47,13 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 20;     % number of modes used
+    M      = 10;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 10;  % [0,t_sample]: temporal domain of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
-    precompute_convection = 0;
-    precompute_diffusion  = 0;
+    precompute_convection = 1;
+    precompute_diffusion  = 1;
     precompute_force      = 0; 
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
