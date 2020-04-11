@@ -51,8 +51,8 @@
     % 1:Nskip:Nsnapshots
     t_sample  = 10;  % part of snapshot matrix used for building SVD
     dt_sample = 10/200; % frequency of snapshots to be used for SVD
-    precompute_convection = 0;
-    precompute_diffusion  = 0;
+    precompute_convection = 1;
+    precompute_diffusion  = 1;
     precompute_force      = 0; 
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
@@ -138,8 +138,8 @@
     
     rtp.show         = 1;          % 1: real time plotting 
 %     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 1;
-    rtp.movie        = 1;
+    rtp.n            = 10;
+    rtp.movie        = 0;
     rtp.moviename    = 'actuator_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
         

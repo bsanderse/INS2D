@@ -43,7 +43,7 @@ for i_RK=1:s_RK
     [~,F_rhs]  = F_ROM(R,p,ti,options);
     
     % store right-hand side of stage i
-    kR(:,i_RK)  = F_rhs; 
+    kR(:,i_RK) = F_rhs; 
     
     % update coefficients R of current stage by sum of F_i's until this stage,
     % weighted with the Butcher tableau coefficients

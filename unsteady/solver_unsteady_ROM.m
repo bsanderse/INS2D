@@ -224,7 +224,7 @@ end
 
 % % test the offline implementation as follows:
 % Rtest = rand(options.rom.M,1);
-% Vtest = B*Rtest;
+% Vtest = B*Rtest + Vbc;
 % 
 % % with precomputing:
 % conv_ROM_pre = convectionROM(Rtest,t,options,0);
@@ -232,9 +232,9 @@ end
 % 
 % % without precomputing:
 % [convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
-% conv_ROM  = B'*([convu;convv]);
+% conv_ROM  = B'*(Om_inv.*[convu;convv]);
 % [d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
-% diff_ROM  = B'*[d2u;d2v];
+% diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
 % 
 % % compute error between the two versions
 % error_conv_ROM = conv_ROM_pre - conv_ROM;
