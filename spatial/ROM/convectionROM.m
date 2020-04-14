@@ -20,6 +20,12 @@ if (order4==0)
         
         Conv        = Conv_quad*kron(R,R) + Conv_linear*R + yConv;
          
+        if (getJacobian == 1)          
+           % d/dR (kron(R,R)) = kron(E,R) + kron(R,E), where E = speye(M)
+           E   = speye(M);
+           Jac = Conv_quad*(kron(E,R) + kron(R,E)) + Conv_linear;
+        end
+        
     else
         error('not implemented');
     end

@@ -26,8 +26,8 @@ end
 
 
 %% construct economic SVD
-% note uh_total is stored as a Nt*Nu matrix instead of Nu*Nt which we use for
-% the SVD
+% note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix 
+% which we use for the SVD
 Om     = options.grid.Om;
 Om_inv = options.grid.Om_inv;
 

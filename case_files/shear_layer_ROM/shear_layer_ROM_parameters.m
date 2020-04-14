@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 1e100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -19,8 +19,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 50;                   % number of volumes in the x-direction
-    Ny      = 50;                   % number of volumes in the y-direction
+    Nx      = 40;                   % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -47,17 +47,17 @@
 
     rom    = 1;      % set to 1 to use ROM solver
     M      = 16;     % number of modes used
-    t_sample  = 8;  % part of snapshot matrix used for building SVD
+    t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
 
-    precompute_convection = 0;
+    precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 0; 
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent   
 
-    snapshot_data = 'results/shear_layer_snapshotdata/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_1.000e+100_40x40/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -84,7 +84,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 8;         % end time
+        t_end         = 4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -99,8 +99,8 @@
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 20;
-        RK                = 'RK44';
+        method            = 21;
+        RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.

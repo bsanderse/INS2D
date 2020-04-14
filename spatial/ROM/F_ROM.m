@@ -5,18 +5,20 @@ if (nargin<5)
     getJacobian = 0;
 end
 
-M  = options.rom.M;
-B  = options.rom.B;
-
-if (options.rom.weighted_norm == 0)
-    Diag = options.grid.Om_inv;
-elseif (options.rom.weighted_norm == 1)
-    Diag = ones(NV,1);
+if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
+    options.rom.precompute_force == 0)
+    B  = options.rom.B;
+    if (options.rom.weighted_norm == 0)
+        Diag = options.grid.Om_inv;
+    elseif (options.rom.weighted_norm == 1)
+        NV   = options.grid.Nu + options.grid.Nv;
+        Diag = ones(NV,1);
+    end
 end
-
+    
 % FOM velocity field (only needed when not precomputing)
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
-    V = getFOM_velocity(R,options);
+    V = getFOM_velocity(R,t,options);
 end
 
 % unsteady BC
@@ -77,6 +79,7 @@ if (getJacobian==1)
     %     end
     
 else
+    M  = options.rom.M;
     dF = spalloc(2*M,2*M,0);
 end
 

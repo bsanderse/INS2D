@@ -93,9 +93,9 @@ voi = {
     'rom', 0; ... % if 1, use reduced order model
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model
-    'precompute_convection', 0; ... % precomputed convection matrices
+    'precompute_convection', 1; ... % precomputed convection matrices
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
-    'precompute_force', 0;... % precomputed forcing term
+    'precompute_force', 1;... % precomputed forcing term
     't_snapshots', 0; ... % snapshots 
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD

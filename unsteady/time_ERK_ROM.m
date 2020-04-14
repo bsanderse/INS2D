@@ -3,7 +3,7 @@
 % number of unknowns (modes) in ROM
 M  = options.rom.M;
 
-% get coefficients of RK method
+%% get coefficients of RK method
 if (isnumeric(options.time.RK))
     options.time.RK = num2str(options.time.RK);
 end
@@ -19,6 +19,8 @@ A_RK = [A_RK(2:end,:); b_RK'];
 
 % vector with time instances 
 c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
+
+%% preprocessing
 
 % store variables at start of time step
 tn     = t;
