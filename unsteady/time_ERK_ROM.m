@@ -40,6 +40,7 @@ for i_RK=1:s_RK
     
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
+    % note that input p is not used in F_ROM
     [~,F_rhs]  = F_ROM(R,p,ti,options);
     
     % store right-hand side of stage i
@@ -61,8 +62,9 @@ end
 % map back from reduced space to full order model space 
 % this is used for postprocessing purposes, e.g. evaluating the divergence
 % of the velocity field
-V = B*R + Vbc;
+V = getFOM_velocity(R,t,options);
 
 if (options.rom.pressure_recovery == 1)
-    p = pressure_additional_solve_ROM(V,tn+dt,options);
+    q = pressure_additional_solve_ROM(R,tn+dt,options);
+    p = getFOM_pressure(q,t,options);
 end

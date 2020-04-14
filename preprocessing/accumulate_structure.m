@@ -101,6 +101,7 @@ voi = {
     'rom_bc', 0; ... % 0: homogeneous (no-slip, periodic); 1: non-homogeneous, time-independent; 2: non-homogeneous, time-dependent
     'weighted_norm', 0; ... % 0: unweighted norm; 1: weighted norm (using finite volumes as weights)
     'pressure_recovery', 0; ... % 0: no pressure computation; 1: compute pressure with PPE-ROM
+    'pressure_precompute', 0; ... % in case of pressure_recovery=1: compute RHS Poisson equation based on FOM (0) or ROM (1)
     };
 
 accumulate_object;

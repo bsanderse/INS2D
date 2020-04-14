@@ -177,40 +177,34 @@ if (options.rom.pressure_recovery == 1)
     Bp = Wp(:,1:M);
     options.rom.Bp = Bp;
     
-    % generate Poisson matrix on ROM level
-    A_ROM = Bp'*options.discretization.A*Bp;
-    % get LU decomposition
-    [L,U] = lu(A_ROM);
-    options.rom.L = L;
-    options.rom.U = U;
     toc
        
 end
 
-%% precompute ROM matrices
+%% precompute ROM operators by calling operator_rom
+% results are stored in options structure
 options = operator_rom(Vbc,options);
 
 
 %% initialize reduced order solution
+% we expand the part of the solution vector that is div-free in terms of
+% B*R
 V  = V - Vbc; % subtract boundary condition contribution (zero if not used)
 
 % get the coefficients of the ROM
-if (options.rom.weighted_norm == 0)
-    R  = B'*V;
-elseif (options.rom.weighted_norm == 1)
-    R  = B'*(Om.*V);
-end
+R = getROM_velocity(V,t,options);
 
 % map back to velocity space to get statistics of initial velocity field
 % note that V will not be equal to the specified initial field, because
 % B*B' does not equal identity in general
-V  = B*R + Vbc; % add boundary condition contribution
+V  = getFOM_velocity(R,t,options);
 
 [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
 
 if (options.rom.pressure_recovery == 1)
-    % get initial pressure
-    p = pressure_additional_solve_ROM(V,t,options);
+    % get initial pressure that corresponds to the ROM velocity field
+    q = pressure_additional_solve_ROM(R,t,options);
+    p = getFOM_pressure(q,t,options);
 end
 
 % overwrite the arrays with total solutions
@@ -222,26 +216,26 @@ end
 
 %% reduced order solution tests
 
-% % test the offline implementation as follows:
-% Rtest = rand(options.rom.M,1);
-% Vtest = B*Rtest + Vbc;
-% 
-% % with precomputing:
-% conv_ROM_pre = convectionROM(Rtest,t,options,0);
-% diff_ROM_pre = diffusionROM(Rtest,t,options,0);
-% 
-% % without precomputing:
-% [convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
-% conv_ROM  = B'*(Om_inv.*[convu;convv]);
-% [d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
-% diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
-% 
-% % compute error between the two versions
-% error_conv_ROM = conv_ROM_pre - conv_ROM;
-% error_diff_ROM = diff_ROM_pre - diff_ROM;
-% plot(error_conv_ROM)
-% hold on
-% plot(error_diff_ROM);
+% test the offline implementation as follows:
+Rtest = rand(options.rom.M,1);
+Vtest = getFOM_velocity(Rtest,t,options);
+
+% with precomputing:
+conv_ROM_pre = convectionROM(Rtest,t,options,0);
+diff_ROM_pre = diffusionROM(Rtest,t,options,0);
+
+% without precomputing:
+[convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
+conv_ROM  = B'*(Om_inv.*[convu;convv]);
+[d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
+diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
+
+% compute error between the two versions
+error_conv_ROM = conv_ROM_pre - conv_ROM;
+error_diff_ROM = diff_ROM_pre - diff_ROM;
+plot(error_conv_ROM)
+hold on
+plot(error_diff_ROM);
 
 %% load restart file if necessary
 if (options.output.save_results==1)

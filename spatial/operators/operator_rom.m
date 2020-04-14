@@ -15,7 +15,7 @@ end
 % simply make calls to diffusion and convection with the modes phi as input
 % arguments
 
-% for diffusion:
+%% diffusion:
 % the ROM discretization will read Diff*R + yDiff, where Diff is the reduced
 % diffusion operator
 % we get this by multiplying B'*Diffusion(B*R), where a call to Diffusion(V) returns
@@ -50,6 +50,7 @@ end
 options.rom.Diff  = Diff;
 options.rom.yDiff = yDiff;
 
+%% convection
 % the convective terms are more involved
 % the convective terms are of the following form:
 % Cx * ( (I*V + yI).*(A*V + yA) ), where Cx is a differencing
@@ -151,3 +152,28 @@ end
 options.rom.Conv_quad   = conv_quad;
 options.rom.Conv_linear = conv_linear1 + conv_linear2;
 options.rom.yConv       = conv_bc;
+
+%% body force
+[Fx, Fy] = force(0,options);
+F  = B'*(Diag.*[Fx;Fy]);
+options.rom.F = F;
+
+%% pressure
+% the pressure gradient term in the momentum equation disappears in the ROM
+% however, we still want to get the pressure, which is obtained by solving
+% a Poisson equation on the ROM level
+% the right hand side of this pressure equation consists of the ROM
+% momentum equation projected onto the pressure basis
+if (options.rom.pressure_recovery == 1)
+    
+    % generate Poisson matrix on ROM level
+    Bp = options.rom.Bp;
+    A_ROM = Bp'*options.discretization.A*Bp;
+    % get LU decomposition
+    [L,U] = lu(A_ROM);
+    options.rom.L = L;
+    options.rom.U = U;
+    
+    % operator for right-hand side pressure equation
+    options.rom.M_ROM = Bp' * options.discretization.M * spdiags(options.grid.Om_inv,0,NV,NV);
+end

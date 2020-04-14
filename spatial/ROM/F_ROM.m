@@ -8,14 +8,15 @@ end
 M  = options.rom.M;
 B  = options.rom.B;
 
-Om_inv = options.grid.Om_inv;
-
-% steady inhomogeneous BC
-Vbc = options.rom.Vbc;
+if (options.rom.weighted_norm == 0)
+    Diag = options.grid.Om_inv;
+elseif (options.rom.weighted_norm == 1)
+    Diag = ones(NV,1);
+end
 
 % FOM velocity field (only needed when not precomputing)
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
-    V = B*R + Vbc;
+    V = getFOM_velocity(R,options);
 end
 
 % unsteady BC
@@ -34,14 +35,8 @@ if (options.rom.precompute_convection == 1)
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
-    if (options.rom.weighted_norm == 0)
-        conv  = B'*(Om_inv.*[convu;convv]);
-        dconv = B'*(Om_inv.*[dconvu;dconvv])*B;
-    elseif (options.rom.weighted_norm == 1)
-        conv  = B'*[convu;convv];
-        dconv = B'*[dconvu;dconvv]*B;
-    end
-    
+    conv  = B'*(Diag.*[convu;convv]);
+    dconv = B'*(Diag.*[dconvu;dconvv])*B;    
 end
 
 % diffusion
@@ -51,25 +46,16 @@ if (options.rom.precompute_diffusion == 1)
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [d2u,d2v,dDiffu,dDiffv] = diffusion(V,t,options,getJacobian);
-    if (options.rom.weighted_norm == 0)   
-        d2    = B'*(Om_inv.*[d2u;d2v]);
-        dDiff = B'*(Om_inv.*[dDiffu;dDiffv])*B;
-    elseif (options.rom.weighted_norm == 1)
-        d2    = B'*[d2u;d2v];
-        dDiff = B'*[dDiffu;dDiffv]*B;
-    end
+    d2    = B'*(Diag.*[d2u;d2v]);
+    dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
 
 % body force
 if (options.rom.precompute_force == 1)
-    error('precomputed forcing term not implemented');
+    F = options.rom.F;
 else
     [Fx, Fy] = force(t,options);
-    if (options.rom.weighted_norm == 0)   
-        F  = B'*(Om_inv.*[Fx;Fy]);
-    elseif (options.rom.weighted_norm == 1)
-        F  = B'*[Fx;Fy];
-    end
+    F  = B'*(Diag.*[Fx;Fy]);
 end
 
 % residual of ROM
