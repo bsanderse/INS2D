@@ -64,12 +64,14 @@ if (options.rom.pressure_recovery == 1)
         [Fx, Fy] = force(0,options);
         F = P_PPE*[Fx;Fy];
 
+        % note: for sign convention see F.m or F_ROM.m
+        
         % constant terms in rhs 
-        options.rom.ppe_const  = conv_bc + yDiff + F;
+        options.rom.ppe_const  = -conv_bc + yDiff + F;
         % terms to be multiplied with R
-        options.rom.ppe_linear = conv_linear + Diff;
+        options.rom.ppe_linear = -conv_linear + Diff;
         % terms to be multiplied with kron(R,R)
-        options.rom.ppe_quad   = conv_quad;   
+        options.rom.ppe_quad   = -conv_quad;   
     end
 
 end

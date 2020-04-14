@@ -8,10 +8,6 @@ M   = options.rom.M;
 Jac = spalloc(M,M,0);
 
 
-%%
-
-% assumes uh, vh, cu, cv
-% normally cu = uh, cv = vh
 
 if (order4==0)
     

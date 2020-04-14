@@ -47,7 +47,7 @@
 
     rom    = 1;      % set to 1 to use ROM solver
     M      = 10;     % number of velocity modes used
-    Mp     = 20;     % number of pressure modes used
+    Mp     = 5;     % number of pressure modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 10;  % part of snapshot matrix used for building SVD

@@ -58,7 +58,7 @@
     precompute_diffusion  = 1;
     precompute_force      = 1;
     pressure_recovery     = 1;
-    pressure_precompute   = 0;
+    pressure_precompute   = 1;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;

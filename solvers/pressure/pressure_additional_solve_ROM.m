@@ -1,19 +1,16 @@
 function q = pressure_additional_solve_ROM(R,t,options)
 % additional pressure solve
-% make the pressure compatible with the velocity field. this should
-% also result in same order pressure as velocity
-
-
-    Bp     = options.rom.Bp; 
-
-    % call F with additional argument nopressure=1 
-    % to only get convection and diffusion
-    % note that p is then irrelevant
+% returns ROM pressure coefficients; to get pressure use getROM_pressure(q)
         
     if (options.rom.pressure_precompute==0)        
         % without precomputing:
+        Bp     = options.rom.Bp; 
+
         % note that time-varying BCs are not implemented yet
         V         = getFOM_velocity(R,t,options);
+        % call F with additional argument nopressure=1 
+        % to only get convection and diffusion
+        % note that p is then irrelevant        
         [~,F_FOM] = F(V,V,0,t,options,0,1);
         Om_inv    = options.grid.Om_inv;
         f         = Bp' * options.discretization.M * (Om_inv.*F_FOM);
