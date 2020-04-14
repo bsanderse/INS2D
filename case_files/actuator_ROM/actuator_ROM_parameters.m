@@ -46,7 +46,8 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 10;     % number of modes used
+    M      = 10;     % number of velocity modes used
+    Mp     = 20;     % number of pressure modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 10;  % part of snapshot matrix used for building SVD
@@ -55,7 +56,7 @@
     precompute_diffusion  = 1;
     precompute_force      = 1; 
     pressure_recovery     = 1;
-    pressure_precompute   = 0;
+    pressure_precompute   = 1;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;

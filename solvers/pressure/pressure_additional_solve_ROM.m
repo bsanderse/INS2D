@@ -19,9 +19,8 @@ function q = pressure_additional_solve_ROM(R,t,options)
         f         = Bp' * options.discretization.M * (Om_inv.*F_FOM);
     
     elseif (options.rom.pressure_precompute == 1)
-        % with precomputing:
-        [~,F_rhs]  = F_ROM(R,0,t,options);
-        f   = options.rom.M_ROM * F_rhs;
+        % with precomputing (see operator_rom.m)      
+        f   = options.rom.ppe_const + options.rom.ppe_linear*R + options.rom.ppe_quad*kron(R,R);
     
     end
 

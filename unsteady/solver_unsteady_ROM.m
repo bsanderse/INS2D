@@ -171,10 +171,16 @@ if (options.rom.pressure_recovery == 1)
     % perform SVD
     [Wp,Sp,Zp] = svd(p_svd,'econ');
     
-    % take first M columns of Wp as a reduced basis
+    % take first Mp columns of Wp as a reduced basis
     % (better is to look at the decay of the singular values in Sp to determine M)
-    M = options.rom.M;
-    Bp = Wp(:,1:M);
+    if (isfield(options.rom,'Mp'))
+        Mp = options.rom.Mp;
+    else
+        % if not defined, use same number of modes as for velocity
+        warning('number of pressure modes not defined, defaulting to number of velocity modes');
+        Mp = options.rom.M;
+    end
+    Bp = Wp(:,1:Mp);
     options.rom.Bp = Bp;
     
     toc
@@ -183,7 +189,7 @@ end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
-options = operator_rom(Vbc,options);
+options = operator_rom(options);
 
 
 %% initialize reduced order solution
@@ -216,26 +222,26 @@ end
 
 %% reduced order solution tests
 
-% test the offline implementation as follows:
-Rtest = rand(options.rom.M,1);
-Vtest = getFOM_velocity(Rtest,t,options);
-
-% with precomputing:
-conv_ROM_pre = convectionROM(Rtest,t,options,0);
-diff_ROM_pre = diffusionROM(Rtest,t,options,0);
-
-% without precomputing:
-[convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
-conv_ROM  = B'*(Om_inv.*[convu;convv]);
-[d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
-diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
-
-% compute error between the two versions
-error_conv_ROM = conv_ROM_pre - conv_ROM;
-error_diff_ROM = diff_ROM_pre - diff_ROM;
-plot(error_conv_ROM)
-hold on
-plot(error_diff_ROM);
+% % test the offline implementation as follows:
+% Rtest = rand(options.rom.M,1);
+% Vtest = getFOM_velocity(Rtest,t,options);
+% 
+% % with precomputing:
+% conv_ROM_pre = convectionROM(Rtest,t,options,0);
+% diff_ROM_pre = diffusionROM(Rtest,t,options,0);
+% 
+% % without precomputing:
+% [convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
+% conv_ROM  = B'*(Om_inv.*[convu;convv]);
+% [d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
+% diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
+% 
+% % compute error between the two versions
+% error_conv_ROM = conv_ROM_pre - conv_ROM;
+% error_diff_ROM = diff_ROM_pre - diff_ROM;
+% plot(error_conv_ROM)
+% hold on
+% plot(error_diff_ROM);
 
 %% load restart file if necessary
 if (options.output.save_results==1)

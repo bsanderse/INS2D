@@ -91,7 +91,8 @@ object = 'rom';
 
 voi = {
     'rom', 0; ... % if 1, use reduced order model
-    'M', 10; ... % number of modes for reduced order model
+    'M', 10; ... % number of velocity modes for reduced order model
+    'Mp', 10; ... % number of pressure modes for reduced order model
     'precompute_convection', 0; ... % precomputed convection matrices
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
     'precompute_force', 0;... % precomputed forcing term

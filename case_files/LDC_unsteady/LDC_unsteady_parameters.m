@@ -48,18 +48,21 @@
 
     rom    = 1;      % set to 1 to use ROM solver
     M      = 10;     % number of modes used
+    Mp     = 5;     % number of pressure modes used (only needed if pressure_recovery=1)
+    
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 10;  % [0,t_sample]: temporal domain of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
     precompute_convection = 1;
     precompute_diffusion  = 1;
-    precompute_force      = 0; 
+    precompute_force      = 1;
+    pressure_recovery     = 1;
+    pressure_precompute   = 0;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent    
-    pressure_recovery = 1; % compute pressure on ROM level with ROM-PPE
     
     snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t10.mat';
     
@@ -87,7 +90,7 @@
         dt            = 0.01;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 1;         % end time
+        t_end         = 10;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
