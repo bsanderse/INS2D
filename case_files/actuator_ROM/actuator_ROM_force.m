@@ -101,6 +101,8 @@ if (abs(sum(hy(yrange))-D)>1e-10)
     keyboard
 end
 
+Fx = Fx*(1 + sin(pi*t));
+
 % Ct = 0.5;
 % % second actuator
 % y1Dx       = zeros(Nux_in,1);

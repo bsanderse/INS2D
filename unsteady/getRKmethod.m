@@ -7,7 +7,11 @@ function [A,b,c,r]=getRKmethod(name,s)
 %Also returns SSP coefficient r
 %For families of methods, optional input s is the number of stages
 
-if nargin<2 s=1; end
+if nargin<2 
+    s=1; 
+end
+
+r = 0;
 
 switch name
     %=================SSP Methods=========================
@@ -391,8 +395,4 @@ switch name
         
     otherwise
         error('RK method not available');
-end
-
-if (~exist('r','var'))
-    r=0;
 end

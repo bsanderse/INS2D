@@ -32,7 +32,8 @@ options.rom.Conv_linear = conv_linear;
 options.rom.yConv       = conv_bc;
 
 %% body force
-[Fx, Fy] = force(0,options);
+% construct at t=t_start
+[Fx, Fy] = force(options.time.t_start,options);
 F        = P*[Fx;Fy];
 options.rom.F = F;
 

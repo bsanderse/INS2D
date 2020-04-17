@@ -5,7 +5,6 @@ order4     = options.discretization.order4;
 regularize = options.case.regularize;
 
 M   = options.rom.M;
-Jac = spalloc(M,M,0);
 
 
 
@@ -24,6 +23,9 @@ if (order4==0)
            % d/dR (kron(R,R)) = kron(E,R) + kron(R,E), where E = speye(M)
            E   = speye(M);
            Jac = Conv_quad*(kron(E,R) + kron(R,E)) + Conv_linear;
+        else
+           Jac = 0;
+%            Jac = spalloc(M,M,0);
         end
         
     else

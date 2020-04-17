@@ -6,8 +6,13 @@
 % residual (in Finite Volume form)
 % for ke model residual also contains k and e terms and is computed
 % in solver_unsteady_ke
-if (~strcmp(visc,'turbulent'))
-    [maxres(n), ~, ~] = F(V,V,p,t,options,0);
+if (options.rom.rom == 0)
+    if (~strcmp(visc,'turbulent'))
+        [maxres(n), ~, ~] = F(V,V,p,t,options,0);
+    end
+elseif (options.rom.rom == 1)
+    % get ROM residual
+    [maxres(n),~,~] = F_ROM(R,0,t,options,0);   
 end
 
 % statistics

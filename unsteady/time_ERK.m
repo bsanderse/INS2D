@@ -91,7 +91,12 @@ for i_RK=1:s_RK
     end
     
     % divergence of intermediate velocity field is directly calculated with M
-    f       = (M*Vtemp + (yM-yMn)/dt)/c_RK(i_RK);
+    % old formulation:
+%     f       = (M*Vtemp + (yM-yMn)/dt)/c_RK(i_RK);
+    % new formulation, prevents growth of constraint errors:
+    % instead of -yMn we use +M*Vn; they are the same up to machine
+    % precision but using the latter prevents error accumulation
+    f       = (M*(Vn/dt+Vtemp) + yM/dt)/c_RK(i_RK);
     % note: we should have sum(f) = 0 for periodic and no-slip BC
     
     % solve the Poisson equation for the pressure, but not for the first

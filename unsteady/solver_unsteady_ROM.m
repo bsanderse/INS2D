@@ -4,7 +4,7 @@
 %% load snapshot data
 
 disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom');
+snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
 % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
 % dt that was used for creating the snapshot matrix:
@@ -160,6 +160,8 @@ semilogy(Sigma/Sigma(1),'s');
 
 %% pressure recovery
 if (options.rom.pressure_recovery == 1)
+    disp('computing SVD of pressure snapshots...');
+
     % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
     % the SVD
     % use same snapshot_indx that was determined for velocity
@@ -184,11 +186,16 @@ if (options.rom.pressure_recovery == 1)
     options.rom.Bp = Bp;
     
     toc
+    
+    hold on
+    SigmaP = diag(Sp);
+    semilogy(SigmaP/SigmaP(1),'o');
        
 end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
+disp('precomputing ROM operators...');
 options = operator_rom(options);
 
 
@@ -269,6 +276,8 @@ eps    = 1e-12;
 
 disp('starting time-stepping...');
 
+time_start = toc
+
 % while (abs(t)<=(t_end-dt+eps))
 % rev = 0;
 while(n<=nt)
@@ -296,7 +305,12 @@ while(n<=nt)
     time(n) = t;
     
     % check residuals, conservation, write output files
-    process_iteration;
+    % this requires to go back to FOM level
+    if (options.rom.process_iteration_FOM == 1)
+        process_iteration;
+    end
     
     
 end
+disp('finished time-stepping...');
+time_loop = toc-time_start

@@ -193,10 +193,6 @@ end
 
 if (steady == 0 && ~strcmp(visc,'turbulent'))
     
-    % ROM does not require Poisson solve for simple BC
-    if (options.rom.rom == 1 && options.rom.rom_bc == 0) 
-        return;
-    end
         
     fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;
@@ -207,6 +203,14 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
     
     %   Laplace = div grad
     A     = M*spdiags(Om_inv,0,Nu+Nv,Nu+Nv)*G;
+    options.discretization.A = A;
+
+    
+    % ROM does not require Poisson solve for simple BC
+    % for rom_bc>0, we need Poisson solve to determine the V_bc field
+    if (options.rom.rom == 1 && options.rom.rom_bc == 0) 
+        return;
+    end
     
     %   LU decomposition
     if (poisson==3)
@@ -262,8 +266,6 @@ if (steady == 0 && ~strcmp(visc,'turbulent'))
         end
     end
     
-    
-    options.discretization.A = A;
-    
+       
     
 end

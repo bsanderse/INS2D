@@ -15,7 +15,6 @@ Vbc = options.rom.Vbc;
 M1  = size(P,1);   
 
 %% convection
-% the convective terms are more involved
 % the convective terms are of the following form:
 % Cx * ( (I*V + yI).*(A*V + yA) ), where Cx is a differencing
 % operator, I interpolation, and A averaging

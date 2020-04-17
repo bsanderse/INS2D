@@ -1,9 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% create files and directories
 
+    
 if (restart.load==0 && options.output.save_results==1)
-%     file         = [project,'_',num2str(Re,'%10.3e'),'_',num2str(L_x),'x',num2str(L_y),...
-%         '_',num2str(Nx),'x',num2str(Ny)];
     file         = [options.case.project,'_',num2str(Re,'%10.3e'),'_',num2str(Nx),'x',num2str(Ny)];
     
     % create results directory if not present
@@ -39,8 +38,8 @@ if (options.output.save_results == 1)
     file_cw    = [path_results,'/cw_output.txt']; % command window output
     
     if (restart.load == 0)
-        if (steady==0)
-            % file with information pressure solve
+        if (steady==0 && options.solversettings.poisson>1) 
+            % file with information pressure solve for iterative schemes
             fpres      = fopen(file_pres,'w+');
             fwrite(fpres,[options.case.project ' ' num2str(Nx) ' ' num2str(Ny) ' ' num2str(Re,'%10.3e') nl]);
             fwrite(fpres,['convergence information pressure solve' nl]);
@@ -76,8 +75,10 @@ options.output.fconv = fconv;
 options.output.fcw   = fcw;
 
 % save workspace to a .mat file at the end of simulation
-if (options.output.save_file == 1)
+if (options.output.save_results==1 && options.output.save_file == 1)
     file_mat   = [path_results,'/matlab_data.mat'];
+elseif (options.output.save_results==0 && options.output.save_file == 1)
+    error('saving matlab data only possible if save_results=1');
 end
 
 % for real time video creation

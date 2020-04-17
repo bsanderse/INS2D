@@ -44,24 +44,31 @@ end
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
-    [d2, dDiff] = diffusionROM(R,t,options,getJacobian);
+    [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [d2u,d2v,dDiffu,dDiffv] = diffusion(V,t,options,getJacobian);
-    d2    = B'*(Diag.*[d2u;d2v]);
+    Diff  = B'*(Diag.*[d2u;d2v]);
     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
 
 % body force
 if (options.rom.precompute_force == 1)
     F = options.rom.F;
+    % this is a bit of a hack for the actuator ROM case with time dependent
+    % body force, which prevents computing the projection of the force at
+    % each time step
+    if (options.case.force_unsteady == 1)
+        F = F*(1+sin(pi*t));
+    end
+    
 else
     [Fx, Fy] = force(t,options);
     F  = B'*(Diag.*[Fx;Fy]);
 end
 
 % residual of ROM
-Fres    = - conv + d2 + F;
+Fres    = - conv + Diff + F;
 
 
 maxres  = max(abs(Fres));
@@ -79,8 +86,10 @@ if (getJacobian==1)
     %     end
     
 else
-    M  = options.rom.M;
-    dF = spalloc(2*M,2*M,0);
+    
+    dF = 0;
+%     M  = options.rom.M;
+%     dF = spalloc(2*M,2*M,0);
 end
 
 end

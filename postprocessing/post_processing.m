@@ -6,7 +6,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 if (exist(full_name,'file'))
     
     run(full_name);
-
+    
 else
     
     disp(['postprocessing file ' file_name ' not available']);
@@ -25,33 +25,88 @@ if (options.rom.rom == 1)
             snapshot_indx = 1:skip:(snapshot_end+1);
             t_vec = t_start:dt:t_end;
             
-            if (options.output.save_unsteady == 1)
-                % uh_total is of size Nt*Nu
-                error_u = max(abs(uh_total - snapshots.uh_total(snapshot_indx,:)),[],2);
-                error_v = max(abs(vh_total - snapshots.vh_total(snapshot_indx,:)),[],2);
-                figure
-                plot(t_vec,max(error_u,error_v));
-                legend('error in ROM velocity')
-                if (options.rom.pressure_recovery == 1)
-%                     error_p = max(abs(p_total - snapshots.p_total(snapshot_indx,:)),[],2);
-                    % correct mean of both to be zero
-                    mean_ROM = mean(p_total,2);
-                    mean_FOM = mean(snapshots.p_total(snapshot_indx,:),2);
-                    error_p = max(abs((p_total - mean_ROM) - ...
-                        (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+            % if velocity fields have been stored, we can compute errors
+            if (options.rom.process_iteration_FOM==1)
+                
+                if (options.output.save_unsteady == 1)
+                    % we have the velocity fields, so we can compute error wrt
+                    % FOM
+                    % uh_total is of size Nt*Nu, V_total size Nt*(Nu+Nv)
+                    V_total = [uh_total vh_total];
+                    snapshots_V_total = [snapshots.uh_total(snapshot_indx,:) snapshots.vh_total(snapshot_indx,:)];
+                    % inf-norm
+                    error_V_inf = max(abs(V_total - snapshots_V_total(snapshot_indx,:)),[],2);
+                    % 2-norm of error, scaled with 2-norm of velocity field
+                    % note that 2-norm of velocity-field is simply sqrt(2*k),
+                    % with k the kinetic energy
+                    error_V_2 = zeros(nt+1,1);
+                    error_V_2_norm = zeros(nt+1,1);
+                    % alternative (equivalent):
+                    %                 error_V_2_norm = sqrt(2*snapshots.k(snapshot_indx))
+                    
+                    for i=1:nt+1
+                        error_V_2(i) = sqrt(sum(options.grid.Om.*(V_total(i,:)' - snapshots_V_total(snapshot_indx(i),:)').^2));
+                        error_V_2_norm(i) = sqrt(sum(options.grid.Om.*(snapshots_V_total(snapshot_indx(i),:)').^2));
+                    end
+                    
+                    figure
+                    plot(t_vec,error_V_inf);
                     hold on
-                    plot(t_vec,error_p);
-                    legend('error in ROM velocity','error in ROM pressure');
+                    % skip i=1, as error_v_2_norm is zero for i=1
+                    plot(t_vec(2:end),error_V_2(2:end)./error_V_2_norm(2:end));
+                    
+                    % best possible approximation given the projection:
+                    V_best = getFOM_velocity(getROM_velocity(snapshots_V_total(snapshot_indx,:)',0,options),0,options);
+                    error_V_best = max(abs(V_best' - snapshots_V_total(snapshot_indx,:)),[],2);
+                    
+                    plot(t_vec,error_V_best);
+                    
+                    legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM')
+
+                    
+                    if (options.rom.pressure_recovery == 1)
+                        %                     error_p = max(abs(p_total - snapshots.p_total(snapshot_indx,:)),[],2);
+                        % correct mean of both to be zero
+                        mean_ROM = mean(p_total,2);
+                        mean_FOM = mean(snapshots.p_total(snapshot_indx,:),2);
+                        error_p = max(abs((p_total - mean_ROM) - ...
+                            (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+                        hold on
+                        plot(t_vec,error_p);
+                        legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','L_{inf} error in ROM pressure')
+                        
+                        % best possible approximation given the projection:
+                        p_best = getFOM_pressure(getROM_pressure(snapshots.p_total(snapshot_indx,:)',0,options),0,options);
+                        mean_FOM_best = mean(p_best',2);
+                        error_p_best = max(abs((p_best' - mean_FOM_best) - ...
+                            (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+                        
+                        plot(t_vec,error_p_best);
+                        legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM velocity','L_{inf} error in ROM pressure','Projection FOM pressure')
+
+                    end
+                    
+
                 end
-            end          
-            
-            
-            figure
-            plot(t_vec,abs(k - snapshots.k(snapshot_indx)));
-            title('error in kinetic energy ROM wrt FOM');
-    %         hold on
-    %         plot(t_start:dt:t_end,error_v);
-    %         legend('error in u','error in v');
+                
+                
+                figure
+                plot(t_vec,abs(k - snapshots.k(snapshot_indx)));
+                title('error in kinetic energy ROM wrt FOM');
+                
+                figure
+                plot(t_vec,maxdiv);
+                hold on
+                plot(t_vec,snapshots.maxdiv(snapshot_indx));
+                xlabel('t')
+                ylabel('maximum divergence of velocity field');
+                grid
+                
+                
+            end
+            %         hold on
+            %         plot(t_start:dt:t_end,error_v);
+            %         legend('error in u','error in v');
             
         end
     end
@@ -60,17 +115,17 @@ end
 
 %% standard plots
 % velocity;
-% 
+%
 % pressure;
-% 
+%
 % vorticity;
-% 
+%
 % streamfunction;
 
 %% Poiseuille
 % u = reshape(uh,Nux_in,Nuy_in);
 % u_exact = -6*yp.*(yp-L_y);
-% 
+%
 % e2(j) = sqrt(sum((u(1,:)'-u_exact).^2)/Npy)
 % einf(j) = max(abs(u(1,:)'-u_exact))
 % p_add_solve=1;
@@ -97,26 +152,26 @@ end
 % pressure
 
 %     uh = uh+cos(t); % from moving ref to stationary ref.
-% 
+%
 %     u_curr   = reshape(uh,Nux_in,Nuy_in);
 %     xin_curr = xin;
 %     yp_curr  = yp;
 %     load('../v2.4/results/AD_2D_translating/periodic_domain/N512_movingref_new.mat','uh','xin','yp');
-% %     
+% %
 %     ufine_int = interp2(xin,yp',reshape(uh,length(xin),length(yp)),xin_curr,yp_curr','spline');
 %     error(j) = max(abs(u_curr(:)-ufine_int(:)))
 %     error2(j) = sqrt(sum((u_curr(:)-ufine_int(:)).^2)/Nu)
-    
+
 
 % velocity
 % line = {'rx-','bo-','ms-','kd-','g-','y-'};
 % color = char(line(j));
 % wake_pos = find(xin==1);
 % % % disp(['position wake: ' num2str(xin(wake_pos))])
-% % % 
+% % %
 % figure(1)
 % % uh = uh+cos(t); % from moving ref to stationary ref.
-% 
+%
 % u = reshape(uh,Nux_in,Nuy_in);
 % velocity
 % pressure
@@ -124,10 +179,10 @@ end
 % u_wake = u(wake_pos,:);
 % if (j==1)
 %     load('results/AD_2D_translating/periodic_domain/N512_movingref_wake_Re100_order2.mat','ufine','yfine');
-%     ufine = u_wake; 
+%     ufine = u_wake;
 %     yfine = yp;
 %     save(['results/AD_2D_translating/periodic_domain/N' num2str(Nx) '_movingref_wake_Re100_order4.mat'],...
-%         'uh','vh','p','Nx','Ny','xp','yp','xin','yin','t','dt','Re','ufine','yfine');   
+%         'uh','vh','p','Nx','Ny','xp','yp','xin','yin','t','dt','Re','ufine','yfine');
 % else
 
 % if (jj>1)
@@ -135,18 +190,18 @@ end
 %     xin_curr = xin;
 %     yp_curr  = yp;
 %     load('results/AD_2D_translating/periodic_domain/N256_movingref_new_Re10.mat','uh','xin','yp');
-%     
+%
 %     ufine_int = interp2(xin,yp',reshape(uh,length(xin),length(yp)),xin_curr,yp_curr','spline');
 %     error(jj) = max(abs(u_curr(:)-ufine_int(:)))
 %     error2(jj) = sqrt(sum((u_curr(:)-ufine_int(:)).^2)/Nu)
-%     
+%
 % end
 %     ufine_int = interp1(yfine,ufine,yp,'spline');
-%     error(j) = max(abs(ufine_int'-u_wake))    
+%     error(j) = max(abs(ufine_int'-u_wake))
 %     error2(j) = sqrt(sum((ufine_int'-u_wake).^2)/length(u_wake))
 
 % end
-% 
+%
 % plot(yp,u(wake_pos,:),color)
 % hold on
 

@@ -105,11 +105,11 @@ else
     
     %% initialize pressure
     if (options.rom.rom == 0)
-        if (steady==1)
+        if (options.case.steady==1)
             % for steady state computations, the initial guess is the provided initial condition
             p  = p_start(:);
         else
-            if (p_initial == 1)
+            if (options.solversettings.p_initial == 1)
                 % calculate initial pressure from a Poisson equation
                 p = pressure_additional_solve(V,p_start(:),t,options);
             else
@@ -120,20 +120,26 @@ else
     end
     
     % ROM: uses the IC for the pressure; note that in solver_unsteady the pressure will be
-    % computed from the ROM PPE
+    % computed from the ROM PPE, after the ROM basis has been set-up
     if (options.rom.rom==1)
-         p = p_start(:); 
+        if (options.case.steady==1)
+            error('ROM not implemented for steady flow');
+        else
+            p = p_start(:); 
+        end
     end
     
     %%
     % for steady problems, with Newton linearization and full Jacobian,
     % first start with nPicard Picard iterations
-    if (steady==1)
+    if (options.case.steady==1)
         options.solversettings.Newton_factor = 0;
-    elseif (steady==0)
+    elseif (options.case.steady==0)
         if (method==21 || (exist('method_startup','var') && method_startup==21)) % implicit RK time integration
             options.solversettings.Newton_factor = 1;
         end
+    else
+        error('wrong setting for steady parameter');
     end
     
     %% residual of momentum equations at start

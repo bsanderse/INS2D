@@ -77,7 +77,7 @@ for j=1:Nsim
     
     
     if (j>1)
-        % run parameter file again in case we are doing a mesh study
+        % run parameter file again in case we are doing a mesh or parametric study
         run([folder_cases '/' case_name '/' case_name '_parameters.m']);
     end
     

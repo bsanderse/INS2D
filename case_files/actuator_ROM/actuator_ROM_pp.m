@@ -4,11 +4,6 @@
 % ECNS: Energy-Conserving Navier-Stokes Solver - Verification of steady laminar flows
 % B. Sanderse, ECN-E–11-042, June 2011
 
-% note: we assume that Npx and Npy are even
-if (rem(Npx,2)~=0 || rem(Npy,2)~=0)
-    error('number of volumes in x- and y-direction should be even for postprocessing');
-end
-
 %% get grid variables
 Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;
@@ -17,8 +12,19 @@ Nvy_in = options.grid.Nvy_in;
 Nu     = options.grid.Nu;
 Nv     = options.grid.Nv;
 
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;    
+
 xin  = options.grid.xin;
 yin  = options.grid.yin;
+
+%%
+% note: we assume that Npx and Npy are even
+if (rem(Npx,2)~=0 || rem(Npy,2)~=0)
+    error('number of volumes in x- and y-direction should be even for postprocessing');
+end
+
+
 
 %% get solution variables
 uh   = V(1:Nu);
@@ -163,5 +169,16 @@ vy = 0.5*(v(xd,:)+v(xd-1,:));
 plot(yin,vy,color)
 hold on
 
-%%
-% pp_AD_mesh_refinement;
+%% contour plot velocity
+[up,vp,qp] = get_velocity(V,t,options);
+list = linspace(0.5,1.15,20);
+% list = 20;
+figure
+set(gcf,'color','w');
+set(gca,'LineWidth',1);
+% pcolor(xp,yp,qp')
+[~,c]=contour(xp,yp,qp',list);
+c.LineWidth = 2;
+axis equal
+axis([x1 x2 y1 y2]);
+colorbar
