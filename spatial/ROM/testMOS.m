@@ -10,16 +10,16 @@ svd_test = 1;
 direct_test = 0;
 ss_test = 1;
 
-% snapshot_data = 'results/LDC_unsteady_1.000e+02_20x20_FE/matlab_data.mat';
+snapshot_data = 'results/LDC_unsteady_1.000e+02_20x20_FE/matlab_data.mat';
 % snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
 % snapshot_data = 'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
-snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
+% snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
 
 
 snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','options');
 %
 X = [snapshots.uh_total';snapshots.vh_total'];
-X = X - mean(X); %snapshots.options.rom.V_bc;
+% X = X - mean(X); %snapshots.options.rom.V_bc;
 [Nv,Ns] = size(X);
 
 % number of modes:
@@ -42,7 +42,8 @@ if (svd_test == 1)
     % S_svd: Ns*Ns
     % Psi_svd: Ns*Ns
     [Phi_svd,S_svd,Psi_svd] = svd(X,'econ');
-    S_svd       = diag(S_svd);
+    S_svd       = diag(S_svd); % singular values
+    d_svd       = S_svd.^2; % eigenvalues
     svd_time    = toc - svd_start
     
     
@@ -94,7 +95,7 @@ if (ss_test == 1)
 
     % eigs routine, already orders the eigenvalues:
     [Psi_ss_sort,D_snapshots] = eigs(C,M,'largestreal');
-    d_sort = diag(D_snapshots);
+    d_ss = diag(D_snapshots);
             
     %
     % r       = length(d_sort);
@@ -105,7 +106,7 @@ if (ss_test == 1)
     norm(Psi_ss_sort'*Psi_ss_sort - speye(M),Inf)
     % note: the division through the square root of small eigenvalues can cause
     % issues in numerical accuracy
-    S_ss        = spdiags(1./sqrt(d_sort),0,M,M);
+    S_ss        = spdiags(1./sqrt(d_ss),0,M,M);
     Phi_ss_sort = (X*Psi_ss_sort)*S_ss;
     
     snapshot_time = toc-snapshot_start
@@ -188,21 +189,29 @@ if (ss_test == 1)
 
 end
 
-%% check divergence freeness of the different approaches
+%% check divergence freeness of the different approaches and projection error of the basis
 Div = snapshots.options.discretization.M; % size Np*Nv
 maxdiv_svd = zeros(r,1);
 maxdiv_direct = zeros(r,1);
 maxdiv_ss = zeros(r,1);
+proj_error_svd = zeros(r,1);
+proj_error_direct = zeros(r,1);
+proj_error_ss = zeros(r,1);
+R = X*X';
 for i=1:r-1
     
     if (svd_test == 1)
         maxdiv_svd(i)    = max(abs(Div*W_svd(:,i)));
+        proj_error_svd(i) = norm( R*W_svd(:,i) - d_svd(i)*W_svd(:,i));
     end
     if (direct_test == 1)
         maxdiv_direct(i) = max(abs(Div*W_direct(:,i)));
+        proj_error_direct(i) = norm( R*W_direct(:,i) - d_direct(i)*W_direct(:,i));
     end
     if (ss_test == 1)
         maxdiv_ss(i)     = max(abs(Div*W_ss(:,i)));
+        proj_error_ss(i) = norm( R*W_ss(:,i) - d_ss(i)*W_ss(:,i));
+
     end
 end
 figure
@@ -212,3 +221,14 @@ semilogy(maxdiv_direct,'o-');
 semilogy(maxdiv_ss,'d-');
 legend('SVD','Direct','Snapshots');
 ylabel('max divergence');
+
+figure
+semilogy(proj_error_svd,'s-');
+hold on
+semilogy(proj_error_direct,'o-');
+semilogy(proj_error_ss,'d-');
+legend('SVD','Direct','Snapshots');
+ylabel('projection error');
+
+% any errors should come from the fact that X*X^T Phi does not equal Phi
+% accurately enough:
