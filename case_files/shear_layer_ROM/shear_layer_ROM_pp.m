@@ -4,8 +4,10 @@ Npy = options.grid.Npy;
 
 %% kinetic energy
 figure
-plot(time,k/k(1),'s-')
+plot(time,(k-k(1))/k(1),'s-')
 grid
+xlabel('t');
+ylabel('(k(t)-k(0))/k(0)');
 
 %% vorticity
 % compare e.g. with PhD thesis figure 3.4

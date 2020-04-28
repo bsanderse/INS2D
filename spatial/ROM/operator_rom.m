@@ -73,6 +73,10 @@ if (options.rom.pressure_recovery == 1)
         options.rom.ppe_linear = -conv_linear + Diff;
         % terms to be multiplied with kron(R,R)
         options.rom.ppe_quad   = -conv_quad;   
+        
+        % this is useful for evaluating int ( p u*n ) dS (pressure work):
+        options.rom.yM = Bp'*options.discretization.yM;
     end
+    
 
 end

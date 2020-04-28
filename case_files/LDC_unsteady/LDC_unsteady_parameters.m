@@ -1,6 +1,11 @@
 % input file                
 % project = 'LDC_unsteady';   % project name used in filenames
+run_multiple = 1;
+% M_list = [2 2 5 5 10 10 20 20 40 40 80 80];
+M_list = [2 5 10 15 20 ];
 
+mesh_list = ones(length(M_list),1);
+% mesh_list = [1 1 1];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -47,8 +52,8 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 10;     % number of modes used
-    Mp     = 5;     % number of pressure modes used (only needed if pressure_recovery=1)
+    M      = M_list(j);     % number of modes used
+    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -60,11 +65,11 @@
     pressure_recovery     = 1;
     pressure_precompute   = 1;
 
-    rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
+    rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent    
     
-    snapshot_data = 'results/LDC_unsteady_snapshotdata/matlab_data_Re1000_t10.mat';
+    snapshot_data = 'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -106,7 +111,7 @@
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
         method            = 20;
-        RK                = 'RK33P2';
+        RK                = 'RK44';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.

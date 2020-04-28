@@ -157,7 +157,10 @@ M      = [Mx My];
 
 %% Gradient operator G
 
-% like in the continuous case, grad = -div*
+% like in the continuous case, grad = -div^T
+% note that this also holds for outflow boundary conditions, if the stress
+% on the ouflow boundary is properly taken into account in y_p (often this
+% stress will be zero)
 Gx     = -Mx';
 Gy     = -My';
 

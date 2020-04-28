@@ -24,7 +24,10 @@ if (rem(Npx,2)~=0 || rem(Npy,2)~=0)
     error('number of volumes in x- and y-direction should be even for postprocessing');
 end
 
-
+%% evaluate pressure work
+figure
+plot(dt:dt:t_end,p_work(2:end));
+ylabel('pressure work');
 
 %% get solution variables
 uh   = V(1:Nu);
@@ -43,7 +46,7 @@ contour(xp,yp,pres');
 
 %% plot settings
 line = {'r-','b-','m-','k-','g-','y-'};
-color = char(line(j));
+color = char(line(mod(j-1,length(line))+1));
 
 %% actuator settings
 x_c  = options.force.x_c;

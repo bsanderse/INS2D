@@ -1,6 +1,8 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-
+run_multiple = 1;
+M_list = 16; %[2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
+mesh_list = ones(length(M_list),1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -19,8 +21,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 40;                   % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 200;                   % number of volumes in the x-direction
+    Ny      = 200;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -46,18 +48,23 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 16;     % number of modes used
+    M      = M_list(j);     % number of modes used
+    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
+
     t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
 
     precompute_convection = 1;
     precompute_diffusion  = 1;
-    precompute_force      = 0; 
+    precompute_force      = 1;
+    pressure_recovery     = 1;
+    pressure_precompute   = 1;
+    
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent   
 
-    snapshot_data = 'results/shear_layer_1.000e+100_40x40/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -189,7 +196,7 @@
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

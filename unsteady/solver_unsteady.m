@@ -54,8 +54,8 @@ method_temp = method;
 
 
 %% start time stepping
-% while (abs(t)<=(t_end-dt+eps))
-% rev = 0;
+time_start = toc
+
 while(n<=nt)
     
     % time step counter
@@ -104,3 +104,5 @@ while(n<=nt)
     
     
 end
+disp('finished time-stepping...');
+time_loop = toc-time_start

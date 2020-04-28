@@ -104,6 +104,7 @@ voi = {
     'pressure_recovery', 0; ... % 0: no pressure computation; 1: compute pressure with PPE-ROM
     'pressure_precompute', 0; ... % in case of pressure_recovery=1: compute RHS Poisson equation based on FOM (0) or ROM (1)
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
+    'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     };
 
 accumulate_object;

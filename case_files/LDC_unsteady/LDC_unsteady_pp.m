@@ -1,9 +1,10 @@
 %% post-processing Lid-driven cavity results
 
-line  = {'r-','b-','k-','m-','g-'};
-color = char(line(j));
+line = {'r-','b-','m-','k-','g-','y-'};
+color = char(line(mod(j-1,length(line))+1));
 
-write_files = 1;
+% write output along centerlines to datafiles:
+write_files = 0;
 
 %load Botella-Peyret data
 % run('results/LDC/BP.m');

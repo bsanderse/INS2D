@@ -24,14 +24,22 @@ if (snapshots.Re ~= Re)
     error('Reynolds numbers of snapshot data and current simulation do not match');
 end
 
-
+%% check whether snapshots are divergence free
+% this gives max div for each snapshot:
+div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+% max over all snapshots:
+maxdiv_snapshots = max(div_snapshots);
+if (maxdiv_snapshots > 1e-14)
+    warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+end
+    
 %% construct economic SVD
 % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix 
 % which we use for the SVD
 Om     = options.grid.Om;
 Om_inv = options.grid.Om_inv;
 
-% subtract non-homogeneous BC contribution
+% subtract non-homogeneous BC contribution:
 if (options.rom.rom_bc == 1)
     f       = options.discretization.yM;
     dp      = pressure_poisson(f,t,options);
@@ -58,6 +66,7 @@ else
     error('sample dt is not an integer multiple of snapshot dt');
 end
 
+svd_start = toc;
 
 % select snapshots
 V_svd = V_total_snapshots(:,snapshot_indx);
@@ -110,7 +119,10 @@ elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
 elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
     
     % perform SVD
-    [W,S,Z] = svd(V_svd,'econ');
+%     [W,S,Z] = svd(V_svd,'econ');  
+    % getBasis uses different methods to get basis: SVD/direct/snapshot
+    % method
+    [W,S] = getBasis(V_svd,options);
     
 elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     
@@ -128,6 +140,8 @@ else
     error('wrong option for weighted norm or momentum conservation');
     
 end
+
+svd_end(j) = toc-svd_start
 
 % take first M columns of W as a reduced basis
 % maximum:
@@ -150,13 +164,28 @@ options.rom.Bv = Bv;
 toc
 
 % relative information content:
-Sigma = diag(S);
+if (size(S,2)>1)
+    Sigma = diag(S);
+else
+    Sigma = S;
+end
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 figure
 semilogy(Sigma/Sigma(1),'s');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
+
+%% check whether basis is divergence free
+% this gives max div for each basis vector (columns of B):
+% note that yM should not be included here, it was already used in
+% subtracting Vbc from the snapshots matrix
+div_basis = max(abs(options.discretization.M*B),[],1); %
+% max over all snapshots:
+maxdiv_basis = max(div_basis);
+if (maxdiv_basis > 1e-14)
+    warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+end
 
 %% pressure recovery
 if (options.rom.pressure_recovery == 1)
@@ -196,7 +225,9 @@ end
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
 disp('precomputing ROM operators...');
+precompute_start = toc;
 options = operator_rom(options);
+precompute_end(j) = toc-precompute_start
 
 
 %% initialize reduced order solution
@@ -313,4 +344,4 @@ while(n<=nt)
     
 end
 disp('finished time-stepping...');
-time_loop = toc-time_start
+time_loop(j) = toc-time_start

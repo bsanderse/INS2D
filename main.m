@@ -204,7 +204,7 @@ for j=1:Nsim
                     fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                     solver_unsteady;
                 elseif (options.rom.rom==1)
-                    fprintf(fcw,'Unsteady flow with reduced order model\n');
+                    fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
                     solver_unsteady_ROM;
                 else
                     error('wrong value for rom parameter');

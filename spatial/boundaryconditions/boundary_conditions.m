@@ -103,6 +103,7 @@ end
 %% pressure
 % pressure BC is only used when at the corresponding boundary 
 % 'pres' is specified
+% note: in the future, this should become an inputfile, e.g. casefile_pBC.m
 p_inf    = 0;
 pLe      = p_inf;
 pRi      = p_inf; 
