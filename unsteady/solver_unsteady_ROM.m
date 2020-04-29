@@ -2,26 +2,30 @@
 
 
 %% load snapshot data
+% assume that for parametric studies (e.g. changing number of modes, the
+% FOM data file does not change:
+if (j==1)
+    disp('loading data and making SVD...');
+    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
+    % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
 
-disp('loading data and making SVD...');
-snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
-% snapshots.U = [snapshots.uh_total; snapshots.vh_total];
+    % dt that was used for creating the snapshot matrix:
+    dt_snapshots = snapshots.dt;
+    % velocity field as snapshot matrix:
+    V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
 
-% dt that was used for creating the snapshot matrix:
-dt_snapshots = snapshots.dt;
-% velocity field as snapshot matrix:
-V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
+    % check input dimensions
+    Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
+    Nu      = options.grid.Nu;
+    Nv      = options.grid.Nv;
+    if (Nspace ~= Nu+Nv)
+        error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
+    end
 
-% check input dimensions
-Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
-Nu      = options.grid.Nu;
-Nv      = options.grid.Nv;
-if (Nspace ~= Nu+Nv)
-    error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
-end
+    if (snapshots.Re ~= Re)
+        error('Reynolds numbers of snapshot data and current simulation do not match');
+    end
 
-if (snapshots.Re ~= Re)
-    error('Reynolds numbers of snapshot data and current simulation do not match');
 end
 
 %% check whether snapshots are divergence free
@@ -199,9 +203,6 @@ if (options.rom.pressure_recovery == 1)
     p_total_snapshots = snapshots.p_total';
     p_svd  = p_total_snapshots(:,snapshot_indx);
     
-    % perform SVD
-    [Wp,Sp,Zp] = svd(p_svd,'econ');
-    
     % take first Mp columns of Wp as a reduced basis
     % (better is to look at the decay of the singular values in Sp to determine M)
     if (isfield(options.rom,'Mp'))
@@ -211,13 +212,24 @@ if (options.rom.pressure_recovery == 1)
         warning('number of pressure modes not defined, defaulting to number of velocity modes');
         Mp = options.rom.M;
     end
+    
+    [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
+    
+    % perform SVD
+%     [Wp,Sp,Zp] = svd(p_svd,'econ');
+    
+
     Bp = Wp(:,1:Mp);
     options.rom.Bp = Bp;
     
     toc
     
     hold on
-    SigmaP = diag(Sp);
+    if (size(Sp,2)>1)
+        SigmaP = diag(Sp);
+    else
+        SigmaP = Sp;
+    end
     semilogy(SigmaP/SigmaP(1),'o');
        
 end

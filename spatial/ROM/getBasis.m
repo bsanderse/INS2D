@@ -1,10 +1,12 @@
-function [Phi,S] = getBasis(X,options)
+function [Phi,S] = getBasis(X,options,M)
 % GETBASIS: get ROM spatial basis
-% input: snapshot matrix X, size Nv*Nsnapshots
+% input: snapshot matrix X, size Nv*Nsnapshots; number of modes
 % output: spatial basis Phi, and singular values S
 
 basis_type = options.rom.basis_type;
-M = options.rom.M;
+if (nargin<3)
+    M = options.rom.M;
+end
 
 [Nv,Nsnapshots] = size(X);
 
