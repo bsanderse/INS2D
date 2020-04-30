@@ -124,7 +124,7 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
     
     % perform SVD
 %     [W,S,Z] = svd(V_svd,'econ');  
-    % getBasis uses different methods to get basis: SVD/direct/snapshot
+    % getBasis can use different methods to get basis: SVD/direct/snapshot
     % method
     [W,S] = getBasis(V_svd,options);
     
@@ -136,7 +136,11 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     % make weighted snapshot matrix
     Vmod = Om_sqrt*V_svd;
     % perform SVD
-    [W,S,Z] = svd(Vmod,'econ');
+%     [W,S,Z] = svd(Vmod,'econ');
+    % getBasis can use different methods to get basis: SVD/direct/snapshot
+    % method
+    [W,S] = getBasis(Vmod,options);
+
     % transform back
     W = Om_invsqrt*W;
     

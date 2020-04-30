@@ -31,58 +31,83 @@ if (options.rom.rom == 1)
                 if (options.output.save_unsteady == 1)
                     % we have the velocity fields, so we can compute error wrt
                     % FOM
-                    % uh_total is of size Nt*Nu, V_total size Nt*(Nu+Nv)
-                    V_total = [uh_total vh_total];
-                    snapshots_V_total = [snapshots.uh_total(snapshot_indx,:) snapshots.vh_total(snapshot_indx,:)];
+                    % uh_total is of size Nt*Nu, V_total size (Nu+Nv)*Nt
+                    V_total = [uh_total vh_total]';
+                    snapshots_V_total = [snapshots.uh_total(snapshot_indx,:) snapshots.vh_total(snapshot_indx,:)]';
+                    error_V = V_total - snapshots_V_total;
+
                     % inf-norm
-                    error_V_inf = max(abs(V_total - snapshots_V_total(snapshot_indx,:)),[],2);
-                    % 2-norm of error, scaled with 2-norm of velocity field
-                    % note that 2-norm of velocity-field is simply sqrt(2*k),
-                    % with k the kinetic energy
-                    error_V_2 = zeros(nt+1,1);
-                    error_V_2_norm = zeros(nt+1,1);
-                    % alternative (equivalent):
-                    %                 error_V_2_norm = sqrt(2*snapshots.k(snapshot_indx))
+                    error_V_inf = max(abs(error_V),[],1);
                     
+                    % 2-norm of error
+                    % note that 2-norm of velocity-field is simply sqrt(2*k),
+                    % with k the kinetic energy = 0.5*V'*Om*V
+                    % NOTE! the (finite volume)-weighted 2-norm is consistent with the
+                    % Frobenius norm of the optimization problem as solved
+                    % by the SVD
+                    error_V_2 = zeros(nt+1,1);
                     for i=1:nt+1
-                        error_V_2(i) = sqrt(sum(options.grid.Om.*(V_total(i,:)' - snapshots_V_total(snapshot_indx(i),:)').^2));
-                        error_V_2_norm(i) = sqrt(sum(options.grid.Om.*(snapshots_V_total(snapshot_indx(i),:)').^2));
+                        error_V_2(i)= sqrt(error_V(:,i)'*(options.grid.Om.*error_V(:,i)));               
                     end
                     
                     figure
                     plot(t_vec,error_V_inf);
                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
-                    plot(t_vec(2:end),error_V_2(2:end)./error_V_2_norm(2:end));
+                    plot(t_vec,error_V_2); %(2:end)./error_V_2_norm(2:end));
                     
                     % best possible approximation given the projection:
-                    V_best = getFOM_velocity(getROM_velocity(snapshots_V_total(snapshot_indx,:)',0,options),0,options);
-                    error_V_best = max(abs(V_best' - snapshots_V_total(snapshot_indx,:)),[],2);
+                    % note that the norm should be consistent with the
+                    % optimization problem used in the SVD
+                    V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);
+                    error_V_best = V_best - snapshots_V_total;
+                    error_V_best_2 = zeros(nt+1,1);
+                    for i=1:nt+1
+                        error_V_best_2(i)= sqrt(error_V_best(:,i)'*(options.grid.Om.*error_V_best(:,i)));               
+                    end
                     
-                    plot(t_vec,error_V_best);
+                    plot(t_vec,error_V_best_2);
                     
-                    legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM')
+                    legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
 
                     
                     if (options.rom.pressure_recovery == 1)
-                        %                     error_p = max(abs(p_total - snapshots.p_total(snapshot_indx,:)),[],2);
                         % correct mean of both to be zero
-                        mean_ROM = mean(p_total,2);
-                        mean_FOM = mean(snapshots.p_total(snapshot_indx,:),2);
-                        error_p = max(abs((p_total - mean_ROM) - ...
-                            (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+                        % p_total is of size Nt*Np, change to Np*Nt
+                        p_total = p_total';
+                        mean_ROM = mean(p_total,1);
+                        snapshots_p_total = snapshots.p_total(snapshot_indx,:)';
+                        mean_FOM = mean(snapshots_p_total,1);
+                        
+                        error_p = (p_total - mean_ROM) - (snapshots_p_total - mean_FOM);
+
+                        % inf-norm
+                        error_p_inf = max(abs(error_p),[],1);
                         hold on
-                        plot(t_vec,error_p);
-                        legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','L_{inf} error in ROM pressure')
+                        plot(t_vec,error_p_inf);
+                        
+                        % 2-norm of error                        
+%                         error_p_2 = zeros(nt+1,1);
+%                         for i=1:nt+1
+%                             error_p_2(i)= sqrt(error_p(:,i)'*error_p(:,i));  
+%                         end
+                        error_p_2 = vecnorm(error_p,2);
+
                         
                         % best possible approximation given the projection:
-                        p_best = getFOM_pressure(getROM_pressure(snapshots.p_total(snapshot_indx,:)',0,options),0,options);
-                        mean_FOM_best = mean(p_best',2);
-                        error_p_best = max(abs((p_best' - mean_FOM_best) - ...
-                            (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
                         
-                        plot(t_vec,error_p_best);
-                        legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM velocity','L_{inf} error in ROM pressure','Projection FOM pressure')
+                        p_best = getFOM_pressure(getROM_pressure(snapshots_p_total,0,options),0,options);
+                        mean_ROM_best = mean(p_best,1);
+                        
+                        error_p_best = (p_best - mean_ROM_best) - (snapshots_p_total - mean_FOM);
+%                         error_p_best_2 = zeros(nt+1,1);
+%                         for i=1:nt+1
+%                             error_p_best_2(i)= sqrt(error_p_best(:,i)'*error_p_best(:,i)); 
+%                         end
+                        error_p_best_2 = vecnorm(error_p_best,2);
+                        
+                        plot(t_vec,error_p_best_2);
+                        legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM velocity','L_{inf} error in ROM pressure','L_{2} error in ROM pressure','Projection FOM pressure')
 
                     end
                     
@@ -90,11 +115,23 @@ if (options.rom.rom == 1)
                 end
                 
                 
-                figure
-                plot(t_vec,abs(k - snapshots.k(snapshot_indx)));
-                title('error in kinetic energy ROM wrt FOM');
+                figure(102)
+%                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
+                semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
+                hold on
+%                 set(gca,'Yscale','log')
+                ylabel('energy error');
+%                 semilogy(t_vec,abs(k-k(1))/k(1));
+%                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
+%                 title('error in kinetic energy ROM');
                 
-                figure
+                figure(103)
+                umom0 = snapshots.umom(1);
+                semilogy(t_vec,abs(umom-umom0)/umom0)
+                hold on
+                ylabel('momentum error');
+                
+                figure(104)
                 plot(t_vec,maxdiv);
                 hold on
                 plot(t_vec,snapshots.maxdiv(snapshot_indx));

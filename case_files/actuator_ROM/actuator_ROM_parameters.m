@@ -61,6 +61,8 @@
     pressure_recovery     = 1; % compute pressure at each time step
     pressure_precompute   = 1; % precompute PPE operator at ROM level
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
+    weighted_norm = 1;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;

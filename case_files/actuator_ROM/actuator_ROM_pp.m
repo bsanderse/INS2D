@@ -25,9 +25,9 @@ if (rem(Npx,2)~=0 || rem(Npy,2)~=0)
 end
 
 %% evaluate pressure work
-figure
-plot(dt:dt:t_end,p_work(2:end));
-ylabel('pressure work');
+% figure
+% plot(dt:dt:t_end,p_work(2:end));
+% ylabel('pressure work');
 
 %% get solution variables
 uh   = V(1:Nu);

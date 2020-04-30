@@ -2,6 +2,15 @@
 
 % calculate mass, momentum and energy
 [maxdiv(n), umom(n), vmom(n), k(n)] = check_conservation(V,t,options);
+% note, for the ROM, we could also precompute:
+% kinetic energy: 
+% 0.5*V'*Om*V = 0.5*(B*R + Vbc)'*Om*(B*R + Vbc)
+%    = 0.5*(R'*B'*Om*B*R + 2*Vbc'*Om*(B*R) + Vbc'*Om*Vbc)
+%    = 0.5*(R'*R + (2*Vbc'*Om*B)*R + Vbc'*Om*Vbc)
+% momentum:
+% total mom = e*Om*V; (e=ones(NV,1))
+%   = e*Om*(B*R+Vbc) = (e*Om*B)*R + e*Om*Vbc
+
 
 % residual (in Finite Volume form)
 % for ke model residual also contains k and e terms and is computed
