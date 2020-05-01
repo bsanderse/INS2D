@@ -217,11 +217,30 @@ if (options.rom.pressure_recovery == 1)
         Mp = options.rom.M;
     end
     
-    [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
+    if (options.rom.weighted_norm == 0)
+            
+        [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
+
+        % perform SVD
+    %     [Wp,Sp,Zp] = svd(p_svd,'econ');        
+        
+    elseif (options.rom.weighted_norm == 1)
+        
+        Np          = options.grid.Np;
+        Omp         = options.grid.Omp;
+        Omp_sqrt    = spdiags(sqrt(Omp),0,Np,Np);
+        Omp_invsqrt = spdiags(1./sqrt(Omp),0,Np,Np);
     
-    % perform SVD
-%     [Wp,Sp,Zp] = svd(p_svd,'econ');
-    
+        % make weighted snapshot matrix
+        pmod = Omp_sqrt*p_svd;
+
+        % getBasis can use different methods to get basis: SVD/direct/snapshot
+        % method
+        [Wp,Sp] = getBasis(pmod,options);
+
+        % transform back
+        Wp = Omp_invsqrt*Wp;
+    end    
 
     Bp = Wp(:,1:Mp);
     options.rom.Bp = Bp;

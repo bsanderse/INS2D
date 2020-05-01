@@ -68,11 +68,18 @@ if (options.rom.pressure_recovery == 1)
         % note: for sign convention see F.m or F_ROM.m
         
         % constant terms in rhs 
-        options.rom.ppe_const  = -conv_bc + yDiff + F;
+        % we distinguish between force and BC, in order to allow time
+        % varying forces
+        options.rom.ppe_force  =  F;
+        options.rom.ppe_bc     = -conv_bc + yDiff;
         % terms to be multiplied with R
         options.rom.ppe_linear = -conv_linear + Diff;
         % terms to be multiplied with kron(R,R)
         options.rom.ppe_quad   = -conv_quad;   
+        
+        % this is useful to do projection of time-varying quantities, e.g.
+        % the force
+        options.rom.P_PPE = P_PPE;
         
         % this is useful for evaluating int ( p u*n ) dS (pressure work):
         options.rom.yM = Bp'*options.discretization.yM;

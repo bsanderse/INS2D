@@ -441,6 +441,8 @@ options.grid.N2     = N2;
 options.grid.N3     = N3;
 options.grid.N4     = N4;
 
+options.grid.Omp    = Omp;
+options.grid.Omp_inv= Omp_inv;
 options.grid.Om     = Om;
 options.grid.Omu    = Omu;
 options.grid.Omv    = Omv;

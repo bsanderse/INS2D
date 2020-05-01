@@ -44,12 +44,9 @@ if (options.rom.rom == 1)
                     % with k the kinetic energy = 0.5*V'*Om*V
                     % NOTE! the (finite volume)-weighted 2-norm is consistent with the
                     % Frobenius norm of the optimization problem as solved
-                    % by the SVD
-                    error_V_2 = zeros(nt+1,1);
-                    for i=1:nt+1
-                        error_V_2(i)= sqrt(error_V(:,i)'*(options.grid.Om.*error_V(:,i)));               
-                    end
-                    
+                    % by the SVD                    
+                    error_V_2 = weightedL2norm(error_V,options.grid.Om);
+                    %%
                     figure
                     plot(t_vec,error_V_inf);
                     hold on
@@ -61,10 +58,7 @@ if (options.rom.rom == 1)
                     % optimization problem used in the SVD
                     V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);
                     error_V_best = V_best - snapshots_V_total;
-                    error_V_best_2 = zeros(nt+1,1);
-                    for i=1:nt+1
-                        error_V_best_2(i)= sqrt(error_V_best(:,i)'*(options.grid.Om.*error_V_best(:,i)));               
-                    end
+                    error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
                     
                     plot(t_vec,error_V_best_2);
                     
@@ -87,24 +81,16 @@ if (options.rom.rom == 1)
                         plot(t_vec,error_p_inf);
                         
                         % 2-norm of error                        
-%                         error_p_2 = zeros(nt+1,1);
-%                         for i=1:nt+1
-%                             error_p_2(i)= sqrt(error_p(:,i)'*error_p(:,i));  
-%                         end
-                        error_p_2 = vecnorm(error_p,2);
+                        error_p_2 = weightedL2norm(error_p,options.grid.Omp);
+                        plot(t_vec,error_p_2);
 
                         
-                        % best possible approximation given the projection:
-                        
+                        % best possible approximation given the projection:                        
                         p_best = getFOM_pressure(getROM_pressure(snapshots_p_total,0,options),0,options);
                         mean_ROM_best = mean(p_best,1);
                         
                         error_p_best = (p_best - mean_ROM_best) - (snapshots_p_total - mean_FOM);
-%                         error_p_best_2 = zeros(nt+1,1);
-%                         for i=1:nt+1
-%                             error_p_best_2(i)= sqrt(error_p_best(:,i)'*error_p_best(:,i)); 
-%                         end
-                        error_p_best_2 = vecnorm(error_p_best,2);
+                        error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp);
                         
                         plot(t_vec,error_p_best_2);
                         legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Projection FOM velocity','L_{inf} error in ROM pressure','L_{2} error in ROM pressure','Projection FOM pressure')
