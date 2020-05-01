@@ -61,7 +61,8 @@ mesh_list = ones(length(M_list),1);
     precompute_force      = 1;
     pressure_recovery     = 0;
     pressure_precompute   = 0;
-    weighted_norm         = 0;
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
+    weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
     mom_cons              = j>4;
     

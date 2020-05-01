@@ -1,7 +1,7 @@
 % project = 'actuator';   % project name used in filenames
-% run_multiple = 1;
-% M_list = [5 5 5 10 10 20 20 40 40 80 80];
-% mesh_list = ones(length(M_list),1);
+run_multiple = 1;
+M_list = [5 5 10 10 20 20 40 40 80 80];
+mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,20 +49,20 @@
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    M      = 20;     % number of velocity modes used
-    Mp     = 20;     % number of pressure modes used
+    M      = M_list(j);     % number of velocity modes used
+    Mp     = M;     % number of pressure modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
-    t_sample  = 10;  % part of snapshot matrix used for building SVD
-    dt_sample = 10/200; % frequency of snapshots to be used for SVD
+    t_sample  = 20;  % part of snapshot matrix used for building SVD
+    dt_sample = 10/400; % frequency of snapshots to be used for SVD
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 1; 
-    pressure_recovery     = 1; % compute pressure at each time step
-    pressure_precompute   = 1; % precompute PPE operator at ROM level
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
-    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
-    weighted_norm = 1;
+    pressure_recovery     = 0; % compute pressure at each time step
+    pressure_precompute   = 0; % precompute PPE operator at ROM level
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
+    basis_type            = 0; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
+    weighted_norm         = 1;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;

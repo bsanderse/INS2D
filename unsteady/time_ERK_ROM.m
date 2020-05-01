@@ -25,6 +25,7 @@ if (t==options.time.t_start)
     c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
     
 end
+
 %% preprocessing
 
 % store variables at start of time step
@@ -66,10 +67,6 @@ for i_RK=1:s_RK
     
 end
 
-% map back from reduced space to full order model space
-% this is used for postprocessing purposes, e.g. evaluating the divergence
-% of the velocity field
-V = getFOM_velocity(R,t,options);
 
 if (options.rom.pressure_recovery == 1)
     q = pressure_additional_solve_ROM(R,tn+dt,options);

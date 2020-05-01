@@ -59,7 +59,7 @@ if (options.rom.precompute_force == 1)
     % body force, which prevents computing the projection of the force at
     % each time step
     if (options.case.force_unsteady == 1)
-        F = F*(1+sin(pi*t));
+        F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
     end
     
 else

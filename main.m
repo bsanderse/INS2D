@@ -152,8 +152,18 @@ for j=1:Nsim
     %% boundary conditions
     options = set_bc_vectors(t,options);
     
+    
     %% construct body force or immersed boundary method
-    % is done in the residual routines e.g. F.m
+    % the body force is called in the residual routines e.g. F.m
+    % here we create a handle to bodyforce file, if exists
+    file_name_force = [options.case.project '_force'];
+    if (exist(file_name_force,'file'))
+        % create function handle with name bodyforce
+        options.force.isforce   = 1;
+        options.force.bodyforce = str2func(file_name_force);  
+    else
+        options.force.isforce   = 0;
+    end
     
     
     %% input checking

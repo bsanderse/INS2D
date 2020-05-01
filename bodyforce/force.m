@@ -4,15 +4,9 @@ function [Fx, Fy] = force(t,options)
 
 force_unsteady = options.case.force_unsteady;
 
-% % only run if unsteady force or at first iteration of steady 
-% if (force_unsteady == 1 || t == options.time.t_start) 
-
-file_name = [options.case.project '_force'];
-
-if (exist(file_name,'file'))
+if (options.force.isforce == 1)
     % create function handle with name bodyforce
-    bodyforce = str2func(file_name);    
-    [Fx, Fy]  = bodyforce(t,options);
+    [Fx, Fy]  = options.force.bodyforce(t,options);
 else
     % 
     Fx = zeros(options.grid.Nu,1);

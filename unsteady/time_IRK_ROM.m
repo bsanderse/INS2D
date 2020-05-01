@@ -4,25 +4,29 @@
 M  = options.rom.M;
 
 %% get coefficients of RK method
-if (isnumeric(options.time.RK))
-    options.time.RK = num2str(options.time.RK);
+if (t==options.time.t_start)
+    
+    if (isnumeric(options.time.RK))
+        options.time.RK = num2str(options.time.RK);
+    end
+    [A_RK,b_RK,c_RK] = getRKmethod(options.time.RK);
+    % RK_order = check_orderconditions(A_RK,b_RK,c_RK);
+    % number of stages
+    s_RK = length(b_RK);
+    
+    options.time.A_RK = A_RK;
+    options.time.b_RK = b_RK;
+    options.time.c_RK = c_RK;
+    options.time.s_RK = s_RK;
+    
+    % extend the Butcher tableau
+    Is        = speye(s_RK);
+    Om_sM     = kron(Is,spdiags(ones(M,1),0,M,M));
+    A_RK_ext  = kron(A_RK,speye(M));
+    b_RK_ext  = kron(b_RK',speye(M));
+    c_RK_ext  = spdiags(c_RK,0,s_RK,s_RK);
+    
 end
-[A_RK,b_RK,c_RK] = getRKmethod(options.time.RK);
-% RK_order = check_orderconditions(A_RK,b_RK,c_RK);
-% number of stages
-s_RK = length(b_RK);
-
-options.time.A_RK = A_RK;
-options.time.b_RK = b_RK;
-options.time.c_RK = c_RK;
-options.time.s_RK = s_RK;
-
-% extend the Butcher tableau 
-Is        = speye(s_RK);
-Om_sM     = kron(Is,spdiags(ones(M,1),0,M,M));
-A_RK_ext  = kron(A_RK,speye(M));
-b_RK_ext  = kron(b_RK',speye(M));
-c_RK_ext  = spdiags(c_RK,0,s_RK,s_RK);
 
 %% preprocessing
 
@@ -111,9 +115,6 @@ nonlinear_its(n) = i;
 
 % solution at new time step with b-coefficients of RK method
 R = Rn + dt*(b_RK_ext*F_rhs);
-
-% map back from reduced space to full order model space
-V = getFOM_velocity(R,t,options);
 
 if (options.rom.pressure_recovery == 1)
     q = pressure_additional_solve_ROM(R,tn+dt,options);

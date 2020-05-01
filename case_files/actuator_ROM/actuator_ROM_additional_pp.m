@@ -1,8 +1,12 @@
+% additional postprocessing, run after post_processing.m is completed in
+% order to get certain variables
+
 %% script to plot Vbc function
 
 % Vbc = options.rom.Vbc;
 
 % u-component
+figure
 set(gcf,'color','w');
 set(gca,'LineWidth',1);
 [~,c]=contour(options.grid.xin,options.grid.yp,reshape(Vbc(1:options.grid.Nu),options.grid.Nux_in,options.grid.Nuy_in)');
@@ -13,7 +17,7 @@ colorbar
 xlabel('x')
 ylabel('y')
 
-export_fig('actuator_uBC_extended','-pdf','-transparent')
+% export_fig('actuator_uBC_extended','-pdf','-transparent')
 
 % v-component
 figure
@@ -27,7 +31,7 @@ colorbar
 xlabel('x')
 ylabel('y')
 
-export_fig('actuator_vBC_extended','-pdf','-transparent')
+% export_fig('actuator_vBC_extended','-pdf','-transparent')
 
 %% script to plot final pressure and velocity
 [up,vp,qp] = get_velocity(V,t,options);
@@ -45,7 +49,7 @@ colorbar
 xlabel('x')
 ylabel('y')
 
-% export_fig('ROM_velocity_field_M20_t20','-pdf','-transparent')
+% export_fig('ROM_velocity_field_M10_t20','-pdf','-transparent')
 % export_fig('FOM_velocity_field_t20','-pdf','-transparent')
 
 Npx = options.grid.Npx;
@@ -62,7 +66,7 @@ axis([x1 x2 y1 y2]);
 colorbar
 xlabel('x')
 ylabel('y')
-% export_fig('ROM_pressure_field_M20_t20','-pdf','-transparent')
+% export_fig('ROM_pressure_field_M10_t20','-pdf','-transparent')
 % export_fig('FOM_pressure_field_t20','-pdf','-transparent')
 
 %% script to plot mass conservation 
@@ -80,35 +84,28 @@ legend('FOM','ROM');
 set(gca, 'YScale', 'log')
 set(gca, 'FontSize',14)
 
-export_fig('error_div_actuator_unsteady','-pdf','-transparent')
+export_fig('error_div_actuator_unsteady_M10','-pdf','-transparent')
 
 %% script to plot errors
 figure
 set(gcf,'color','w');
 set(gca,'LineWidth',1);
-plot(t_vec,error_V_inf,'LineWidth',2);
+plot(t_vec,error_V_2,'LineWidth',2);
 hold on
-plot(t_vec,error_V_best,'LineWidth',2);
-legend('Velocity - ROM','Velocity - FOM projection');
+plot(t_vec,error_V_best_2,'LineWidth',2);
+legend('Velocity - ROM','Velocity - best approximation');
 
 if (options.rom.pressure_recovery == 1)
-    %                     error_p = max(abs(p_total - snapshots.p_total(snapshot_indx,:)),[],2);
-    % correct mean of both to be zero
-    mean_ROM = mean(p_total,2);
-    mean_FOM = mean(snapshots.p_total(snapshot_indx,:),2);
-    error_p = max(abs((p_total - mean_ROM) - ...
-        (snapshots.p_total(snapshot_indx,:) - mean_FOM)),[],2);
+    plot(t_vec,error_p_2,'LineWidth',2);
     hold on
-    plot(t_vec,error_p,'LineWidth',2);
-    hold on
-    plot(t_vec,error_p_best,'LineWidth',2);
+    plot(t_vec,error_p_best_2,'LineWidth',2);
 %     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','L_{inf} error in ROM pressure')
-    legend('Velocity - ROM','Velocity - FOM projection','Pressure - ROM','Pressure - FOM projection')
+    legend('Velocity - ROM','Velocity - best approximation','Pressure - ROM','Pressure - best approximation')
 %     legend('Velocity','Pressure')
 end
 set(gca, 'YScale', 'log')
 set(gca, 'FontSize',14)
 grid
 xlabel('t')
-ylabel('Maximum absoute error')
-% export_fig('error_velocity_actuator_unsteady','-pdf','-transparent')
+ylabel('L2 error')
+export_fig('error_velocity_actuator_unsteady','-pdf','-transparent')

@@ -5,15 +5,16 @@
 % assume that for parametric studies (e.g. changing number of modes, the
 % FOM data file does not change:
 if (j==1)
-    disp('loading data and making SVD...');
+    
+    disp('loading data...');
     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
     % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
-
+    
     % dt that was used for creating the snapshot matrix:
     dt_snapshots = snapshots.dt;
     % velocity field as snapshot matrix:
     V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
-
+    
     % check input dimensions
     Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
     Nu      = options.grid.Nu;
@@ -21,59 +22,65 @@ if (j==1)
     if (Nspace ~= Nu+Nv)
         error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
     end
-
+    
     if (snapshots.Re ~= Re)
         error('Reynolds numbers of snapshot data and current simulation do not match');
     end
-
-end
-
-%% check whether snapshots are divergence free
-% this gives max div for each snapshot:
-div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
-% max over all snapshots:
-maxdiv_snapshots = max(div_snapshots);
-if (maxdiv_snapshots > 1e-14)
-    warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
-end
     
-%% construct economic SVD
-% note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix 
-% which we use for the SVD
-Om     = options.grid.Om;
-Om_inv = options.grid.Om_inv;
+    
+    %% check whether snapshots are divergence free
+    % this gives max div for each snapshot:
+    div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+    % max over all snapshots:
+    maxdiv_snapshots = max(div_snapshots);
+    if (maxdiv_snapshots > 1e-14)
+        warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+    end
+    
 
-% subtract non-homogeneous BC contribution:
-if (options.rom.rom_bc == 1)
-    f       = options.discretization.yM;
-    dp      = pressure_poisson(f,t,options);
-    Vbc     = - Om_inv.*(options.discretization.G*dp);
-    V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-else
-    Vbc = zeros(Nu+Nv,1);
+    %% subtract non-homogeneous BC contribution:
+
+    % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
+    % which we use for the SVD
+    Om     = options.grid.Om;
+    Om_inv = options.grid.Om_inv;
+
+    if (options.rom.rom_bc == 1)
+        f       = options.discretization.yM;
+        dp      = pressure_poisson(f,t,options);
+        Vbc     = - Om_inv.*(options.discretization.G*dp);
+        V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
+    else
+        Vbc = zeros(Nu+Nv,1);
+    end
+
+    % sample dt can be used to get only a subset of the snapshots
+    if (rem(dt_sample,dt_snapshots) == 0)
+        % sample dt should be a multiple of snapshot dt:
+        Nskip = dt_sample/dt_snapshots;
+        % check if t_sample is multiple of dt_sample
+        if (rem(t_sample,dt_sample) == 0)
+            Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
+            snapshot_sample = 1:Nskip:Nsnapshots;
+        else
+            error('sample dt is not an integer multiple of sample time');
+        end
+    else
+        error('sample dt is not an integer multiple of snapshot dt');
+    end
+
+    % select snapshots
+    V_svd = V_total_snapshots(:,snapshot_sample);
+
+    
 end
+
+%% get Vbc into options (this has to be outside the j==1 if statement)
 options.rom.Vbc = Vbc;
 
 
-
-% sample dt is multiple of snapshot dt:
-if (rem(dt_sample,dt_snapshots) == 0)
-    Nskip = dt_sample/dt_snapshots;
-    % check if t_sample is multiple of dt_sample
-    if (rem(t_sample,dt_sample) == 0)
-        Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
-        snapshot_indx = 1:Nskip:Nsnapshots;
-    else
-        error('sample dt is not an integer multiple of sample time');
-    end
-else
-    error('sample dt is not an integer multiple of snapshot dt');
-end
-
+%% construct basis through SVD or eigenvalue problem
 svd_start = toc;
-
-% select snapshots
-V_svd = V_total_snapshots(:,snapshot_indx);
 
 % enforce momentum conservation (works for periodic domains)
 if (options.rom.mom_cons == 1 && options.rom.weighted_norm == 0)
@@ -123,7 +130,7 @@ elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
 elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
     
     % perform SVD
-%     [W,S,Z] = svd(V_svd,'econ');  
+    %     [W,S,Z] = svd(V_svd,'econ');
     % getBasis can use different methods to get basis: SVD/direct/snapshot
     % method
     [W,S] = getBasis(V_svd,options);
@@ -136,11 +143,11 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     % make weighted snapshot matrix
     Vmod = Om_sqrt*V_svd;
     % perform SVD
-%     [W,S,Z] = svd(Vmod,'econ');
+    %     [W,S,Z] = svd(Vmod,'econ');
     % getBasis can use different methods to get basis: SVD/direct/snapshot
     % method
     [W,S] = getBasis(Vmod,options);
-
+    
     % transform back
     W = Om_invsqrt*W;
     
@@ -198,14 +205,14 @@ end
 %% pressure recovery
 if (options.rom.pressure_recovery == 1)
     disp('computing SVD of pressure snapshots...');
-
+    svd_start2 = toc;
     % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
     % the SVD
     % use same snapshot_indx that was determined for velocity
     
     % select snapshots
     p_total_snapshots = snapshots.p_total';
-    p_svd  = p_total_snapshots(:,snapshot_indx);
+    p_svd  = p_total_snapshots(:,snapshot_sample);
     
     % take first Mp columns of Wp as a reduced basis
     % (better is to look at the decay of the singular values in Sp to determine M)
@@ -218,11 +225,11 @@ if (options.rom.pressure_recovery == 1)
     end
     
     if (options.rom.weighted_norm == 0)
-            
+        
         [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
-
+        
         % perform SVD
-    %     [Wp,Sp,Zp] = svd(p_svd,'econ');        
+        %     [Wp,Sp,Zp] = svd(p_svd,'econ');
         
     elseif (options.rom.weighted_norm == 1)
         
@@ -230,22 +237,22 @@ if (options.rom.pressure_recovery == 1)
         Omp         = options.grid.Omp;
         Omp_sqrt    = spdiags(sqrt(Omp),0,Np,Np);
         Omp_invsqrt = spdiags(1./sqrt(Omp),0,Np,Np);
-    
+        
         % make weighted snapshot matrix
         pmod = Omp_sqrt*p_svd;
-
+        
         % getBasis can use different methods to get basis: SVD/direct/snapshot
         % method
         [Wp,Sp] = getBasis(pmod,options);
-
+        
         % transform back
         Wp = Omp_invsqrt*Wp;
-    end    
-
+    end
+    
     Bp = Wp(:,1:Mp);
     options.rom.Bp = Bp;
     
-    toc
+    svd_end(j) = svd_end(j) + toc - svd_start2
     
     hold on
     if (size(Sp,2)>1)
@@ -254,7 +261,7 @@ if (options.rom.pressure_recovery == 1)
         SigmaP = Sp;
     end
     semilogy(SigmaP/SigmaP(1),'o');
-       
+    
 end
 
 %% precompute ROM operators by calling operator_rom
@@ -273,42 +280,50 @@ V  = V - Vbc; % subtract boundary condition contribution (zero if not used)
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
-% map back to velocity space to get statistics of initial velocity field
-% note that V will not be equal to the specified initial field, because
-% B*B' does not equal identity in general
-V  = getFOM_velocity(R,t,options);
-
-[maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+if (options.rom.process_iteration_FOM == 1)
+    % map back to velocity space to get statistics of initial velocity field
+    % note that V will not be equal to the specified initial field, because
+    % B*B' does not equal identity in general
+    V  = getFOM_velocity(R,t,options);
+    
+    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+    
+    
+    % overwrite the arrays with total solutions
+    if (save_unsteady == 1)
+        uh_total(n,:) = V(1:options.grid.Nu);
+        vh_total(n,:) = V(options.grid.Nu+1:end);
+    end
+end
 
 if (options.rom.pressure_recovery == 1)
     % get initial pressure that corresponds to the ROM velocity field
     q = pressure_additional_solve_ROM(R,t,options);
     p = getFOM_pressure(q,t,options);
+    
+    % overwrite the arrays with total solutions
+    if (save_unsteady == 1)
+        p_total(n,:)  = p;
+    end
 end
 
-% overwrite the arrays with total solutions
-if (steady==0 && save_unsteady == 1)
-    uh_total(n,:) = V(1:options.grid.Nu);
-    vh_total(n,:) = V(options.grid.Nu+1:end);
-    p_total(n,:)  = p;
-end
 
 %% reduced order solution tests
 
 % % test the offline implementation as follows:
 % Rtest = rand(options.rom.M,1);
 % Vtest = getFOM_velocity(Rtest,t,options);
-% 
+%
 % % with precomputing:
 % conv_ROM_pre = convectionROM(Rtest,t,options,0);
 % diff_ROM_pre = diffusionROM(Rtest,t,options,0);
-% 
+%
 % % without precomputing:
 % [convu, convv, dconvu, dconvv] = convection(Vtest,Vtest,t,options,0);
 % conv_ROM  = B'*(Om_inv.*[convu;convv]);
 % [d2u,d2v,dDiffu,dDiffv] = diffusion(Vtest,t,options,0);
 % diff_ROM  = B'*(Om_inv.*[d2u;d2v]);
-% 
+%
 % % compute error between the two versions
 % error_conv_ROM = conv_ROM_pre - conv_ROM;
 % error_diff_ROM = diff_ROM_pre - diff_ROM;
@@ -344,8 +359,6 @@ disp('starting time-stepping...');
 
 time_start = toc
 
-% while (abs(t)<=(t_end-dt+eps))
-% rev = 0;
 while(n<=nt)
     
     %% dynamic timestepping:
@@ -354,7 +367,7 @@ while(n<=nt)
     %%
     
     n = n+1;
-       
+    
     % perform one time step with the time integration method
     if (method == 20)
         time_ERK_ROM;
@@ -373,6 +386,11 @@ while(n<=nt)
     % check residuals, conservation, write output files
     % this requires to go back to FOM level
     if (options.rom.process_iteration_FOM == 1)
+        % map back from reduced space to full order model space
+        % this is used for postprocessing purposes, e.g. evaluating the divergence
+        % of the velocity field
+        V = getFOM_velocity(R,t,options);
+        
         process_iteration;
     end
     
@@ -380,3 +398,6 @@ while(n<=nt)
 end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start
+
+
+V  = getFOM_velocity(R,t,options);

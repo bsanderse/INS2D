@@ -62,8 +62,11 @@ mesh_list = ones(length(M_list),1);
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 1;
-    pressure_recovery     = 1;
-    pressure_precompute   = 1;
+    pressure_recovery     = 0;
+    pressure_precompute   = 0;
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
+    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
+    weighted_norm         = 1;
 
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -199,7 +202,7 @@ mesh_list = ones(length(M_list),1);
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
                                    % -> requires save_file=1 to get saved into output file
         
