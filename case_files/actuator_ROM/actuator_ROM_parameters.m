@@ -1,6 +1,8 @@
 % project = 'actuator';   % project name used in filenames
 run_multiple = 1;
-M_list = [5 5 10 10 20 20 40 40 80 80];
+% M_list = [2 2 2 5 5 10 10 20 20 40 40 80 80];
+% M_list = [2 5 10 20 40 80];
+M_list = 10;
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
@@ -58,10 +60,10 @@ mesh_list = ones(length(M_list),1);
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 1; 
-    pressure_recovery     = 0; % compute pressure at each time step
-    pressure_precompute   = 0; % precompute PPE operator at ROM level
-    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
-    basis_type            = 0; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
+    pressure_recovery     = 1; % compute pressure at each time step
+    pressure_precompute   = 1; % precompute PPE operator at ROM level
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 

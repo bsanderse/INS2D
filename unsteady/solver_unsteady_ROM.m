@@ -7,7 +7,7 @@
 if (j==1)
     
     disp('loading data...');
-    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
+    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
     % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
     
     % dt that was used for creating the snapshot matrix:
@@ -37,23 +37,29 @@ if (j==1)
         warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
     end
     
-
+    
     %% subtract non-homogeneous BC contribution:
-
+    
     % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
     % which we use for the SVD
     Om     = options.grid.Om;
     Om_inv = options.grid.Om_inv;
-
+    
     if (options.rom.rom_bc == 1)
-        f       = options.discretization.yM;
-        dp      = pressure_poisson(f,t,options);
-        Vbc     = - Om_inv.*(options.discretization.G*dp);
+        % check if the Vbc field has been stored as part of the FOM
+        if (isfield(snapshots,'Vbc'))
+            Vbc = snapshots.Vbc;
+        else
+            disp('computing Vbc field...');
+            f       = options.discretization.yM;
+            dp      = pressure_poisson(f,t,options);
+            Vbc     = - Om_inv.*(options.discretization.G*dp);
+        end
         V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
     else
         Vbc = zeros(Nu+Nv,1);
     end
-
+    
     % sample dt can be used to get only a subset of the snapshots
     if (rem(dt_sample,dt_snapshots) == 0)
         % sample dt should be a multiple of snapshot dt:
@@ -68,10 +74,10 @@ if (j==1)
     else
         error('sample dt is not an integer multiple of snapshot dt');
     end
-
+    
     % select snapshots
     V_svd = V_total_snapshots(:,snapshot_sample);
-
+    
     
 end
 

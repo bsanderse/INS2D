@@ -10,6 +10,8 @@
 % momentum:
 % total mom = e*Om*V; (e=ones(NV,1))
 %   = e*Om*(B*R+Vbc) = (e*Om*B)*R + e*Om*Vbc
+% divergence:
+% M*(B*R + Vbc) = (M*B)*R + M*Vbc
 
 
 % residual (in Finite Volume form)
