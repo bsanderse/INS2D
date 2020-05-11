@@ -103,6 +103,7 @@ voi = {
     'weighted_norm', 1; ... % 0: unweighted norm; 1: weighted norm (using finite volumes as weights)
     'pressure_recovery', 0; ... % 0: no pressure computation; 1: compute pressure with PPE-ROM
     'pressure_precompute', 0; ... % in case of pressure_recovery=1: compute RHS Poisson equation based on FOM (0) or ROM (1)
+    'pressure_mean', 0; ... % subtract pressure mean from snapshots
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     };

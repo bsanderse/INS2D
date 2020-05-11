@@ -218,6 +218,11 @@ if (options.rom.pressure_recovery == 1)
     
     % select snapshots
     p_total_snapshots = snapshots.p_total';
+    if (options.rom.pressure_mean == 1)    
+        % subtract temporal mean
+        options.rom.p_mean = mean(p_total_snapshots,2);
+        p_total_snapshots = p_total_snapshots - options.rom.p_mean;
+    end
     p_svd  = p_total_snapshots(:,snapshot_sample);
     
     % take first Mp columns of Wp as a reduced basis
@@ -281,7 +286,7 @@ precompute_end(j) = toc-precompute_start
 %% initialize reduced order solution
 % we expand the part of the solution vector that is div-free in terms of
 % B*R
-V  = V - Vbc; % subtract boundary condition contribution (zero if not used)
+% V = B*R + Vbc
 
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);

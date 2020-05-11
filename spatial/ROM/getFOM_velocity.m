@@ -4,5 +4,5 @@ function [V] = getFOM_velocity(R,t,options)
 B   = options.rom.B;
 Vbc = options.rom.Vbc;
 
-V = B*R + Vbc;
+V   = B*R + Vbc;
 

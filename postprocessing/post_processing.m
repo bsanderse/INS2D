@@ -68,7 +68,7 @@ if (options.rom.rom == 1)
 
                     
                     if (options.rom.pressure_recovery == 1)
-                        % correct mean of both to be zero
+                        % correct spatial mean of both to be zero
                         % p_total is of size Nt*Np, change to Np*Nt
                         p_total = p_total';
                         mean_ROM = mean(p_total,1);

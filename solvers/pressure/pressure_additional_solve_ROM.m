@@ -31,6 +31,13 @@ function q = pressure_additional_solve_ROM(R,t,options)
     
     end
 
+    if (options.rom.pressure_mean == 1)
+        % subtract mean pressure field
+        f = f - options.rom.ppe_mean;
+    end
+        
+        
+    
     L   = options.rom.L;
     U   = options.rom.U;
     b   = L\f;

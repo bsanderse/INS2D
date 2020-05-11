@@ -62,6 +62,8 @@ mesh_list = ones(length(M_list),1);
     precompute_force      = 1; 
     pressure_recovery     = 1; % compute pressure at each time step
     pressure_precompute   = 1; % precompute PPE operator at ROM level
+    pressure_mean         = 0; % subtract mean pressure in constructing ROM
+    
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;

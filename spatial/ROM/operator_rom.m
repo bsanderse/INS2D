@@ -85,5 +85,8 @@ if (options.rom.pressure_recovery == 1)
         options.rom.yM = Bp'*options.discretization.yM;
     end
     
+    if (options.rom.pressure_mean == 1)
+        options.rom.ppe_mean = Bp'*options.discretization.A*options.rom.p_mean;
+    end
 
 end
