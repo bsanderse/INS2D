@@ -45,15 +45,25 @@ if (options.rom.rom == 1)
                     % NOTE! the (finite volume)-weighted 2-norm is consistent with the
                     % Frobenius norm of the optimization problem as solved
                     % by the SVD                    
-                    Om_total = sum(sum(options.grid.Om));
-                    error_V_2 = weightedL2norm(error_V,options.grid.Om)/Om_total;
+%                     Om_total = sum(sum(options.grid.Om));
+                    
+                    % choose reference velocity field (can be time
+                    % dependent)
+                    % V_ref = 1:
+                    V_ref    = ones(size(snapshots_V_total));
+                    % V_ref = snapshots:
+%                     V_ref    = snapshots_V_total;
+                    
+                    V_2_ref  = weightedL2norm(V_ref,options.grid.Om); 
+                    error_V_2 = weightedL2norm(error_V,options.grid.Om)./V_2_ref;
+                    
                     
                     % best possible approximation given the projection:
                     % note that the norm should be consistent with the
                     % optimization problem used in the SVD
                     V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);
                     error_V_best = V_best - snapshots_V_total;
-                    error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)/Om_total;
+                    error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
                     
                     figure(101)
 %                     plot(t_vec,error_V_inf);
@@ -80,15 +90,22 @@ if (options.rom.rom == 1)
                         % inf-norm
                         error_p_inf = max(abs(error_p),[],1);
                         
-                        % 2-norm of error                        
-                        error_p_2 = weightedL2norm(error_p,options.grid.Omp)/Om_total;
+                        % 2-norm of error    
+                        % choose reference pressure field (can be time
+                        % dependent)                        
+                        p_ref     = 0.25*ones(size(snapshots_p_total));
+                        % p_ref = snapshots:
+%                         p_ref    = snapshots_p_total - mean_FOM;
+
+                        p_2_ref   = weightedL2norm(p_ref,options.grid.Omp); 
+                        error_p_2 = weightedL2norm(error_p,options.grid.Omp)./p_2_ref;
 
                         % best possible approximation given the projection:                        
                         p_best = getFOM_pressure(getROM_pressure(snapshots_p_total,0,options),0,options);
                         mean_ROM_best = mean(p_best,1);
                         
                         error_p_best = (p_best - mean_ROM_best) - (snapshots_p_total - mean_FOM);
-                        error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp)/Om_total;
+                        error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp)./p_2_ref;
                         
                         figure(102)
                         plot(t_vec,error_p_2);
@@ -106,16 +123,18 @@ if (options.rom.rom == 1)
                 
                 figure(103)
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
-                semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
+%                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
+                semilogy(t_vec,abs(k-k(1))/k(1));
                 hold on
 %                 set(gca,'Yscale','log')
                 ylabel('energy error');
-%                 semilogy(t_vec,abs(k-k(1))/k(1));
+
 %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
 %                 title('error in kinetic energy ROM');
                 
                 figure(104)
-                umom0 = snapshots.umom(1);
+%                 umom0 = snapshots.umom(1);
+                umom0 = umom(1);
                 semilogy(t_vec,abs(umom-umom0)/umom0)
                 hold on
                 ylabel('momentum error');

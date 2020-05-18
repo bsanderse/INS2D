@@ -62,16 +62,17 @@ else
         if (timestep.set==1)
             set_timestep;
         end
-        % estimate number of time steps
+        % estimate number of time steps that will be taken
         nt     = ceil((t_end-t_start)/dt);
         
-        maxres = zeros(nt,1);
-        maxdiv = zeros(nt,1);
-        k      = zeros(nt,1);
-        umom   = zeros(nt,1);
-        vmom   = zeros(nt,1);
-        time   = zeros(nt,1);
-        nonlinear_its = zeros(nt,1);
+        % allocate variables, including initial condition
+        maxres = zeros(nt+1,1);
+        maxdiv = zeros(nt+1,1);
+        k      = zeros(nt+1,1);
+        umom   = zeros(nt+1,1);
+        vmom   = zeros(nt+1,1);
+        time   = zeros(nt+1,1);
+        nonlinear_its = zeros(nt+1,1);
         
     end
     

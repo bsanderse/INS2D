@@ -1,8 +1,8 @@
 % input file                
 % project = 'LDC_unsteady';   % project name used in filenames
 run_multiple = 1;
-M_list = [2 2 2 5 5 10 10 20 20 40 40 ];
-% M_list = [2 5 10 15 20 ];
+% M_list = [2 2 2 5 5 10 10 20 20 40 40 ];
+M_list = [2 5 10 15 20 ];
 
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
@@ -51,7 +51,7 @@ mesh_list = ones(length(M_list),1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     
@@ -62,9 +62,9 @@ mesh_list = ones(length(M_list),1);
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 1;
-    pressure_recovery     = 0;
-    pressure_precompute   = 0;
-    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
+    pressure_recovery     = 1;
+    pressure_precompute   = 1;
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
 
