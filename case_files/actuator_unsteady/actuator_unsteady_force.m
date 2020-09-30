@@ -1,4 +1,4 @@
-function [Fx,Fy] = actuator_unsteady_force(t,options)
+function [Fx,Fy,dFx,dFy] = actuator_unsteady_force(~,t,options,~)
 % force expression for 2D uniformly loaded actuator disk
 
 xin = options.grid.xin;
@@ -8,6 +8,11 @@ Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 
+% Jacobian:
+Nu  = options.grid.Nu;
+Nv  = options.grid.Nv;
+dFx = spalloc(Nu,Nu+Nv,0);
+dFy = spalloc(Nv,Nu+Nv,0);  
 
 order4 = options.discretization.order4;
 

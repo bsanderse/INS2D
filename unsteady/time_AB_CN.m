@@ -64,7 +64,7 @@ convu_old = conv_old(1:Nu);
 convv_old = conv_old(Nu+1:end);
 
 %% evaluate BC and force at starting point
-[Fx1,Fy1]      = force(tn,options);
+[Fx1,Fy1]      = force(Vn,tn,options,0);
 % unsteady BC at current time
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn,options);
@@ -82,7 +82,7 @@ yDiffv1 = options.discretization.yDiffv;
 %% evaluate BC and force at end of time step
 
 % unsteady BC at next time
-[Fx2,Fy2]      = force(tn+dt,options);
+[Fx2,Fy2]      = force(Vn,tn+dt,options,0); % Vn is not used normally in force.m
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn+dt,options);
 end

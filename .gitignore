@@ -1,2 +1,6 @@
 
 *.m~
+.DS_Store
+case_files/.DS_Store
+case_files/.DS_Store
+results/.DS_Store

@@ -22,7 +22,7 @@ function q = pressure_additional_solve_ROM(R,t,options)
         % with precomputing (see operator_rom.m)        
 %         if (options.case.force_unsteady == 1)
 %             % for unsteady forcing, we have to compute
-%             [Fx, Fy] = force(t,options);
+%             [Fx, Fy] = force(V,t,options,getJacobian);
 %             options.rom.ppe_force = options.rom.P_PPE*[Fx;Fy];
 %         end
         options.rom.ppe_force = options.rom.ppe_force*(1+sin(pi*t)); % see also F_ROM.m

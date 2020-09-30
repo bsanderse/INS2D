@@ -11,7 +11,7 @@ function [V,p,options] = main(case_name,folder_cases)
 
 %   see readme.txt
 
-%   Benjamin Sanderse, September 2018 - January 2019
+%   Benjamin Sanderse, September 2018 - April 2019
 
 if (nargin<1)
     error('please provide an input file');
@@ -199,6 +199,9 @@ for j=1:Nsim
                 else
                     error('wrong value for order4 parameter');
                 end
+            case 'ML'
+                fprintf(fcw,'Steady flow with mixing length, 2nd order\n');                
+                solver_steady;                
             otherwise
                 error('wrong value for visc parameter');
         end

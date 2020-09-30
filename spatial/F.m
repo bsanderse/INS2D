@@ -41,7 +41,7 @@ end
 [d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
 
 % body force
-[Fx, Fy] = force(t,options);
+[Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
 
 % residual in Finite Volume form, including the pressure contribution
 Fu   = - convu + d2u + Fx;
@@ -62,13 +62,9 @@ maxres  = max(abs(Fres));
 if (getJacobian==1)
     % Jacobian requested
     % we return only the Jacobian with respect to V (not p)
-        
-    % we assume here that the body force Fx, Fy is not depending on the
-    % solution u,v
-    % so we only have convection and diffusion in the Jacobian
-    
-    dFu  = - dconvu + dDiffu;
-    dFv  = - dconvv + dDiffv;
+           
+    dFu  = - dconvu + dDiffu + dFx;
+    dFv  = - dconvv + dDiffv + dFy;
     
     dF   = [dFu; dFv];
     

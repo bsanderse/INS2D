@@ -1,4 +1,4 @@
-function [maxres,Fres,dF] = F_ROM(R,~,t,options,getJacobian)
+function [maxres,Fres,dFres] = F_ROM(R,~,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 if (nargin<5)
@@ -61,10 +61,15 @@ if (options.rom.precompute_force == 1)
     if (options.case.force_unsteady == 1)
         F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
     end
-    
+    if (getJacobian == 1)
+        % Jacobian is not straightforward for general non-linear forcing    
+        error('precomputing Jacobian of force not available');
+    end
 else
-    [Fx, Fy] = force(t,options);
-    F  = B'*(Diag.*[Fx;Fy]);
+    [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+    F   = B'*(Diag.*[Fx;Fy]);
+    dF  = B'*(Diag.*[dFx;dFy])*B;
+%     dFy = spalloc(Nv,Nu+Nv,0);    
 end
 
 % residual of ROM
@@ -80,14 +85,14 @@ if (getJacobian==1)
     % solution u,v
     % so we only have convection and diffusion in the Jacobian
        
-    dF   = -dconv + dDiff;
+    dFres   = -dconv + dDiff + dF;
     %     if (options.case.steady==0) % unsteady case, solve for velocities
     %         dF = spdiags(Om_inv,0,NV,NV)*dF;
     %     end
     
 else
     
-    dF = 0;
+    dFres = 0;
 %     M  = options.rom.M;
 %     dF = spalloc(2*M,2*M,0);
 end

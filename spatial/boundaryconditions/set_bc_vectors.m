@@ -301,16 +301,25 @@ if (order4==0)
     ySv_vy = Sv_vy_BC.Bbc*ybc;
     
     
-    if ( strcmp(visc,'laminar') )
-        
-        yDiffu = Dux*( (1/Re)* ySu_ux) + Duy*( (1/Re)* ySu_uy);
-        yDiffv = Dvx*( (1/Re)* ySv_vx) + Dvy*( (1/Re)* ySv_vy);
-        
-    elseif ( strcmp(visc,'turbulent') )
-        
-        yDiffu  = Dux*( (1/Re) * 2*ySu_ux) + Duy*( (1/Re) * ySu_uy + (1/Re) * ySv_uy);
-        yDiffv  = Dvx*( (1/Re) * ySv_vx + (1/Re) * ySu_vx) + Dvy*( (1/Re) * 2*ySv_vy);
-        
+    switch visc
+        case 'laminar'
+            yDiffu = Dux*( (1/Re)* ySu_ux) + Duy*( (1/Re)* ySu_uy);
+            yDiffv = Dvx*( (1/Re)* ySv_vx) + Dvy*( (1/Re)* ySv_vy);
+            
+        case {'turbulent','LES','qr','ML'}
+            
+            % these values are normally not needed, as the viscosity will
+            % be changing over time
+            yDiffu  = Dux*( (1/Re) * 2*ySu_ux) + Duy*( (1/Re) * ySu_uy + (1/Re) * ySv_uy);
+            yDiffv  = Dvx*( (1/Re) * ySv_vx + (1/Re) * ySu_vx) + Dvy*( (1/Re) * 2*ySv_vy);
+            % instead, we will use the following values directly (see
+            % diffusion.m and strain_tensor.m)
+            options.discretization.ySu_ux = ySu_ux;
+            options.discretization.ySu_uy = ySu_uy;
+            options.discretization.ySu_vx = ySu_vx;
+            options.discretization.ySv_vx = ySv_vx;
+            options.discretization.ySv_vy = ySv_vy;
+            options.discretization.ySv_uy = ySv_uy;
     end
     
 end

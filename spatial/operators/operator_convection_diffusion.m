@@ -465,7 +465,7 @@ switch visc
         end
         
         
-    case {'turbulent','LES'}
+    case {'turbulent','LES','qr','ML'}
         % only implemented for 2nd order
         
         % diffusion u-momentum
@@ -496,11 +496,15 @@ options.discretization.Dux   = Dux;
 options.discretization.Duy   = Duy;
 options.discretization.Dvx   = Dvx;
 options.discretization.Dvy   = Dvy;
-options.discretization.Diffu = Diffu;
-options.discretization.Diffv = Diffv;
+
 
 switch visc
-    case {'turbulent','LES'}
+
+    case 'laminar'
+        options.discretization.Diffu = Diffu;
+        options.discretization.Diffv = Diffv;
+
+    case {'turbulent','LES','qr','ML'}
         options.discretization.Sv_uy = Sv_uy;
         options.discretization.Su_vx = Su_vx;
         

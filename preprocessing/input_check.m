@@ -144,11 +144,11 @@ else
     end
     
     %% residual of momentum equations at start
-    if (strcmp(options.case.visc,'laminar'))
+%     if (strcmp(options.case.visc,'laminar'))
         [maxres(1), ~, ~] = F(V,V,p,t,options,0);
-    else
-        maxres(1) = 0;
-    end
+%     else
+%         maxres(1) = 0;
+%     end
     
     if (steady==0 && save_unsteady == 1)
         % allocate space for variables

@@ -67,4 +67,8 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     
     fprintf(fcw,'residual momentum equation: %16.8e \n', maxres(n));
     
+    if (n>options.solversettings.nonlinear_maxit)
+        error(['Newton not converged in ' num2str(nonlinear_maxit) ' iterations']);
+    end
+    
 end
