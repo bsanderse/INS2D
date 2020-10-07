@@ -7,19 +7,19 @@ function [nu_t_ux,nu_t_uy,nu_t_vx,nu_t_vy] = interpolate_nu(nu_t,options)
 
 Anu_ux   = options.discretization.Anu_ux;
 yAnu_ux  = options.discretization.yAnu_ux;
-nu_t_ux  = Anu_ux * nu_t(:) + yAnu_ux;
+nu_t_ux  = Anu_ux * nu_t + yAnu_ux;
 
 Anu_uy   = options.discretization.Anu_uy;
 yAnu_uy  = options.discretization.yAnu_uy;
-nu_t_uy  = Anu_uy * nu_t(:) + yAnu_uy;
+nu_t_uy  = Anu_uy * nu_t + yAnu_uy;
 
 Anu_vx   = options.discretization.Anu_vx;
 yAnu_vx  = options.discretization.yAnu_vx;
-nu_t_vx  = Anu_vx * nu_t(:) + yAnu_vx;
+nu_t_vx  = Anu_vx * nu_t + yAnu_vx;
 
 Anu_vy   = options.discretization.Anu_vy;
 yAnu_vy  = options.discretization.yAnu_vy;
-nu_t_vy  = Anu_vy * nu_t(:) + yAnu_vy;
+nu_t_vy  = Anu_vy * nu_t + yAnu_vy;
 
 %% option 2: construct interpolation operators here 
 

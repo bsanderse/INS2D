@@ -1,4 +1,4 @@
-function [S11,S12,S21,S22,S_abs] = strain_tensor(V,t,options,getJacobian)
+function [S11,S12,S21,S22,S_abs,Jacu,Jacv] = strain_tensor(V,t,options,getJacobian)
 % evaluate rate of strain tensor S(u) and its magnitude
 indu = options.grid.indu;
 indv = options.grid.indv;
@@ -10,6 +10,8 @@ Ny = options.grid.Ny;
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+Np = options.grid.Np;
+
 Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
@@ -43,13 +45,6 @@ S12 = (1/2)* (Su_uy*uh + ySu_uy + Sv_uy*vh + ySv_uy);
 S21 = (1/2)* (Su_vx*uh + ySu_vx + Sv_vx*vh + ySv_vx);
 S22 = (1/2)* 2*(Sv_vy*vh + ySv_vy);
 
-% if (getJacobian == 0)
-%     Jacu = spalloc(Nu,Nu+Nv,0);
-%     Jacv = spalloc(Nv,Nu+Nv,0);
-% elseif (getJacobian == 1)
-%     Jacu = [Su_ux + (1/2)*Su_uy        (1/2)*Sv_uy];
-%     Jacv = [(1/2)*Su_vx          (1/2)*Sv_vx + Sv_vy];
-% end
 
 % Note: S11 and S22 at xp,yp locations (pressure locations)
 % S12, S21 at vorticity locations (corners of pressure cells,(x,y))
@@ -92,9 +87,21 @@ switch get_S_abs
         S11_p     = (1/2)*2*( Cux_k*uh + yCux_k);
         S12_p     = (1/2)*( Cuy_k*(Auy_k*uh+yAuy_k) + yCuy_k + ...
                             Cvx_k*(Avx_k*vh+yAvx_k) + yCvx_k);
+        S21_p     = S12_p;
         S22_p     = (1/2)*2*( Cvy_k*vh + yCvy_k);
         
-        S_abs     = sqrt(2*S11_p.^2 + 2*S22_p.^2 + 4*S12_p.^2);
+        S_abs     = sqrt(2*S11_p.^2 + 2*S22_p.^2 + 2*S12_p.^2 + 2*S21_p.^2);
+                
+        % Jacobian of S_abs wrt u and v
+        if (getJacobian == 0)
+            Jacu = spalloc(Np,Nu,0);
+            Jacv = spalloc(Np,Nv,0);
+        elseif (getJacobian == 1)
+            Sabs_inv = spdiags(1./(2*S_abs),0,Np,Np);
+            Jacu = Sabs_inv*(4*spdiags(S11_p,0,Np,Np)*Cux_k + 4*spdiags(S12_p,0,Np,Np)*Cuy_k*Auy_k);
+            Jacv = Sabs_inv*(4*spdiags(S12_p,0,Np,Np)*Cvx_k*Avx_k + 4*spdiags(S22_p,0,Np,Np)*Cvy_k);
+        end
+        
         
     case 1 % option 2b
         
