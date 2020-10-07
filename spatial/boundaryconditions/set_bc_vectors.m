@@ -29,6 +29,9 @@ end
 Nux_in = options.grid.Nux_in;
 Nvy_in = options.grid.Nvy_in;
 Np     = options.grid.Np;
+Npx    = options.grid.Npx;
+Npy    = options.grid.Npy;
+
 
 xin = options.grid.xin;
 yin = options.grid.yin;
@@ -265,6 +268,31 @@ if (order4==0)
     ybc    = kron(Su_uy_BC.ybc1,uLo_i) + kron(Su_uy_BC.ybc2,uUp_i);
     ySu_uy = Su_uy_BC.Bbc*ybc;
     
+%         diag1           = 1./gxd;
+%     S1D             = spdiags([-diag1 diag1],[0 1],Nvx_t-1,Nvx_t);
+%     % the restriction is essentially 1D so it can be directly applied to I1D
+%     S1D             = Bvux*S1D;
+%     S2D             = kron(speye(Nuy_t-1),S1D);
+%     
+%     
+%     % boundary conditions low/up
+%     Nb              = Nuy_in+1-Nvy_in;
+%     Sv_uy_BC_lu     = BC_general(Nuy_in+1,Nvy_in,Nb,...
+%         BC.v.low,BC.v.up,hy(1),hy(end));
+%     Sv_uy_BC_lu.B2D = kron(Sv_uy_BC_lu.B1D,speye(Nvx_in));
+%     Sv_uy_BC_lu.Bbc = kron(Sv_uy_BC_lu.Btemp,speye(Nvx_in));
+%     
+%     
+%     % boundary conditions left/right
+%     Sv_uy_BC_lr     = BC_general_stag(Nvx_t,Nvx_in,Nvx_b,...
+%         BC.v.left,BC.v.right,hx(1),hx(end));
+%     % take I2D into left/right operators for convenience
+%     Sv_uy_BC_lr.B2D = S2D*kron(speye(Nuy_t-1),Sv_uy_BC_lr.B1D);
+%     Sv_uy_BC_lr.Bbc = S2D*kron(speye(Nuy_t-1),Sv_uy_BC_lr.Btemp);
+%   
+%    Sv_uy           = Sv_uy_BC_lr.B2D*Sv_uy_BC_lu.B2D;
+
+    
     % Sv_uy
     % left/right
     ybc       = kron(vLe,Sv_uy_BC_lr.ybc1) + kron(vRi,Sv_uy_BC_lr.ybc2);
@@ -306,12 +334,12 @@ if (order4==0)
             yDiffu = Dux*( (1/Re)* ySu_ux) + Duy*( (1/Re)* ySu_uy);
             yDiffv = Dvx*( (1/Re)* ySv_vx) + Dvy*( (1/Re)* ySv_vy);
             
-        case {'turbulent','LES','qr','ML'}
+            options.discretization.yDiffu = yDiffu;
+            options.discretization.yDiffv = yDiffv;
             
-            % these values are normally not needed, as the viscosity will
-            % be changing over time
-            yDiffu  = Dux*( (1/Re) * 2*ySu_ux) + Duy*( (1/Re) * ySu_uy + (1/Re) * ySv_uy);
-            yDiffv  = Dvx*( (1/Re) * ySv_vx + (1/Re) * ySu_vx) + Dvy*( (1/Re) * 2*ySv_vy);
+            
+        case {'keps','LES','qr','ML'}
+            
             % instead, we will use the following values directly (see
             % diffusion.m and strain_tensor.m)
             options.discretization.ySu_ux = ySu_ux;
@@ -351,12 +379,25 @@ if (order4==1)
     ybc3    = kron(Sv_vy_BC3.ybc1,vLo_i) + kron(Sv_vy_BC3.ybc2,vUp_i);
     ySv_vy  = alfa*Sv_vy_BC.Bbc*ybc1 - Sv_vy_BC3.Bbc*ybc3;
     
-    yDiffu  = (1/Re)*(Diffux_div*ySu_ux + Diffuy_div*ySu_uy);
-    yDiffv  = (1/Re)*(Diffvx_div*ySv_vx + Diffvy_div*ySv_vy);
+     switch visc
+        case 'laminar'
+    
+            yDiffu  = (1/Re)*(Diffux_div*ySu_ux + Diffuy_div*ySu_uy);
+            yDiffv  = (1/Re)*(Diffvx_div*ySv_vx + Diffvy_div*ySv_vy);
+
+            options.discretization.yDiffu = yDiffu;
+            options.discretization.yDiffv = yDiffv;
+            
+        case {'keps','LES','qr','ML'}
+            
+            error('fourth order turbulent diffusion not implemented');
+            
+     end
+ 
+            
+            
 end
 
-options.discretization.yDiffu = yDiffu;
-options.discretization.yDiffv = yDiffv;
 
 
 %% boundary conditions for interpolation
@@ -492,5 +533,65 @@ if (order4==1)
     options.discretization.yIv_vy3 = yIv_vy3;
 end
 
+switch visc
+    
+    case {'qr','LES','ML'}
+
+        % set BC for turbulent viscosity nu_t
+        % in the periodic case, the value of nu_t is not needed
+        % in all other cases, homogeneous (zero) Neumann conditions are used
+
+        nuLe = zeros(Npy,1);
+        nuRi = zeros(Npy,1);
+        nuLo = zeros(Npx,1);
+        nuUp = zeros(Npx,1);
+        
+        %% nu_ux
+        Anu_ux_BC = options.discretization.Anu_ux_BC;
+        ybc       = kron(nuLe,Anu_ux_BC.ybc1) + kron(nuRi,Anu_ux_BC.ybc2);
+        yAnu_ux   = Anu_ux_BC.Bbc*ybc;
+
+        %% nu_uy
+        Anu_uy_BC_lr = options.discretization.Anu_uy_BC_lr;
+        Anu_uy_BC_lu = options.discretization.Anu_uy_BC_lu;
+        
+        nuLe_i = [nuLe(1);nuLe;nuLe(end)];
+        nuRi_i = [nuRi(1);nuRi;nuRi(end)];
+        % in x-direction
+        ybc        = kron(nuLe_i,Anu_uy_BC_lr.ybc1)+ kron(nuRi_i,Anu_uy_BC_lr.ybc2);  
+        yAnu_uy_lr = Anu_uy_BC_lr.B2D*ybc;            
+        
+        % in y-direction
+        ybc         = kron(Anu_uy_BC_lu.ybc1,nuLo) + kron(Anu_uy_BC_lu.ybc2,nuUp);
+        yAnu_uy_lu  = Anu_uy_BC_lu.B2D*ybc;
+        
+        yAnu_uy     = yAnu_uy_lu + yAnu_uy_lr;
+
+        %% nu_vx
+        Anu_vx_BC_lr = options.discretization.Anu_vx_BC_lr;
+        Anu_vx_BC_lu = options.discretization.Anu_vx_BC_lu;
+        
+        nuLo_i     = [nuLo(1);nuLo;nuLo(end)];
+        nuUp_i     = [nuUp(1);nuUp;nuUp(end)];
+
+        % in y-direction
+        ybc        = kron(Anu_vx_BC_lu.ybc1,nuLo_i) + kron(Anu_vx_BC_lu.ybc2,nuUp_i);
+        yAnu_vx_lu = Anu_vx_BC_lu.B2D*ybc;
+        % in x-direction
+        ybc        = kron(nuLe,Anu_vx_BC_lr.ybc1) + kron(nuRi,Anu_vx_BC_lr.ybc2);
+        yAnu_vx_lr = Anu_vx_BC_lr.B2D*ybc;
+
+        yAnu_vx    = yAnu_vx_lu + yAnu_vx_lr;
+        
+        %% nu_vy
+        Anu_vy_BC = options.discretization.Anu_vy_BC;
+        ybc       = kron(Anu_vy_BC.ybc1,nuLo) + kron(Anu_vy_BC.ybc2,nuUp);
+        yAnu_vy   = Anu_vy_BC.Bbc*ybc;
+
+        
+        options.discretization.yAnu_ux = yAnu_ux;
+        options.discretization.yAnu_uy = yAnu_uy;
+        options.discretization.yAnu_vx = yAnu_vx;
+        options.discretization.yAnu_vy = yAnu_vy;        
 
 end

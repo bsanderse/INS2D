@@ -467,6 +467,8 @@ options.grid.gyd = gyd;
 
 options.grid.Buvy = Buvy;
 options.grid.Bvux = Bvux;
+options.grid.Bkux = Bkux;
+options.grid.Bkvy = Bkvy;
 
 options.grid.xin  = xin;
 options.grid.yin  = yin;

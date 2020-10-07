@@ -48,9 +48,10 @@ else
     V_old = V;
     
     
-    if (strcmp(visc,'turbulent'))
-        kth = kt(:);
-        eh  = e(:);
+    switch visc
+        case 'keps'
+            kth = kt(:);
+            eh  = e(:);
     end
     
     % for unsteady problems allocate k, umom and vmom, maxdiv and time

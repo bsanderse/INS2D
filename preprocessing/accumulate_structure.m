@@ -23,7 +23,7 @@ object='case';
 voi={
     'project',      case_name;...
     'steady',       [];...    % 0: unsteady; 1: steady
-    'visc',         [];...    % 0: laminar; 1: turbulent (k-eps)
+    'visc',         [];...    % 'laminar', 'keps','ML','LES,'qr'
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
     'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing
     'ibm', 0; % 0: no immersed boundary method; 1: immersed boundary method
@@ -41,6 +41,16 @@ voi={
         'd_layer',   [];
     };
     
+accumulate_object;
+
+%% turbulent flow settings
+object = 'visc';
+
+voi={
+    'lm', 1;... % mixing length
+    'Cs', 0.17; ...    % Smagorinsky constant
+};
+
 accumulate_object;
 
 %% grid parameters

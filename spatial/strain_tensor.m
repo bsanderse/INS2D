@@ -8,6 +8,8 @@ vh   = V(indv);
 Nx = options.grid.Nx;
 Ny = options.grid.Ny;
 
+Nu = options.grid.Nu;
+Nv = options.grid.Nv;
 Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
@@ -20,6 +22,7 @@ Su_vx = options.discretization.Su_vx;
 Sv_vx = options.discretization.Sv_vx;
 Sv_vy = options.discretization.Sv_vy;
 Sv_uy = options.discretization.Sv_uy;
+
 ySu_ux = options.discretization.ySu_ux;
 ySu_uy = options.discretization.ySu_uy;
 ySu_vx = options.discretization.ySu_vx;
@@ -40,6 +43,14 @@ S12 = (1/2)* (Su_uy*uh + ySu_uy + Sv_uy*vh + ySv_uy);
 S21 = (1/2)* (Su_vx*uh + ySu_vx + Sv_vx*vh + ySv_vx);
 S22 = (1/2)* 2*(Sv_vy*vh + ySv_vy);
 
+% if (getJacobian == 0)
+%     Jacu = spalloc(Nu,Nu+Nv,0);
+%     Jacv = spalloc(Nv,Nu+Nv,0);    
+% elseif (getJacobian == 1)
+%     Jacu = [Su_ux + (1/2)*Su_uy        (1/2)*Sv_uy];
+%     Jacv = [(1/2)*Su_vx          (1/2)*Sv_vx + Sv_vy];
+% end
+
 % Note: S11 and S22 at xp,yp locations (pressure locations)
 % S12, S21 at vorticity locations (corners of pressure cells,(x,y))
 
@@ -58,9 +69,9 @@ if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
     % 'cut-off' the double points in case of periodic BC    
     % for periodic boundary conditions S11(Npx+1,:)=S11(1,:)
     % so S11 has size (Npx+1)*Npy; the last row are 'ghost' points equal to the
-    % first points. positions ([xp; xp(1)], yp)    
+    % first points. we have S11 at positions ([xp(1)-0.5*(hx(1)+hx(end)); xp], yp)    
     S11_p = reshape(S11,Nux_in+1,Nuy_in);
-    S11_p = S11_p(2:Nux_in+1,:); % why not 1:Nux_in?
+    S11_p = S11_p(2:Nux_in+1,:); % b
     
     % S12 is defined on the corners: size Nux_in*(Nuy_in+1), positions (xin,y)
     % get S12 and S21 at all corner points

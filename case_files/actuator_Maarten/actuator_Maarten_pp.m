@@ -1,9 +1,5 @@
 %% post-processing actuator disk of Maarten vd Broek's testcase
 
-% note: we assume that Npx and Npy are even
-if (rem(Npx,2)~=0 || rem(Npy,2)~=0)
-    error('number of volumes in x- and y-direction should be even for postprocessing');
-end
 
 %% get grid variables
 Nux_in = options.grid.Nux_in;
@@ -12,9 +8,12 @@ Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 Nu     = options.grid.Nu;
 Nv     = options.grid.Nv;
-
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;
 xin  = options.grid.xin;
 yin  = options.grid.yin;
+
+diffusion(V,t,options,0);
 
 %% get solution variables
 uh   = V(1:Nu);

@@ -120,8 +120,9 @@ for j=1:Nsim
     
     
     % turbulence constants
-    if (strcmp(visc,'turbulent'))
-        constants_ke;
+    switch visc
+        case 'keps'
+            constants_ke;
     end
     
     %% construct mesh
@@ -176,9 +177,10 @@ for j=1:Nsim
     fprintf(fcw,'start solver...\n');
     tic
     
-    if (options.case.steady==1)
+    if (options.case.steady==1) % steady
+        
         switch options.case.visc
-            case 'turbulent'
+            case 'keps'
                 fprintf(fcw,'Steady flow with k-epsilon model, 2nd order\n');                
                 solver_steady_ke;
             case 'laminar'
@@ -206,13 +208,13 @@ for j=1:Nsim
                 error('wrong value for visc parameter');
         end
         
-    else
+    else %unsteady
         
         switch options.case.visc
-            case 'turbulent'
+            case 'keps'
                 fprintf(fcw,'Unsteady flow with k-eps model, 2nd order\n');
                 solver_unsteady_ke;
-            case {'laminar','LES'}
+            case {'laminar','qr','LES','ML'}
                 if (options.rom.rom==0)
                     fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                     solver_unsteady;

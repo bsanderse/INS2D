@@ -1,3 +1,6 @@
+%% THIS FILE IS OBSOLETE NOW THAT WE USE set_bc_vectors
+
+
 %% operator for boundary conditions
 
 
@@ -114,16 +117,17 @@ if (order4==0)
     ybc    = kron(Sv_vy_BC.ybc1,vLo_i) + kron(Sv_vy_BC.ybc2,vUp_i);
     ySv_vy = Sv_vy_BC.Bbc*ybc;
     
-    
-    if ( strcmp(visc,'laminar') )
+    switch visc
         
-        yDiffu = Dux*( (1/Re)* ySu_ux) + Duy*( (1/Re)* ySu_uy);
-        yDiffv = Dvx*( (1/Re)* ySv_vx) + Dvy*( (1/Re)* ySv_vy);
+        case 'laminar'
         
-    elseif ( strcmp(visc,'turbulent') )
+            yDiffu = Dux*( (1/Re)* ySu_ux) + Duy*( (1/Re)* ySu_uy);
+            yDiffv = Dvx*( (1/Re)* ySv_vx) + Dvy*( (1/Re)* ySv_vy);
         
-        yDiffu  = Dux*( (1/Re) * 2*ySu_ux) + Duy*( (1/Re) * ySu_uy + (1/Re) * ySv_uy);
-        yDiffv  = Dvx*( (1/Re) * ySv_vx + (1/Re) * ySu_vx) + Dvy*( (1/Re) * 2*ySv_vy);
+        case 'keps'
+        
+            yDiffu  = Dux*( (1/Re) * 2*ySu_ux) + Duy*( (1/Re) * ySu_uy + (1/Re) * ySv_uy);
+            yDiffv  = Dvx*( (1/Re) * ySv_vx + (1/Re) * ySu_vx) + Dvy*( (1/Re) * 2*ySv_vy);
         
     end
     

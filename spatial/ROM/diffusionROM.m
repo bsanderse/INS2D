@@ -11,17 +11,18 @@ yDiff = options.rom.yDiff;
 
 Jac = spalloc(M,M,0);
 
-if (strcmp(visc,'laminar'))
+switch visc
     
-    d2     = Diff*R + yDiff;
-    
-    if (getJacobian == 1)
-        Jac    = Diff;
-    end
-    
-else
-    error('not implemented');
-    
+    case 'laminar'
+        d2     = Diff*R + yDiff;
+        
+        if (getJacobian == 1)
+            Jac    = Diff;
+        end
+        
+    otherwise
+        error('turbulent diffusion not implemented for ROM');
+        
 end
 
 end

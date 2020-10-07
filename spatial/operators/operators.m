@@ -23,20 +23,28 @@ options = operator_postprocessing(options);
 
 
 %% turbulence
+
+% regularization modelling - this changes the convective term
 if (regularize>0)
      
     operator_regularization;
     
 end
 
-if ( strcmp(visc,'turbulent') )
+% classical turbulence modelling via the diffusive term
+switch visc
+    case 'keps'   
 
-    %% averaging viscosity to cell faces of u- and v- volumes
-    operators_viscosity;
+        %% averaging viscosity to cell faces of u- and v- volumes
+        ke_viscosity;
 
-    %% k-e operators
-    ke_convection;
-    ke_diffusion;
-    ke_production;
+        %% k-e operators
+        ke_convection;
+        ke_diffusion;
+        ke_production;
 
+    case {'qr','LES','ML'}
+        
+        options = operator_interpolate_viscosity(options);
+        
 end

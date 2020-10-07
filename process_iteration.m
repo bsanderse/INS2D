@@ -18,7 +18,7 @@
 % for ke model residual also contains k and e terms and is computed
 % in solver_unsteady_ke
 if (options.rom.rom == 0)
-    if (~strcmp(visc,'turbulent'))
+    if (~strcmp(visc,'keps'))
         [maxres(n), ~, ~] = F(V,V,p,t,options,0);
     end
 elseif (options.rom.rom == 1)

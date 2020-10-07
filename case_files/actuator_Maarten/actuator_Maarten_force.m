@@ -65,7 +65,7 @@ for k=1:length(options.force.x_c)
 
     elseif (order4==1)
         % fourth order:
-        error('not implemented');
+        error('fourth order actuator disk not implemented');
 %         
 %         % small volumes
 %         y1Dy1       = zeros(Nuy_in,1);

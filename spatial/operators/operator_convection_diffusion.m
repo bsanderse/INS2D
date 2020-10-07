@@ -465,15 +465,23 @@ switch visc
         end
         
         
-    case {'turbulent','LES','qr','ML'}
+    case {'keps','LES','qr','ML'}
         % only implemented for 2nd order
         
+        % the terms below are an example of how the laminar case is
+        % evaluated with the full stress tensor
+        % these are not used in practical computations, as in the turbulent
+        % case one needs to add nu_T, making the effective operator
+        % solution-dependent, so that it cannot be computed beforehand
+        
+        % see diffusion.m for actual use
+        
         % diffusion u-momentum
-        Diffu_u = Dux*( (1/Re) * 2*Su_ux) + Duy*( (1/Re) * Su_uy);
-        Diffu_v = Duy*( (1/Re) * Sv_uy);
+%         Diffu_u = Dux*( (1/Re) * 2*Su_ux) + Duy*( (1/Re) * Su_uy);
+%         Diffu_v = Duy*( (1/Re) * Sv_uy);
         % diffusion v-momentum
-        Diffv_u = Dvx*( (1/Re) * Su_vx);
-        Diffv_v = Dvx*( (1/Re) * Sv_vx) + Dvy*( (1/Re) * 2*Sv_vy);
+%         Diffv_u = Dvx*( (1/Re) * Su_vx);
+%         Diffv_v = Dvx*( (1/Re) * Sv_vx) + Dvy*( (1/Re) * 2*Sv_vy);
         
     otherwise
         error('wrong visc parameter');
@@ -504,14 +512,14 @@ switch visc
         options.discretization.Diffu = Diffu;
         options.discretization.Diffv = Diffv;
 
-    case {'turbulent','LES','qr','ML'}
+    case {'keps','LES','qr','ML'}
         options.discretization.Sv_uy = Sv_uy;
         options.discretization.Su_vx = Su_vx;
         
-        options.discretization.Diffu_u = Diffu_u;
-        options.discretization.Diffu_v = Diffu_v;       
-        options.discretization.Diffv_u = Diffv_u;
-        options.discretization.Diffv_v = Diffv_v;
+%         options.discretization.Diffu_u = Diffu_u;
+%         options.discretization.Diffu_v = Diffu_v;       
+%         options.discretization.Diffv_u = Diffv_u;
+%         options.discretization.Diffv_v = Diffv_v;
      
 end
 

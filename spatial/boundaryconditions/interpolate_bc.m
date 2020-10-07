@@ -1,3 +1,5 @@
+%% THIS FILE IS NOW OBSOLETE AND REPLACED BY SET_BC_VECTORS
+
 % make boundary values vectors if scalars
 uLo = uLo.*ones(Nx+1,1);
 uUp = uUp.*ones(Nx+1,1);
