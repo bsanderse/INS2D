@@ -594,4 +594,44 @@ switch visc
         options.discretization.yAnu_vx = yAnu_vx;
         options.discretization.yAnu_vy = yAnu_vy;        
 
+        
+        % set BC for getting du/dx, du/dy, dv/dx, dv/dy at cell centers
+        
+        uLo_p    = uBC(xp,y(1),t,options);
+        uUp_p    = uBC(xp,y(end),t,options);
+
+        vLe_p    = vBC(x(1),yp,t,options);
+        vRi_p    = vBC(x(end),yp,t,options);
+        
+        Cux_k_BC = options.discretization.Cux_k_BC;
+        ybc      = kron(uLe_i,Cux_k_BC.ybc1) + kron(uRi_i,Cux_k_BC.ybc2);        
+        yCux_k   = Cux_k_BC.Bbc *ybc;
+        
+        Auy_k_BC = options.discretization.Auy_k_BC;
+        ybc      = kron(uLe_i,Auy_k_BC.ybc1) + kron(uRi_i,Auy_k_BC.ybc2);
+        yAuy_k   = Auy_k_BC.Bbc*ybc;
+        Cuy_k_BC = options.discretization.Cuy_k_BC;
+        ybc      = kron(Cuy_k_BC.ybc1,uLo_p) + kron(Cuy_k_BC.ybc2,uUp_p);
+        yCuy_k   = Cuy_k_BC.Bbc*ybc;
+
+        Avx_k_BC = options.discretization.Avx_k_BC;        
+        ybc     = kron(Avx_k_BC.ybc1,vLo_i) + kron(Avx_k_BC.ybc2,vUp_i);
+        yAvx_k  = Avx_k_BC.Bbc*ybc;
+        
+        Cvx_k_BC = options.discretization.Cvx_k_BC;        
+        ybc     = kron(vLe_p,Cvx_k_BC.ybc1) + kron(vRi_p,Cvx_k_BC.ybc2);
+        yCvx_k  = Cvx_k_BC.Bbc*ybc;
+
+        Cvy_k_BC = options.discretization.Cvy_k_BC;                
+        ybc     = kron(Cvy_k_BC.ybc1,vLo_i) + kron(Cvy_k_BC.ybc2,vUp_i);
+        yCvy_k  = Cvy_k_BC.Bbc*ybc;
+
+        
+        options.discretization.yCux_k = yCux_k;
+        options.discretization.yCuy_k = yCuy_k;
+        options.discretization.yCvx_k = yCvx_k;
+        options.discretization.yCvy_k = yCvy_k;
+        options.discretization.yAuy_k = yAuy_k;
+        options.discretization.yAvx_k = yAvx_k;
+
 end

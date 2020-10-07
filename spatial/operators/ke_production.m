@@ -47,7 +47,7 @@ uUp_i   = interp1(x,uUp,xp);
 ybc     = kron(ybcl,uLo_i) + kron(ybcu,uUp_i);
 yCuy_k  = kron(C1D*Btemp,speye(Npx))*ybc;
 
-% Cuy_k*(kAux*uh+ykAux) + yCuy_k;
+% Cuy_k*(Auy_k*uh+yAuy_k) + yCuy_k;
 
 
 %% dv/dx
@@ -78,7 +78,7 @@ vRi_i   = interp1(y,vRi,yp);
 ybc     = kron(vLe_i,ybcl) + kron(vRi_i,ybcr);
 yCvx_k  = kron(speye(Npy),C1D*Btemp)*ybc;
 
-% kCvx*(kAvx*vh+ykAvx) + ykCvx;
+% Cvx_k*(Avx_k*vh+yAvx_k) + yCvx_k;
 
 
 %% dv/dy
@@ -96,4 +96,4 @@ vUp_i  = interp1(x,vUp,xp);
 ybc    = kron(ybcl,vLo_i) + kron(ybcu,vUp_i);
 yCvy_k = kron(C1D*Btemp,speye(Npx))*ybc;
 
-% kCvy*vh+ykCvy;
+% Cvy_k*vh+yCvy_k;

@@ -14,15 +14,11 @@ options = operator_interpolation(options);
 options = operator_divergence(options);
 
 
-%% convection and diffusion operators on u- and v- centered volumes
+%% convection operators on u- and v- centered volumes
 options = operator_convection_diffusion(options);
 
 
-%% post-processing
-options = operator_postprocessing(options);
-
-
-%% turbulence
+%% trbulence
 
 % regularization modelling - this changes the convective term
 if (regularize>0)
@@ -33,6 +29,7 @@ end
 
 % classical turbulence modelling via the diffusive term
 switch visc
+
     case 'keps'   
 
         %% averaging viscosity to cell faces of u- and v- volumes
@@ -45,6 +42,16 @@ switch visc
 
     case {'qr','LES','ML'}
         
-        options = operator_interpolate_viscosity(options);
+        options = operator_turbulent_diffusion(options);
+    
+    case 'laminar'
+        % do nothing, these are constructed in operator_convection_diffusion
+        
+    otherwise
+        error('wrong value for visc parameter');
         
 end
+
+
+%% post-processing
+options = operator_postprocessing(options);

@@ -40,29 +40,8 @@ switch visc
         % the magnitude S_abs is evaluated at pressure points
         [S11,S12,S21,S22,S_abs] = strain_tensor(V,t,options,getJacobian);
         
-        
-        % compute turbulent viscosity based on S_abs
-        switch visc
-            case 'LES' % Smagorinsky
-                
-                C_S  = options.visc.Cs;
-                filter_length = deltax; % =sqrt(FV size) for uniform grids
-                
-                nu_t = (C_S^2)*(filter_length^2)*S_abs;
-                
-            case 'qr'  % q-r
-                % q-r
-                C_d  = deltax^2/8;
-                nu_t = C_d * 0.5 * S_abs * (1 - alfa / C_d)^2;
-                
-            case 'ML' % mixing-length
-                lm   = options.visc.lm; % mixing length
-                nu_t = (lm^2)*S_abs;
-                
-            otherwise
-                error('wrong value for visc parameter');
-                
-        end
+        nu_t = turbulent_viscosity(S_abs,options);
+
         
         % we now have the turbulent viscosity at all pressure points
 
@@ -95,15 +74,7 @@ switch visc
             Sv_vx = options.discretization.Sv_vx;
             Sv_vy = options.discretization.Sv_vy;
             Sv_uy = options.discretization.Sv_uy;
-            
-            % if (getJacobian == 0)
-            %     Jacu = spalloc(Nu,Nu+Nv,0);
-            %     Jacv = spalloc(Nv,Nu+Nv,0);    
-            % elseif (getJacobian == 1)
-            %     Jacu = [Su_ux + (1/2)*Su_uy        (1/2)*Sv_uy];
-            %     Jacv = [(1/2)*Su_vx          (1/2)*Sv_vx + Sv_vy];
-            % end
-            
+                       
             N1 = options.grid.N1;
             N2 = options.grid.N2;
             N3 = options.grid.N3;

@@ -13,7 +13,7 @@ Npy = options.grid.Npy;
 xin  = options.grid.xin;
 yin  = options.grid.yin;
 
-diffusion(V,t,options,0);
+
 
 %% get solution variables
 uh   = V(1:Nu);
@@ -42,7 +42,7 @@ colorbar
 % title('velocity')
 % set(gca,'LineWidth',1);
 
-%%
+%% velocity as pcolor
 figure
 set(gcf,'color','w');
 % pcolor(xp,yp,qp')
@@ -57,3 +57,19 @@ colorbar
 %% plot settings
 % line = {'r-','b-','m-','k-','g-','y-'};
 % color = char(line(j));
+
+%% turbulent diffusion
+[S11,S12,S21,S22,S_abs] = strain_tensor(V,t,options,0);
+
+nu_t = turbulent_viscosity(S_abs,options);
+
+% list = linspace(0,1,20);
+list = 20;
+figure
+set(gcf,'color','w');
+% pcolor(xp,yp,qp')
+[~,c]=contourf(xp,yp,reshape(nu_t,Npx,Npy)',list);
+c.LineWidth = 1;
+axis equal
+axis([x1 x2 y1 y2]);
+colorbar
