@@ -67,4 +67,3 @@ q = (1/2) * ( S11_p(:).^2 + S12_p(:).^2 + S21_p(:).^2 + S22_p(:).^2 );
 % figure
 % contour(xp,yp,reshape(r,Npx,Npy)',25);
 
-

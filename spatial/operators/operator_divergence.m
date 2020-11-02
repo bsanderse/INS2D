@@ -260,6 +260,31 @@ if (steady == 0 && ~strcmp(visc,'keps'))
         fprintf(fcw,'...matrix written to Petsc!\n');
     end
     
+    if (poisson==6)
+        if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per') && ...
+                strcmp(BC.u.left,'per') && strcmp(BC.u.left,'per'))            
+            
+            if (max(abs(diff(hx)))>1e-14 || max(abs(diff(hy)))>1e-14)
+                error('grid needs to be uniform to use Fourier transform for pressure matrix');
+            else
+                dx = hx(1);
+                dy = hy(1);
+                
+                % Fourier transform of the discretization; assuming uniform
+                % grid, although dx, dy and dz do not need to be the same
+                [I, J] = ndgrid(0:(Npx-1),0:(Npy-1));
+                % scale with dx*dy*dz, since we solve the PPE in integrated
+                % form
+                Ahat      = (dx*dy)* 4*((1/(dx^2))*sin(I*pi/Npx).^2 + (1/(dy^2))*sin(J*pi/Npy).^2);
+                Ahat(1,1) = 1; % pressure is determined up to constant, fix at 0
+                
+                options.solversettings.Ahat = Ahat;
+            end
+        else
+            error('Fourier transform for pressure Poisson only implemented for periodic boundary conditions');
+        end
+    end
+    
     % check if all the row sums of the pressure matrix are zero, which
     % should be the case if there are no pressure boundary conditions
     if (~strcmp(BC.v.low,'pres') && ~strcmp(BC.v.up,'pres') && ...

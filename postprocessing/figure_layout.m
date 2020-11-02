@@ -1,9 +1,9 @@
 %
-fig_name = 'singular_values';
+fig_name = 'singular_values_shearlayer_N40_inviscid';
 
 addpath('/Users/sanderse/Dropbox/work/Programming/libs/altmany-export_fig-cafc7c5/')
 
-h = figure(1) % or whatever fig
+h = figure(2) % or whatever fig
 
 %% general properties
 set(gcf,'Color','w')

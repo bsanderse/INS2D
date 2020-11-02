@@ -97,7 +97,8 @@ switch get_S_abs
             Jacu = spalloc(Np,Nu,0);
             Jacv = spalloc(Np,Nv,0);
         elseif (getJacobian == 1)
-            Sabs_inv = spdiags(1./(2*S_abs),0,Np,Np);
+            eps = 1e-14 ;
+            Sabs_inv = spdiags(1./(2*S_abs+eps),0,Np,Np);
             Jacu = Sabs_inv*(4*spdiags(S11_p,0,Np,Np)*Cux_k + 4*spdiags(S12_p,0,Np,Np)*Cuy_k*Auy_k);
             Jacv = Sabs_inv*(4*spdiags(S12_p,0,Np,Np)*Cvx_k*Avx_k + 4*spdiags(S22_p,0,Np,Np)*Cvy_k);
         end

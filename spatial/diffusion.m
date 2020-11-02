@@ -41,7 +41,8 @@ switch visc
         [S11,S12,S21,S22,S_abs,S_abs_u,S_abs_v] = strain_tensor(V,t,options,getJacobian);
         
         nu_t = turbulent_viscosity(S_abs,options);
-
+%         Np   = options.grid.Np;
+%         nu_t = zeros(Np,1);
         
         % we now have the turbulent viscosity at all pressure points
 
@@ -96,6 +97,10 @@ switch visc
             % = d/du ( Anu_ux * const * sqrt( 2*( Cux_k*uh + yCux_k).^2 + 
             %             ( Cuy_k*(Auy_k*uh+yAuy_k) + yCuy_k Cvx_k*(Avx_k*vh+yAvx_k) + yCvx_k).^2) )
             % = Anu_ux*const/sqrt( ) * (4*S11_p*Cux_k + 4*S12_p*(Cuy_k*Auy_k)
+            
+            % this indeed improves the convergence rate, however the number
+            % of nonzeros in the Jacobian increases quite dramatically, and
+            % the cost per iteration as well
             
             Anu_ux   = options.discretization.Anu_ux;
             Anu_uy   = options.discretization.Anu_uy;

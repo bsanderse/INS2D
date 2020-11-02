@@ -71,6 +71,20 @@ elseif (poisson==5)
     norm1  = norm1(1);
     
     dp     = dp';
+elseif (poisson==6) % discrete Fourier transform   
+    
+    Npx    = options.grid.Npx;
+    Npy    = options.grid.Npy;
+    % fourier transform of right hand side    
+    fhat   = fft2(reshape(f,Npx,Npy));
+    % fourier transform of the discretization
+    Ahat   = options.solversettings.Ahat;
+    % solve for coefficients in fourier space
+    phat   = -fhat./Ahat;
+    % transform back
+    dp     = real(ifft2(phat));
+    % convert 3D field to 1D column vector
+    dp     = dp(:);
     
 else
     error('wrong poisson method');
