@@ -71,6 +71,12 @@ while(n<=nt)
         method      = method_temp;
     end
     
+    % time reversal (used in inviscid shear-layer testcase)
+%     if (abs(t-t_end/2)<1e-12)
+%         dt = -dt;
+%     end
+%         
+    
     % perform a single time step with the time integration method
     if (method==2)
         [V,p,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options);

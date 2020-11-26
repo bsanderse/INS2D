@@ -17,7 +17,8 @@ if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion =
 end
     
 % FOM velocity field (only needed when not precomputing)
-if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
+if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
+    options.rom.precompute_force == 0)
     V = getFOM_velocity(R,t,options);
 end
 
@@ -63,7 +64,9 @@ if (options.rom.precompute_force == 1)
     end
     if (getJacobian == 1)
         % Jacobian is not straightforward for general non-linear forcing    
-        error('precomputing Jacobian of force not available');
+        warning('precomputing Jacobian of force not available, using zero Jacobian');
+        M  = options.rom.M;
+        dF = spalloc(M,M,0);
     end
 else
     [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);

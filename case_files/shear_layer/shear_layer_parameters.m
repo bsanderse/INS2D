@@ -18,8 +18,8 @@
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 20;          % number of volumes in the x-direction
-    Ny      = 20;          % number of volumes in the y-direction
+    Nx      = 40;          % number of volumes in the x-direction
+    Ny      = 40;          % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -76,7 +76,7 @@
     dt            = 0.1;       % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;        % start time
-    t_end         = 4;         % end time
+    t_end         = 8;         % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -91,8 +91,8 @@
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method            = 21;
-    RK                = 'GL1';
+    method            = 20;
+    RK                = 'RK44';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.
@@ -123,6 +123,7 @@
                           % 3: CG mexfile, 
                           % 4: CG with IC, own Matlab impl.
                           % 5: Petsc
+                          % 6: DFT
     p_initial        = 1; % calculate pressure field compatible
                           % with the velocity field at t=0
     p_add_solve      = 1; % do additional pressure solve to make it same 
@@ -162,7 +163,7 @@
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
     rtp.show         = 1;          % real time plotting 
-    rtp.n            = 10;
+    rtp.n            = 1;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'viscous_shear_layer_Re100_N200_ROM_M16'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

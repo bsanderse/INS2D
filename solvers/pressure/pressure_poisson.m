@@ -83,7 +83,7 @@ elseif (poisson==6) % discrete Fourier transform
     phat   = -fhat./Ahat;
     % transform back
     dp     = real(ifft2(phat));
-    % convert 3D field to 1D column vector
+    % convert 2D field to 1D column vector
     dp     = dp(:);
     
 else

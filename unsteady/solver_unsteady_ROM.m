@@ -78,6 +78,7 @@ if (j==1)
     % select snapshots
     V_svd = V_total_snapshots(:,snapshot_sample);
     
+    clear V_total_snapshots;
     
 end
 
@@ -161,6 +162,7 @@ else
     error('wrong option for weighted norm or momentum conservation');
     
 end
+clear V_svd;
 
 svd_end(j) = toc-svd_start
 
@@ -378,6 +380,11 @@ while(n<=nt)
     %%
     
     n = n+1;
+    
+    % time reversal (used in inviscid shear-layer testcase)
+%     if (abs(t-t_end/2)<1e-12)
+%         dt = -dt;
+%     end
     
     % perform one time step with the time integration method
     if (method == 20)

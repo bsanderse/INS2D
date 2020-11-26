@@ -32,8 +32,8 @@ options.rom.Conv_linear = conv_linear;
 options.rom.yConv       = conv_bc;
 
 %% body force
-% construct at t=t_start
-[Fx, Fy] = force(options.time.t_start,options);
+% construct at t=t_start with dummy velocity field
+[Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
 F        = P*[Fx;Fy];
 options.rom.F = F;
 
@@ -62,7 +62,7 @@ if (options.rom.pressure_recovery == 1)
 
         [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P_PPE,options);
         [yDiff,Diff] = operator_rom_diffusion(P_PPE,options);    
-        [Fx, Fy] = force(0,options);
+        [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
         F = P_PPE*[Fx;Fy];
 
         % note: for sign convention see F.m or F_ROM.m

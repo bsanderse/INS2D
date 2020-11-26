@@ -88,7 +88,7 @@ if (rtp.show == 1)
         error(['real-time plotting is on, but no file ' rtp.file ' exists']);
     end
     if (rtp.movie == 1)
-        writerObj = VideoWriter(rtp.moviename,'Motion JPEG AVI');
+        writerObj = VideoWriter(rtp.moviename,'MPEG-4'); %'Motion JPEG AVI');
         writerObj.FrameRate = rtp.movierate;
         open(writerObj);        
     end     

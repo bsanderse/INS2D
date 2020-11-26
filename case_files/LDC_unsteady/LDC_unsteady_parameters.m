@@ -2,11 +2,11 @@
 % project = 'LDC_unsteady';   % project name used in filenames
 run_multiple = 1;
 % M_list = [2 2 2 5 5 10 10 20 20 40 40 ];
-M_list = [2 5 10 15 20 ];
+M_list = 10; %[2 5 10 15 20 ];
 
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
-
+mesh_list = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1000;                  % Reynolds number

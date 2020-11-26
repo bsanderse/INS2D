@@ -1,7 +1,8 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 run_multiple = 1;
-M_list = [2 4 8 16 2 4 8 16];
+% M_list = [2 4 8 16 2 4 8 16];
+M_list = 16;
 % M_list = [16 16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -74,7 +75,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
     % 200x200:
     snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
-
+    % 200x200, with RK4 until t=7
+%     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,10 +189,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'viscous_shear_layer_ROM'; % movie name
+    rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -206,7 +208,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

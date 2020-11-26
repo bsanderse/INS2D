@@ -5,7 +5,8 @@ color = char(line(mod(j-1,length(line))+1));
 
 % write output along centerlines to datafiles:
 write_files = 0;
-show_plots = 0;
+% show plots:
+show_plots = 1;
 
 %load Botella-Peyret data
 % run('results/LDC/BP.m');
@@ -36,6 +37,8 @@ omega = get_vorticity(V,t,options);
 omega = reshape(omega,Nx-1,Ny-1);
 % streamfunction
 psi = get_streamfunction(V,t,options);
+% velocity at pressure points
+[up,vp,qp] = get_velocity(V,t,options);
 
 
 %% create plots
@@ -62,7 +65,7 @@ if (show_plots == 1)
     figure
     
     l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-    contour(xp,yp,pres_',l,'LineWidth',2);
+    contourf(xp,yp,pres_',l,'LineWidth',2);
     axis equal
     axis([x1 x2 y1 y2]);
     xlabeltex('x',14);
@@ -71,6 +74,21 @@ if (show_plots == 1)
     title('pressure');
     colorbar
     set(gca,'LineWidth',1)
+    
+    
+    %% velocity
+    list = linspace(0,1,20);
+    % list = 20;
+    figure
+    set(gcf,'color','w');
+    pcolor(xp,yp,qp')
+    shading interp
+    % [~,c]=contour(xp,yp,qp',list);
+    % c.LineWidth = 1;
+    axis equal
+    axis([x1 x2 y1 y2]);
+    colorbar
+    caxis([0 1])
     
     
     %% streamfunction
