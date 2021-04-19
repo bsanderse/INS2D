@@ -63,7 +63,7 @@
     
     nonlinear_acc          = 1e-14;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+    nonlinear_maxit        = 25;
         
     nonlinear_Newton       = 1;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
