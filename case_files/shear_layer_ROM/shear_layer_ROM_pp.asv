@@ -23,37 +23,27 @@ colorbar
 grid
 
 colors = ['b' 'r' 'g' 'k' 'b' 'r' 'g' 'k'];
-% lines = ['-' '-' '-' '-' '--' '--' '--' '--'];
-% 
-% lines = ['-';'--'];
+lines = ['-' '-' '-' '-' '--' '--' '--' '--'];
 
 %% Fig. 3. Singular values for inviscid shear-layer roll-up
-% if j==1
-%     singulars = figure;
-% end
-% if j==1 || j==2
-%     if (size(S,2)>1)
-%         Sigma = diag(S);
-%     else
-%         Sigma = S;
-%     end
-%     if j==1
-%         singulars = figure;
-%         Sigma0 = Sigma;
-%         dispname = "standard SVD";
-%     else
-%         dispname = "momentum-conserving SVD";
-%         hold on
-%     end
-%     Sigma = Sigma(1:80);
-%     figure(singulars);
-%     semilogy(Sigma/Sigma(1),'s','displayname', dispname);
-%     hold on
-%     title('singular values')
-%     legend('show')
-% end
-
-
+if j==1 || j==4
+    if (size(S,2)>1)
+        Sigma = diag(S);
+    else
+        Sigma = S;
+    end
+    if j==1
+        singulars = figure;
+    else
+        figure(singulars);
+        hold on
+    end
+    title('singular values')
+    Sigma = Sigma(1:80);
+    semilogy(Sigma/Sigma(1),'s');
+    hold on
+    title('singular values')
+end
 % [~,S0] = getBasis(V_svd,options,M);
 % if (size(S0,2)>1)
 %     Sigma0 = diag(S0);
@@ -79,15 +69,13 @@ if j==1
     % hold on
 end
 if j>4
-    suffix = " explicit";
-    lines = "--";
+    suffix = "momentum conserving";
 else
-    suffix = " implicit";
-    lines = "-";
+    suffix = "";
 end
 
 figure(energy1)
-semilogy(abs(k_r-k(1))/k(1),'color', colors(j), 'LineStyle', lines, ...
+semilogy(abs(k_r-k(1))/k(1),'color', colors(j), 'LineStyle', lines(j), ...
     'displayname',"M="+M+suffix)
 hold on
 title('energy 1')
@@ -95,14 +83,14 @@ legend('show')
 
 figure(momentum)
 semilogy(abs(umom_r-umom(1))/umom(1),'color', colors(j), ...
-    'LineStyle', lines,'displayname',"M="+M+suffix)
+    'LineStyle', lines(j),'displayname',"M="+M+suffix)
 hold on
 title('momentum')
 legend('show')
 
 figure(energy2)
 semilogy(abs(k_r-k_r(1))/k_r(1),'color', colors(j), ...
-    'LineStyle', lines, 'displayname',"M="+M+suffix)
+    'LineStyle', lines(j), 'displayname',"M="+M+suffix)
 hold on
 title('energy 2')
 legend('show')

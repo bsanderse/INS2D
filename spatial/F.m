@@ -38,7 +38,9 @@ end
 [convu, convv, dconvu, dconvv] = convection(V,C,t,options,getJacobian);
 
 % diffusion
-[d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
+% addpath('spatial/')
+% import spatial.diffusion
+[d2u, d2v, dDiffu, dDiffv] = mydiffusion(V,t,options,getJacobian);
 
 % body force
 [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);

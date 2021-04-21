@@ -162,7 +162,7 @@ else
     error('wrong option for weighted norm or momentum conservation');
     
 end
-clear V_svd;
+% clear V_svd;
 
 svd_end(j) = toc-svd_start
 
