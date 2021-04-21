@@ -71,7 +71,8 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
+%     snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
+    snapshot_data = 'results/actuator_ROM_5.000e+02_240x80_1/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -174,7 +175,7 @@ mesh_list = ones(length(M_list),1);
     
     restart.load     = 0;          % start from previous simulation
     restart.folder   = 'results/TCF_100_2x1x1_24x12x12_0';   % folder to be loaded
-    restart.file     = 25;         % file number to load
+    restart.file     = 0;%25;         % file number to load
     
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations

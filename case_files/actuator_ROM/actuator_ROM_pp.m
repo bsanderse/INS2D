@@ -5,7 +5,7 @@
 % B. Sanderse, ECN-E–11-042, June 2011
 
 
-show_plots = 0;
+show_plots = 1;
 
 %% get grid variables
 Nux_in = options.grid.Nux_in;
@@ -89,97 +89,97 @@ if (show_plots == 1)
     
     %% compare analytical and numerical solutions
     
-    %% centerline pressure
-    
-    % analytical solution
-    p_ex = -deltap / (2*pi) * ( atan((D/2-yr)./(xp-xr)) + atan((D/2+yr)./(xp-xr)) );
-    % numerical solution
-    px   = (pres_(:,Npy/2+1)+pres_(:,floor(Npy/2)))/2;
-    
-    
-    figure(1)
-    plot(xp,p_ex);
-    hold on
-    
-    plot(xp,px,color)
-    hold on
-    % legend('Exact','Present');
-    grid
-    title('pressure at centerline');
-    
-    %% centerline velocity
-    
-    % analytical solution
-    u_ex = 1 - p_ex - deltap*(xp>xr);
-    % numerical solution
-    ux   = (u(:,Nuy_in/2)+u(:,Nuy_in/2+1))/2;
-    
-    figure(2)
-    plot(xp,u_ex);
-    hold on
-    plot(xin,ux,color)
-    % hold on
-    uw = sqrt(1-Ct) - 1;
-    % duw = sqrt(1-Ct)-1;
-    % plot([min(x) max(x)],[uw uw]/deltap,'k--');
-    
-    title('velocity at centerline');
-    grid
-    
-    
-    %% wake profile velocity
-    
-    figure(3)
-    
-    xwake  = 1;
-    xd     = find(xin>=xwake,1); % point at which profile is plotted
-    
-    disp(['wake velocity profile at: x=' num2str(xin(xd))]);
-    
-    % u velocities are at grid lines
-    p_ex_y = -deltap/(2*pi) * (atan((D/2-yp)/xin(xd)) + atan((D/2+yp)/xin(xd)));
-    % u_ex_y =   - deltap*p_ex_y - deltap*(abs(yp)<D/2);
-    u_ex_y = 1 - p_ex_y - deltap*(abs(yp)<D/2);
-    
-    plot(yp,u_ex_y);
-    hold on
-    
-    % uy = (u(xd,:)-u_inf)/deltap;
-    uy = u(xd,:);
-    plot(yp,uy,color)
-    hold on
-    title('velocity in wake');
-    grid
-    
-    
-    %% wake profile pressure
-    
-    figure(4)
-    
-    xwake  = 1;
-    xd     = find(xp>=xwake,1); % point at which profile is plotted
-    % p is at pressure points
-    disp(['pressure profile at: x=' num2str(0.5*(xp(xd-1)+xp(xd)))]);
-    
-    p_ex_y = -deltap/(2*pi) * (atan((D/2-yp)/xp(xd)) + atan((D/2+yp)/xp(xd)));
-    plot(yp,p_ex_y);
-    hold on
-    py = 0.5*(pres_(xd,:)+pres_(xd-1,:));
-    
-    plot(yp,py,color);
-    hold on
-    
-    title('pressure in wake');
-    grid
-    
-    %% vertical velocity profile
-    
-    figure(5)
-    vy = 0.5*(v(xd,:)+v(xd-1,:));
-    plot(yin,vy,color)
-    hold on
-    
-    %% contour plot velocity
+%     %% centerline pressure
+%     
+%     % analytical solution
+%     p_ex = -deltap / (2*pi) * ( atan((D/2-yr)./(xp-xr)) + atan((D/2+yr)./(xp-xr)) );
+%     % numerical solution
+%     px   = (pres_(:,Npy/2+1)+pres_(:,floor(Npy/2)))/2;
+%     
+%     
+%     figure(1)
+%     plot(xp,p_ex);
+%     hold on
+%     
+%     plot(xp,px,color)
+%     hold on
+%     % legend('Exact','Present');
+%     grid
+%     title('pressure at centerline');
+%     
+%     %% centerline velocity
+%     
+%     % analytical solution
+%     u_ex = 1 - p_ex - deltap*(xp>xr);
+%     % numerical solution
+%     ux   = (u(:,Nuy_in/2)+u(:,Nuy_in/2+1))/2;
+%     
+%     figure(2)
+%     plot(xp,u_ex);
+%     hold on
+%     plot(xin,ux,color)
+%     % hold on
+%     uw = sqrt(1-Ct) - 1;
+%     % duw = sqrt(1-Ct)-1;
+%     % plot([min(x) max(x)],[uw uw]/deltap,'k--');
+%     
+%     title('velocity at centerline');
+%     grid
+%     
+%     
+%     %% wake profile velocity
+%     
+%     figure(3)
+%     
+%     xwake  = 1;
+%     xd     = find(xin>=xwake,1); % point at which profile is plotted
+%     
+%     disp(['wake velocity profile at: x=' num2str(xin(xd))]);
+%     
+%     % u velocities are at grid lines
+%     p_ex_y = -deltap/(2*pi) * (atan((D/2-yp)/xin(xd)) + atan((D/2+yp)/xin(xd)));
+%     % u_ex_y =   - deltap*p_ex_y - deltap*(abs(yp)<D/2);
+%     u_ex_y = 1 - p_ex_y - deltap*(abs(yp)<D/2);
+%     
+%     plot(yp,u_ex_y);
+%     hold on
+%     
+%     % uy = (u(xd,:)-u_inf)/deltap;
+%     uy = u(xd,:);
+%     plot(yp,uy,color)
+%     hold on
+%     title('velocity in wake');
+%     grid
+%     
+%     
+%     %% wake profile pressure
+%     
+%     figure(4)
+%     
+%     xwake  = 1;
+%     xd     = find(xp>=xwake,1); % point at which profile is plotted
+%     % p is at pressure points
+%     disp(['pressure profile at: x=' num2str(0.5*(xp(xd-1)+xp(xd)))]);
+%     
+%     p_ex_y = -deltap/(2*pi) * (atan((D/2-yp)/xp(xd)) + atan((D/2+yp)/xp(xd)));
+%     plot(yp,p_ex_y);
+%     hold on
+%     py = 0.5*(pres_(xd,:)+pres_(xd-1,:));
+%     
+%     plot(yp,py,color);
+%     hold on
+%     
+%     title('pressure in wake');
+%     grid
+%     
+%     %% vertical velocity profile
+%     
+%     figure(5)
+%     vy = 0.5*(v(xd,:)+v(xd-1,:));
+%     plot(yin,vy,color)
+%     hold on
+%     
+    %% ROM contour plot velocity
     [up,vp,qp] = get_velocity(V,t,options);
     list = linspace(0.5,1.15,20);
     % list = 20;
@@ -193,4 +193,76 @@ if (show_plots == 1)
     axis([x1 x2 y1 y2]);
     colorbar
     
+    if j>1
+        %% FOM contour velocity pressure
+        [up,vp,qp] = get_velocity(snapshots_V_total(:,801),t,options);
+        figure
+        list = linspace(0.5,1.15,20);
+        % list = 20;
+        figure
+        set(gcf,'color','w');
+        set(gca,'LineWidth',1);
+        % pcolor(xp,yp,qp')
+        [~,c]=contour(xp,yp,qp',list);
+        c.LineWidth = 2;
+        axis equal
+        axis([x1 x2 y1 y2]);
+        colorbar
+    end
+    
+    %% ROM contour plot pressure
+%     [up,vp,qp] = get_pressure(V,t,options);
+%     list = linspace(0.5,1.15,20);
+    list = linspace(-0.1,0.1,20);
+    % list = 20;
+    figure
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1);
+    % pcolor(xp,yp,qp')
+    [~,c]=contour(xp,yp,pres_',list);
+    c.LineWidth = 2;
+    axis equal
+    axis([x1 x2 y1 y2]);
+    colorbar
+    
+    if j>1
+        %% FOM contour plot pressure
+        figure
+        list = linspace(-0.1,0.1,20);
+        % list = 20;
+        figure
+        set(gcf,'color','w');
+        set(gca,'LineWidth',1);
+        % pcolor(xp,yp,qp')
+        [~,c]=contour(xp,yp,reshape(snapshots_p_total(:,801),[240,80])',list);
+        c.LineWidth = 2;
+        axis equal
+        axis([x1 x2 y1 y2]);
+        colorbar
+    end
+ 
+    %% contour plot lifting function velocity
+    [up,vp,qp] = get_velocity(Vbc,t,options);
+    list = linspace(0,1,10);
+    % list = 20;
+    figure
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1);
+    % pcolor(xp,yp,qp')
+    [~,c]=contour(xp,yp,up',list);
+    c.LineWidth = 2;
+    axis equal
+    axis([x1 x2 y1 y2]);
+    colorbar
+        list = linspace(-2.5,2.5,20);
+        figure
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1);
+    % pcolor(xp,yp,qp')
+    [~,c]=contour(xp,yp,vp',list);
+    c.LineWidth = 2;
+    axis equal
+    axis([x1 x2 y1 y2]);
+    colorbar
+
 end

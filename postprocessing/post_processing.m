@@ -140,9 +140,11 @@ if (options.rom.rom == 1)
                 ylabel('momentum error');
                 
                 figure(105)
-                plot(t_vec,maxdiv);
+%                 plot(t_vec,maxdiv);
+                semilogy(t_vec,maxdiv);
                 hold on
-                plot(t_vec,snapshots.maxdiv(snapshot_indx));
+%                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
+                semilogy(t_vec,snapshots.maxdiv(snapshot_indx));
                 xlabel('t')
                 ylabel('maximum divergence of velocity field');
                 grid

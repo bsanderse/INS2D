@@ -2,11 +2,11 @@
 % project = 'LDC_unsteady';   % project name used in filenames
 run_multiple = 1;
 % M_list = [2 2 2 5 5 10 10 20 20 40 40 ];
-M_list = 10; %[2 5 10 15 20 ];
+M_list = [2 5 10 15 20];
 
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
-mesh_list = 1;
+% mesh_list = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1000;                  % Reynolds number
@@ -72,8 +72,9 @@ mesh_list = 1;
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent    
     
-    snapshot_data = 'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
-    
+%     snapshot_data = 'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
+    snapshot_data = 'results/LDC_unsteady_1.000e+03_100x100/matlab_data.mat';
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +203,7 @@ mesh_list = 1;
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
                                    % -> requires save_file=1 to get saved into output file
         
