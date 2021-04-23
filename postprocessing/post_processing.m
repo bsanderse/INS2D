@@ -141,12 +141,13 @@ if (options.rom.rom == 1)
                 
                 figure(105)
 %                 plot(t_vec,maxdiv);
-                semilogy(t_vec,maxdiv);
+                semilogy(t_vec,maxdiv,'displayname',"ROM");
                 hold on
 %                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
-                semilogy(t_vec,snapshots.maxdiv(snapshot_indx));
+                semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
                 xlabel('t')
                 ylabel('maximum divergence of velocity field');
+                legend('show')
                 grid
                 
                 

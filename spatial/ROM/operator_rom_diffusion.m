@@ -11,8 +11,9 @@ B   = options.rom.B;
 M   = options.rom.M;
 Vbc = options.rom.Vbc;
 
-% P can project to M or to Mp modes 
-M1  = size(P,1);   
+% P can project to M or to Mp modes
+M1  = size(P,1);
+
 
 %% diffusion:
 % the ROM discretization will read Diff*R + yDiff, where Diff is the reduced
@@ -20,7 +21,7 @@ M1  = size(P,1);
 % we get this by multiplying B'*Diffusion(B*R), where a call to Diffusion(V) returns
 % D*V + yD
 % this also works for the case that we have
-% B'*Diffusion(B*R + Vbc) = 
+% B'*Diffusion(B*R + Vbc) =
 % B'*(D*(B*R+Vbc) + yD) = (B'*D*B)*R + B'*D*Vbc + B'*yD =
 % (B'*D*B)*R + B'*yDiff, where yDiff = B'*(D*Vbc + yD)
 Diff = zeros(M1,M);

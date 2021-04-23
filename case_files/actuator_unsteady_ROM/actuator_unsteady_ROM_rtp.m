@@ -111,30 +111,31 @@ hold off
 % ylabel('y');
 
 %% V_bc
-[up,vp,qp] = get_velocity(Vbc(n,:)',t,options);
 
-% Vbc_u = reshape(Vbc(n,1:Nu),[Nx,Ny]);
-% Vbc_v = reshape(Vbc(n,Nu+1:end),[Nx,Ny]);
-figure
-l = 20; 
-contour(xp,yp,up',l,'LineWidth',2);
-axis equal
-axis([x1 x2 y1 y2]);
-xlabeltex('x',14);
-ylabeltex('y',14);
-grid
-title("u of V_{bc}");
-colorbar
-set(gca,'LineWidth',1)
+% [up,vp,qp] = get_velocity(Vbc(n,:)',t,options);
+% 
+% figure
+% l = 20; 
+% contour(xp,yp,up',l,'LineWidth',2);
+% axis equal
+% axis([x1 x2 y1 y2]);
+% xlabeltex('x',14);
+% ylabeltex('y',14);
+% grid
+% title("u of V_{bc}");
+% colorbar
+% set(gca,'LineWidth',1)
+% 
+% figure
+% l = 20; 
+% contour(xp,yp,vp',l,'LineWidth',2);
+% axis equal
+% axis([x1 x2 y1 y2]);
+% xlabeltex('x',14);
+% ylabeltex('y',14);
+% grid
+% title("v of V_{bc}");
+% colorbar
+% set(gca,'LineWidth',1)
 
-figure
-l = 20; 
-contour(xp,yp,vp',l,'LineWidth',2);
-axis equal
-axis([x1 x2 y1 y2]);
-xlabeltex('x',14);
-ylabeltex('y',14);
-grid
-title("v of V_{bc}");
-colorbar
-set(gca,'LineWidth',1)
+

@@ -56,6 +56,13 @@ if (j==1)
             Vbc     = - Om_inv.*(options.discretization.G*dp);
         end
         V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
+    elseif (options.rom.rom_bc == 2)
+        if (isfield(snapshots,'Vbc'))
+            Vbc = snapshots.Vbc;
+        else
+            error('Vbc data not provided');
+        end
+        V_total_snapshots = V_total_snapshots - Vbc'; % this velocity field satisfies M*V_total = 0
     else
         Vbc = zeros(Nu+Nv,1);
     end
@@ -66,8 +73,8 @@ if (j==1)
         Nskip = dt_sample/dt_snapshots;
         % check if t_sample is multiple of dt_sample
         if (rem(t_sample,dt_sample) == 0)
-            Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
-            snapshot_sample = 1:Nskip:Nsnapshots;
+            Nsnapshots    = round(t_sample / dt_snapshots); %size(V_total,2);
+            snapshot_sample = 1:Nskip:(Nsnapshots+1);
         else
             error('sample dt is not an integer multiple of sample time');
         end
@@ -162,7 +169,7 @@ else
     error('wrong option for weighted norm or momentum conservation');
     
 end
-% clear V_svd;
+clear V_svd;
 
 svd_end(j) = toc-svd_start
 
@@ -277,13 +284,32 @@ if (options.rom.pressure_recovery == 1)
     
 end
 
+%% construct basis for unsteady Vbc   not necessary yet
+% if (options.rom.rom_bc==2)
+%     if (options.rom.weighted_norm == 1)
+%         Np          = options.grid.Np;
+%         Omp         = options.grid.Omp;
+%         Omp_sqrt    = spdiags(sqrt(Omp),0,Np,Np);
+%         Omp_invsqrt = spdiags(1./sqrt(Omp),0,Np,Np);
+%         
+%         [Wbc,Sbc,~] = svd(Omp_sqrt*Vbc,'econ');
+%         Bbc = Omp_invsqrt*Wbc(:,1:Mbc);
+%     else
+%         error('unsteady Vbc not implemented for non-weighted norm')
+%     end
+% end
+
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
-disp('precomputing ROM operators...');
-precompute_start = toc;
-options = operator_rom(options);
-precompute_end(j) = toc-precompute_start
-
+if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
+        options.rom.precompute_force == 1)
+    disp('precomputing ROM operators...');
+    precompute_start = toc;
+    options = operator_rom(options);
+    precompute_end(j) = toc-precompute_start
+end
+%     options = operator_rom(options);
+% disp('solver unsteady ROM manipulated')
 
 %% initialize reduced order solution
 % we expand the part of the solution vector that is div-free in terms of

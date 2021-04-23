@@ -24,12 +24,14 @@ end
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
-    if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0)
+    if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
         options = set_bc_vectors(t,options);
-    else
+    elseif (options.rom.bc_recon ~= 1)
         error('unsteady BC with precomputing not fully tested');
     end
 end
+%         options = set_bc_vectors(t,options);
+% disp('F ROM 34 manipulated')
 
 % convection:
 if (options.rom.precompute_convection == 1)
@@ -39,19 +41,30 @@ elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
     conv  = B'*(Diag.*[convu;convv]);
-    dconv = B'*(Diag.*[dconvu;dconvv])*B;    
+    dconv = B'*(Diag.*[dconvu;dconvv])*B;  
 end
 
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
-    [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
+    if (options.rom.rom_bc == 2)
+        [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+    else
+        [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
+    end
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
-    [d2u,d2v,dDiffu,dDiffv] = diffusion(V,t,options,getJacobian);
+    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
     Diff  = B'*(Diag.*[d2u;d2v]);
     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
+    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
+    Diff1  = B'*(Diag.*[d2u;d2v]);
+    norm(Diff-Diff1)
+%     Diff = Diff1;
+% %     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
+% %     disp('F ROM 64 manipulated')
+
 
 % body force
 if (options.rom.precompute_force == 1)
@@ -77,6 +90,9 @@ end
 
 % residual of ROM
 Fres    = - conv + Diff + F;
+% [d2u,d2v] = mydiffusion(get_unsteadyVbc(t,options),0,options,0);
+% DiffBC = B'*[d2u;d2v];
+% Fres    = - conv + Diff + F + DiffBC;
 
 
 maxres  = max(abs(Fres));

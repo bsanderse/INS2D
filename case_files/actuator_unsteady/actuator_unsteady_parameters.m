@@ -46,6 +46,7 @@
 %%% reduced order model
 
     rom    = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = 50;     % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -89,7 +90,7 @@
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
     method        = 20;
-    RK            = 'RK44P2';
+    RK            = 'M2S4R4'; %'RK44P2';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.

@@ -19,11 +19,18 @@ P = B'*spdiags(Diag,0,NV,NV);
 
 
 %% diffusion
-[yDiff,Diff] = operator_rom_diffusion(P,options);
-
-options.rom.Diff  = Diff;
-options.rom.yDiff = yDiff;
-
+if options.rom.rom_bc == 2
+    [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
+  
+    options.rom.Diff   = Diff;
+    options.rom.DiffBC = DiffBC;
+    options.rom.yDiff  = yDiff;
+else
+    [yDiff,Diff] = operator_rom_diffusion(P,options);
+    
+    options.rom.Diff  = Diff;
+    options.rom.yDiff = yDiff;
+end
 %% convection 
 [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
 

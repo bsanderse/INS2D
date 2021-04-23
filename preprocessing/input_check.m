@@ -175,3 +175,12 @@ if (steady==0)
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Henrik's checks
+if (options.rom.precompute_diffusion == 1 || ...
+    options.rom.precompute_convection == 1 || ...
+    options.rom.precompute_force == 1)
+    if (options.rom.rom_bc == 2 && options.rom.bc_recon ~= 1)
+        error('to precompute ROM operators for unsteady BC use bc_recon = 1');
+    end
+end

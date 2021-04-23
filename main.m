@@ -153,6 +153,12 @@ for j=1:Nsim
     %% boundary conditions
     options = set_bc_vectors(t,options);
     
+    %% initialize basis for lifting function Vbc
+    if (options.rom.rom_bc == 2 && options.rom.bc_recon == 1) % could also be used for rom = 0, pro_rom = 1
+        run([folder_cases '/' case_name '/' case_name '_init_unsteady_Vbc.m']);
+    end
+        
+    
     
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m

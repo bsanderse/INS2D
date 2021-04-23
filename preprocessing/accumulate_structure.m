@@ -101,6 +101,7 @@ object = 'rom';
 
 voi = {
     'rom', 0; ... % if 1, use reduced order model
+    'pro_rom', 0; ... % if 1, provide snapshots
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model
     'precompute_convection', 1; ... % precomputed convection matrices
@@ -110,6 +111,7 @@ voi = {
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD
     'rom_bc', 0; ... % 0: homogeneous (no-slip, periodic); 1: non-homogeneous, time-independent; 2: non-homogeneous, time-dependent
+    'bc_recon', 0; ... % 0: unsteady is always computed by solving a poisson eq, 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
     'weighted_norm', 1; ... % 0: unweighted norm; 1: weighted norm (using finite volumes as weights)
     'pressure_recovery', 0; ... % 0: no pressure computation; 1: compute pressure with PPE-ROM
     'pressure_precompute', 0; ... % in case of pressure_recovery=1: compute RHS Poisson equation based on FOM (0) or ROM (1)
