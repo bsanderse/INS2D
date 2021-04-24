@@ -21,7 +21,7 @@ norm(vbc1-vbc2)
 switch visc
     
     case 'laminar'
-        d2     = Diff*R + DiffBC*abc(t) + yDiff;
+        d2     = Diff*R + DiffBC*abc(t) + yDiff*abc(t);
 %         d2     = Diff*R; %pfusch
         
         if (getJacobian == 1)

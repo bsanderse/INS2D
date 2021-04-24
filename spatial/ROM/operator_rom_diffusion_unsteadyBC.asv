@@ -40,16 +40,11 @@ Diffv  = options.discretization.Diffv;
 yDiffu = options.discretization.yDiffu;
 yDiffv = options.discretization.yDiffv;
 
-Diff_   = P*blkdiag(Diffu, Diffv)*B;
-DiffBC_ = P*blkdiag(Diffu, Diffv)*Vbc0;
-yDiff0_ = P*[yDiffu; yDiffv];
+Diff_   = P*[Diffu; Diffv]*B;
+DiffBC_ = P*[Diffu; Diffv]*Vbc0;
+yDiff0_ = [yDiffu; yDiffv];
 
 norm(Diff-Diff_)
-norm(DiffBC-DiffBC_)
-norm(yDiff0 - yDiff0_)
-
-Diff   = Diff_;
-DiffBC = DiffBC_;
-yDiff0 = yDiffy0_;
+norm(DiffBC-Diff
 
 
