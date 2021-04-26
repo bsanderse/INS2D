@@ -37,14 +37,24 @@ end
 
 Diffu  = options.discretization.Diffu;
 Diffv  = options.discretization.Diffv;
-yDiffu = options.discretization.yDiffu;
-yDiffv = options.discretization.yDiffv;
 
-Diff_   = P*[Diffu; Diffv]*B;
-DiffBC_ = P*[Diffu; Diffv]*Vbc0;
-yDiff0_ = [yDiffu; yDiffv];
+Diff_   = P*blkdiag(Diffu, Diffv)*B;
+DiffBC_ = P*blkdiag(Diffu, Diffv)*Vbc0;
+
+yDiffu1 = options.bc_options1.discretization.yDiffu;
+yDiffv1 = options.bc_options1.discretization.yDiffv;
+yDiff0_1 = P*[yDiffu1; yDiffv1];
+
+yDiffu2 = options.bc_options2.discretization.yDiffu;
+yDiffv2 = options.bc_options2.discretization.yDiffv;
+yDiff0_2 = P*[yDiffu2; yDiffv2];
 
 norm(Diff-Diff_)
-norm(DiffBC-Diff
+norm(DiffBC-DiffBC_)
+norm(yDiff0 - (yDiff0_1*oabc1(t)+yDiff0_2*abc2(t)))
+
+Diff   = Diff_;
+DiffBC = DiffBC_;
+yDiff0 = [yDiff0_1, yDiff0_2];
 
 
