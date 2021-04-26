@@ -58,9 +58,9 @@ elseif (options.rom.precompute_diffusion == 0)
     Diff  = B'*(Diag.*[d2u;d2v]);
     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
-    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
-    Diff1  = B'*(Diag.*[d2u;d2v]);
-    norm(Diff-Diff1)
+%     [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
+%     Diff1  = B'*(Diag.*[d2u;d2v]);
+%     norm(Diff-Diff1)
 %     Diff = Diff1;
 % %     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 % %     disp('F ROM 64 manipulated')

@@ -54,7 +54,7 @@ yDiffu = options.discretization.yDiffu;
 yDiffv = options.discretization.yDiffv;
 yDiff0_ = P*[yDiffu; yDiffv];
 
-norm(yDiff0_ - (yDiff0_1*options.rom.abc1(0)+yDiff0_2*options.rom.abc2(0)))
+% norm(yDiff0_ - (yDiff0_1*options.rom.abc1(0)+yDiff0_2*options.rom.abc2(0)))
 
 % norm(Diff-Diff_)
 % norm(DiffBC-DiffBC_)

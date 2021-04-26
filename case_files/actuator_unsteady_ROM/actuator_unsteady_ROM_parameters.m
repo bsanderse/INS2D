@@ -32,7 +32,7 @@
     Ct = 0.5; % thrust coefficient actuator disk
     D = 1;     % diameter actuator disk
     
-    force_unsteady     = 1; % set to 1 if force is time dependent
+    force_unsteady     = 0;%1; % set to 1 if force is time dependent
     
     % immersed boundary method
     ibm     = 0;
@@ -54,7 +54,7 @@
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
     precompute_convection = 0;
     precompute_diffusion  = 1;
-    precompute_force      = 0; 
+    precompute_force      = 1; 
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';

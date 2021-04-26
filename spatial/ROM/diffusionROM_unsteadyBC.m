@@ -16,9 +16,9 @@ yDiff = options.rom.yDiff;
 
 Jac = spalloc(M,M,0);
 
-vbc1 = get_unsteadyVbc(t,options);
-vbc2 = options.rom.Vbc0*options.rom.abc(t);
-norm(vbc1-vbc2)
+% vbc1 = get_unsteadyVbc(t,options);
+% vbc2 = options.rom.Vbc0*options.rom.abc(t);
+% norm(vbc1-vbc2)
 
 switch visc
     
@@ -36,23 +36,23 @@ switch visc
         
 end
 
-Diffu  = options.discretization.Diffu;
-Diffv  = options.discretization.Diffv;
-yDiffu = options.discretization.yDiffu;
-yDiffv = options.discretization.yDiffv;
-
-D_h = blkdiag(Diffu, Diffv);
-y_D = [yDiffu; yDiffv];
-
-B   = options.rom.B;
-
-V_r = getFOM_velocity(R,t,options);
-norm(B'*(D_h*V_r+y_D)-d2)
-norm(B'*D_h*B-Diff)
-norm(B'*D_h*get_unsteadyVbc(t,options)-DiffBC*abc(t))
-% norm(B'*D_h*y_D-yDiff*abc(t))
-% norm(B'*y_D-(yDiff*abc(t)))
-norm(B'*y_D-(yDiff(:,1)*abc1(t) + yDiff(:,2)*abc2(t)))
+% Diffu  = options.discretization.Diffu;
+% Diffv  = options.discretization.Diffv;
+% yDiffu = options.discretization.yDiffu;
+% yDiffv = options.discretization.yDiffv;
+% 
+% D_h = blkdiag(Diffu, Diffv);
+% y_D = [yDiffu; yDiffv];
+% 
+% B   = options.rom.B;
+% 
+% V_r = getFOM_velocity(R,t,options);
+% norm(B'*(D_h*V_r+y_D)-d2)
+% norm(B'*D_h*B-Diff)
+% norm(B'*D_h*get_unsteadyVbc(t,options)-DiffBC*abc(t))
+% % norm(B'*D_h*y_D-yDiff*abc(t))
+% % norm(B'*y_D-(yDiff*abc(t)))
+% norm(B'*y_D-(yDiff(:,1)*abc1(t) + yDiff(:,2)*abc2(t)))
 
 
 end
