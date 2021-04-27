@@ -29,8 +29,8 @@ yIv_vy = options.discretization.yIv_vy;
 A = blkdiag([Au_ux; Au_uy],[Av_vx; Av_vy]); %not efficient but intuitive
 I = [blkdiag(Iu_ux,Iv_uy);blkdiag(Iu_vx,Iv_vy)]; %not efficient but intuitive
 K = blkdiag([Cux Cuy],[Cvx Cvy]); %not efficient but intuitive
-% y_A = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
-% y_I = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
+y_A = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
+y_I = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
 
 
 B = options.rom.B;
@@ -39,10 +39,10 @@ M   = options.rom.M;
 Vbc0 = options.rom.Vbc0;
 M_inhom = size(Vbc0,2);
 
-yAu_ux = options.bc_options1.discretization.yAu_ux;
-yAu_uy = options.bc_options1.discretization.yAu_uy;
-yAv_vx = options.bc_options1.discretization.yAv_vx;
-yAv_vy = options.bc_options1.discretization.yAv_vy;
+Iu_ux = options.bc_options1.discretization.Iu_ux;
+Iv_uy = options.bc_options1.discretization.Iv_uy;
+Iu_vx = options.bc_options1.discretization.Iu_vx;
+Iv_vy = options.bc_options1.discretization.Iv_vy;
 
 yIu_ux = options.bc_options1.discretization.yIu_ux;
 yIv_uy = options.bc_options1.discretization.yIv_uy;
@@ -50,19 +50,19 @@ yIu_vx = options.bc_options1.discretization.yIu_vx;
 yIv_vy = options.bc_options1.discretization.yIv_vy;
 
 y_A1 = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
-y_I1 = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
+y_I2 = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
 
-yAu_ux = options.bc_options2.discretization.yAu_ux;
-yAu_uy = options.bc_options2.discretization.yAu_uy;
-yAv_vx = options.bc_options2.discretization.yAv_vx;
-yAv_vy = options.bc_options2.discretization.yAv_vy;
+Iu_ux = options.bc_options2.discretization.Iu_ux;
+Iv_uy = options.bc_options2.discretization.Iv_uy;
+Iu_vx = options.bc_options2.discretization.Iu_vx;
+Iv_vy = options.bc_options2.discretization.Iv_vy;
 
 yIu_ux = options.bc_options2.discretization.yIu_ux;
 yIv_uy = options.bc_options2.discretization.yIv_uy;
 yIu_vx = options.bc_options2.discretization.yIu_vx;
 yIv_vy = options.bc_options2.discretization.yIv_vy;
 
-y_A2 = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
+y_A1 = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
 y_I2 = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
 
 y_A = [y_A1 y_A2];
@@ -137,3 +137,5 @@ for i=1:M_bc
         C_bc(:,k) = P*Conv;        
     end
 end
+
+C_bc=0;

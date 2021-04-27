@@ -36,7 +36,11 @@ end
 % convection:
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
-    [conv, dconv] = convectionROM(R,t,options,getJacobian);
+    if (options.rom.rom_bc == 2)
+        [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+    else
+        [conv, dconv] = convectionROM(R,t,options,getJacobian);
+    end
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);

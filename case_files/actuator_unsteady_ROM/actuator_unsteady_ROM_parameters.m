@@ -52,7 +52,7 @@
     % 1:Nskip:Nsnapshots
     t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
-    precompute_convection = 0;
+    precompute_convection = 1;
     precompute_diffusion  = 0;
     precompute_force      = 0; 
 
