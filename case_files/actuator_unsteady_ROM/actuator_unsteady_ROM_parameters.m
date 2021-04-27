@@ -53,8 +53,8 @@
     t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
     precompute_convection = 0;
-    precompute_diffusion  = 1;
-    precompute_force      = 1; 
+    precompute_diffusion  = 0;
+    precompute_force      = 0; 
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
