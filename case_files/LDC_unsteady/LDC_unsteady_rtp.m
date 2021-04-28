@@ -32,23 +32,23 @@ end
 
 %% create 2D plots
 
-%% velocity
-[up,vp,qp] = get_velocity(V,t,options);
-list = linspace(0,1,20);
-% list = 20;
-figure(1)
-set(gcf,'color','w');
-pcolor(xp,yp,qp')
-shading interp
-% [~,c]=contour(xp,yp,qp',list);
-% c.LineWidth = 1;
-axis equal
-axis([x1 x2 y1 y2]);
-colorbar
-caxis([0 1])
-% grid
-% title('velocity')
-% set(gca,'LineWidth',1);
+% %% velocity
+% [up,vp,qp] = get_velocity(V,t,options);
+% list = linspace(0,1,20);
+% % list = 20;
+% figure(1)
+% set(gcf,'color','w');
+% pcolor(xp,yp,qp')
+% shading interp
+% % [~,c]=contour(xp,yp,qp',list);
+% % c.LineWidth = 1;
+% axis equal
+% axis([x1 x2 y1 y2]);
+% colorbar
+% caxis([0 1])
+% % grid
+% % title('velocity')
+% % set(gca,'LineWidth',1);
 
 
 %% vorticity

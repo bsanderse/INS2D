@@ -67,9 +67,7 @@ if (options.rom.rom == 1)
                     % optimization problem used in the SVD
 %                     V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);
                     B = options.rom.B;
-                    Om = options.grid.Om;
-                    D = diag(Om); % sparse please!!!
-                    V_best = B*B'*D*(snapshots_V_total-snapshots.Vbc)+snapshots.Vbc;
+                    V_best = B*B'*(snapshots_V_total-snapshots.Vbc)+snapshots.Vbc;
                     if options.rom.rom_bc == 2
                         error_V_best = V_best - snapshots_V_total;
                     else

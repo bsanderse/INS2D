@@ -80,6 +80,9 @@ if (steady==0 && save_unsteady == 1)
     uh_total(n,:) = V(1:options.grid.Nu);
     vh_total(n,:) = V(options.grid.Nu+1:end);
     p_total(n,:)  = p;
+%     uh_total(:,n) = V(1:options.grid.Nu); % more efficient
+%     vh_total(:,n) = V(options.grid.Nu+1:end);
+%     p_total(:,n)  = p;
 end
 
 % write data to Tecplot file

@@ -62,7 +62,7 @@ if (j==1)
         else
             error('Vbc data not provided');
         end
-        V_total_snapshots = V_total_snapshots - Vbc'; % this velocity field satisfies M*V_total = 0
+        V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
     else
         Vbc = zeros(Nu+Nv,1);
     end
@@ -169,7 +169,7 @@ else
     error('wrong option for weighted norm or momentum conservation');
     
 end
-clear V_svd;
+% clear V_svd;
 
 svd_end(j) = toc-svd_start
 

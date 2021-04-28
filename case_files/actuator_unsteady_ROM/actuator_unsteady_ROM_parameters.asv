@@ -1,6 +1,6 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 1;
-M_list = [2 5 10 15 20 40];
+M_list = [2][2 5 10 15 20];
 
 mesh_list = ones(length(M_list),1);
 
@@ -49,7 +49,7 @@ mesh_list = ones(length(M_list),1);
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -61,12 +61,9 @@ mesh_list = ones(length(M_list),1);
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_4/matlab_data.mat'; %M2S4R4
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_4/matlab_data.mat'; %M2S4R4
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_1/matlab_data.mat'; %   FE11
     
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_17/matlab_data.mat'; %M2S4R4
-
-
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent

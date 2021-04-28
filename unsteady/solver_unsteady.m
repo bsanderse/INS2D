@@ -15,7 +15,7 @@ if (options.BC.BC_unsteady == 1 && options.rom.pro_rom == 1)
     options = set_bc_vectors(t,options);
     f       = options.discretization.yM;
     dp      = pressure_poisson(f,t,options);
-    Vbc(n,:)= - Om_inv.*(options.discretization.G*dp);
+    Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
 end
 
 
@@ -121,7 +121,7 @@ while(n<=nt)
         options = set_bc_vectors(t,options);
         f       = options.discretization.yM;
         dp      = pressure_poisson(f,t,options);
-        Vbc(n,:)= - Om_inv.*(options.discretization.G*dp);
+        Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
     end
     
     % check residuals, conservation, set timestep, write output files

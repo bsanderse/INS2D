@@ -1,6 +1,8 @@
 function [maxres,Fres,dFres] = F_ROM(R,~,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
+
+% warning pressure contribution for outflow BC not included
 if (nargin<5)
     getJacobian = 0;
 end
