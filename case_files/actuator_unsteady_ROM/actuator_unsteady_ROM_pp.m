@@ -4,6 +4,8 @@
 line  = {'r-','b-','k-','m-','g-'};
 color = char(line(j));
 
+cd case_files/actuator_unsteady_ROM
+
 Nu  = options.grid.Nu;
 Nv  = options.grid.Nv;
 Npx = options.grid.Npx;
@@ -168,3 +170,5 @@ title('divergence of velocity field')
 if save_file == 1
     savefig(strcat('../../',path_results,'/ divergence.fig'))
 end
+
+cd ../..
