@@ -12,10 +12,11 @@ end
 % compute V_bc snapshot if BC unsteady and snapshots are wanted
 Om_inv = options.grid.Om_inv;
 if (options.BC.BC_unsteady == 1 && options.rom.pro_rom == 1)
-    options = set_bc_vectors(t,options);
-    f       = options.discretization.yM;
-    dp      = pressure_poisson(f,t,options);
-    Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
+%     options = set_bc_vectors(t,options);
+%     f       = options.discretization.yM;
+%     dp      = pressure_poisson(f,t,options);
+%     Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
+Vbc(:,n) = get_unsteadyVbc(t,options);
 end
 
 

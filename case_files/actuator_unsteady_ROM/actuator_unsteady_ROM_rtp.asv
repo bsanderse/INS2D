@@ -111,8 +111,8 @@ Axes = zeros(2);
 % figure
 
 s = pcolor(qp');
-caxis manual;          % allow subsequent plots to use the same color limits
-caxis([0 0.6]); 
+% caxis manual;          % allow subsequent plots to use the same color limits
+% caxis([0 0.6]); 
 s.EdgeColor = 'none';
 title('ROM - FOM velocity error')
 % colorbar('Location','east')

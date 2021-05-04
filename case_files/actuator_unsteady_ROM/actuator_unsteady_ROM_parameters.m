@@ -1,5 +1,5 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 1;
+run_multiple = 0;
 M_list = [2 5 10 15 20 40];
 
 mesh_list = ones(length(M_list),1);
@@ -21,8 +21,8 @@ mesh_list = ones(length(M_list),1);
     y1      = -2;
     y2      = 2;
 
-    Nx      = 20; %200;                  % number of volumes in the x-direction
-    Ny      = 8; %80;                   % number of volumes in the y-direction
+    Nx      = 20; %20; %200;                  % number of volumes in the x-direction
+    Ny      = 8; %8; %80;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -65,6 +65,8 @@ mesh_list = ones(length(M_list),1);
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_1/matlab_data.mat'; %   FE11
     
     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_17/matlab_data.mat'; %M2S4R4
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_2/matlab_data.mat'; %M2S4R4
+
 
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
@@ -189,10 +191,10 @@ mesh_list = ones(length(M_list),1);
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;
-    rtp.moviename    = 'actuator_unsteady'; % movie name
+    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
     

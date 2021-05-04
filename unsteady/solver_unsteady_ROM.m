@@ -202,7 +202,7 @@ end
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 figure
-semilogy(Sigma/Sigma(1),'s');
+semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
@@ -280,9 +280,10 @@ if (options.rom.pressure_recovery == 1)
     else
         SigmaP = Sp;
     end
-    semilogy(SigmaP/SigmaP(1),'o');
+    semilogy(SigmaP/SigmaP(1),'o''displayname', 'singular values pressure snapshot matrix');
     
 end
+legend('show')
 
 %% construct basis for unsteady Vbc   not necessary yet
 % if (options.rom.rom_bc==2)

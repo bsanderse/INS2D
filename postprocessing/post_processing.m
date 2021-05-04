@@ -10,8 +10,8 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-    run(full_name);
-    
+%     run(full_name);
+    actuator_unsteady_ROM_pp;
 else
     
     disp(['postprocessing file ' file_name ' not available']);
@@ -81,13 +81,15 @@ if (options.rom.rom == 1)
 %                     plot(t_vec,error_V_inf);
 %                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
-                    plot(t_vec,error_V_2,color,'LineWidth',7-j,'displayname',"L2 error in ROM velocity M="+M); %(2:end)./error_V_2_norm(2:end));                    
+%                     plot(t_vec,error_V_2,color,'displayname',"L2 error in ROM velocity M="+M); %(2:end)./error_V_2_norm(2:end));                    
+                    plot(t_vec,error_V_2,color,'displayname',"ROM M="+M); %(2:end)./error_V_2_norm(2:end));                    
                     hold on
-                    plot(t_vec,error_V_best_2,color2,'LineWidth',7-j,'displayname',"L2 error in best approximation velocity M="+M);
+                    plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error in best approximation velocity M="+M);
                     set(gca,'Yscale','log');
 %                     legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
-                        legend('show')
+%                         legend('show')
+                        legend('show','NumColumns',2,'Orientation','horizontal')
 
                     
                     if (options.rom.pressure_recovery == 1)
@@ -121,13 +123,16 @@ if (options.rom.rom == 1)
                         error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp)./p_2_ref;
                         
                         figure(102)
-                        plot(t_vec,error_p_2,color,'displayname',"L2 error in ROM pressure M="+M);
+%                         plot(t_vec,error_p_2,color,'displayname',"L2 error in ROM pressure M="+M);
+                        plot(t_vec,error_p_2,color,'displayname',"ROM M="+M);
                         hold on
 %                         plot(t_vec,error_p_inf);
-                        plot(t_vec,error_p_best_2,color2,'displayname',"L2 error of FOM projection pressure M="+M);
+                        plot(t_vec,error_p_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error of FOM projection pressure M="+M);
                         set(gca,'Yscale','log');
 %                         legend('L_{2} error in ROM pressure','Projection FOM pressure')
-                        legend('show')
+%                         legend('show')
+                        legend('show','NumColumns',2,'Orientation','horizontal')
+
                     end
                     
 
@@ -154,12 +159,15 @@ if (options.rom.rom == 1)
                 
                 figure(105)
 %                 plot(t_vec,maxdiv);
-                semilogy(t_vec,maxdiv,'displayname',"ROM M="+M);
+                semilogy(t_vec,maxdiv,color,'displayname',"ROM M="+M);
                 hold on
 %                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
-                semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM M="+M);
+                if j==Nsim
+                    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
+                end
                 xlabel('t')
-                ylabel('maximum divergence of velocity field');
+%                 ylabel('maximum divergence of velocity field');
+                ylabel('maximum norm of continuity equation residual');
                 legend('show')
                 grid
                 
