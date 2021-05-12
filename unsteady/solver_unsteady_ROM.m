@@ -36,7 +36,7 @@ if (j==1)
     if (maxdiv_snapshots > 1e-14)
         warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
     end
-    
+    % warning not relevant for unsteady BC
     
     %% subtract non-homogeneous BC contribution:
     
@@ -47,13 +47,17 @@ if (j==1)
     
     if (options.rom.rom_bc == 1)
         % check if the Vbc field has been stored as part of the FOM
-        if (isfield(snapshots,'Vbc'))
+        if (options.rom.bc_recon == 2)
+            Vbc = 0*Om;
+            snapshots.Vbc = Vbc;
+        elseif (isfield(snapshots,'Vbc'))
             Vbc = snapshots.Vbc;
         else
             disp('computing Vbc field...');
             f       = options.discretization.yM;
             dp      = pressure_poisson(f,t,options);
             Vbc     = - Om_inv.*(options.discretization.G*dp);
+            snapshots.Vbc = Vbc;
         end
         V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
     elseif (options.rom.rom_bc == 2)
@@ -65,6 +69,7 @@ if (j==1)
         V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
     else
         Vbc = zeros(Nu+Nv,1);
+        snapshots.Vbc = Vbc;
     end
     
     % sample dt can be used to get only a subset of the snapshots
@@ -201,8 +206,8 @@ else
 end
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
-figure
-semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
+% figure
+% semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
@@ -280,10 +285,12 @@ if (options.rom.pressure_recovery == 1)
     else
         SigmaP = Sp;
     end
-    semilogy(SigmaP/SigmaP(1),'o''displayname', 'singular values pressure snapshot matrix');
+%     semilogy(SigmaP/SigmaP(1),'o','displayname', 'singular values pressure snapshot matrix');
     
 end
-legend('show')
+% ylabel("\sigma_1/\sigma_i")
+% xlabel("mode index")
+% legend('show')
 
 %% construct basis for unsteady Vbc   not necessary yet
 % if (options.rom.rom_bc==2)

@@ -225,44 +225,44 @@ if (show_plots == 1)
     axis([x1 x2 y1 y2]);
     colorbar
     
-    if j>1
-        %% FOM contour plot pressure
-        figure
-        list = linspace(-0.1,0.1,20);
-        % list = 20;
-        figure
-        set(gcf,'color','w');
-        set(gca,'LineWidth',1);
-        % pcolor(xp,yp,qp')
-        [~,c]=contour(xp,yp,reshape(snapshots_p_total(:,801),[240,80])',list);
-        c.LineWidth = 2;
-        axis equal
-        axis([x1 x2 y1 y2]);
-        colorbar
-    end
+%     if j>1
+%         %% FOM contour plot pressure
+%         figure
+%         list = linspace(-0.1,0.1,20);
+%         % list = 20;
+%         figure
+%         set(gcf,'color','w');
+%         set(gca,'LineWidth',1);
+%         % pcolor(xp,yp,qp')
+%         [~,c]=contour(xp,yp,reshape(snapshots_p_total(:,801),[240,80])',list);
+%         c.LineWidth = 2;
+%         axis equal
+%         axis([x1 x2 y1 y2]);
+%         colorbar
+%     end
  
     %% contour plot lifting function velocity
-    [up,vp,qp] = get_velocity(Vbc,t,options);
-    list = linspace(0,1,10);
-    % list = 20;
-    figure
-    set(gcf,'color','w');
-    set(gca,'LineWidth',1);
-    % pcolor(xp,yp,qp')
-    [~,c]=contour(xp,yp,up',list);
-    c.LineWidth = 2;
-    axis equal
-    axis([x1 x2 y1 y2]);
-    colorbar
-        list = linspace(-2.5,2.5,20);
-        figure
-    set(gcf,'color','w');
-    set(gca,'LineWidth',1);
-    % pcolor(xp,yp,qp')
-    [~,c]=contour(xp,yp,vp',list);
-    c.LineWidth = 2;
-    axis equal
-    axis([x1 x2 y1 y2]);
-    colorbar
+%     [up,vp,qp] = get_velocity(Vbc,t,options);
+%     list = linspace(0,1,10);
+%     % list = 20;
+%     figure
+%     set(gcf,'color','w');
+%     set(gca,'LineWidth',1);
+%     % pcolor(xp,yp,qp')
+%     [~,c]=contour(xp,yp,up',list);
+%     c.LineWidth = 2;
+%     axis equal
+%     axis([x1 x2 y1 y2]);
+%     colorbar
+%         list = linspace(-2.5,2.5,20);
+%         figure
+%     set(gcf,'color','w');
+%     set(gca,'LineWidth',1);
+%     % pcolor(xp,yp,qp')
+%     [~,c]=contour(xp,yp,vp',list);
+%     c.LineWidth = 2;
+%     axis equal
+%     axis([x1 x2 y1 y2]);
+%     colorbar
 
 end

@@ -14,7 +14,7 @@ Diff  = options.rom.Diff;
 DiffBC  = options.rom.DiffBC;
 yDiff = options.rom.yDiff;
 
-Jac = spalloc(M,M,0);
+Jac = 0;%spalloc(M,M,0);
 
 % vbc1 = get_unsteadyVbc(t,options);
 % vbc2 = options.rom.Vbc0*options.rom.abc(t);

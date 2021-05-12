@@ -3,6 +3,8 @@ function [Vbc] = get_unsteadyVbc(t,options)
 
 if options.rom.bc_recon == 1
     Vbc = options.rom.Vbc0*options.rom.abc(t);
+elseif options.rom.bc_recon == 2
+    Vbc = 0;
 else
     Om_inv = options.grid.Om_inv;
     

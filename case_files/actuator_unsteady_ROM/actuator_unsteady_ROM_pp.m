@@ -1,10 +1,10 @@
 %% unsteady actuator
 % see figure 6.6 in PhD thesis
 
-line  = {'r-','b-','k-','m-','g-'};
+line  = {'r-','b-','k-','m-','g-','c-'};
 color = char(line(j));
 
-cd case_files/actuator_unsteady_ROM
+% cd case_files/actuator_unsteady_ROM
 
 Nu  = options.grid.Nu;
 Nv  = options.grid.Nv;
@@ -171,4 +171,4 @@ if save_file == 1
     savefig(strcat('../../',path_results,'/ divergence.fig'))
 end
 
-cd ../..
+% cd ../..

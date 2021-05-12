@@ -2,25 +2,25 @@
 Npx = options.grid.Npx;
 Npy = options.grid.Npy;
 
-%% kinetic energy
-figure
-plot(time,(k-k(1))/k(1),'s-')
-grid
-xlabel('t');
-ylabel('(k(t)-k(0))/k(0)');
-
-%% vorticity
-% compare e.g. with PhD thesis figure 3.4
-
-figure
-omega = get_vorticity(V,t,options);
-omega = reshape(omega,Npx+1,Npy+1);
-% for Re=1000: labels = -4:0.5:4;
-labels= 20;
-contour(x,y,omega',labels);
-axis square
-colorbar
-grid
+% %% kinetic energy
+% figure
+% plot(time,(k-k(1))/k(1),'s-')
+% grid
+% xlabel('t');
+% ylabel('(k(t)-k(0))/k(0)');
+% 
+% %% vorticity
+% % compare e.g. with PhD thesis figure 3.4
+% 
+% figure
+% omega = get_vorticity(V,t,options);
+% omega = reshape(omega,Npx+1,Npy+1);
+% % for Re=1000: labels = -4:0.5:4;
+% labels= 20;
+% contour(x,y,omega',labels);
+% axis square
+% colorbar
+% grid
 
 colors = ['b' 'r' 'g' 'k' 'b' 'r' 'g' 'k'];
 % lines = ['-' '-' '-' '-' '--' '--' '--' '--'];
@@ -79,10 +79,12 @@ if j==1
     % hold on
 end
 if j>4
-    suffix = " explicit";
+%     suffix = " explicit";
+    suffix = " mc";
     lines = "--";
 else
-    suffix = " implicit";
+%     suffix = " implicit";
+    suffix = " ";
     lines = "-";
 end
 

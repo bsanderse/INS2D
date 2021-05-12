@@ -8,7 +8,7 @@ run_multiple = 1;
 M_list = [2 4 8 16 2 4 8 16];
 mesh_list = ones(length(M_list),1);
 % method_list = {'RK44'}; %{'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
-method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
+% method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1e100;                  % Reynolds number
@@ -67,7 +67,7 @@ method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
-    mom_cons              = 0; %j>4;
+    mom_cons              = j>4;
     
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -122,8 +122,9 @@ method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 21; %21-(j>4);
-        RK                = method_list{j}; %'RK44';
+        method            = 20; %21-(j>4);
+%         RK                = method_list{j}; %'RK44';
+        RK                = 'RK44';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -192,7 +193,7 @@ method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name

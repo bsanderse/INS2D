@@ -262,3 +262,4 @@ for j=1:Nsim
     end
     
 end
+trg = 1

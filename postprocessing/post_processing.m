@@ -1,9 +1,6 @@
 %% post-processing
 
-line  = {'r-','b-','k-','m-','g-','c-'};
-line2  = {'r--','b--','k--','m--','g--','c--'};
-color = char(line(j));
-color2 = char(line2(j));
+
 
 file_name = [case_name '_pp.m'];
 full_name = [folder_cases '/' case_name '/' file_name];
@@ -11,12 +8,19 @@ full_name = [folder_cases '/' case_name '/' file_name];
 if (exist(full_name,'file'))
     
 %     run(full_name);
-    actuator_unsteady_ROM_pp;
+% %     actuator_unsteady_ROM_pp;
 else
     
     disp(['postprocessing file ' file_name ' not available']);
     
 end
+
+% line  = {'r-','b-','k-','m-','g-','c-'};
+% line2  = {'r--','b--','k--','m--','g--','c--'};
+line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
+line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
+color = char(line(j));
+color2 = char(line2(j));
 
 %% additional Reduced-Order Model postprocessing
 if (options.rom.rom == 1)
@@ -69,8 +73,9 @@ if (options.rom.rom == 1)
                     B = options.rom.B;
                     Om = options.grid.Om;
 %                     D = diag(Om); % sparse please!!!
-                    D = spdiags(Om,0,numel(Om),numel(Om));
-                    V_best = B*(B'*D*(snapshots_V_total-snapshots.Vbc))+snapshots.Vbc;
+%                     D = spdiags(Om,0,numel(Om),numel(Om));
+%                     V_best = B*(B'*D*(snapshots_V_total-snapshots.Vbc))+snapshots.Vbc;
+                    V_best = B*(B'*(Om.*(snapshots_V_total-snapshots.Vbc)))+snapshots.Vbc;
                     if options.rom.rom_bc == 2
                         error_V_best = V_best - snapshots_V_total;
                     else
@@ -83,59 +88,68 @@ if (options.rom.rom == 1)
 %                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
 %                     plot(t_vec,error_V_2,color,'displayname',"L2 error in ROM velocity M="+M); %(2:end)./error_V_2_norm(2:end));                    
-                    plot(t_vec,error_V_2,color,'displayname',"ROM M="+M); %(2:end)./error_V_2_norm(2:end));                    
-                    hold on
-                    plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error in best approximation velocity M="+M);
+                    if j>4
+                        plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+" mc"); %(2:end)./error_V_2_norm(2:end));
+                        hold on
+                        plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+" mc");%,'displayname',"L2 error in best approximation velocity M="+M);
+                    else
+                        plot(t_vec,error_V_2,color,'displayname',"ROM M="+M); %(2:end)./error_V_2_norm(2:end));
+                        hold on
+                        plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error in best approximation velocity M="+M);
+                    end
                     set(gca,'Yscale','log');
 %                     legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                         legend('show')
                         legend('show','NumColumns',2,'Orientation','horizontal')
+                         xlabel('t')
+                         ylabel('velocity error')
+                        title("\Omega_h-norm of velocity error")
 
-                    
-                    if (options.rom.pressure_recovery == 1)
-                        % correct spatial mean of both to be zero
-                        % p_total is of size Nt*Np, change to Np*Nt
-                        p_total = p_total';
-                        mean_ROM = mean(p_total,1);
-                        snapshots_p_total = snapshots.p_total(snapshot_indx,:)';
-                        mean_FOM = mean(snapshots_p_total,1);
-                        
-                        error_p = (p_total - mean_ROM) - (snapshots_p_total - mean_FOM);
-
-                        % inf-norm
-                        error_p_inf = max(abs(error_p),[],1);
-                        
-                        % 2-norm of error    
-                        % choose reference pressure field (can be time
-                        % dependent)                        
-                        p_ref     = 0.25*ones(size(snapshots_p_total));
-                        % p_ref = snapshots:
-%                         p_ref    = snapshots_p_total - mean_FOM;
-
-                        p_2_ref   = weightedL2norm(p_ref,options.grid.Omp); 
-                        error_p_2 = weightedL2norm(error_p,options.grid.Omp)./p_2_ref;
-
-                        % best possible approximation given the projection:                        
-                        p_best = getFOM_pressure(getROM_pressure(snapshots_p_total,0,options),0,options);
-                        mean_ROM_best = mean(p_best,1);
-                        
-                        error_p_best = (p_best - mean_ROM_best) - (snapshots_p_total - mean_FOM);
-                        error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp)./p_2_ref;
-                        
-                        figure(102)
-%                         plot(t_vec,error_p_2,color,'displayname',"L2 error in ROM pressure M="+M);
-                        plot(t_vec,error_p_2,color,'displayname',"ROM M="+M);
-                        hold on
-%                         plot(t_vec,error_p_inf);
-                        plot(t_vec,error_p_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error of FOM projection pressure M="+M);
-                        set(gca,'Yscale','log');
-%                         legend('L_{2} error in ROM pressure','Projection FOM pressure')
-%                         legend('show')
-                        legend('show','NumColumns',2,'Orientation','horizontal')
-
-                    end
-                    
+       %%             
+%                     if (options.rom.pressure_recovery == 1)
+%                         % correct spatial mean of both to be zero
+%                         % p_total is of size Nt*Np, change to Np*Nt
+%                         p_total = p_total';
+%                         mean_ROM = mean(p_total,1);
+%                         snapshots_p_total = snapshots.p_total(snapshot_indx,:)';
+%                         mean_FOM = mean(snapshots_p_total,1);
+%                         
+%                         error_p = (p_total - mean_ROM) - (snapshots_p_total - mean_FOM);
+% 
+%                         % inf-norm
+%                         error_p_inf = max(abs(error_p),[],1);
+%                         
+%                         % 2-norm of error    
+%                         % choose reference pressure field (can be time
+%                         % dependent)                        
+%                         p_ref     = 0.25*ones(size(snapshots_p_total));
+%                         % p_ref = snapshots:
+% %                         p_ref    = snapshots_p_total - mean_FOM;
+% 
+%                         p_2_ref   = weightedL2norm(p_ref,options.grid.Omp); 
+%                         error_p_2 = weightedL2norm(error_p,options.grid.Omp)./p_2_ref;
+% 
+%                         % best possible approximation given the projection:                        
+%                         p_best = getFOM_pressure(getROM_pressure(snapshots_p_total,0,options),0,options);
+%                         mean_ROM_best = mean(p_best,1);
+%                         
+%                         error_p_best = (p_best - mean_ROM_best) - (snapshots_p_total - mean_FOM);
+%                         error_p_best_2 = weightedL2norm(error_p_best,options.grid.Omp)./p_2_ref;
+%                         
+%                         figure(102)
+% %                         plot(t_vec,error_p_2,color,'displayname',"L2 error in ROM pressure M="+M);
+%                         plot(t_vec,error_p_2,color,'displayname',"ROM M="+M);
+%                         hold on
+% %                         plot(t_vec,error_p_inf);
+%                         plot(t_vec,error_p_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error of FOM projection pressure M="+M);
+%                         set(gca,'Yscale','log');
+% %                         legend('L_{2} error in ROM pressure','Projection FOM pressure')
+% %                         legend('show')
+%                         legend('show','NumColumns',2,'Orientation','horizontal')
+% 
+%                     end
+%                     
 
                 end
                 

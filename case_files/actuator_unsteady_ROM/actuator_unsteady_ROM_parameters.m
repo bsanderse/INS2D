@@ -1,6 +1,10 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-M_list = [2 5 10 15 20 40];
+run_multiple = 1;
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = kron([2 5 10 20 50 100],ones(1,5));
+% M_list = 100*ones(1,5);
+M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
+
 
 mesh_list = ones(length(M_list),1);
 
@@ -49,7 +53,7 @@ mesh_list = ones(length(M_list),1);
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -65,19 +69,19 @@ mesh_list = ones(length(M_list),1);
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_1/matlab_data.mat'; %   FE11
     
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_17/matlab_data.mat'; %M2S4R4
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_2/matlab_data.mat'; %M2S4R4
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_2/matlab_data.mat'; %M2S4R4
 
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_3/matlab_data.mat'; %M2S4R4 2nd pc
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_3/matlab_data.mat'; %M2S4R4 2nd pc
 
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
     bc_recon = 1; % 0: unsteady is always computed by solving a poisson eq
-                  % 1: Vbc is linearly combined of solutions to 
-                  % Mbc predefined righ-hand sides
+                  % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
+                  % 2: no lifting function is used
                 
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
@@ -213,7 +217,7 @@ mesh_list = ones(length(M_list),1);
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
     save_results     = 0;          % create folder with results files and input files
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
