@@ -25,7 +25,11 @@ if (max(abs(A*dp-f))<tol)
 end
 
 % choose a method to solve the Poisson equation
-if (poisson==1)
+if (poisson==-1)
+    A(1,:) = 0;
+    f(1) = 0;
+    dp = A\f;
+elseif (poisson==1)
     % using pre-determined LU decomposition
     L   = options.solversettings.L;
     U   = options.solversettings.U;

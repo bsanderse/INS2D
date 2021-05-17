@@ -22,10 +22,10 @@ time_loop2 = taylor(time_loop);
 %  time_loop2 = time_loop;
 
 figure
-loglog(Ms,svd_end2,'displayname','offline - SVD')
+loglog(Ms,svd_end2,'-s','displayname','offline - SVD')
 hold on
-loglog(Ms,precompute_end2,'displayname','offline - precomputing operators')
-loglog(Ms,time_loop2,'displayname','online')
+loglog(Ms,precompute_end2,'-s','displayname','offline - precomputing operators')
+loglog(Ms,time_loop2,'-s','displayname','online')
 ylabel('CPU time [s]')
 xlabel('number of modes')
 

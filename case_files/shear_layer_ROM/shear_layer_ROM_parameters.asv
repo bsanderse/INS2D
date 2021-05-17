@@ -52,7 +52,7 @@ mesh_list = ones(length(M_list),1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
@@ -72,7 +72,7 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 1;%pfusch % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent 
-    bc_recon = 1;
+    bc_recon = 2;
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
@@ -80,9 +80,8 @@ mesh_list = ones(length(M_list),1);
 %     snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
-
-%     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_1/matlab_data.mat';
-    snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_1/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_1/matlab_data.mat';
+    shear_layer_ROM_1.000e+100_20x20_1
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -213,9 +212,9 @@ mesh_list = ones(length(M_list),1);
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
