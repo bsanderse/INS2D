@@ -16,9 +16,9 @@ if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion =
     nopressure = 1;
     [maxres,Fres,dFres] = myF(V,V,0,t,options,getJacobian,nopressure);
 %     Fres2 = B'*(Diag.*Fres); eba net
-    Fres2 = B'*Fres;
+    Fres = B'*Fres;
     maxres  = max(abs(Fres));
-%     return
+    return
 end
 %%
 
@@ -133,7 +133,7 @@ Fres    = - conv + Diff + F;
 % DiffBC = B'*[d2u;d2v];
 % Fres    = - conv + Diff + F + DiffBC;
 
-norm(Fres-Fres2)
+% norm(Fres-Fres2)
 
 maxres  = max(abs(Fres));
 

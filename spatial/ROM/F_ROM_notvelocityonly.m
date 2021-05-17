@@ -17,8 +17,7 @@ nopressure = 0;
 
 [maxres,Fres,dFres] = myF(V,V,p,t,options,getJacobian,nopressure);
 B = options.rom.B;
-Diag = options.grid.Om_inv;
-Fres = B'*(Diag.*Fres);
+Fres = B'*Fres;
 
 maxres  = max(abs(Fres));
 
