@@ -194,8 +194,9 @@ end
 %% Pressure matrix for pressure correction method;
 % also used to make initial data divergence free or compute additional poisson solve
 
-if (steady == 0 && ~strcmp(visc,'keps'))
-    
+% if (steady == 0 && ~strcmp(visc,'keps'))
+if (~strcmp(visc,'keps'))
+
         
     fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;

@@ -78,8 +78,8 @@ uerror = (upFOM-upROM)';
 s = pcolor(uerror);
 caxis manual;          % allow subsequent plots to use the same color limits
 caxis([0 0.05]);
-% axis equal
-% axis([x1 x2 y1 y2]);
+axis equal
+axis([x1 x2 y1 y2]);
 s.EdgeColor = 'none';
 title('ROM - FOM  u velocity error')
 % colorbar('Location','east')
@@ -92,8 +92,8 @@ verror = (vpFOM-vpROM)';
 s = pcolor(verror);
 caxis manual;          % allow subsequent plots to use the same color limits
 caxis([0 0.05]);
-% axis equal
-% axis([x1 x2 y1 y2]);
+axis equal
+axis([x1 x2 y1 y2]);
 s.EdgeColor = 'none';
 title('ROM - FOM  v velocity error')
 % colorbar('Location','east')
@@ -111,8 +111,8 @@ subplot(2,2,2)
 s = pcolor(umaxerror);
 caxis manual;          % allow subsequent plots to use the same color limits
 caxis([0 0.05]);
-% axis equal
-% axis([x1 x2 y1 y2]);
+axis equal
+axis([x1 x2 y1 y2]);
 s.EdgeColor = 'none';
 title('ROM - FOM  max u velocity error so far')
 % colorbar('Location','east')
@@ -124,8 +124,8 @@ subplot(2,2,4)
 s = pcolor(vmaxerror);
 caxis manual;          % allow subsequent plots to use the same color limits
 caxis([0 0.05]);
-% axis equal
-% axis([x1 x2 y1 y2]);
+axis equal
+axis([x1 x2 y1 y2]);
 s.EdgeColor = 'none';
 title('ROM - FOM  max v velocity error so far')
 % colorbar('Location','east')

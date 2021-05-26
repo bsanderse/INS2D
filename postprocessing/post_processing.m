@@ -7,7 +7,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-%     run(full_name);
+    run(full_name);
 % %     actuator_unsteady_ROM_pp;
 else
     
@@ -88,7 +88,7 @@ if (options.rom.rom == 1)
 %                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
 %                     plot(t_vec,error_V_2,color,'displayname',"L2 error in ROM velocity M="+M); %(2:end)./error_V_2_norm(2:end));                    
-                    if j>4
+                    if false %j>4
                         plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+" mc"); %(2:end)./error_V_2_norm(2:end));
                         hold on
                         plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+" mc");%,'displayname',"L2 error in best approximation velocity M="+M);

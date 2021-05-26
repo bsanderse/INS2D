@@ -26,8 +26,8 @@ mesh_list = ones(length(M_list),1);
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 20;                   % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 200;   %200             % number of volumes in the x-direction
+    Ny      = 200;   %200             % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -52,7 +52,7 @@ mesh_list = ones(length(M_list),1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
@@ -72,7 +72,7 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 1;%pfusch % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent 
-    bc_recon = 1;
+    bc_recon = 2;
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';

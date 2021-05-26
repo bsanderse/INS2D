@@ -108,6 +108,8 @@ if (abs(sum(hy(yrange))-D)>1e-10)
 end
 
 Fx = Fx*(1 + sin(pi*t));
+% Fx = Fx*(2);
+% disp('pfusch: force manipulated')
 
 % Ct = 0.5;
 % % second actuator

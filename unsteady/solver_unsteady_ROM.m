@@ -310,7 +310,7 @@ end
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
 if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
-        options.rom.precompute_force == 1)
+        options.rom.precompute_force == 1 || options.rom.pressure_recovery == 1)
     disp('precomputing ROM operators...');
     precompute_start = toc;
     options = operator_rom(options);

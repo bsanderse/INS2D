@@ -135,17 +135,17 @@ hold off
 % set(gca,'LineWidth',1);
 
 %% pressure
-% figure
-% l = 20; 
-% contour(xp,yp,pres_',l,'LineWidth',2);
-% axis equal
-% axis([x1 x2 y1 y2]);
-% xlabeltex('x',14);
-% ylabeltex('y',14);
-% grid
-% title('pressure');
-% colorbar
-% set(gca,'LineWidth',1)
+figure
+l = 20; 
+contour(xp,yp,pres_',l,'LineWidth',2);
+axis equal
+axis([x1 x2 y1 y2]);
+xlabeltex('x',14);
+ylabeltex('y',14);
+grid
+title('pressure');
+colorbar
+set(gca,'LineWidth',1)
 
 
 %% streamfunction

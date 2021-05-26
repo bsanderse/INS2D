@@ -26,7 +26,7 @@ end
 
 % choose a method to solve the Poisson equation
 if (poisson==-1)
-    A(1,:) = 0;
+    A(1,:) = 1;
     f(1) = 0;
     dp = A\f;
 elseif (poisson==1)

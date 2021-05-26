@@ -1,6 +1,7 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 1;
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+run_multiple = 0;
+M_list = 10;
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 100*ones(1,5);
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
@@ -25,8 +26,8 @@ mesh_list = ones(length(M_list),1);
     y1      = -2;
     y2      = 2;
 
-    Nx      = 20; %20; %200;                  % number of volumes in the x-direction
-    Ny      = 8; %8; %80;                   % number of volumes in the y-direction
+    Nx      = 20; %200;                  % number of volumes in the x-direction
+    Ny      = 8; %80;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -77,7 +78,7 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 2; % 0: unsteady is always computed by solving a poisson eq
+    bc_recon = 1; % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
                 
@@ -217,7 +218,7 @@ mesh_list = ones(length(M_list),1);
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
     save_results     = 0;          % create folder with results files and input files
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
