@@ -140,8 +140,10 @@ if (options.rom.carl_cons == 1)
 % % [up,vp,qp] = get_velocity(Csum,t,options);
 %%
 pro_CC = eye(Nu + Nv);
-CC = pro_CC(:,1:(Nu + Nv)-10);
+% CC = pro_CC(:,1:(Nu + Nv)-10);
 % CC = pro_CC(:,1:20);
+inds = [78 102];
+CC = pro_CC(:,inds);
 Q_1 = sqrt(Om_inv).*CC;
 V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*Om.*V_svd);
 [W,S,Z] = svd(V_mod,'econ');

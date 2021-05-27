@@ -4,7 +4,7 @@ run_multiple = 0;
 % M_list = [2 5 10 20 40];
 % M_list = flip(kron(ones(1,5),[2 5 10 20 40 80]));
 
-M_list = 408;%20+17;
+M_list = 10;%20+17;408
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
