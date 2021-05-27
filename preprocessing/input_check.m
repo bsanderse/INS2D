@@ -183,6 +183,9 @@ if (options.rom.precompute_diffusion == 1 || ...
     if (options.rom.rom_bc == 2 && options.rom.bc_recon ~= 1)
         error('to precompute ROM operators for unsteady BC use bc_recon = 1');
     end
+    if (options.rom.bc_recon == 2)
+        error('bc_recon == 2 does not support operator precomputation');
+    end
 end
 
 if (options.rom.carl_cons == 1 && options.rom.bc_recon ~= 2)

@@ -4,7 +4,7 @@ run_multiple = 0;
 % M_list = [2 5 10 20 40];
 % M_list = flip(kron(ones(1,5),[2 5 10 20 40 80]));
 
-M_list = 20;
+M_list = 408;%20+17;
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
@@ -25,8 +25,8 @@ mesh_list = ones(length(M_list),1);
     y1      = -2;
     y2      = 2;
 
-    Nx      = 240;                   % number of volumes in the x-direction
-    Ny      = 80;                   % number of volumes in the y-direction
+    Nx      = 24;                   % number of volumes in the x-direction
+    Ny      = 8;                   % number of volumes in the y-direction
 
     sx      = 1;                    % stretch factor
     sy      = 1;
@@ -61,9 +61,9 @@ mesh_list = ones(length(M_list),1);
     % 1:Nskip:Nsnapshots
     t_sample  = 20;  % part of snapshot matrix used for building SVD
     dt_sample = 10/400; % frequency of snapshots to be used for SVD
-    precompute_convection = 1;
-    precompute_diffusion  = 1;
-    precompute_force      = 1; 
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0; 
     pressure_recovery     = 0; % compute pressure at each time step
     pressure_precompute   = 1; % precompute PPE operator at ROM level
     pressure_mean         = 0; % subtract mean pressure in constructing ROM
@@ -87,8 +87,8 @@ mesh_list = ones(length(M_list),1);
                 
                 
 %     snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
-    snapshot_data = 'results/actuator_ROM_5.000e+02_240x80_1/matlab_data.mat';
-%     snapshot_data = 'results/actuator_ROM_5.000e+02_24x8/matlab_data.mat';
+%     snapshot_data = 'results/actuator_ROM_5.000e+02_240x80_1/matlab_data.mat';
+    snapshot_data = 'results/actuator_ROM_5.000e+02_24x8/matlab_data.mat';
 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,6 +189,8 @@ mesh_list = ones(length(M_list),1);
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
 %     statistics.n     = 1;
+
+    show_sigmas = 1;
     
     restart.load     = 0;          % start from previous simulation
     restart.folder   = 'results/TCF_100_2x1x1_24x12x12_0';   % folder to be loaded
