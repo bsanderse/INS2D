@@ -81,7 +81,7 @@ mesh_list = ones(length(M_list),1);
         rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 1; % 0: unsteady is always computed by solving a poisson eq
+    bc_recon = 2; % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to 
                   % Mbc predefined righ-hand sides
                 

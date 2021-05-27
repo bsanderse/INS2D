@@ -140,9 +140,7 @@ if (options.rom.carl_cons == 1)
 % [up,vp,qp] = get_velocity(Csum,t,options);
 %%
 Q_1 = sqrt(Om_inv).*CC;
-V_mod = sqrt(Om)*(V_svd - Q_1*Q_1'*Om.*V_svd);
-[W,S,Z] = svd(V_mod,'econ');
-W = [Q_1 W];
+V_svd = V_svd - Q_1*Q_1'*Om.*V_svd;
 
 
 % enforce momentum conservation (works for periodic domains)

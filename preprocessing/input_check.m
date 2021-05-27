@@ -184,3 +184,7 @@ if (options.rom.precompute_diffusion == 1 || ...
         error('to precompute ROM operators for unsteady BC use bc_recon = 1');
     end
 end
+
+if (options.rom.carl_cons == 1 && options.rom.bc_recon ~= 2)
+    error('Carlberg conservation only for ROM without lifting function');
+end
