@@ -26,6 +26,8 @@ color2 = char(line2(j));
 if (options.rom.rom == 1)
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
+    dt_snapshots = snapshots.dt;
+
     if (rem(dt,dt_snapshots) == 0)
         skip = dt/dt_snapshots;
         % final time should be smaller than FOM time
