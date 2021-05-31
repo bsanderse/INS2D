@@ -1,11 +1,10 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = 10;
+M_list = [10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 100*ones(1,5);
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
-
 
 mesh_list = ones(length(M_list),1);
 
@@ -78,7 +77,7 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 1; % 0: unsteady is always computed by solving a poisson eq
+    bc_recon = 1;%(j>1)+1; % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
                 
@@ -203,6 +202,7 @@ mesh_list = ones(length(M_list),1);
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
+    show_sigmas = 0;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

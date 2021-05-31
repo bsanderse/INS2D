@@ -88,11 +88,15 @@ if (options.rom.rom == 1)
 %                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
 %                     plot(t_vec,error_V_2,color,'displayname',"L2 error in ROM velocity M="+M); %(2:end)./error_V_2_norm(2:end));                    
-                    if false %j>4
-                        plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+" mc"); %(2:end)./error_V_2_norm(2:end));
+                    if j>1 %false %j>4
+%                         suffix = " mc";
+%                         suffix = " CC";
+                        suffix = " without lifting function";
+                        plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
                         hold on
-                        plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+" mc");%,'displayname',"L2 error in best approximation velocity M="+M);
+                        plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
                     else
+                        suffix = '';
                         plot(t_vec,error_V_2,color,'displayname',"ROM M="+M); %(2:end)./error_V_2_norm(2:end));
                         hold on
                         plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error in best approximation velocity M="+M);
@@ -174,7 +178,7 @@ if (options.rom.rom == 1)
                 
                 figure(105)
 %                 plot(t_vec,maxdiv);
-                semilogy(t_vec,maxdiv,color,'displayname',"ROM M="+M);
+                semilogy(t_vec,maxdiv,color,'displayname',"ROM M="+M+suffix);
                 hold on
 %                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
                 if j==Nsim

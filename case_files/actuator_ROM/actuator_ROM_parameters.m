@@ -4,7 +4,7 @@ run_multiple = 0;
 % M_list = [2 5 10 20 40];
 % M_list = flip(kron(ones(1,5),[2 5 10 20 40 80]));
 
-M_list = 10;%20+17;408
+M_list = 20+100; %38640; %[10 10 12];%20+17;408
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
@@ -25,8 +25,8 @@ mesh_list = ones(length(M_list),1);
     y1      = -2;
     y2      = 2;
 
-    Nx      = 24;                   % number of volumes in the x-direction
-    Ny      = 8;                   % number of volumes in the y-direction
+    Nx      = 240;                   % number of volumes in the x-direction
+    Ny      = 80;                   % number of volumes in the y-direction
 
     sx      = 1;                    % stretch factor
     sy      = 1;
@@ -72,7 +72,7 @@ mesh_list = ones(length(M_list),1);
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
-    carl_cons = 1; % enforce Carlberg conservation according to specified constraint matrix
+    carl_cons = 1;%j>1; % enforce Carlberg conservation according to specified constraint matrix
 
 %     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
 %                 % 1: non-homogeneous, time-independent;
@@ -87,8 +87,8 @@ mesh_list = ones(length(M_list),1);
                 
                 
 %     snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
-%     snapshot_data = 'results/actuator_ROM_5.000e+02_240x80_1/matlab_data.mat';
-    snapshot_data = 'results/actuator_ROM_5.000e+02_24x8/matlab_data.mat';
+    snapshot_data = 'results/actuator_ROM_5.000e+02_240x80_1/matlab_data.mat';
+%     snapshot_data = 'results/actuator_ROM_5.000e+02_24x8/matlab_data.mat';
 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

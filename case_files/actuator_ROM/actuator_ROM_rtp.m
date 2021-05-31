@@ -73,6 +73,7 @@ V_FOM = [snapshots.uh_total(n,:) snapshots.vh_total(n,:)]';
 [upROM,vpROM,qpFOM] = get_velocity(V,t,options);
 
 figure(1)
+title('spatial error')
 subplot(2,2,1)
 uerror = (upFOM-upROM)';
 s = pcolor(uerror);

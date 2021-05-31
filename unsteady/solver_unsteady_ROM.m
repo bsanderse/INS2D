@@ -105,45 +105,51 @@ svd_start = toc;
 
 if (options.rom.carl_cons == 1)
 %% construct constraint matrix manually
-%     % pfusch
-%     Nux = options.grid.Nux_in;
-%     Nuy = options.grid.Nuy_in;
-%     Nvx = options.grid.Nvx_in;
-%     Nvy = options.grid.Nvy_in;
-%     
-% %     CC_u = zeros(Nuy,Nux);
-% %     CC_v = zeros(Nvy,Nvx);
+    % pfusch
+    Nux = options.grid.Nux_in;
+    Nuy = options.grid.Nuy_in;
+    Nvx = options.grid.Nvx_in;
+    Nvy = options.grid.Nvy_in;
+    
+
 %     uv_ind = [49 81; 49 82; 49 83; 50 81; 50 82];
 %     u_ind  = [31 81; 31 82; 32 81; 32 82; 32 83];
 %     v_ind  = [30 80; 31 80];
-%     U_ind = [uv_ind; u_ind];
-%     V_ind = [uv_ind; v_ind];
-%     CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
-%     for i =1:size(U_ind,1)
-%         CC_u = zeros(Nuy,Nux);
-%         CC_v = zeros(Nvy,Nvx);
-%         CC_u(U_ind(i,1),U_ind(i,2)) = 1;
-%         CC_u = CC_u';
-%         CC_v = CC_v';
-%         CC(:,i) = [CC_u(:);CC_v(:)];
-%     end
-%     for i =1:size(V_ind,1)
-%         CC_u = zeros(Nuy,Nux);
-%         CC_v = zeros(Nvy,Nvx);
-%         CC_v(V_ind(i,1),V_ind(i,2)) = 1;
-%         CC_u = CC_u';
-%         CC_v = CC_v';
-%         CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
-%     end
+    [X,Y] = meshgrid([48:52,28:32],[80:84]);
+    uv_ind = [X(:),Y(:)];
+    u_ind = [];
+    v_ind = [];
+    U_ind = [uv_ind; u_ind];
+    V_ind = [uv_ind; v_ind];
+    CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
+    for i =1:size(U_ind,1)
+        CC_u = zeros(Nuy,Nux);
+        CC_v = zeros(Nvy,Nvx);
+        CC_u(U_ind(i,1),U_ind(i,2)) = 1;
+        CC_u = CC_u';
+        CC_v = CC_v';
+        CC(:,i) = [CC_u(:);CC_v(:)];
+    end
+    for i =1:size(V_ind,1)
+        CC_u = zeros(Nuy,Nux);
+        CC_v = zeros(Nvy,Nvx);
+        CC_v(V_ind(i,1),V_ind(i,2)) = 1;
+        CC_u = CC_u';
+        CC_v = CC_v';
+        CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
+    end
+
+% CC = ones(Nu+Nv,1)/(Nu+Nv);
+    
 % % figure
 % % Csum = sum(CC,2);
 % % [up,vp,qp] = get_velocity(Csum,t,options);
 %%
-pro_CC = eye(Nu + Nv);
-% CC = pro_CC(:,1:(Nu + Nv)-10);
-% CC = pro_CC(:,1:20);
-inds = [78 102];
-CC = pro_CC(:,inds);
+% pro_CC = eye(Nu + Nv);
+% CC = pro_CC(:,1:(Nu + Nv));
+% % CC = pro_CC(:,1:20);
+% inds = [78 102];
+% CC = pro_CC(:,inds);
 Q_1 = sqrt(Om_inv).*CC;
 V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*Om.*V_svd);
 [W,S,Z] = svd(V_mod,'econ');
@@ -260,7 +266,7 @@ end
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 
-if (show_sigmas == 1)
+if (options.visualization.show_sigmas == 1)
     figure(23)
     semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 end
@@ -341,13 +347,14 @@ if (options.rom.pressure_recovery == 1)
     else
         SigmaP = Sp;
     end
-    if (show_sigmas == 1)
+    if (options.visualization.show_sigmas == 1)
         semilogy(SigmaP/SigmaP(1),'o','displayname', 'singular values pressure snapshot matrix');
     end
 end
-if (show_sigmas == 1)
+if (options.visualization.show_sigmas == 1)
     ylabel("\sigma_1/\sigma_i")
     xlabel("mode index")
+    title('singular values')
     legend('show')
 end
 

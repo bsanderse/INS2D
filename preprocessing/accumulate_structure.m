@@ -203,7 +203,8 @@ voi={
     'plotgrid', 0; ...       % plot gridlines and pressure points    
     'rtp_show', 1; ...         % real time plotting 
     'rtp_type', 'velocity'; ... % velocity, quiver, vorticity or pressure
-    'rtp_n', 10;     
+    'rtp_n', 10; 
+    'show_sigmas', '1'; ... % show singular value distribution
     };
 
 accumulate_object;
