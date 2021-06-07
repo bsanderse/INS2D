@@ -8,18 +8,18 @@ if (nargin<5)
 end
 
 %% pfusch
-if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0 && ...
-    options.rom.precompute_force == 0)
-    V = getFOM_velocity(R,t,options);
-    B  = options.rom.B;
-%     Diag = options.grid.Om_inv; eba net
-    nopressure = 1;
-    [maxres,Fres,dFres] = myF(V,V,0,t,options,getJacobian,nopressure);
-%     Fres2 = B'*(Diag.*Fres); eba net
-    Fres = B'*Fres;
-    maxres  = max(abs(Fres));
-    return
-end
+% if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0 && ...
+%     options.rom.precompute_force == 0)
+%     V = getFOM_velocity(R,t,options);
+%     B  = options.rom.B;
+% %     Diag = options.grid.Om_inv; eba net
+%     nopressure = 1;
+%     [maxres,Fres,dFres] = myF(V,V,0,t,options,getJacobian,nopressure);
+% %     Fres2 = B'*(Diag.*Fres); eba net
+%     Fres = B'*Fres;
+%     maxres  = max(abs(Fres));
+%     return
+% end
 %%
 
 % if (options.rom.bc_recon == 2)

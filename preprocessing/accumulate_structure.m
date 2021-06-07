@@ -27,6 +27,7 @@ voi={
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
     'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing
     'ibm', 0; % 0: no immersed boundary method; 1: immersed boundary method
+    'changing_snapshotdata', 0; % every run requires loading snapshot_data anew
     };
 
 accumulate_object;
@@ -121,6 +122,8 @@ voi = {
     'pressure_mean', 0; ... % subtract pressure mean from snapshots
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
+    'vary_re', 0; ... % 0: default; 1: ROM Re varies delibaretly from FOM Re (parametric problem)
+    'multiple_train_data', 0; ... %0: default; 1: more than one source of snapshot data
     };
 
 accumulate_object;

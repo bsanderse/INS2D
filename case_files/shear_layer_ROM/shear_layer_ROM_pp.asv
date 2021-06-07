@@ -67,9 +67,7 @@ lines = '--';
 k_r = k;
 umom_r = umom;
 % load("../../"+snapshot_data,'k','umom')
-if (~exist('test_data'))
-    test_data = snapshot_data;
-end
+if 
 load("../../"+test_data,'k','umom')
 
 

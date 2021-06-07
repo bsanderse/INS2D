@@ -28,17 +28,12 @@ color2 = char(line2(j));
 if (options.rom.rom == 1)
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
-    if (exist('test_data'))
-        test_snapshots = load(test_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
-    else
-        test_snapshots = snapshots;
-    end
-    dt_snapshots = test_snapshots.dt;
+    dt_snapshots = testsnapshots.dt;
 
     if (rem(dt,dt_snapshots) == 0)
         skip = dt/dt_snapshots;
         % final time should be smaller than FOM time
-        if (t_end<=test_snapshots.t_end)
+        if (t_end<=snapshots.t_end)
             snapshot_end = ceil(t_end/dt_snapshots);
             snapshot_indx = 1:skip:(snapshot_end+1);
             t_vec = t_start:dt:t_end;
@@ -51,7 +46,7 @@ if (options.rom.rom == 1)
                     % FOM
                     % uh_total is of size Nt*Nu, V_total size (Nu+Nv)*Nt
                     V_total = [uh_total vh_total]'; %[uh_total; vh_total];
-                    snapshots_V_total = [test_snapshots.uh_total(snapshot_indx,:) test_snapshots.vh_total(snapshot_indx,:)]';
+                    snapshots_V_total = [snapshots.uh_total(snapshot_indx,:) snapshots.vh_total(snapshot_indx,:)]';
                     error_V = V_total - snapshots_V_total;
                     % inf-norm
                     error_V_inf = max(abs(error_V),[],1);

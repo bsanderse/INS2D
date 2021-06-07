@@ -85,8 +85,10 @@ end
 % x-direction
 diag1 = (1./hx).*ones(Nx,1);
 Q1D   = spdiags([-diag1 diag1],[0 1],Nx,Nx+1);
-Qx_BC = BC_general(Nx+1,Nx-1,2, ...
-                                      'dir','dir',hx(1),hx(end));
+% Qx_BC = BC_general(Nx+1,Nx-1,2, ...
+%                                       'dir','dir',hx(1),hx(end));
+% Qx_BC = BC_general(Nx+1,Nx-1,2, 'per','per',hx(1),hx(end));
+Qx_BC = BC_general(Nx,Nx,2, 'per','per',hx(1),hx(end));
 
 
 % extend to 2D
@@ -98,8 +100,10 @@ yQx   = kron(speye(Ny-1),Q1D*Qx_BC.Btemp)*...
 % y-direction
 diag1 = (1./hy).*ones(Ny,1);
 Q1D   = spdiags([-diag1 diag1],[0 1],Ny,Ny+1);
-Qy_BC = BC_general(Ny+1,Ny-1,2, ...
-                                      'dir','dir',hy(1),hy(end));
+% Qy_BC = BC_general(Ny+1,Ny-1,2, ...
+%                                       'dir','dir',hy(1),hy(end));
+% Qy_BC = BC_general(Ny+1,Ny-1,2,'per','per',hy(1),hy(end));
+Qy_BC = BC_general(Nux_t,Nux_in,2,'per','per',hy(1),hy(end));
 
 
 % extend to 2D

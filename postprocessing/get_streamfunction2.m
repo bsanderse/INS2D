@@ -1,4 +1,4 @@
-function psi = get_streamfunction(V,t,options)
+function psi = get_streamfunction2(V,t,options)
 % compute streamfunction from a Poisson equation nabla^2 psi = -omega
 
 global uBC vBC
@@ -83,10 +83,22 @@ end
 % inner points only
 
 % x-direction
+BC = options.BC;
+Nux_t = options.grid.Nux_t;
+Nux_in = options.grid.Nux_in;
+Nux_b = options.grid.Nux_b;
+
+% diag1 = (1./hx).*ones(Nx,1);
+% Q1D   = spdiags([-diag1 diag1],[0 1],Nx,Nx+1);
 diag1 = (1./hx).*ones(Nx,1);
 Q1D   = spdiags([-diag1 diag1],[0 1],Nx,Nx+1);
-Qx_BC = BC_general(Nx+1,Nx-1,2, ...
-                                      'dir','dir',hx(1),hx(end));
+
+% Qx_BC = BC_general(Nx+1,Nx-1,2, ...
+%                                       'dir','dir',hx(1),hx(end));
+% Qx_BC = BC_general(Nx+1,Nx-1,2, 'per','per',hx(1),hx(end));
+
+% Qx_BC = BC_general(Nux_t,Nux_in,2, 'per','per',hx(1),hx(end));
+Qx_BC = BC_general(Nux_t,Nux_in,Nux_b,BC.u.left,BC.u.right,hx(1),hx(end));
 
 
 % extend to 2D
@@ -98,8 +110,14 @@ yQx   = kron(speye(Ny-1),Q1D*Qx_BC.Btemp)*...
 % y-direction
 diag1 = (1./hy).*ones(Ny,1);
 Q1D   = spdiags([-diag1 diag1],[0 1],Ny,Ny+1);
-Qy_BC = BC_general(Ny+1,Ny-1,2, ...
-                                      'dir','dir',hy(1),hy(end));
+% Qy_BC = BC_general(Ny+1,Ny-1,2, ...
+%                                       'dir','dir',hy(1),hy(end));
+% Qy_BC = BC_general(Ny+1,Ny-1,2,'per','per',hy(1),hy(end));
+Nvy_t = options.grid.Nvy_t;
+Nvy_in = options.grid.Nvy_in;
+Nvy_b = options.grid.Nvy_b;
+% Qy_BC = BC_general(Nuy_t,Nuy_in,2,'per','per',hy(1),hy(end));
+Qy_BC = BC_general(Nvy_t,Nvy_in,Nvy_b,BC.v.low,BC.v.up,hy(1),hy(end));
 
 
 % extend to 2D

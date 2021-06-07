@@ -98,11 +98,11 @@ end
 %     snapshot_data = 'results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat'; %Re=200
     test_data = 'results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat'; %Re=100
 
-    snapshot_data = ["results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat", ...
-        "results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat"];
+    snapshot_data = {'results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat', ...
+        'results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat'};
     
     vary_re = 1;
-    multiple_train_data = 1;
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

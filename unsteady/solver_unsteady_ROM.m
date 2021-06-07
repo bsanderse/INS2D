@@ -4,10 +4,9 @@
 %% load snapshot data
 % assume that for parametric studies (e.g. changing number of modes, the
 % FOM data file does not change:
-if (j==1)
-    [V_svd,Vbc,snapshots] = prepare_snapshot_data(snapshot_data,options);
-
-%     
+if (j==1 || options.case.changing_snapshotdata)
+    [V_svd,Vbc,snapshots,Nspace] = ...
+        prepare_snapshot_data(snapshot_data,options,options.rom.multiple_train_data);     
 %     disp('loading data...');
 %     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
 %     % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
@@ -25,20 +24,21 @@ if (j==1)
 %         error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
 %     end
 %     
-%     if (snapshots.Re ~= Re)
+%     if (snapshots.Re ~= options.fluid.Re && options.rom.vary_re==0)
 %         error('Reynolds numbers of snapshot data and current simulation do not match');
 %     end
 %     
 %     
 %     %% check whether snapshots are divergence free
-%     % this gives max div for each snapshot:
-%     div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
-%     % max over all snapshots:
-%     maxdiv_snapshots = max(div_snapshots);
-%     if (maxdiv_snapshots > 1e-14)
-%         warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+%     if (options.BC.BC_unsteady==0)     % not working for unsteady BC
+%         % this gives max div for each snapshot:
+%         div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+%         % max over all snapshots:
+%         maxdiv_snapshots = max(div_snapshots);
+%         if (maxdiv_snapshots > 1e-14)
+%             warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+%         end
 %     end
-%     % warning not relevant for unsteady BC
 %     
 %     %% subtract non-homogeneous BC contribution:
 %     
@@ -76,6 +76,8 @@ if (j==1)
 %         end
 %     end
 %     
+%     dt_sample = options.rom.dt_sample;
+%     t_sample  = options.rom.t_sample;
 %     % sample dt can be used to get only a subset of the snapshots
 %     if (rem(dt_sample,dt_snapshots) == 0)
 %         % sample dt should be a multiple of snapshot dt:
@@ -94,8 +96,7 @@ if (j==1)
 %     % select snapshots
 %     V_svd = V_total_snapshots(:,snapshot_sample);
 %     
-%     clear V_total_snapshots;
-    
+%     clear V_total_snapshots;  
 end
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
