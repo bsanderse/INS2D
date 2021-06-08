@@ -17,7 +17,7 @@ clearvars
 close all
 
 %%
-N  = 200; % number of points, assume EVEN
+N  = 20; % number of points, assume EVEN
 L = 1;
 x  = linspace(0,L-L/N,N)';
 dx = x(2)-x(1);
@@ -31,39 +31,35 @@ N    = length(x);
 %% method 1: use Matlab FFT
 % for physical interpretation, one could add scaling of 1/N in the definition of uhat
 % if scaling is included it needs to be added also in ifft
-u_hat = fft(u,N); 
+% note that the Matlab definition uses 1/N in the ifft and 1 in the fft
+% to get to the symmetric form with 1/sqrt(N) in both, we need to add
+% 1/sqrt(N) in the fft and *sqrt(N) in the ifft
+u_hat = fft(u,N)/sqrt(N); 
 
 % inverse transform
-u_back = ifft(u_hat,N);
+u_back = ifft(u_hat,N)*sqrt(N);
 
 %% method 2: program the DFT matrix Phi and Phi_inv, such that
 % u_hat = Phi*u
 % and similarly u = Phi_inv*u_hat
-phi     = zeros(N,N); 
-phi_inv = zeros(N,N);
 
-k   = 0:N-1; % frequency array
-% loop over spatial index
-for j = 1:N % loop over columns
-    i = j-1; % spatial index is from 0..n-1
-    phi(:,j) = exp(-I*2*pi*k*i/N);
-end
-
-i   = 0:N-1; % spatial index array
-% loop over frequencies
-for j = 1:N
-    k = j-1;
-    phi_inv(:,j) = (1/N)*exp(I*2*pi*k*i/N);
-end
+[phi,phi_inv] = DFT_matrix(N);
 
 % for physical interpretation, one could add 1/N in the definition of uhat
 % if scaling is included it needs to be added also in ifft
+
 u_hat2  = phi*u;
 u_back2 = phi_inv*u_hat2;
 
-% note that phi' = N*phi_inv, where ' is the complex conjugate transpose
+% note that phi' = phi_inv, where ' is the complex conjugate transpose
+% this is because we use 1/sqrt(N) scaling in definition of the DFT
 % furthermore, phi*phi_inv = phi_inv*phi = I
-% and phi*phi' = phi'*phi = N*I
+
+% check orthogonality
+max(max(abs(phi*phi_inv-speye(N))))
+% check transpose = inverse
+max(max(abs(phi'-phi_inv)))
+
 
 % uhat2 should equal uhat:
 max(abs(u_hat2-u_hat))
@@ -101,46 +97,53 @@ max(abs(u_back2-u_back))
 % u_hat = Phi_real*u
 % and similarly u = Phi_real_inv*u_hat
 
-phi_real = zeros(N,N);
+[phi_real,phi_real_inv] = DFT_matrix_real(N);
+% check orthogonality
+max(max(abs(phi_real*phi_real_inv-speye(N))))
+% check transpose = inverse
+max(max(abs(phi_real.'-phi_real_inv)))
 
-i  = 0:N-1; % spatial index is from 0..N-1
-k1 = 0:N/2; % frequency array for real part
-k2 = N/2+1:N-1; % frequency array for im part
-
-% loop over spatial index
-for j = 1:length(i)
-    phi_real(k1+1,j) = cos(2*pi*k1*i(j)/N);
-    phi_real(k2+1,j) = -sin(2*pi*k2*i(j)/N);
-end
+% phi_real = zeros(N,N);
+% 
+% i  = 0:N-1; % spatial index is from 0..N-1
+% k1 = 0:N/2; % frequency array for real part
+% k2 = N/2+1:N-1; % frequency array for im part
+% 
+% % loop over spatial index
+% for j = 1:length(i)
+%     phi_real(k1+1,j) = cos(2*pi*k1*i(j)/N);
+%     phi_real(k2+1,j) = -sin(2*pi*k2*i(j)/N);
+% end
 
 % the resulting phi_real*u gives coefficients u_real that are not the same
 % as u_hat, but related as follows: [real(u_hat(1:N/2+1));imag(u_hat(N/2+2:N))];
 
 % alternatively, we can use a matrix that selects the right modes from the
 % original matrix Phi to get Phi_real
-phi_real2 = [real(phi(1:N/2+1,:)); imag(phi(N/2+2:N,:))];
-max(max(abs(phi_real-phi_real2)))
+% phi_real2 = [real(phi(1:N/2+1,:)); imag(phi(N/2+2:N,:))];
+% max(max(abs(phi_real-phi_real2)))
 
 %%
 % the inverse transform is then as follows
 % u = Phi_inv * uhat
-phi_real_inv = zeros(N,N);
+% phi_real_inv = zeros(N,N);
+% 
+% i  = 0:N-1; % spatial index array
+% k1 = 0:N/2; % frequency array for real part
+% k2 = N/2+1:N-1; % frequency array for im part
+% 
+% % loop over frequencies
+% for j = 1:length(k1)
+%     phi_real_inv(:,j)     = (2/N)*cos(2*pi*k1(j)*i/N);
+% end
+% % note! adapt k=0 and k=N/2:
+% phi_real_inv(:,1)     = phi_real_inv(:,1)/2;
+% phi_real_inv(:,N/2+1) = phi_real_inv(:,N/2+1)/2;
+% 
+% for j = 1:length(k2)   
+%     phi_real_inv(:,j+k2(1)) = -(2/N)*sin(2*pi*k2(j)*i/N);
+% end
 
-i  = 0:N-1; % spatial index array
-k1 = 0:N/2; % frequency array for real part
-k2 = N/2+1:N-1; % frequency array for im part
-
-% loop over frequencies
-for j = 1:length(k1)
-    phi_real_inv(:,j)     = (2/N)*cos(2*pi*k1(j)*i/N);
-end
-% note! adapt k=0 and k=N/2:
-phi_real_inv(:,1)     = phi_real_inv(:,1)/2;
-phi_real_inv(:,N/2+1) = phi_real_inv(:,N/2+1)/2;
-
-for j = 1:length(k2)   
-    phi_real_inv(:,j+k2(1)) = -(2/N)*sin(2*pi*k2(j)*i/N);
-end
 u_hat3  = phi_real*u;
 u_back3 = phi_real_inv*u_hat3;
 
@@ -151,19 +154,23 @@ max(abs(u_back3-u_back))
 M = 8;
 
 % truncate the complex exponential form
-% index truncation set, simply based on frequency ordering (not on PSD)
 
-ind_trunc = [1:M+1 (N-M+1):N]; 
-phi_inv_trunc = phi_inv(:,ind_trunc);
-phi_trunc     = phi(ind_trunc,:);
+% index truncation set, simply based on frequency ordering (not on PSD)
+% ind_trunc     = [1:M+1 (N-M+1):N]; 
+% phi_inv_trunc = phi_inv(:,ind_trunc);
+% phi_trunc     = phi(ind_trunc,:);
+
+[phi_trunc,phi_trunc_inv] = DFT_matrix(N,M);
 u_hat_trunc   = phi_trunc*u;
-u_back_trunc  = phi_inv_trunc*u_hat_trunc;
+u_back_trunc  = phi_trunc_inv*u_hat_trunc;
 
 % truncate the real form
-phi_real_inv_trunc = [phi_real_inv(:,1:M+1) phi_real_inv(:,end-M+1:end)];
-phi_real_trunc = [phi_real(1:M+1,:); phi_real(end-M+1:end,:)];
-u_hat_trunc3  = phi_real_trunc*u;
+% phi_real_inv_trunc = [phi_real_inv(:,1:M+1) phi_real_inv(:,end-M+1:end)];
+% phi_real_trunc = [phi_real(1:M+1,:); phi_real(end-M+1:end,:)];
+[phi_real_trunc,phi_real_inv_trunc] = DFT_matrix_real(N,2*M);
+u_hat_trunc3   = phi_real_trunc*u;
 u_back_trunc3  = phi_real_inv_trunc*u_hat_trunc3;
+
 
 % we should still have phi*phi_inv = I_M
 max(max(abs(phi_real_trunc*phi_real_inv_trunc - eye(2*M+1))))
@@ -226,12 +233,12 @@ abs(f_keep);
 
 % get only positive frequencies and mean
 ind_pos = 2:2:2*(n_keep-1);
-abs(u_hat(1))
-abs(u_hat(ind_keep(ind_pos)))*2
+abs(u_hat(1));
+abs(u_hat(ind_keep(ind_pos)))*2;
 f2 = u_hat;
 threshold = max(abs(f2))/1e4; %tolerance threshold
 f2(abs(f2)<threshold) = 0; %maskout values that are below the threshold
-angle(f2(ind_keep(ind_pos)))*180/pi
+angle(f2(ind_keep(ind_pos)))*180/pi;
 
 
 figure
