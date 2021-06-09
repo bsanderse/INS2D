@@ -1,280 +1,390 @@
 %  Main solver file for unsteady calculations with reduced order model
 
 
-%% load snapshot data
-% assume that for parametric studies (e.g. changing number of modes, the
-% FOM data file does not change:
-if (j==1)
+switch rom_type
     
-    disp('loading data...');
-    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
-    % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
-    
-    % dt that was used for creating the snapshot matrix:
-    dt_snapshots = snapshots.dt;
-    % velocity field as snapshot matrix:
-    V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
-    
-    % check input dimensions
-    Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
-    Nu      = options.grid.Nu;
-    Nv      = options.grid.Nv;
-    if (Nspace ~= Nu+Nv)
-        error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
-    end
-    
-    if (snapshots.Re ~= Re)
-        error('Reynolds numbers of snapshot data and current simulation do not match');
-    end
-    
-    
-    %% check whether snapshots are divergence free
-    % this gives max div for each snapshot:
-    div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
-    % max over all snapshots:
-    maxdiv_snapshots = max(div_snapshots);
-    if (maxdiv_snapshots > 1e-14)
-        warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
-    end
-    
-    
-    %% subtract non-homogeneous BC contribution:
-    
-    % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
-    % which we use for the SVD
-    Om     = options.grid.Om;
-    Om_inv = options.grid.Om_inv;
-    
-    if (options.rom.rom_bc == 1)
-        % check if the Vbc field has been stored as part of the FOM
-        if (isfield(snapshots,'Vbc'))
-            Vbc = snapshots.Vbc;
-        else
-            disp('computing Vbc field...');
-            f       = options.discretization.yM;
-            dp      = pressure_poisson(f,t,options);
-            Vbc     = - Om_inv.*(options.discretization.G*dp);
+    case 'POD'
+        
+        %% load snapshot data
+        % assume that for parametric studies (e.g. changing number of modes, the
+        % FOM data file does not change:
+        if (j==1)
+            
+            disp(['loading datafile...: ' snapshot_data]);
+            snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
+            % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
+            
+            % dt that was used for creating the snapshot matrix:
+            dt_snapshots = snapshots.dt;
+            % velocity field as snapshot matrix:
+            V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
+            
+            % check input dimensions
+            Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
+            Nu      = options.grid.Nu;
+            Nv      = options.grid.Nv;
+            if (Nspace ~= Nu+Nv)
+                error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
+            end
+            
+            if (snapshots.Re ~= Re)
+                error('Reynolds numbers of snapshot data and current simulation do not match');
+            end
+            
+            
+            %% check whether snapshots are divergence free
+            % this gives max div for each snapshot:
+            div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+            % max over all snapshots:
+            maxdiv_snapshots = max(div_snapshots);
+            if (maxdiv_snapshots > 1e-14)
+                warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+            end
+            
+            
+            %% subtract non-homogeneous BC contribution:
+            
+            % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
+            % which we use for the SVD
+            Om     = options.grid.Om;
+            Om_inv = options.grid.Om_inv;
+            
+            if (options.rom.rom_bc == 1)
+                % check if the Vbc field has been stored as part of the FOM
+                if (isfield(snapshots,'Vbc'))
+                    Vbc = snapshots.Vbc;
+                else
+                    disp('computing Vbc field...');
+                    f       = options.discretization.yM;
+                    dp      = pressure_poisson(f,t,options);
+                    Vbc     = - Om_inv.*(options.discretization.G*dp);
+                end
+                V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
+            else
+                Vbc = zeros(Nu+Nv,1);
+            end
+            
+            % sample dt can be used to get only a subset of the snapshots
+            if (rem(dt_sample,dt_snapshots) == 0)
+                % sample dt should be a multiple of snapshot dt:
+                Nskip = dt_sample/dt_snapshots;
+                % check if t_sample is multiple of dt_sample
+                if (rem(t_sample,dt_sample) == 0)
+                    Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
+                    snapshot_sample = 1:Nskip:Nsnapshots;
+                else
+                    error('sample dt is not an integer multiple of sample time');
+                end
+            else
+                error('sample dt is not an integer multiple of snapshot dt');
+            end
+            
+            % select snapshots
+            V_svd = V_total_snapshots(:,snapshot_sample);
+            
+            clear V_total_snapshots;
+            
         end
-        V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-    else
+        
+        %% get Vbc into options (this has to be outside the j==1 if statement)
+        options.rom.Vbc = Vbc;
+        
+        
+        %% construct basis through SVD or eigenvalue problem
+        svd_start = toc;
+        
+        % enforce momentum conservation (works for periodic domains)
+        if (options.rom.mom_cons == 1 && options.rom.weighted_norm == 0)
+            
+            e_u = zeros(Nspace,1);
+            e_v = zeros(Nspace,1);
+            e_u(1:Nu)     = 1;
+            e_v(Nu+1:end) = 1;
+            e = [e_u e_v];
+            e = e / norm(e);
+            
+            % 1) construct (I-ee')*V_svd
+            Vmod = V_svd - e*(e'*V_svd);
+            % 2) take SVD
+            [W,S,Z] = svd(Vmod,'econ');
+            % 3) add e
+            W = [e W];
+            
+            %     disp('error in representing vector y before truncating:');
+            %     norm(Wext*Wext'*e - e,'inf')
+            
+        elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
+            
+            Om_mat     = spdiags(Om,0,Nu+Nv,Nu+Nv);
+            Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
+            Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
+            
+            e_u = zeros(Nspace,1);
+            e_v = zeros(Nspace,1);
+            e_u(1:Nu)     = 1;
+            e_v(Nu+1:end) = 1;
+            e = [e_u e_v];
+            % scale e such that e'*Om*e = I
+            e = e / sqrt(norm(e'*(Om_mat*e)));
+            
+            % 1) construct (I-ee')*Om*V_svd
+            Vmod = V_svd - e*(e'*(Om_mat*V_svd));
+            % 2) apply weighting
+            Vmod = Om_sqrt*Vmod;
+            % 3) perform SVD
+            [W,S,Z] = svd(Vmod,'econ');
+            % 4) transform back
+            W = Om_invsqrt*W;
+            % 5) add e
+            W = [e W];
+            
+        elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
+            
+            % perform SVD
+            %     [W,S,Z] = svd(V_svd,'econ');
+            % getBasis can use different methods to get basis: SVD/direct/snapshot
+            % method
+            [W,S] = getBasis(V_svd,options);
+            
+        elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
+            
+            Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
+            Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
+            
+            % make weighted snapshot matrix
+            Vmod = Om_sqrt*V_svd;
+            % perform SVD
+            %     [W,S,Z] = svd(Vmod,'econ');
+            % getBasis can use different methods to get basis: SVD/direct/snapshot
+            % method
+            [W,S] = getBasis(Vmod,options);
+            
+            % transform back
+            W = Om_invsqrt*W;
+            
+        else
+            error('wrong option for weighted norm or momentum conservation');
+            
+        end
+        clear V_svd;
+        
+        svd_end(j) = toc-svd_start
+        
+        % take first M columns of W as a reduced basis
+        % maximum:
+        % M = size(Wu,2);
+        % reduction:
+        % M = floor(Nspace/100);
+        % M = 16;
+        M = options.rom.M;
+        % (better is to look at the decay of the singular values in S)
+        B  = W(:,1:M);
+        % Bu = Wu(:,1:M);
+        % Bv = Wv(:,1:M);
+        Bu = B(1:Nu,:);
+        Bv = B(Nu+1:end,:);
+        options.rom.B = B;
+        options.rom.Bu = Bu;
+        options.rom.Bv = Bv;
+        % options.rom.BuT = BuT;
+        % options.rom.BvT = BvT;
+        toc
+        
+        % relative information content:
+        if (size(S,2)>1)
+            Sigma = diag(S);
+        else
+            Sigma = S;
+        end
+        RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
+        disp(['relative energy captured by SVD = ' num2str(RIC)]);
+        figure
+        semilogy(Sigma/Sigma(1),'s');
+        % or alternatively
+        % semilogy(Sigma.^2/sum(Sigma.^2),'s');
+        
+        %% check whether basis is divergence free
+        % this gives max div for each basis vector (columns of B):
+        % note that yM should not be included here, it was already used in
+        % subtracting Vbc from the snapshots matrix
+        div_basis = max(abs(options.discretization.M*B),[],1); %
+        % max over all snapshots:
+        maxdiv_basis = max(div_basis);
+        if (maxdiv_basis > 1e-14)
+            warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+        end
+        
+        %% pressure recovery
+        if (options.rom.pressure_recovery == 1)
+            disp('computing SVD of pressure snapshots...');
+            svd_start2 = toc;
+            % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
+            % the SVD
+            % use same snapshot_indx that was determined for velocity
+            
+            % select snapshots
+            p_total_snapshots = snapshots.p_total';
+            if (options.rom.pressure_mean == 1)
+                % subtract temporal mean
+                options.rom.p_mean = mean(p_total_snapshots,2);
+                p_total_snapshots = p_total_snapshots - options.rom.p_mean;
+            end
+            p_svd  = p_total_snapshots(:,snapshot_sample);
+            
+            % take first Mp columns of Wp as a reduced basis
+            % (better is to look at the decay of the singular values in Sp to determine M)
+            if (isfield(options.rom,'Mp'))
+                Mp = options.rom.Mp;
+            else
+                % if not defined, use same number of modes as for velocity
+                warning('number of pressure modes not defined, defaulting to number of velocity modes');
+                Mp = options.rom.M;
+            end
+            
+            if (options.rom.weighted_norm == 0)
+                
+                [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
+                
+                % perform SVD
+                %     [Wp,Sp,Zp] = svd(p_svd,'econ');
+                
+            elseif (options.rom.weighted_norm == 1)
+                
+                Np          = options.grid.Np;
+                Omp         = options.grid.Omp;
+                Omp_sqrt    = spdiags(sqrt(Omp),0,Np,Np);
+                Omp_invsqrt = spdiags(1./sqrt(Omp),0,Np,Np);
+                
+                % make weighted snapshot matrix
+                pmod = Omp_sqrt*p_svd;
+                
+                % getBasis can use different methods to get basis: SVD/direct/snapshot
+                % method
+                [Wp,Sp] = getBasis(pmod,options);
+                
+                % transform back
+                Wp = Omp_invsqrt*Wp;
+            end
+            
+            Bp = Wp(:,1:Mp);
+            options.rom.Bp = Bp;
+            
+            svd_end(j) = svd_end(j) + toc - svd_start2
+            
+            hold on
+            if (size(Sp,2)>1)
+                SigmaP = diag(Sp);
+            else
+                SigmaP = Sp;
+            end
+            semilogy(SigmaP/SigmaP(1),'o');
+            
+        end
+        
+        
+        
+    case 'Fourier'
+        
+        % construct B from discrete Fourier transform
+        Phi = getFourierBasis(options,M);
+        B   = [Phi; Phi];
+        options.rom.B = B;
+        M   = size(Phi,2);
+        options.rom.M = M;
+
+        Nu  = options.grid.Nu;
+        Nv  = options.grid.Nv;
         Vbc = zeros(Nu+Nv,1);
-    end
-    
-    % sample dt can be used to get only a subset of the snapshots
-    if (rem(dt_sample,dt_snapshots) == 0)
-        % sample dt should be a multiple of snapshot dt:
-        Nskip = dt_sample/dt_snapshots;
-        % check if t_sample is multiple of dt_sample
-        if (rem(t_sample,dt_sample) == 0)
-            Nsnapshots    = t_sample / dt_snapshots; %size(V_total,2);
-            snapshot_sample = 1:Nskip:Nsnapshots;
-        else
-            error('sample dt is not an integer multiple of sample time');
+        options.rom.Vbc = Vbc;
+        
+        % make the basis divergence free
+        Om_inv = options.grid.Om_inv;
+        G  = options.discretization.G;
+        for i=1:M
+           
+            % make velocity field divergence free            
+        
+            f  = options.discretization.M*B(:,i) + options.discretization.yM;
+            dp = pressure_poisson(f,t,options);
+            
+            % look at the resulting modes, before and after projection
+            figure(1)
+            surf(reshape(B(options.grid.indu,i),Nx,Ny)')
+            
+            B(:,i)  = B(:,i) - Om_inv.*(G*dp);
+            % turns out that they effectively become 0!
+            figure(2)
+            surf(reshape(B(options.grid.indu,i),Nx,Ny)')
+            
         end
-    else
-        error('sample dt is not an integer multiple of snapshot dt');
-    end
-    
-    % select snapshots
-    V_svd = V_total_snapshots(:,snapshot_sample);
-    
-    clear V_total_snapshots;
-    
-end
-
-%% get Vbc into options (this has to be outside the j==1 if statement)
-options.rom.Vbc = Vbc;
-
-
-%% construct basis through SVD or eigenvalue problem
-svd_start = toc;
-
-% enforce momentum conservation (works for periodic domains)
-if (options.rom.mom_cons == 1 && options.rom.weighted_norm == 0)
-    
-    e_u = zeros(Nspace,1);
-    e_v = zeros(Nspace,1);
-    e_u(1:Nu)     = 1;
-    e_v(Nu+1:end) = 1;
-    e = [e_u e_v];
-    e = e / norm(e);
-    
-    % 1) construct (I-ee')*V_svd
-    Vmod = V_svd - e*(e'*V_svd);
-    % 2) take SVD
-    [W,S,Z] = svd(Vmod,'econ');
-    % 3) add e
-    W = [e W];
-    
-    %     disp('error in representing vector y before truncating:');
-    %     norm(Wext*Wext'*e - e,'inf')
-    
-elseif (options.rom.mom_cons == 1 && options.rom.weighted_norm == 1)
-    
-    Om_mat     = spdiags(Om,0,Nu+Nv,Nu+Nv);
-    Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
-    Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
-    
-    e_u = zeros(Nspace,1);
-    e_v = zeros(Nspace,1);
-    e_u(1:Nu)     = 1;
-    e_v(Nu+1:end) = 1;
-    e = [e_u e_v];
-    % scale e such that e'*Om*e = I
-    e = e / sqrt(norm(e'*(Om_mat*e)));
-    
-    % 1) construct (I-ee')*Om*V_svd
-    Vmod = V_svd - e*(e'*(Om_mat*V_svd));
-    % 2) apply weighting
-    Vmod = Om_sqrt*Vmod;
-    % 3) perform SVD
-    [W,S,Z] = svd(Vmod,'econ');
-    % 4) transform back
-    W = Om_invsqrt*W;
-    % 5) add e
-    W = [e W];
-    
-elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 0)
-    
-    % perform SVD
-    %     [W,S,Z] = svd(V_svd,'econ');
-    % getBasis can use different methods to get basis: SVD/direct/snapshot
-    % method
-    [W,S] = getBasis(V_svd,options);
-    
-elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
-    
-    Om_sqrt    = spdiags(sqrt(Om),0,Nu+Nv,Nu+Nv);
-    Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
-    
-    % make weighted snapshot matrix
-    Vmod = Om_sqrt*V_svd;
-    % perform SVD
-    %     [W,S,Z] = svd(Vmod,'econ');
-    % getBasis can use different methods to get basis: SVD/direct/snapshot
-    % method
-    [W,S] = getBasis(Vmod,options);
-    
-    % transform back
-    W = Om_invsqrt*W;
-    
-else
-    error('wrong option for weighted norm or momentum conservation');
-    
-end
-clear V_svd;
-
-svd_end(j) = toc-svd_start
-
-% take first M columns of W as a reduced basis
-% maximum:
-% M = size(Wu,2);
-% reduction:
-% M = floor(Nspace/100);
-% M = 16;
-M = options.rom.M;
-% (better is to look at the decay of the singular values in S)
-B  = W(:,1:M);
-% Bu = Wu(:,1:M);
-% Bv = Wv(:,1:M);
-Bu = B(1:Nu,:);
-Bv = B(Nu+1:end,:);
-options.rom.B = B;
-options.rom.Bu = Bu;
-options.rom.Bv = Bv;
-% options.rom.BuT = BuT;
-% options.rom.BvT = BvT;
-toc
-
-% relative information content:
-if (size(S,2)>1)
-    Sigma = diag(S);
-else
-    Sigma = S;
-end
-RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
-disp(['relative energy captured by SVD = ' num2str(RIC)]);
-figure
-semilogy(Sigma/Sigma(1),'s');
-% or alternatively
-% semilogy(Sigma.^2/sum(Sigma.^2),'s');
-
-%% check whether basis is divergence free
-% this gives max div for each basis vector (columns of B):
-% note that yM should not be included here, it was already used in
-% subtracting Vbc from the snapshots matrix
-div_basis = max(abs(options.discretization.M*B),[],1); %
-% max over all snapshots:
-maxdiv_basis = max(div_basis);
-if (maxdiv_basis > 1e-14)
-    warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
-end
-
-%% pressure recovery
-if (options.rom.pressure_recovery == 1)
-    disp('computing SVD of pressure snapshots...');
-    svd_start2 = toc;
-    % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
-    % the SVD
-    % use same snapshot_indx that was determined for velocity
-    
-    % select snapshots
-    p_total_snapshots = snapshots.p_total';
-    if (options.rom.pressure_mean == 1)    
-        % subtract temporal mean
-        options.rom.p_mean = mean(p_total_snapshots,2);
-        p_total_snapshots = p_total_snapshots - options.rom.p_mean;
-    end
-    p_svd  = p_total_snapshots(:,snapshot_sample);
-    
-    % take first Mp columns of Wp as a reduced basis
-    % (better is to look at the decay of the singular values in Sp to determine M)
-    if (isfield(options.rom,'Mp'))
-        Mp = options.rom.Mp;
-    else
-        % if not defined, use same number of modes as for velocity
-        warning('number of pressure modes not defined, defaulting to number of velocity modes');
-        Mp = options.rom.M;
-    end
-    
-    if (options.rom.weighted_norm == 0)
         
-        [Wp,Sp] = getBasis(p_svd,options,options.rom.Mp);
+    case 'FDG'
         
-        % perform SVD
-        %     [Wp,Sp,Zp] = svd(p_svd,'econ');
+%         % generate null vectors
+%         Null_u = zeros(options.grid.Nu,1);
+%         Null_u(2)    = 1;
+%         Null_u(2+Nx) = -1;
+%         Null_v = zeros(options.grid.Nv,1);
+%         Null_v(1+Nx) = -1;
+%         Null_v(2+Nx) = 1;
+
+        % use vorticity operator to construct null space
+        % note: need to get rid of extra periodic entries
         
-    elseif (options.rom.weighted_norm == 1)
+        %% for periodic BC, not covering entire mesh
+        % du/dy, like Su_uy
+        diag1  = ones(Ny,1); %1./options.grid.gyd(1:end-1);
+        W1D    = spdiags([-diag1 diag1],[-1 0],Ny,Ny);
+        W1D(1,end) = -W1D(1,1);
+        % extend to 2D
+        Wu_uy  = kron(W1D,speye(Nx));
+
+        % dv/dx, like Sv_vx
+        diag1  = ones(Nx,1); %1./options.grid.gxd(1:end-1);
+        W1D    = spdiags([-diag1 diag1],[-1 0],Nx,Nx);
+        W1D(1,end) = -W1D(1,1);
+        % extend to 2D
+        Wv_vx  = kron(speye(Ny),W1D);
+
+        % curl operator that acts on velocity fields
+        W = [-Wu_uy Wv_vx];
+%         M_Null = W';
+        % null space is then given by W'
+        C = W';
+        % is the divergence of C indeed zero?
+        max(max(abs(options.discretization.M*C)))
         
-        Np          = options.grid.Np;
-        Omp         = options.grid.Omp;
-        Omp_sqrt    = spdiags(sqrt(Omp),0,Np,Np);
-        Omp_invsqrt = spdiags(1./sqrt(Omp),0,Np,Np);
+        % we can thus expand V, such that M*V=M*C*psi=0 for any psi
+        % V = C*psi
         
-        % make weighted snapshot matrix
-        pmod = Omp_sqrt*p_svd;
+        % build a Fourier basis for psi (streamfunction)
+        % V = C*psi = C*Phi*R = B*R, where R are Fourier coefficients for
+        % streamfunction,
+        % to get 
+        Phi = getFourierBasis(options,M);
+        M   = size(Phi,2);
+        B   = C*Phi;
         
-        % getBasis can use different methods to get basis: SVD/direct/snapshot
-        % method
-        [Wp,Sp] = getBasis(pmod,options);
+        % is B orthonormal?
+        max(max(B'*B-speye(M)))
         
-        % transform back
-        Wp = Omp_invsqrt*Wp;
-    end
-    
-    Bp = Wp(:,1:Mp);
-    options.rom.Bp = Bp;
-    
-    svd_end(j) = svd_end(j) + toc - svd_start2
-    
-    hold on
-    if (size(Sp,2)>1)
-        SigmaP = diag(Sp);
-    else
-        SigmaP = Sp;
-    end
-    semilogy(SigmaP/SigmaP(1),'o');
-    
+        % get nullspace of div-operator (all vectors v such that M*v=0)
+%         NullSpace = null(full(options.discretization.M));
+        % construct basis from linear combination of the nullspace,
+        % 
+%         B = NullSpace(:,2:end);
+
+        options.rom.B = B;
+        options.rom.M = M;
+
+        Nu  = options.grid.Nu;
+        Nv  = options.grid.Nv;
+        Vbc = zeros(Nu+Nv,1);
+        options.rom.Vbc = Vbc;
+        
+    otherwise
+        error ('wrong ROM type')
+        
 end
 
 %% precompute ROM operators by calling operator_rom
@@ -382,9 +492,9 @@ while(n<=nt)
     n = n+1;
     
     % time reversal (used in inviscid shear-layer testcase)
-%     if (abs(t-t_end/2)<1e-12)
-%         dt = -dt;
-%     end
+    %     if (abs(t-t_end/2)<1e-12)
+    %         dt = -dt;
+    %     end
     
     % perform one time step with the time integration method
     if (method == 20)

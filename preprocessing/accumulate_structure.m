@@ -92,6 +92,7 @@ voi = {
     'y_c',  0; ... % y-coordinate of body
     'Ct',   0; ... % thrust coefficient for actuator disk computations
     'D',    1; ... % actuator disk diameter
+    'isforce', 0; ... % presence of a force file 
 };
 
 accumulate_object;
@@ -101,6 +102,7 @@ object = 'rom';
 
 voi = {
     'rom', 0; ... % if 1, use reduced order model
+    'rom_type', 'POD'; ... % 'POD', 'Fourier'
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model
     'precompute_convection', 1; ... % precomputed convection matrices

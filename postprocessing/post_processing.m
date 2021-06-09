@@ -14,7 +14,7 @@ else
 end
 
 %% additional Reduced-Order Model postprocessing
-if (options.rom.rom == 1)
+if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
     if (rem(dt,dt_snapshots) == 0)

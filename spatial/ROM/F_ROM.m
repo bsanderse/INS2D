@@ -54,25 +54,34 @@ elseif (options.rom.precompute_diffusion == 0)
 end
 
 % body force
-if (options.rom.precompute_force == 1)
-    F = options.rom.F;
-    % this is a bit of a hack for the actuator ROM case with time dependent
-    % body force, which prevents computing the projection of the force at
-    % each time step
-    if (options.case.force_unsteady == 1)
-        F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
+if (options.case.force_unsteady == 1)
+    
+    if (options.rom.precompute_force == 1)
+        F = options.rom.F;
+        % this is a bit of a hack for the actuator ROM case with time dependent
+        % body force, which prevents computing the projection of the force at
+        % each time step
+        if (options.case.force_unsteady == 1)
+            F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
+        end
+        if (getJacobian == 1)
+            % Jacobian is not straightforward for general non-linear forcing    
+            warning('precomputing Jacobian of force not available, using zero Jacobian');
+            M  = options.rom.M;
+            dF = spalloc(M,M,0);
+        end
+    else % no precomputing, use FOM expression and project to ROM (expensive)
+        [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+        F   = B'*(Diag.*[Fx;Fy]);
+        dF  = B'*(Diag.*[dFx;dFy])*B;
+    %     dFy = spalloc(Nv,Nu+Nv,0);    
     end
+else
+    F = options.rom.F;
     if (getJacobian == 1)
-        % Jacobian is not straightforward for general non-linear forcing    
-        warning('precomputing Jacobian of force not available, using zero Jacobian');
         M  = options.rom.M;
         dF = spalloc(M,M,0);
     end
-else
-    [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
-    F   = B'*(Diag.*[Fx;Fy]);
-    dF  = B'*(Diag.*[dFx;dFy])*B;
-%     dFy = spalloc(Nv,Nu+Nv,0);    
 end
 
 % residual of ROM
