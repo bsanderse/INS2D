@@ -113,56 +113,73 @@ svd_start = toc;
 if (options.rom.carl_cons == 1)
 %% construct constraint matrix manually
     % pfusch
-    Nux = options.grid.Nux_in;
-    Nuy = options.grid.Nuy_in;
-    Nvx = options.grid.Nvx_in;
-    Nvy = options.grid.Nvy_in;
+    Nux = options.grid.Nux_in; %240
+    Nuy = options.grid.Nuy_in; %80
+    Nvx = options.grid.Nvx_in; %240
+    Nvy = options.grid.Nvy_in; %81
     
 
 %     uv_ind = [49 81; 49 82; 49 83; 50 81; 50 82];
 %     u_ind  = [31 81; 31 82; 32 81; 32 82; 32 83];
 %     v_ind  = [30 80; 31 80];
-    [X,Y] = meshgrid([48:52,28:32],[80:84]);
-    uv_ind = [X(:),Y(:)];
-    u_ind = [];
-    v_ind = [];
-    U_ind = [uv_ind; u_ind];
-    V_ind = [uv_ind; v_ind];
-    CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
-    for i =1:size(U_ind,1)
-        CC_u = zeros(Nuy,Nux);
-        CC_v = zeros(Nvy,Nvx);
-        CC_u(U_ind(i,1),U_ind(i,2)) = 1;
-        CC_u = CC_u';
-        CC_v = CC_v';
-        CC(:,i) = [CC_u(:);CC_v(:)];
-    end
-    for i =1:size(V_ind,1)
-        CC_u = zeros(Nuy,Nux);
-        CC_v = zeros(Nvy,Nvx);
-        CC_v(V_ind(i,1),V_ind(i,2)) = 1;
-        CC_u = CC_u';
-        CC_v = CC_v';
-        CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
-    end
+%     [X,Y] = meshgrid([48:52,28:32],[80:84]);
+%     uv_ind = [X(:),Y(:)];
+%     u_ind = [];
+%     v_ind = [];
+%     U_ind = [uv_ind; u_ind];
+%     V_ind = [uv_ind; v_ind];
+%     CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
+%     for i =1:size(U_ind,1)
+%         CC_u = zeros(Nuy,Nux);
+%         CC_v = zeros(Nvy,Nvx);
+%         CC_u(U_ind(i,1),U_ind(i,2)) = 1;
+%         CC_u = CC_u';
+%         CC_v = CC_v';
+%         CC(:,i) = [CC_u(:);CC_v(:)];
+%     end
+%     for i =1:size(V_ind,1)
+%         CC_u = zeros(Nuy,Nux);
+%         CC_v = zeros(Nvy,Nvx);
+%         CC_v(V_ind(i,1),V_ind(i,2)) = 1;
+%         CC_u = CC_u';
+%         CC_v = CC_v';
+%         CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
+%     end
+
+%% global momentum conservation
+% CC = zeros(Nu+Nv,2);
+% CC(1:Nu,1)=1/sqrt(Nu);
+% CC(Nu+1:end,2)=1/sqrt(Nv);
+%%
 
 % CC = ones(Nu+Nv,1)/(Nu+Nv);
-    
 % % figure
 % % Csum = sum(CC,2);
 % % [up,vp,qp] = get_velocity(Csum,t,options);
 %%
 % pro_CC = eye(Nu + Nv);
-% CC = pro_CC(:,1:(Nu + Nv));
+  pro_CC = speye(Nu+Nv);
+  
+%     [X,Y] = meshgrid([48:52,28:32],[80:84]);
+    [X,Y] = meshgrid([1:240],[28:52]);
+    x_inds = sub2ind([240,80],X,Y);
+    y_inds = sub2ind([240,81],X,Y)+Nu;
+    CC = pro_CC(:,[x_inds y_inds])
+
+% CC = pro_CC(:,1:(Nu + Nv)-minus);
+% CC = pro_CC(:,[1:Nu-minus_u, Nu+1:end-minus_v]);
+
 % % CC = pro_CC(:,1:20);
 % inds = [78 102];
 % CC = pro_CC(:,inds);
 Q_1 = sqrt(Om_inv).*CC;
-V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*Om.*V_svd);
+V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*(Om.*V_svd));
 [W,S,Z] = svd(V_mod,'econ');
-% W = zeros(size(Om,1),1); %pfusch
-% W(end) = sqrt(Om_inv(end));
+% % W = zeros(size(Om,1),1); %pfusch
+% % W(end) = sqrt(Om_inv(end));
 W = [Q_1, sqrt(Om_inv).*W];
+
+% W = sqrt(Om_inv).*speye(Nu+Nv);S = ones(Nu+Nv,1);
 
 %  W = sqrt(Om_inv).*eye(Nu + Nv);S = ones(Nu+Nv,1);
 
@@ -264,19 +281,38 @@ options.rom.Bv = Bv;
 % options.rom.BvT = BvT;
 toc
 
+%% pfusch
+% Om = options.grid.Om;
+% Y = B'*(Om.*B);
+% figure(706)
+% spy(Y);
+% 
+% if (options.rom.carl_cons == 1)
+% %     c_core = sum(CC,2);
+% %     B_copy = B;
+% %     B_copy(c_core~=0,size(CC,2)+1:end) = 0;
+% %     Y = B_copy'*(Om.*B_copy);
+% %     figure(806)
+% %     spy(Y);
+% %     B = B_copy;
+% end
+%%
+
 % relative information content:
 if (size(S,2)>1)
     Sigma = diag(S);
 else
     Sigma = S;
 end
-RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
-disp(['relative energy captured by SVD = ' num2str(RIC)]);
+% RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
+% disp(['relative energy captured by SVD = ' num2str(RIC)]);
+disp('commented some information out')
 
 if (options.visualization.show_sigmas == 1)
     figure(23)
     semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 end
+
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
@@ -359,10 +395,13 @@ if (options.rom.pressure_recovery == 1)
     end
 end
 if (options.visualization.show_sigmas == 1)
-    ylabel("\sigma_1/\sigma_i")
+    ylabel("\sigma_i/\sigma_1")
     xlabel("mode index")
     title('singular values')
     legend('show')
+    if (exist('fig_destination') && j==Nsim)
+        savefig([fig_destination '/singular values'])
+    end
 end
 
 %% construct basis for unsteady Vbc   not necessary yet

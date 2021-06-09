@@ -24,8 +24,10 @@ if (options.rom.rom == 0)
 elseif (options.rom.rom == 1)
     % get ROM residual
     if (options.rom.bc_recon == 2)
-        [maxres(n),~,~] = F_ROM_notvelocityonly(R,p,t,options,0);
+        [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
+        [maxres(n),~,~] = F_ROM(R,p,t,options,0);
     else
+        [~,F_rhs]  = F_ROM(R,p,ti,options);
         [maxres(n),~,~] = F_ROM(R,0,t,options,0);
     end
        

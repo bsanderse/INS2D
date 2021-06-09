@@ -1,9 +1,11 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [2 4 8 16];
 % M_list = 16;
-M_list = [16 16 18];
+% M_list = [16 16 18];
+% M_list = [32 32 34];
+M_list = [64 64 66];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 % M_list = [2 4 8 16 2 4 8 16];
 mesh_list = ones(length(M_list),1);
@@ -17,12 +19,16 @@ if j>1 %false %j>4
 else
     suffix = "";
 end
+
+% fig_destination = '../numerical experiments/generalization of shear layer roll up/train Re=100+200/test Re = 150 3/';
+% fig_destination = '../numerical experiments/generalization of shear layer roll up/train Re=100+200/test Re = 190 3/';
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
 %     Re      = 1e100;                  % Reynolds number
 %     Re      = 200;                  % Reynolds number
-%     Re      = 190;                  % Reynolds number
-    Re      = 100;                  % Reynolds number
+    Re      = 190;                  % Reynolds number
+%     Re      = 150;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -78,7 +84,7 @@ end
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
-    mom_cons              = 1;% j>1;
+    mom_cons              =  j>1;
     
     rom_bc = 0;%pfusch % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -96,10 +102,17 @@ end
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_1/matlab_data.mat';
 
 %     snapshot_data = 'results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat'; %Re=200
-    test_data = 'results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat'; %Re=100
+%     snapshot_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
+%     test_data = 'results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat'; %Re=100
+%     test_data = 'results/shear_layer_ROM_1.500e+02_200x200_1/matlab_data.mat'; %Re=150
+    test_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
 
-    snapshot_data = ["results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat", ...
-        "results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat"];
+
+    snapshot_data = [ ...
+        "results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat" ... %200
+%         "results/shear_layer_ROM_1.500e+02_200x200_1/matlab_data.mat" ... %150
+        "results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat" ... %100
+        ];
     
     vary_re = 1;
     multiple_train_data = 1;
@@ -245,4 +258,4 @@ end
     filelen          = 8;          % number of characters for output files
     
     library_path     = '~/Dropbox/work/Programming/libs/'; % own written matlab libraries
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

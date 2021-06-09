@@ -5,97 +5,98 @@
 % assume that for parametric studies (e.g. changing number of modes, the
 % FOM data file does not change:
 if (j==1 || options.case.changing_snapshotdata)
-%     [V_svd,Vbc,snapshots] = prepare_snapshot_data(snapshot_data,options);     
-    disp('loading data...');
-    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
-    % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
-    
-    % dt that was used for creating the snapshot matrix:
-   dt_snapshots = snapshots.dt;
-    % velocity field as snapshot matrix:
-    V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
-    
-    % check input dimensions
-    Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
-    Nu      = options.grid.Nu;
-    Nv      = options.grid.Nv;
-    if (Nspace ~= Nu+Nv)
-        error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
-    end
-    
-    if (snapshots.Re ~= options.fluid.Re && options.rom.vary_re==0)
-        error('Reynolds numbers of snapshot data and current simulation do not match');
-    end
-    
-    
-    %% check whether snapshots are divergence free
-    if (options.BC.BC_unsteady==0)     % not working for unsteady BC
-        % this gives max div for each snapshot:
-        div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
-        % max over all snapshots:
-        maxdiv_snapshots = max(div_snapshots);
-        if (maxdiv_snapshots > 1e-14)
-            warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
-        end
-    end
-    
-    %% subtract non-homogeneous BC contribution:
-    
-    % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
-    % which we use for the SVD
-    Om     = options.grid.Om;
-    Om_inv = options.grid.Om_inv;
-    
-    if (options.rom.bc_recon == 2)
-        Vbc = 0*Om;
-        snapshots.Vbc = Vbc;
-    else
-        if (options.rom.rom_bc == 1)
-            % check if the Vbc field has been stored as part of the FOM
-            if (isfield(snapshots,'Vbc'))
-                Vbc = snapshots.Vbc;
-            else
-                disp('computing Vbc field...');
-                f       = options.discretization.yM;
-                dp      = pressure_poisson(f,t,options);
-                Vbc     = - Om_inv.*(options.discretization.G*dp);
-                snapshots.Vbc = Vbc;
-            end
-            V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-        elseif (options.rom.rom_bc == 2)
-            if (isfield(snapshots,'Vbc'))
-                Vbc = snapshots.Vbc;
-            else
-                error('Vbc data not provided');
-            end
-            V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-        else
-            Vbc = zeros(Nu+Nv,1);
-            snapshots.Vbc = Vbc;
-        end
-    end
-    
-    dt_sample = options.rom.dt_sample;
-    t_sample  = options.rom.t_sample;
-    % sample dt can be used to get only a subset of the snapshots
-    if (rem(dt_sample,dt_snapshots) == 0)
-        % sample dt should be a multiple of snapshot dt:
-        Nskip = dt_sample/dt_snapshots;
-        % check if t_sample is multiple of dt_sample
-        if (rem(t_sample,dt_sample) == 0)
-            Nsnapshots    = round(t_sample / dt_snapshots); %size(V_total,2);
-            snapshot_sample = 1:Nskip:(Nsnapshots+1);
-        else
-            error('sample dt is not an integer multiple of sample time');
-        end
-    else
-        error('sample dt is not an integer multiple of snapshot dt');
-    end
-    
-    % select snapshots
-    V_svd = V_total_snapshots(:,snapshot_sample);
-    
-    clear V_total_snapshots;  
+    [V_svd,Vbc,snapshots,Nspace] = ...
+        prepare_snapshot_data(snapshot_data,options,options.rom.multiple_train_data);     
+%     disp('loading data...');
+%     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
+%     % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
+%     
+%     % dt that was used for creating the snapshot matrix:
+%     dt_snapshots = snapshots.dt;
+%     % velocity field as snapshot matrix:
+%     V_total_snapshots = [snapshots.uh_total';snapshots.vh_total'];
+%     
+%     % check input dimensions
+%     Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
+%     Nu      = options.grid.Nu;
+%     Nv      = options.grid.Nv;
+%     if (Nspace ~= Nu+Nv)
+%         error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
+%     end
+%     
+%     if (snapshots.Re ~= options.fluid.Re && options.rom.vary_re==0)
+%         error('Reynolds numbers of snapshot data and current simulation do not match');
+%     end
+%     
+%     
+%     %% check whether snapshots are divergence free
+%     if (options.BC.BC_unsteady==0)     % not working for unsteady BC
+%         % this gives max div for each snapshot:
+%         div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+%         % max over all snapshots:
+%         maxdiv_snapshots = max(div_snapshots);
+%         if (maxdiv_snapshots > 1e-14)
+%             warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+%         end
+%     end
+%     
+%     %% subtract non-homogeneous BC contribution:
+%     
+%     % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
+%     % which we use for the SVD
+%     Om     = options.grid.Om;
+%     Om_inv = options.grid.Om_inv;
+%     
+%     if (options.rom.bc_recon == 2)
+%         Vbc = 0*Om;
+%         snapshots.Vbc = Vbc;
+%     else
+%         if (options.rom.rom_bc == 1)
+%             % check if the Vbc field has been stored as part of the FOM
+%             if (isfield(snapshots,'Vbc'))
+%                 Vbc = snapshots.Vbc;
+%             else
+%                 disp('computing Vbc field...');
+%                 f       = options.discretization.yM;
+%                 dp      = pressure_poisson(f,t,options);
+%                 Vbc     = - Om_inv.*(options.discretization.G*dp);
+%                 snapshots.Vbc = Vbc;
+%             end
+%             V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
+%         elseif (options.rom.rom_bc == 2)
+%             if (isfield(snapshots,'Vbc'))
+%                 Vbc = snapshots.Vbc;
+%             else
+%                 error('Vbc data not provided');
+%             end
+%             V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
+%         else
+%             Vbc = zeros(Nu+Nv,1);
+%             snapshots.Vbc = Vbc;
+%         end
+%     end
+%     
+%     dt_sample = options.rom.dt_sample;
+%     t_sample  = options.rom.t_sample;
+%     % sample dt can be used to get only a subset of the snapshots
+%     if (rem(dt_sample,dt_snapshots) == 0)
+%         % sample dt should be a multiple of snapshot dt:
+%         Nskip = dt_sample/dt_snapshots;
+%         % check if t_sample is multiple of dt_sample
+%         if (rem(t_sample,dt_sample) == 0)
+%             Nsnapshots    = round(t_sample / dt_snapshots); %size(V_total,2);
+%             snapshot_sample = 1:Nskip:(Nsnapshots+1);
+%         else
+%             error('sample dt is not an integer multiple of sample time');
+%         end
+%     else
+%         error('sample dt is not an integer multiple of snapshot dt');
+%     end
+%     
+%     % select snapshots
+%     V_svd = V_total_snapshots(:,snapshot_sample);
+%     
+%     clear V_total_snapshots;  
 end
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
@@ -112,56 +113,71 @@ svd_start = toc;
 if (options.rom.carl_cons == 1)
 %% construct constraint matrix manually
     % pfusch
-    Nux = options.grid.Nux_in;
-    Nuy = options.grid.Nuy_in;
-    Nvx = options.grid.Nvx_in;
-    Nvy = options.grid.Nvy_in;
+    Nux = options.grid.Nux_in; %240
+    Nuy = options.grid.Nuy_in; %80
+    Nvx = options.grid.Nvx_in; %240
+    Nvy = options.grid.Nvy_in; %81
     
 
 %     uv_ind = [49 81; 49 82; 49 83; 50 81; 50 82];
 %     u_ind  = [31 81; 31 82; 32 81; 32 82; 32 83];
 %     v_ind  = [30 80; 31 80];
-    [X,Y] = meshgrid([48:52,28:32],[80:84]);
-    uv_ind = [X(:),Y(:)];
-    u_ind = [];
-    v_ind = [];
-    U_ind = [uv_ind; u_ind];
-    V_ind = [uv_ind; v_ind];
-    CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
-    for i =1:size(U_ind,1)
-        CC_u = zeros(Nuy,Nux);
-        CC_v = zeros(Nvy,Nvx);
-        CC_u(U_ind(i,1),U_ind(i,2)) = 1;
-        CC_u = CC_u';
-        CC_v = CC_v';
-        CC(:,i) = [CC_u(:);CC_v(:)];
-    end
-    for i =1:size(V_ind,1)
-        CC_u = zeros(Nuy,Nux);
-        CC_v = zeros(Nvy,Nvx);
-        CC_v(V_ind(i,1),V_ind(i,2)) = 1;
-        CC_u = CC_u';
-        CC_v = CC_v';
-        CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
-    end
+%     [X,Y] = meshgrid([48:52,28:32],[80:84]);
+%     uv_ind = [X(:),Y(:)];
+%     u_ind = [];
+%     v_ind = [];
+%     U_ind = [uv_ind; u_ind];
+%     V_ind = [uv_ind; v_ind];
+%     CC = zeros(Nu+Nv,size(U_ind,1)+size(V_ind,1));
+%     for i =1:size(U_ind,1)
+%         CC_u = zeros(Nuy,Nux);
+%         CC_v = zeros(Nvy,Nvx);
+%         CC_u(U_ind(i,1),U_ind(i,2)) = 1;
+%         CC_u = CC_u';
+%         CC_v = CC_v';
+%         CC(:,i) = [CC_u(:);CC_v(:)];
+%     end
+%     for i =1:size(V_ind,1)
+%         CC_u = zeros(Nuy,Nux);
+%         CC_v = zeros(Nvy,Nvx);
+%         CC_v(V_ind(i,1),V_ind(i,2)) = 1;
+%         CC_u = CC_u';
+%         CC_v = CC_v';
+%         CC(:,size(U_ind,1)+i) = [CC_u(:);CC_v(:)];
+%     end
+
+%% global momentum conservation
+% CC = zeros(Nu+Nv,2);
+% CC(1:Nu,1)=1/sqrt(Nu);
+% CC(Nu+1:end,2)=1/sqrt(Nv);
+%%
 
 % CC = ones(Nu+Nv,1)/(Nu+Nv);
-    
 % % figure
 % % Csum = sum(CC,2);
 % % [up,vp,qp] = get_velocity(Csum,t,options);
 %%
 % pro_CC = eye(Nu + Nv);
-% CC = pro_CC(:,1:(Nu + Nv));
+  pro_CC = speye(Nu+Nv);
+  
+%     [X,Y] = meshgrid([48:52,28:32],[80:84]);
+    [X,Y] = meshgrid([28:52],[1:240]);
+    sub2ind([240,80],
+
+% CC = pro_CC(:,1:(Nu + Nv)-minus);
+% CC = pro_CC(:,[1:Nu-minus_u, Nu+1:end-minus_v]);
+
 % % CC = pro_CC(:,1:20);
 % inds = [78 102];
 % CC = pro_CC(:,inds);
 Q_1 = sqrt(Om_inv).*CC;
-V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*Om.*V_svd);
+V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*(Om.*V_svd));
 [W,S,Z] = svd(V_mod,'econ');
-% W = zeros(size(Om,1),1); %pfusch
-% W(end) = sqrt(Om_inv(end));
+% % W = zeros(size(Om,1),1); %pfusch
+% % W(end) = sqrt(Om_inv(end));
 W = [Q_1, sqrt(Om_inv).*W];
+
+% W = sqrt(Om_inv).*speye(Nu+Nv);S = ones(Nu+Nv,1);
 
 %  W = sqrt(Om_inv).*eye(Nu + Nv);S = ones(Nu+Nv,1);
 
@@ -263,19 +279,38 @@ options.rom.Bv = Bv;
 % options.rom.BvT = BvT;
 toc
 
+%% pfusch
+% Om = options.grid.Om;
+% Y = B'*(Om.*B);
+% figure(706)
+% spy(Y);
+% 
+% if (options.rom.carl_cons == 1)
+% %     c_core = sum(CC,2);
+% %     B_copy = B;
+% %     B_copy(c_core~=0,size(CC,2)+1:end) = 0;
+% %     Y = B_copy'*(Om.*B_copy);
+% %     figure(806)
+% %     spy(Y);
+% %     B = B_copy;
+% end
+%%
+
 % relative information content:
 if (size(S,2)>1)
     Sigma = diag(S);
 else
     Sigma = S;
 end
-RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
-disp(['relative energy captured by SVD = ' num2str(RIC)]);
+% RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
+% disp(['relative energy captured by SVD = ' num2str(RIC)]);
+disp('commented some information out')
 
 if (options.visualization.show_sigmas == 1)
     figure(23)
     semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 end
+
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 
@@ -358,10 +393,13 @@ if (options.rom.pressure_recovery == 1)
     end
 end
 if (options.visualization.show_sigmas == 1)
-    ylabel("\sigma_1/\sigma_i")
+    ylabel("\sigma_i/\sigma_1")
     xlabel("mode index")
     title('singular values')
     legend('show')
+    if (exist('fig_destination') && j==Nsim)
+        savefig([fig_destination '/singular values'])
+    end
 end
 
 %% construct basis for unsteady Vbc   not necessary yet

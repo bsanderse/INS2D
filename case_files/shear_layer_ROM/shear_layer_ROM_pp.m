@@ -102,6 +102,9 @@ title('energy error')
 xlabel('t')
 ylabel("(K_r^n-K_h(0))/K_h(0)")
 legend('show')
+if (exist('fig_destination')&& j==Nsim)
+    savefig(['../../' fig_destination '/energy error'])
+end
 
 figure(momentum)
 semilogy(abs(umom_r-umom(1))/umom(1),'color', colors(j), ...
@@ -111,6 +114,9 @@ title('momentum error')
 xlabel('t')
 ylabel('error in u component of global momentum')
 legend('show')
+if (exist('fig_destination')&& j==Nsim)
+    savefig(['../../' fig_destination '/momentum error'])
+end
 
 figure(energy2)
 semilogy(abs(k_r-k_r(1))/k_r(1),'color', colors(j), ...
@@ -120,3 +126,6 @@ title('energy error')
 xlabel('t')
 ylabel("(K_r^n-K_r^0)/K_r^0")
 legend('show')
+if (exist('fig_destination')&& j==Nsim)
+    savefig(['../../' fig_destination '/energy error2'])
+end

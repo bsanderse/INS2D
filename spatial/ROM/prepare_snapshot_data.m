@@ -3,11 +3,12 @@ function [V_svd,Vbc,snapshots,Nspace] = prepare_snapshot_data(snapshot_data,opti
 if multiple_train_data == 1
     V_svd = [];
     Vbc = [];
-    for j = numel(snapshot_data)
-    [V_svd_j,Vbc_j,snapshots_j,Nspace] = prepare_snapshot_data(char(snapshot_data(j)),options,0);
-    V_svd = [V_svd, V_svd_j];
-    Vbc = [Vbc, Vbc_j];
+    for j = 1:numel(snapshot_data)
+        [V_svd_j,Vbc_j,snapshots_j,Nspace] = prepare_snapshot_data(char(snapshot_data(j)),options,0);
+        V_svd = [V_svd, V_svd_j];
+%         Vbc = [Vbc, Vbc_j];
     end
+    Vbc = Vbc_j; %pfusch: only if Vbc 0
     snapshots = snapshots_j;
 else
     disp('loading data...');

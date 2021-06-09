@@ -118,7 +118,10 @@ if (options.rom.rom == 1)
                          xlabel('t')
                          ylabel('velocity error')
                         title("\Omega_h-norm of velocity error")
-
+                        
+                        if (exist('fig_destination') && j==Nsim)
+                            savefig([fig_destination '/velocity error'])
+                        end
        %%             
 %                     if (options.rom.pressure_recovery == 1)
 %                         % correct spatial mean of both to be zero

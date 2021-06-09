@@ -3,11 +3,34 @@ run_multiple = 0;
 % M_list = [2 2 2 5 5 10 10 20 20 40 40 80 80];
 % M_list = [2 5 10 20 40];
 % M_list = flip(kron(ones(1,5),[2 5 10 20 40 80]));
+% M_list = [20 20 22];
+% M_list = 20+100; %38640; %[10 10 12];%20+17;408
+% M_list = 20+17; %38640; %[10 10 12];%20+17;408 Nu = 19200 Nv = 19440
 
-M_list = 20+100; %38640; %[10 10 12];%20+17;408
+% minus = 19000;
+plus = 30;
+minus_u = 9600;
+minus_v = 9500+220;
+% M_list = 38640-minus_u-minus_v+plus;
+M_list = 12000;
+
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
+if true %j>1 %false %j>4
+%     suffix = " mc";
+    suffix = " CC";
+%     suffix = " without lifting function";
+%     suffix = " global CC"
+else
+    suffix = "";
+end
+
+% fig_destination = '../numerical experiments/generalization of shear layer roll up/train Re=100+200/test Re = 190 3/';
+% fig_destination = ['../numerical experiments/appl carl cons/actuator ROM 240x80/FOM minus ',num2str(minus),' plus ',num2str(plus),'/'];
+% fig_destination = ['../numerical experiments/appl carl cons/actuator ROM 240x80/FOM minus (',...
+%     num2str(minus_u),'+',num2str(minus_v),') plus ',num2str(plus),'/'];
+fig_destination = ['../numerical experiments/appl carl cons/actuator ROM 240x80/M =',num2str(M),'/'];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 500;                  % Reynolds number
@@ -72,7 +95,7 @@ mesh_list = ones(length(M_list),1);
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
-    carl_cons = 1;%j>1; % enforce Carlberg conservation according to specified constraint matrix
+    carl_cons = 1;% j>1;%j>1; % enforce Carlberg conservation according to specified constraint matrix
 
 %     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
 %                 % 1: non-homogeneous, time-independent;
