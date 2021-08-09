@@ -45,7 +45,7 @@ M_inhom = size(phi_inhom,2);
 
 for i=1:M_bc
     yBC = phi_bc(:,i);
-    options = set_bc_vectors_from_yBC(t,options,yBC);
+    options = set_bc_vectors_from_yBC(options,yBC);
     
     yAu_ux = options.discretization.yAu_ux;
     yAu_uy = options.discretization.yAu_uy;

@@ -444,11 +444,35 @@ end
 if (options.rom.bc_recon == 3)
     dt = snapshots.dt;
     t_end = snapshots.t_end;
-    times 
-    X_bc = zeros(length(get_bc_vector_yBC(0,options),length(0:dt:t_end));
-    for t=0:dt:t_end
-        
+    t_js = 0:dt:t_end;
+    X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
+    for j=1:length(t_js)
+        t = t_js(j);
+        X_bc(:,j) = get_bc_vector_yBC(t,options);
     end
+    [U_bc,S_bc,V_bc] = svd(X_bc,);
+    phi_bc = U_bc(:,1:Mbc);
+    a_bc = phi_bc'*X_bc;
+    for j = 1:Mbc
+        yBC = phi_bc(:,j);
+        Y_M(:,j) = get_yM(t,options,yBC);
+    end
+    L = options.discretization.A;
+    Gx   = options.discretization.Gx;
+    Gy   = options.discretization.Gy;
+    G = [Gx;Gy];
+    Om = options.grid.Om;
+    Om_inv = options.grid.Om_inv;
+    tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+    [Q_inhom,R_inhom] = qr(tilde_phi_inhom);
+    M_inhom = rank(tilde_phi_inhom);
+    Q_1_inhom = Q_inhom(:,1:M_inhom);
+    R_inhom = R_inhom(1:M_inhom,:);
+    phi_inhom = sqrt(Om).*Q_1_inhom;
+    a_inhom = R_inhom*a_bc;
+    options.rom.phi_bc = phi_bc;
+    options.rom.phi_inhom = phi_inhom;
+    options.rom.R_inhom = R_inhom;
 end
 
 %% precompute ROM operators by calling operator_rom

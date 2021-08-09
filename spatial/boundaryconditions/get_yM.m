@@ -60,7 +60,7 @@ uLe_i = yBC(1:ypl); yBC = yBC(ypl+1:end);
 uRi_i = yBC(1:ypl); yBC = yBC(ypl+1:end);
 
 vLe = yBC(1:yl); yBC = yBC(yl+1:end);
-vRi = yBC(1:yl); yBC = yBC(y1+1:end);
+vRi = yBC(1:yl); yBC = yBC(yl+1:end);
 
 vLo_i = yBC(1:xpl); yBC = yBC(xpl+1:end);
 vUp_i = yBC(1:xpl); yBC = yBC(xpl+1:end);

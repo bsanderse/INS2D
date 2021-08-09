@@ -20,11 +20,19 @@ P = B'*spdiags(Diag,0,NV,NV);
 
 %% diffusion
 if options.rom.rom_bc == 2
+    if options.rom.bc_recon == 3
+            [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC2(P,options);
+  
+            options.rom.Diff   = Diff;
+            options.rom.DiffBC = DiffBC;
+            options.rom.yDiff  = yDiff;
+    else
     [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
   
     options.rom.Diff   = Diff;
     options.rom.DiffBC = DiffBC;
     options.rom.yDiff  = yDiff;
+    end
 else
     [yDiff,Diff] = operator_rom_diffusion(P,options);
     
@@ -33,6 +41,17 @@ else
 end
 %% convection 
 if options.rom.rom_bc == 2
+    if options.rom.bc_recon == 3
+        [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
+            operator_rom_convection_unsteadyBC2(P,options);
+        
+        options.rom.C_hom       = C_hom;
+        options.rom.C_hom_inhom = C_hom_inhom;
+        options.rom.C_hom_bc    = C_hom_bc;
+        options.rom.C_inhom     = C_inhom;
+        options.rom.C_inhom_bc  = C_inhom_bc;
+        options.rom.C_bc        = C_bc;
+    else
     [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
         operator_rom_convection_unsteadyBC(P,options);
     
@@ -42,16 +61,7 @@ if options.rom.rom_bc == 2
     options.rom.C_inhom     = C_inhom;
     options.rom.C_inhom_bc  = C_inhom_bc;
     options.rom.C_bc        = C_bc;
-elseif options.rom.rom_bc == 3
-    [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
-        operator_rom_convection_unsteadyBC2(P,options);
-    
-    options.rom.C_hom       = C_hom;
-    options.rom.C_hom_inhom = C_hom_inhom;
-    options.rom.C_hom_bc    = C_hom_bc;
-    options.rom.C_inhom     = C_inhom;
-    options.rom.C_inhom_bc  = C_inhom_bc;
-    options.rom.C_bc        = C_bc;
+    end
 else
     [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
     

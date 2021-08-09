@@ -6,10 +6,12 @@ if options.rom.bc_recon == 1
 elseif options.rom.bc_recon == 2
     Vbc = 0;
 elseif options.rom.bc_recon == 3
-    phi_bc = options.rom.phi_bc;
+%     phi_bc = options.rom.phi_bc;
     phi_inhom = options.rom.phi_inhom;
-    R1 = options.rom.R1;
-    Vbc = phi_inhom*R1*phi_bc'*get_bc_vector_yBC(t,options);
+%     R1 = options.rom.R1;
+%     error('wrong')
+%     Vbc = phi_inhom*R1*phi_bc'*get_bc_vector_yBC(t,options);
+    Vbc = phi_inhom*get_a_inhom(t,options);
 else
     Om_inv = options.grid.Om_inv;
     

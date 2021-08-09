@@ -61,7 +61,7 @@ end
 if (options.BC.BC_unsteady == 1)
     if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
         options = set_bc_vectors(t,options);
-    elseif (options.rom.bc_recon ~= 1)
+    elseif (options.rom.bc_recon ~= 1 && options.rom.bc_recon ~= 3)
         error('unsteady BC with precomputing not fully tested');
     end
 end
@@ -72,7 +72,11 @@ end
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
     if (options.rom.rom_bc == 2)
+        if options.rom.bc_recon == 3
+            [conv, dconv] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
+        else
         [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+        end
     else
         [conv, dconv] = convectionROM(R,t,options,getJacobian);
     end
@@ -87,7 +91,11 @@ end
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
     if (options.rom.rom_bc == 2)
+        if options.rom.bc_recon == 3
+            [Diff, dDiff] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
+        else
         [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+        end
     else
         [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
     end

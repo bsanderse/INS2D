@@ -90,11 +90,11 @@ vRi_i = yBC(1:yinl); %yBC = yBC(yinl+1:end);
 
 if (steady == 0 && options.BC.BC_unsteady==1)
     warning('bc_recon=3 and BC time derivative not implemented');
-%     dudtLe_i   = 0; %dudtBC(x(1),options.grid.yp,t,options);
-%     dudtRi_i   = 0; % dudtBC(x(end),options.grid.yp,t,options);
-%     
-%     dvdtLo_i   = 0; %dvdtBC(options.grid.xp,y(1),t,options);
-%     dvdtUp_i   = 0; %dvdtBC(options.grid.xp,y(end),t,options);
+    dudtLe_i   = 0; %dudtBC(x(1),options.grid.yp,t,options);
+    dudtRi_i   = 0; % dudtBC(x(end),options.grid.yp,t,options);
+    
+    dvdtLo_i   = 0; %dvdtBC(options.grid.xp,y(1),t,options);
+    dvdtUp_i   = 0; %dvdtBC(options.grid.xp,y(end),t,options);
 end
 
 pLe = options.BC.pLe;

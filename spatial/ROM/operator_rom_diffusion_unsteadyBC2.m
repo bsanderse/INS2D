@@ -13,12 +13,12 @@ Diffv  = options.discretization.Diffv;
 Diff_   = P*blkdiag(Diffu, Diffv)*B;
 Diff_inhom_ = P*blkdiag(Diffu, Diffv)*phi_inhom;
 
-phi_bc = options.rom_phi_bc;
+phi_bc = options.rom.phi_bc;
 M_bc = size(phi_bc,2);
 
 for i = 1:M_bc
     yBC = phi_bc(:,i);
-    options = set_bc_vectors_from_yBC(t,options,yBC);
+    options = set_bc_vectors_from_yBC(options,yBC);
     
     yDiffu1 = options.discretization.yDiffu;
     yDiffv1 = options.discretization.yDiffv;

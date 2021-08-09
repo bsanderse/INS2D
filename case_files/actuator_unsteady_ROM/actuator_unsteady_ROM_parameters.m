@@ -1,12 +1,14 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 1;
-% M_list = [10 10];
+M_list = [10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 2 5 10 20];
-M_list = [2 2 5 5 10 10 20 20];
+% M_list = [2 2 5 5 10 10 20 20];
 % M_list = kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 100*ones(1,5);
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
+
+Mbc = 2;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
@@ -70,9 +72,9 @@ end
     % 1:Nskip:Nsnapshots
     t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
-    precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
@@ -88,7 +90,7 @@ end
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; % 0: unsteady is always computed by solving a poisson eq
+    bc_recon =3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
                 

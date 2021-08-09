@@ -445,16 +445,17 @@ if (options.rom.bc_recon == 3)
     dt = snapshots.dt;
     t_end = snapshots.t_end;
     t_js = 0:dt:t_end;
-    X_bc = zeros(length(get_bc_vector_yBC(0,options),length(t_js)));
-    for j=1:length(t_js)
-        j = t_js(j);
-        X_bc(:,j) = get_bc_vector_yBC(t,options);
+    X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
+    for jj=1:length(t_js)
+        t_j = t_js(jj);
+        X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
     end
-    [U_bc,S_bc,V_bc] = svd(X_bc);
+    [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
     phi_bc = U_bc(:,1:Mbc);
     a_bc = phi_bc'*X_bc;
-    for j = 1:Mbc
-        Y_M(:,j) = get_yM(t,options,yBC);
+    for jj = 1:Mbc
+        yBC = phi_bc(:,jj);
+        Y_M(:,jj) = get_yM(t,options,yBC);
     end
     L = options.discretization.A;
     Gx   = options.discretization.Gx;
@@ -466,11 +467,12 @@ if (options.rom.bc_recon == 3)
     [Q_inhom,R_inhom] = qr(tilde_phi_inhom);
     M_inhom = rank(tilde_phi_inhom);
     Q_1_inhom = Q_inhom(:,1:M_inhom);
-    R_1_inhom = R_inhom(1:M_inhom,1:M_inhom);
+    R_inhom = R_inhom(1:M_inhom,:);
     phi_inhom = sqrt(Om).*Q_1_inhom;
-    a_inhom = R_1_inhom*a_bc;
+    a_inhom = R_inhom*a_bc;
     options.rom.phi_bc = phi_bc;
     options.rom.phi_inhom = phi_inhom;
+    options.rom.R_inhom = R_inhom;
 end
 
 %% precompute ROM operators by calling operator_rom
