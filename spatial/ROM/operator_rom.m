@@ -42,6 +42,16 @@ if options.rom.rom_bc == 2
     options.rom.C_inhom     = C_inhom;
     options.rom.C_inhom_bc  = C_inhom_bc;
     options.rom.C_bc        = C_bc;
+elseif options.rom.rom_bc == 3
+    [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
+        operator_rom_convection_unsteadyBC2(P,options);
+    
+    options.rom.C_hom       = C_hom;
+    options.rom.C_hom_inhom = C_hom_inhom;
+    options.rom.C_hom_bc    = C_hom_bc;
+    options.rom.C_inhom     = C_inhom;
+    options.rom.C_inhom_bc  = C_inhom_bc;
+    options.rom.C_bc        = C_bc;
 else
     [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
     
