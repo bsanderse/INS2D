@@ -26,68 +26,145 @@ Npy = options.grid.Npy;
 % % grid
 
 %% velocity
-Nu  = options.grid.Nu;
-Nv  = options.grid.Nv;
-Npx = options.grid.Npx;
-Npy = options.grid.Npy;   
-
-% streamfunction
-% psi = get_streamfunction2(V,t,options);
-
-% uh   = V(1:Nu);
-% vh   = V(Nu+1:Nu+Nv);
-% pres = reshape(p,Npx,Npy);
+% Nu  = options.grid.Nu;
+% Nv  = options.grid.Nv;
+% Npx = options.grid.Npx;
+% Npy = options.grid.Npy;   
 % 
-% figure(1)
-% clf
-% Axes = zeros(2);
-% [up,vp,qp] = get_velocity(V,t,options);
-% % list = 20;
-% figure(1)
-% set(gcf,'color','w');
+% % streamfunction
+% % psi = get_streamfunction2(V,t,options);
 % 
-% % Axes(1) = axes;
-% % contour(Axes(1),x(2:end-1),y(2:end-1),reshape(psi,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
-% % % colorbar
+% % uh   = V(1:Nu);
+% % vh   = V(Nu+1:Nu+Nv);
+% % pres = reshape(p,Npx,Npy);
+% % 
+% % figure(1)
+% % clf
+% % Axes = zeros(2);
+% % [up,vp,qp] = get_velocity(V,t,options);
+% % % list = 20;
+% % figure(1)
+% % set(gcf,'color','w');
+% % 
+% % % Axes(1) = axes;
+% % % contour(Axes(1),x(2:end-1),y(2:end-1),reshape(psi,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
+% % % % colorbar
+% % % axis equal
+% % % axis([x1 x2 y1 y2]);
+% % % hold off
+% % 
+% % Axes(2) = axes;
+% % % pcolor(xp,yp,qp')
+% % list = linspace(0.6,1.1,20);
+% % [~,c]=contour(Axes(2),xp,yp,qp');%,list);
+% % c.LineWidth = 1;
 % % axis equal
 % % axis([x1 x2 y1 y2]);
-% % hold off
+% % colorbar('Location','east')
+% % title('velocity magnitude')
 % 
-% Axes(2) = axes;
-% % pcolor(xp,yp,qp')
-% list = linspace(0.6,1.1,20);
-% [~,c]=contour(Axes(2),xp,yp,qp');%,list);
-% c.LineWidth = 1;
+% 
+% % linkaxes(Axes)
+% hold off
+% 
+% figure(2)
+% clf
+% figure(2)
+% set(gcf,'color','w');
+% [up,vp,qp] = get_velocity(V,t,options);
+% 
+% subplot(1,2,1)
+% [~,c_u]=contour(xp,yp,up');
+% c_u.LineWidth = 1;
 % axis equal
 % axis([x1 x2 y1 y2]);
 % colorbar('Location','east')
-% title('velocity magnitude')
+% title('velocity u component')
+% 
+% 
+% subplot(1,2,2)
+% [~,c_v]=contour(xp,yp,vp');
+% c_v.LineWidth = 1;
+% axis equal
+% axis([x1 x2 y1 y2]);
+% colorbar('Location','east')
+% title('velocity v component')
+% 
+% hold off
 
+%% ROM-FOM velocity error componentwise
+V_FOM = [snapshots.uh_total(n,:) snapshots.vh_total(n,:)]';
+[upFOM,vpFOM,qpFOM] = get_velocity(V_FOM,t,options);
+[upROM,vpROM,qpFOM] = get_velocity(V,t,options);
 
-% linkaxes(Axes)
+% bar_axis = [-1 1]*4e-4;
+bar_axis = [-1 1]*4e-7;
+
+figure(1)
+title('spatial error')
+subplot(2,2,1)
+uerror = (upFOM-upROM)';
+s = pcolor(uerror);
+caxis manual;          % allow subsequent plots to use the same color limits
+% caxis([0 4e-7]);
+caxis([bar_axis]);
+% axis equal
+% axis([x1 x2 y1 y2]);
+s.EdgeColor = 'none';
+title('ROM - FOM  u velocity error')
+% colorbar('Location','east')
+colorbar
+hold off
+ 
+% figure
+subplot(2,2,3)
+verror = (vpFOM-vpROM)';
+s = pcolor(verror);
+caxis manual;          % allow subsequent plots to use the same color limits
+% caxis([0 4e-7]);
+caxis([bar_axis]);
+% axis equal
+% axis([x1 x2 y1 y2]);
+s.EdgeColor = 'none';
+title('ROM - FOM  v velocity error')
+% colorbar('Location','east')
+colorbar
 hold off
 
-figure(2)
-clf
-figure(2)
-set(gcf,'color','w');
-[up,vp,qp] = get_velocity(V,t,options);
+if t == 0
+    umaxerror = uerror;
+    vmaxerror = verror;
+end
+umaxerror = bsxfun(@max,umaxerror,uerror);
+vmaxerror = bsxfun(@max,vmaxerror,verror);
 
-subplot(1,2,1)
-[~,c_u]=contour(xp,yp,up');
-c_u.LineWidth = 1;
-axis equal
-axis([x1 x2 y1 y2]);
-colorbar('Location','east')
-title('velocity u component')
-
-
-subplot(1,2,2)
-[~,c_v]=contour(xp,yp,vp');
-c_v.LineWidth = 1;
-axis equal
-axis([x1 x2 y1 y2]);
-colorbar('Location','east')
-title('velocity v component')
-
+subplot(2,2,2)
+s = pcolor(umaxerror);
+caxis manual;          % allow subsequent plots to use the same color limits
+% caxis([0 4e-7]);
+caxis([bar_axis]);
+% axis equal
+% axis([x1 x2 y1 y2]);
+s.EdgeColor = 'none';
+title('ROM - FOM  max u velocity error so far')
+% colorbar('Location','east')
+colorbar
 hold off
+ 
+% figure
+subplot(2,2,4)
+s = pcolor(vmaxerror);
+caxis manual;          % allow subsequent plots to use the same color limits
+% caxis([0 4e-7]);
+caxis([bar_axis]);
+% axis equal
+% axis([x1 x2 y1 y2]);
+s.EdgeColor = 'none';
+title('ROM - FOM  max v velocity error so far')
+% colorbar('Location','east')
+colorbar
+hold off
+
+if (t==t_end && exist('fig_destination') && j==Nsim)
+    savefig([fig_destination '/spatial error 4 plots'])
+end

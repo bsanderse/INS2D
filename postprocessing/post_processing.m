@@ -9,7 +9,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-    run(full_name);
+%     run(full_name);
 % %     actuator_unsteady_ROM_pp;
 else
     
@@ -19,8 +19,12 @@ end
 
 % line  = {'r-','b-','k-','m-','g-','c-'};
 % line2  = {'r--','b--','k--','m--','g--','c--'};
-line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
-line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
+% line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
+% line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
+line  = {'r-','r:','b-','b:','k-','k:','m-','m:'};
+line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.'};
+% line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
+% line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 color = char(line(j));
 color2 = char(line2(j));
 
@@ -85,10 +89,27 @@ if (options.rom.rom == 1)
 %                     D = spdiags(Om,0,numel(Om),numel(Om));
 %                     V_best = B*(B'*D*(snapshots_V_total-snapshots.Vbc))+snapshots.Vbc;
 
-                    V_best = B*(B'*(Om.*(snapshots_V_total-snapshots.Vbc)))+snapshots.Vbc;
+%                     V_best = B*(B'*(Om.*(snapshots_V_total-snapshots.Vbc)))+snapshots.Vbc;
+                    V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
                     error_V_best = V_best - snapshots_V_total;
 
                     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
+          
+                    %%      pfusch   
+if mod(j,2)==0
+figure
+
+plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
+hold on
+plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
+legend('show')
+xlabel('t')
+ylabel('error difference (M+20 CC) - M')
+else
+                    error_V_2_old = error_V_2;
+                    error_V_best_2_old = error_V_best_2;
+end
+%%
                     
                     figure(101)
 %                     plot(t_vec,error_V_inf);
@@ -114,7 +135,8 @@ if (options.rom.rom == 1)
 %                     legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                         legend('show')
-                        legend('show','NumColumns',2,'Orientation','horizontal')
+%                         legend('show','NumColumns',2,'Orientation','horizontal')
+                        legend('show','NumColumns',4,'Orientation','horizontal')
                          xlabel('t')
                          ylabel('velocity error')
                         title("\Omega_h-norm of velocity error")
@@ -169,17 +191,24 @@ if (options.rom.rom == 1)
 
                 end
                 
-                
-%                 figure(103)
-% %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
+                figure(103)
+%                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
-% %                 semilogy(t_vec,abs(k-k(1))/k(1));
-%                 hold on
-% %                 set(gca,'Yscale','log')
-%                 ylabel('energy error');
-% 
-% %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
-% %                 title('error in kinetic energy ROM');
+%                 semilogy(t_vec,abs(k-k(1))/k(1));
+
+%                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1),color,'displayname',"ROM M="+M+suffix);
+                semilogy(t_vec,abs(k-k(1))/k(1),color,'displayname',"ROM M="+M+suffix);
+
+                hold on
+%                 set(gca,'Yscale','log')
+%                 ylabel('energy error (K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)');
+%                 ylabel('energy error (K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)');
+                ylabel('energy error')
+
+%                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
+%                 legend('(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)')
+%                 title('error in kinetic energy ROM');
+                  legend('show')
 %                 
 %                 figure(104)
 %                 umom0 = snapshots.umom(1);
@@ -188,20 +217,23 @@ if (options.rom.rom == 1)
 %                 hold on
 %                 ylabel('momentum error');
 %                 
-%                 figure(105)
-% %                 plot(t_vec,maxdiv);
-%                 semilogy(t_vec,maxdiv,color,'displayname',"ROM M="+M+suffix);
-%                 hold on
-% %                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
-%                 if j==Nsim
-%                     semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
-%                 end
-%                 xlabel('t')
-% %                 ylabel('maximum divergence of velocity field');
+                figure(105)
+%                 plot(t_vec,maxdiv);
+                semilogy(t_vec,maxdiv,color,'displayname',"ROM M="+M+suffix);
+                hold on
+%                 plot(t_vec,snapshots.maxdiv(snapshot_indx));
+                if j==Nsim
+                    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
+                end
+                xlabel('t')
+%                 ylabel('maximum divergence of velocity field');
 %                 ylabel('maximum norm of continuity equation residual');
-%                 legend('show')
-%                 grid
-                
+                ylabel('maximum norm of mass conservation residual');
+                legend('show')
+                grid
+                if (exist('fig_destination') && j==Nsim)
+                    savefig([fig_destination '/continuity violation'])
+                end
                 
             end
             %         hold on

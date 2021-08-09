@@ -188,6 +188,6 @@ if (options.rom.precompute_diffusion == 1 || ...
     end
 end
 
-if (options.rom.carl_cons == 1 && options.rom.bc_recon ~= 2)
+if (options.rom.carl_cons == 1 && options.rom.bc_recon ~= 2 && options.rom.self_checked_CC_consistency == 0)
     error('Carlberg conservation only for ROM without lifting function');
 end

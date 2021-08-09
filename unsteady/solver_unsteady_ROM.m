@@ -156,22 +156,44 @@ if (options.rom.carl_cons == 1)
 % % figure
 % % Csum = sum(CC,2);
 % % [up,vp,qp] = get_velocity(Csum,t,options);
+%% actuator ROM specific
+% % pro_CC = eye(Nu + Nv);
+%   pro_CC = speye(Nu+Nv);
+%   
+% %     [X,Y] = meshgrid([48:52,28:32],[80:84]);
+% %     [X,Y] = meshgrid([1:240],[28:52]);
+%     [X,Y] = meshgrid([1:240],[20:60]);
+%     x_inds = sub2ind([240,80],X,Y);
+%     y_inds = sub2ind([240,81],X,Y)+Nu;
+%     CC = pro_CC(:,[x_inds y_inds]);
+% 
+% % CC = pro_CC(:,1:(Nu + Nv)-minus);
+% % CC = pro_CC(:,[1:Nu-minus_u, Nu+1:end-minus_v]);
+% 
+% % % CC = pro_CC(:,1:20);
+% % inds = [78 102];
+% % CC = pro_CC(:,inds);
+%% shear layer ROM specific
+%   pro_CC = speye(Nu+Nv);
+% CC = zeros(Nu+Nv,1);
+
+Nrc = 200; % here: sqrt(Nu)=sqrt(Nv)
+handy = 1:Nrc;
+% CC = sparse(Nu+Nv,1);
+% CC(200*50+handy) = 1/sqrt(200);
+handy1 = repmat(handy,1,Nrc);
+handy2 = repelem(handy,Nrc);
+handy3 = Nrc*(handy2-1)+handy1;
+CC_u = sparse(handy3,handy2,1/sqrt(Nrc),Nu+Nv,Nrc);
+
+handy4 = Nrc*(handy1-1)+handy2;
+CC_v = sparse(Nu+handy4,handy2,1/sqrt(Nrc),Nu+Nv,Nrc);
+
+CC = [CC_u CC_v];
+CC = CC(:,1:20);
+% CC = CC(:,[45:54, 146:155]);
+
 %%
-% pro_CC = eye(Nu + Nv);
-  pro_CC = speye(Nu+Nv);
-  
-%     [X,Y] = meshgrid([48:52,28:32],[80:84]);
-    [X,Y] = meshgrid([1:240],[28:52]);
-    x_inds = sub2ind([240,80],X,Y);
-    y_inds = sub2ind([240,81],X,Y)+Nu;
-    CC = pro_CC(:,[x_inds y_inds])
-
-% CC = pro_CC(:,1:(Nu + Nv)-minus);
-% CC = pro_CC(:,[1:Nu-minus_u, Nu+1:end-minus_v]);
-
-% % CC = pro_CC(:,1:20);
-% inds = [78 102];
-% CC = pro_CC(:,inds);
 Q_1 = sqrt(Om_inv).*CC;
 V_mod = sqrt(Om).*(V_svd - Q_1*Q_1'*(Om.*V_svd));
 [W,S,Z] = svd(V_mod,'econ');
@@ -418,6 +440,38 @@ end
 %         error('unsteady Vbc not implemented for non-weighted norm')
 %     end
 % end
+
+if (options.rom.bc_recon == 3)
+    dt = snapshots.dt;
+    t_end = snapshots.t_end;
+    t_js = 0:dt:t_end;
+    X_bc = zeros(length(get_bc_vector_yBC(0,options),length(t_js)));
+    for j=1:length(t_js)
+        j = t_js(j);
+        X_bc(:,j) = get_bc_vector_yBC(t,options);
+    end
+    [U_bc,S_bc,V_bc] = svd(X_bc);
+    phi_bc = U_bc(:,1:Mbc);
+    a_bc = phi_bc'*X_bc;
+    for j = 1:Mbc
+        Y_M(:,j) = get_yM(t,options,yBC);
+    end
+    L = options.discretization.A;
+    Gx   = options.discretization.Gx;
+    Gy   = options.discretization.Gy;
+    G = [Gx;Gy];
+    Om = options.grid.Om;
+    Om_inv = options.grid.Om_inv;
+    tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+    [Q_inhom,R_inhom] = qr(tilde_phi_inhom);
+    M_inhom = rank(tilde_phi_inhom);
+    Q_1_inhom = Q_inhom(:,1:M_inhom);
+    R_1_inhom = R_inhom(1:M_inhom,1:M_inhom);
+    phi_inhom = sqrt(Om).*Q_1_inhom;
+    a_inhom = R_1_inhom*a_bc;
+    options.rom.phi_bc = phi_bc;
+    options.rom.phi_inhom = phi_inhom;
+end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
