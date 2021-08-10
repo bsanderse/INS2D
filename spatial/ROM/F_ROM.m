@@ -73,9 +73,11 @@ if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
     if (options.rom.rom_bc == 2)
         if options.rom.bc_recon == 3
+%             [conv1, dconv1] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
             [conv, dconv] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
         else
         [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+%         norm(conv1-conv)
         end
     else
         [conv, dconv] = convectionROM(R,t,options,getJacobian);
@@ -92,9 +94,11 @@ if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
     if (options.rom.rom_bc == 2)
         if options.rom.bc_recon == 3
+%             [Diff1, dDiff1] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
             [Diff, dDiff] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
-        else
+        else % debugging
         [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+%         norm(Diff1-Diff)
         end
     else
         [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);

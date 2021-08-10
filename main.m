@@ -155,7 +155,8 @@ for j=1:Nsim
     
     %% initialize basis for lifting function Vbc
     if (options.rom.rom_bc == 2 && options.rom.bc_recon == 1)... % could also be used for rom = 0, pro_rom = 1
-            || (options.rom.rom_bc == 2 && options.rom.bc_recon == 2)
+        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 3) ... %only in debug mode
+        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 2)  
         run([folder_cases '/' case_name '/' case_name '_init_unsteady_Vbc.m']);
     end
         

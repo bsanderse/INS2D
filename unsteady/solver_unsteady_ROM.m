@@ -455,7 +455,7 @@ if (options.rom.bc_recon == 3)
     a_bc = phi_bc'*X_bc;
     for jj = 1:Mbc
         yBC = phi_bc(:,jj);
-        Y_M(:,jj) = get_yM(t,options,yBC);
+        Y_M(:,jj) = get_yM(options,yBC);
     end
     L = options.discretization.A;
     Gx   = options.discretization.Gx;
@@ -464,15 +464,18 @@ if (options.rom.bc_recon == 3)
     Om = options.grid.Om;
     Om_inv = options.grid.Om_inv;
     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
-    [Q_inhom,R_inhom] = qr(tilde_phi_inhom);
+    [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
     M_inhom = rank(tilde_phi_inhom);
     Q_1_inhom = Q_inhom(:,1:M_inhom);
     R_inhom = R_inhom(1:M_inhom,:);
-    phi_inhom = sqrt(Om).*Q_1_inhom;
+    phi_inhom = sqrt(Om_inv).*Q_1_inhom;
     a_inhom = R_inhom*a_bc;
     options.rom.phi_bc = phi_bc;
     options.rom.phi_inhom = phi_inhom;
     options.rom.R_inhom = R_inhom;
+    
+    options.rom.a_bc_matrix = a_bc;
+    options.rom.a_inhom_matrix = a_inhom;
 end
 
 %% precompute ROM operators by calling operator_rom

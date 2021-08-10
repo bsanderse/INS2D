@@ -5,9 +5,9 @@ visc = options.case.visc;
 R_inhom = get_a_inhom(t,options);
 R_bc    = get_a_bc(t,options);
 
-Diff  = options.rom.Diff;
-DiffBC  = options.rom.DiffBC;
-yDiff = options.rom.yDiff;
+Diff  = options.rom.Diff2;
+DiffBC  = options.rom.DiffBC2;
+yDiff = options.rom.yDiff2;
 
 Jac = 0;%spalloc(M,M,0);
 

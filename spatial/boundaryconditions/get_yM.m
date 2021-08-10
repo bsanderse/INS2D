@@ -1,4 +1,4 @@
-function yM = get_yM(t,options,yBC)
+function yM = get_yM(options,yBC)
 % construct boundary conditions
 
 

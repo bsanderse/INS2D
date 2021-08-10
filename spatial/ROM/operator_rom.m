@@ -23,10 +23,10 @@ if options.rom.rom_bc == 2
     if options.rom.bc_recon == 3
             [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC2(P,options);
   
-            options.rom.Diff   = Diff;
-            options.rom.DiffBC = DiffBC;
-            options.rom.yDiff  = yDiff;
-    else
+            options.rom.Diff2   = Diff;
+            options.rom.DiffBC2 = DiffBC;
+            options.rom.yDiff2  = yDiff;
+    else %debbuging
     [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
   
     options.rom.Diff   = Diff;
@@ -45,13 +45,13 @@ if options.rom.rom_bc == 2
         [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
             operator_rom_convection_unsteadyBC2(P,options);
         
-        options.rom.C_hom       = C_hom;
-        options.rom.C_hom_inhom = C_hom_inhom;
-        options.rom.C_hom_bc    = C_hom_bc;
-        options.rom.C_inhom     = C_inhom;
-        options.rom.C_inhom_bc  = C_inhom_bc;
-        options.rom.C_bc        = C_bc;
-    else
+        options.rom.C_hom2       = C_hom;
+        options.rom.C_hom_inhom2 = C_hom_inhom;
+        options.rom.C_hom_bc2    = C_hom_bc;
+        options.rom.C_inhom2     = C_inhom;
+        options.rom.C_inhom_bc2  = C_inhom_bc;
+        options.rom.C_bc2        = C_bc;
+    else % debugging
     [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
         operator_rom_convection_unsteadyBC(P,options);
     

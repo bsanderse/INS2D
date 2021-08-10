@@ -6,9 +6,12 @@ f__       = options.discretization.yM;
 dp__      = pressure_poisson(f__,t,options);
 Vbc__     = - Om_inv__.*(options.discretization.G*dp__);
 
-options.rom.Vbc0 = Vbc__;
+Om__ = options.grid.Om;
+normali = norm(sqrt(Om__).*Vbc__);
+
+options.rom.Vbc0 = Vbc__/normali;
 options.rom.yM0  = options.discretization.yM;
-options.rom.abc  = @(t) cos(pi/6*sin(t/2));
+options.rom.abc  = @(t) cos(pi/6*sin(t/2))*normali;
 
 uBC1 = @(x,y,t,options) actuator_unsteady_ROM_uBC1(x,y,t,options);
 vBC1 = @(x,y,t,options) actuator_unsteady_ROM_vBC1(x,y,t,options);

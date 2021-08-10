@@ -12,6 +12,11 @@ elseif options.rom.bc_recon == 3
 %     error('wrong')
 %     Vbc = phi_inhom*R1*phi_bc'*get_bc_vector_yBC(t,options);
     Vbc = phi_inhom*get_a_inhom(t,options);
+    
+    
+    Vbc11 = options.rom.Vbc0*options.rom.abc(t);
+    norm(Vbc-Vbc11)
+    norm(Vbc+Vbc11)
 else
     Om_inv = options.grid.Om_inv;
     
