@@ -80,7 +80,7 @@ else
                     options = set_bc_vectors(t_j,options)
                     f       = options.discretization.yM;
                     dp      = pressure_poisson(f,t,options);
-                    Vbc(:,jj)  = - Om_inv.*(options.discretization.G*dp);
+                    Vbc     = - Om_inv.*(options.discretization.G*dp);
                 end
             end
             V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0

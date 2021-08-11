@@ -27,15 +27,15 @@ if options.rom.rom_bc == 2
             options.rom.DiffBC2 = DiffBC2;
             options.rom.yDiff2  = yDiff2;
             %debbuging
-            [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
-            
-            options.rom.Diff   = Diff;
-            options.rom.DiffBC = DiffBC;
-            options.rom.yDiff  = yDiff;
-            
-            norm(Diff2-Diff)
-            norm(DiffBC2-DiffBC)
-            norm(yDiff2-yDiff)
+%             [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
+%             
+%             options.rom.Diff   = Diff;
+%             options.rom.DiffBC = DiffBC;
+%             options.rom.yDiff  = yDiff;
+%             
+%             norm(Diff2-Diff)
+%             norm(DiffBC2-DiffBC)
+%             norm(yDiff2-yDiff)
     else 
     [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
   
@@ -62,22 +62,22 @@ if options.rom.rom_bc == 2
         options.rom.C_inhom_bc2  = C_inhom_bc2;
         options.rom.C_bc2        = C_bc2;
         % debugging
-        [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
-            operator_rom_convection_unsteadyBC(P,options);
-        
-        options.rom.C_hom       = C_hom;
-        options.rom.C_hom_inhom = C_hom_inhom;
-        options.rom.C_hom_bc    = C_hom_bc;
-        options.rom.C_inhom     = C_inhom;
-        options.rom.C_inhom_bc  = C_inhom_bc;
-        options.rom.C_bc        = C_bc;
-        
-        norm(C_hom2-C_hom)
-        norm(C_hom_inhom2-C_hom_inhom)
-        norm(C_hom_bc2-C_hom_bc)
-        norm(C_inhom2-C_inhom)
-        norm(C_inhom_bc2-C_inhom_bc)
-        norm(C_bc2-C_bc)
+%         [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
+%             operator_rom_convection_unsteadyBC(P,options);
+%         
+%         options.rom.C_hom       = C_hom;
+%         options.rom.C_hom_inhom = C_hom_inhom;
+%         options.rom.C_hom_bc    = C_hom_bc;
+%         options.rom.C_inhom     = C_inhom;
+%         options.rom.C_inhom_bc  = C_inhom_bc;
+%         options.rom.C_bc        = C_bc;
+%         
+%         norm(C_hom2-C_hom)
+%         norm(C_hom_inhom2-C_hom_inhom)
+%         norm(C_hom_bc2-C_hom_bc)
+%         norm(C_inhom2-C_inhom)
+%         norm(C_inhom_bc2-C_inhom_bc)
+%         norm(C_bc2-C_bc)
     else
     [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
         operator_rom_convection_unsteadyBC(P,options);

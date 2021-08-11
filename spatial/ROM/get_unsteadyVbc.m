@@ -14,9 +14,9 @@ elseif options.rom.bc_recon == 3
     Vbc = phi_inhom*get_a_inhom(t,options);
     
     
-    Vbc11 = options.rom.Vbc0*options.rom.abc(t);
-    norm(Vbc-Vbc11)
-    norm(Vbc+Vbc11)
+%     Vbc11 = options.rom.Vbc0*options.rom.abc(t);
+%     norm(Vbc-Vbc11)
+%     norm(Vbc+Vbc11)
 else
     Om_inv = options.grid.Om_inv;
     
