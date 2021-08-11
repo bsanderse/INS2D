@@ -451,6 +451,7 @@ if (options.rom.bc_recon == 3)
         X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
     end
     [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
+%     [U_bc,S_bc,V_bc] = svd(-X_bc,'econ'); %pfusch
     phi_bc = U_bc(:,1:Mbc);
     a_bc = phi_bc'*X_bc;
     for jj = 1:Mbc
@@ -463,11 +464,12 @@ if (options.rom.bc_recon == 3)
     G = [Gx;Gy];
     Om = options.grid.Om;
     Om_inv = options.grid.Om_inv;
-    tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+%     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+    tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
     [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
     M_inhom = rank(tilde_phi_inhom);
-    Q_1_inhom = Q_inhom(:,1:M_inhom);
-    R_inhom = R_inhom(1:M_inhom,:);
+    Q_1_inhom = -Q_inhom(:,1:M_inhom);
+    R_inhom = -R_inhom(1:M_inhom,:);
     phi_inhom = sqrt(Om_inv).*Q_1_inhom;
     a_inhom = R_inhom*a_bc;
     options.rom.phi_bc = phi_bc;
