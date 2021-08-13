@@ -1,14 +1,15 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-M_list = [10 10];
-% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+run_multiple = 1;
+% M_list = [10 10 10 10];
+M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
 % M_list = kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 100*ones(1,5);
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
-Mbc_list = [2 4 10 20 40];
-Mbc = Mbc_list(j);
+% Mbc_list = [2 4 10 20];
+% Mbc = Mbc_list(j);
+Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
@@ -20,7 +21,7 @@ changing_snapshotdata = 1;
 % else
 %     suffix = " mc";
 % end
-suffix = "Mbc = "+num2str(Mbc);
+suffix = " Mbc = "+num2str(Mbc);
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -87,7 +88,10 @@ suffix = "Mbc = "+num2str(Mbc);
 
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_3/matlab_data.mat'; %M2S4R4 2nd pc
 
-    snapshot_data = 'results/actuator_unsteady_ROM_manipulatedBC/matlab_data.mat'; %M2S4R4 2nd pc
+%     snapshot_data =
+%     'results/actuator_unsteady_ROM_manipulatedBC/matlab_data.mat';
+%     %M2S4R4 2nd pc wrong initial condition
+    snapshot_data = 'results/actuator_unsteady_ROM_manipulatedBC_2/matlab_data.mat'; %M2S4R4 2nd pc
 
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
@@ -213,9 +217,9 @@ suffix = "Mbc = "+num2str(Mbc);
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

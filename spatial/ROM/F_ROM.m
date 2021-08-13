@@ -76,8 +76,9 @@ if (options.rom.precompute_convection == 1)
 %             [conv1, dconv1] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
             [conv, dconv] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
         else % debugging
-        [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
-%         norm(conv1-conv)
+            [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+%         [conv0, dconv0] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+%         norm(conv0-conv)
         end
     else
         [conv, dconv] = convectionROM(R,t,options,getJacobian);
@@ -97,8 +98,9 @@ if (options.rom.precompute_diffusion == 1)
 %             [Diff1, dDiff1] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
             [Diff, dDiff] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
         else % debugging
-        [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
-%         norm(Diff1-Diff)
+            [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+%         [Diff0, dDiff0] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+%         norm(Diff0-Diff)
         end
     else
         [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);

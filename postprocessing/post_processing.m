@@ -17,12 +17,12 @@ else
     
 end
 
-% line  = {'r-','b-','k-','m-','g-','c-'};
-% line2  = {'r--','b--','k--','m--','g--','c--'};
+line  = {'r-','b-','k-','m-','g-','c-'};
+line2  = {'r--','b--','k--','m--','g--','c--'};
 % line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
-line  = {'r-','r:','b-','b:','k-','k:','m-','m:'};
-line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.'};
+% line  = {'r-','r:','b-','b:','k-','k:','m-','m:'};
+% line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.'};
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 color = char(line(j));
@@ -89,26 +89,26 @@ if (options.rom.rom == 1)
 %                     D = spdiags(Om,0,numel(Om),numel(Om));
 %                     V_best = B*(B'*D*(snapshots_V_total-snapshots.Vbc))+snapshots.Vbc;
 
-%                     V_best = B*(B'*(Om.*(snapshots_V_total-snapshots.Vbc)))+snapshots.Vbc;
-                    V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+                    V_best = B*(B'*(Om.*(snapshots_V_total-snapshots.Vbc)))+snapshots.Vbc;
+%                     V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
                     error_V_best = V_best - snapshots_V_total;
 
                     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
           
                     %%      pfusch   
-if mod(j,2)==0
-figure
-
-plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
-hold on
-plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
-legend('show')
-xlabel('t')
-ylabel('error difference (M+20 CC) - M')
-else
-                    error_V_2_old = error_V_2;
-                    error_V_best_2_old = error_V_best_2;
-end
+% if mod(j,2)==0
+% figure
+% 
+% plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
+% hold on
+% plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
+% legend('show')
+% xlabel('t')
+% ylabel('error difference (M+20 CC) - M')
+% else
+%                     error_V_2_old = error_V_2;
+%                     error_V_best_2_old = error_V_best_2;
+% end
 %%
                     
                     figure(101)
@@ -135,8 +135,8 @@ end
 %                     legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                         legend('show')
-%                         legend('show','NumColumns',2,'Orientation','horizontal')
-                        legend('show','NumColumns',4,'Orientation','horizontal')
+                        legend('show','NumColumns',2,'Orientation','horizontal')
+%                         legend('show','NumColumns',4,'Orientation','horizontal')
                          xlabel('t')
                          ylabel('velocity error')
                         title("\Omega_h-norm of velocity error")
