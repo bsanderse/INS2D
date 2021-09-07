@@ -104,18 +104,14 @@ if (options.rom.rom == 1)
           
                     %%      pfusch   
 if mod(j,2)==0
-figure(77)
-subplot(2,2,j/2)
-% plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
-plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors"); %(2:end)./error_V_2_norm(2:end));
+figure
+
+plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
 hold on
-% plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
-plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors"); %(2:end)./error_V_2_norm(2:end));
+plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
 legend('show')
 xlabel('t')
 ylabel('error difference (M+20 CC) - M')
-ylabel('error difference')
-
 else
                     error_V_2_old = error_V_2;
                     error_V_best_2_old = error_V_best_2;
