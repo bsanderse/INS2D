@@ -17,16 +17,16 @@ Mbc = 20;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
-% if mod(j,2)==0 %j>4 %false %j>4
-% %     suffix = " mc";
-% %     suffix = " CC";
-% %     suffix = " without lifting function";
-%     suffix = " POD";
-% else
-% %     suffix = " mc";
-%     suffix = " Mbc = "+num2str(Mbc);
-% end
-suffix = " Mbc = "+num2str(Mbc);
+if mod(j,2)==0 %j>4 %false %j>4
+%     suffix = " mc";
+%     suffix = " CC";
+%     suffix = " without lifting function";
+    suffix = " POD";
+else
+%     suffix = " mc";
+    suffix = " Mbc = "+num2str(Mbc);
+end
+% suffix = " Mbc = "+num2str(Mbc);
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -105,8 +105,8 @@ suffix = " Mbc = "+num2str(Mbc);
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used

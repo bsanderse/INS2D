@@ -595,7 +595,12 @@ while(n<=nt)
     
     % perform one time step with the time integration method
     if (method == 20)
-        time_ERK_ROM;
+        %pfusch
+        if options.rom.bc_recon ==2
+            time_ERK;
+        else
+            time_ERK_ROM;
+        end
     elseif (method == 21)
         time_IRK_ROM;
     else

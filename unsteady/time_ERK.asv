@@ -158,9 +158,7 @@ else
     p = pressure_additional_solve(V,p,tn+dt,options);
 end
 
-%% pfusch
-    V = R;
-%%
+%% 
 
 Vnew = V;
 pnew = p;
