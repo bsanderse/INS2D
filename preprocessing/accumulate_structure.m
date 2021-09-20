@@ -25,8 +25,8 @@ voi={
     'steady',       [];...    % 0: unsteady; 1: steady
     'visc',         [];...    % 'laminar', 'keps','ML','LES,'qr'
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
-    'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing
-    'ibm', 0; % 0: no immersed boundary method; 1: immersed boundary method
+    'ibm', 0; ... % 0: no immersed boundary method; 1: immersed boundary method
+%     'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing    
     };
 
 accumulate_object;
@@ -93,6 +93,7 @@ voi = {
     'Ct',   0; ... % thrust coefficient for actuator disk computations
     'D',    1; ... % actuator disk diameter
     'isforce', 0; ... % presence of a force file 
+    'force_unsteady', 0; ... % steady (0) or unsteady (1) force
 };
 
 accumulate_object;

@@ -42,9 +42,9 @@ else
     
     
     %% initial velocity field
-    uh    = u_start(:);
-    vh    = v_start(:);
-    V     = [uh; vh];
+%     uh    = u_start(:);
+%     vh    = v_start(:);
+    V     = V_start; %[uh; vh];
     V_old = V;
     
     
@@ -99,10 +99,9 @@ else
         %         uh = V(1:Nu); vh = V(Nu+1:end);
         % repeat conservation with updated velocity field
         [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
-    else
-        [symmetry_flag, symmetry_error] = check_symmetry(uh,vh,t,options);
-        
     end
+    
+    [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);
     
     
     %% initialize pressure
@@ -157,9 +156,9 @@ else
         vh_total = zeros(nt,options.grid.Nv);
         p_total  = zeros(nt,options.grid.Np);
         % store initial solution
-        uh_total(1,:) = uh;
-        vh_total(1,:) = vh;
-        p_total(1,:)  = p;
+        uh_total(1,:) = u_start(:);
+        vh_total(1,:) = v_start(:);
+        p_total(1,:)  = p_start(:);
     end
     
     

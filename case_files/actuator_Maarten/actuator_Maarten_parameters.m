@@ -36,7 +36,7 @@
     Ct = [1;1]*4*a_ind/(1-a_ind); % thrust coefficient actuator disk
     D  = [1;1]*178.4;     % diameter actuator disk
     
-    force_unsteady     = 0; % set to 1 if force is time dependent
+    force_unsteady     = 1; % set to 1 if force is time or velocity dependent
     
     % immersed boundary method
     ibm     = 0;

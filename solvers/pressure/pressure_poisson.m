@@ -26,12 +26,15 @@ end
 
 % choose a method to solve the Poisson equation
 if (poisson==1)
-    % using pre-determined LU decomposition
-%     L   = options.solversettings.L;
-%     U   = options.solversettings.U;
-%     b   = L\f;
-%     dp  = U\b;
-    dp  = options.solversettings.decomp\f;
+    %  using pre-determined decomposition
+    if (verLessThan('matlab','9.3'))    
+        L   = options.solversettings.L;
+        U   = options.solversettings.U;
+        b   = L\f;
+        dp  = U\b;
+    else
+        dp  = options.solversettings.decomp\f;
+    end
 elseif (poisson==2)
     % using preconditioned CG
     L   = options.solversettings.L;

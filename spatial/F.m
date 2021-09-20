@@ -18,6 +18,7 @@ end
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+NV = options.grid.NV;
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
@@ -41,7 +42,21 @@ end
 [d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
 
 % body force
-[Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+if (options.force.isforce == 1)
+    if (options.force.force_unsteady == 1)
+        [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+    else
+        Fx = options.force.Fx;
+        Fy = options.force.Fy;
+        dFx = spalloc(Nu,NV,0);
+        dFy = spalloc(Nv,NV,0);            
+    end
+else
+    Fx  = zeros(Nu,1);
+    Fy  = zeros(Nv,1);
+    dFx = spalloc(Nu,NV,0);
+    dFy = spalloc(Nv,NV,0);      
+end
 
 % residual in Finite Volume form, including the pressure contribution
 Fu   = - convu + d2u + Fx;

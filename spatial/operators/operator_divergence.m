@@ -245,11 +245,15 @@ if (steady == 0 && ~strcmp(visc,'keps'))
         options.solversettings.U = U;        
     end
     if (poisson==1)
-        fprintf(fcw,'LU decomposition of pressure matrix...\n');
-%         [L, U] = lu(A);
-%         options.solversettings.L = L;
-%         options.solversettings.U = U;
-        options.solversettings.decomp = decomposition(A);
+        fprintf(fcw,'Decomposition of pressure matrix...\n');
+        if (verLessThan('matlab','9.3'))
+            warning('You use a relatively old Matlab version (older than 2017b), LU decomposition will be used');
+            [L, U] = lu(A);
+            options.solversettings.L = L;
+            options.solversettings.U = U;
+        else            
+            options.solversettings.decomp = decomposition(A);
+        end
     end
     
     if (poisson==5)

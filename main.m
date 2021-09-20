@@ -161,7 +161,11 @@ for j=1:Nsim
     if (exist(file_name_force,'file'))
         % create function handle with name bodyforce
         options.force.isforce   = 1;
-        options.force.bodyforce = str2func(file_name_force);  
+        options.force.bodyforce = str2func(file_name_force); 
+        % steady force can be precomputed once:
+        if (options.force.force_unsteady==0)
+            [options.force.Fx,options.force.Fy] = force(V_start,t,options,0);
+        end        
     else
         options.force.isforce   = 0;
     end

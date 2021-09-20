@@ -1,10 +1,16 @@
-function [flag, symmetry_error] = check_symmetry(uh,vh,t,options)
+function [flag, symmetry_error] = check_symmetry(V,t,options)
 % check symmetry of convection operator
 % flag = 0: no symmetry error
 % flag = 1: symmetry error
 
 eps = 1e-14;
 fcw = options.output.fcw;
+
+indu = options.grid.indu;
+indv = options.grid.indv;
+
+uh = V(indu);
+vh = V(indv);
 
 BC  = options.BC;
 

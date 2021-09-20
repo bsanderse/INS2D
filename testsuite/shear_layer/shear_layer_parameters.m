@@ -107,11 +107,12 @@
 %%% solver settings
 
     % pressure
-    poisson          = 1; % 1: direct solver, 
+    poisson          = 6; % 1: direct solver, 
                           % 2: CG with ILU (matlab), 
                           % 3: CG mexfile, 
                           % 4: CG with IC, own Matlab impl.
                           % 5: Petsc
+                          % 6: FFT                          
     p_initial        = 1; % calculate pressure field compatible
                           % with the velocity field at t=0
     p_add_solve      = 1; % do additional pressure solve to make it same 
