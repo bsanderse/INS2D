@@ -1,4 +1,86 @@
-%% post-processing Taylor-Green
+%% post-processing Taylor-Green: 
+
+fontsize = 12;
+fontname = 'Helvetica';
+set(0,'defaultlinelinewidth',2)
+
+
+%% some plots
+
+% velocity
+figure
+set(gcf,'DefaultAxesFontSize',fontsize,'DefaultAxesFontName',fontname);
+set(gcf,'Color','w');
+[up,vp,qp] = get_velocity(V,t,options);
+contour(xp,yp,qp',25)
+axis square
+xlim([options.grid.x1 options.grid.x2]);
+ylim([options.grid.y1 options.grid.y2]);
+xlabel('x')
+ylabel('y')
+colorbar
+grid
+title(['velocity, t=' num2str(t)]);
+colorbar
+
+
+% vorticity
+figure
+omega = get_vorticity(V,t,options);
+omega2D = reshape(omega,Npx+1,Npy+1);
+labels= linspace(-6,6,20);
+contour(x,y,omega2D',labels,'LineWidth',2);
+axis square
+colorbar
+grid
+title(['vorticity, t=' num2str(t)]);
+
+% streamfunction
+if (options.rom.rom == 1 )
+    switch options.rom.rom_type
+        case 'FDG'
+            %plot streamfunction, given by coefficients R
+            
+            figure
+            set(gcf,'DefaultAxesFontSize',fontsize,'DefaultAxesFontName',fontname);
+            set(gcf,'Color','w');
+
+            psi2D = reshape(R,Npx,Npy);
+        %     labels= linspace(-6,6,20);
+            contour(x(1:end-1),y(1:end-1),psi2D',25,'LineWidth',2);
+            axis square
+            colorbar
+            grid
+            title(['streamfunction, t=' num2str(t)]);
+            xlabel('x')
+            ylabel('y')
+            xlim([options.grid.x1 options.grid.x2]);
+            ylim([options.grid.y1 options.grid.y2]);
+            
+        otherwise
+            % do nothing
+    end
+end
+
+% pressure
+if (options.rom.rom == 1 )
+    % for roms we do this 'quick and dirty' by solving at the FOM level
+    % this also works if pressure_recovery is not switched on
+    p = pressure_additional_solve(V,p,t,options);
+end
+
+figure
+% omega = get_vorticity(V,t,options);
+p2D = reshape(p,Npx,Npy);
+% labels= linspace(-6,6,20);
+contour(xp,yp,p2D',25,'LineWidth',2);
+axis square
+colorbar
+grid
+title(['pressure, t=' num2str(t)]);
+
+%% error analysis
+
 xu = options.grid.xu;
 yu = options.grid.yu;
 xv = options.grid.xv;
@@ -84,6 +166,7 @@ if (j==Nsim && Nsim>1)
     loglog(1./mesh_list,p_error_i,'d-');
     legend('u','v','k','p');
     grid on
+    
 end
 
 % % convection

@@ -3,21 +3,20 @@ function [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian)
 % in Finite Volume setting, so integrated
 % dFx, dFy are the Jacobians dFx/dV and dFy/dV
 
-force_unsteady = options.case.force_unsteady;
-
-
 if (options.force.isforce == 1)
     % create function handle with name bodyforce
     [Fx, Fy, dFx, dFy]  = options.force.bodyforce(V,t,options,getJacobian);
 else
-    % 
+    % no body force file, set to zero
     Nu = options.grid.Nu;
     Nv = options.grid.Nv;
     Fx = zeros(Nu,1);
     Fy = zeros(Nv,1);
     dFx = spalloc(Nu,Nu+Nv,0);
     dFy = spalloc(Nv,Nu+Nv,0);    
-    
+       
+    % no body force file, but unsteady has been switched on: give error
+    force_unsteady = options.force.force_unsteady;
     if (force_unsteady == 1)
         error(['Body force file ' file_name ' not available']);
     end

@@ -17,5 +17,8 @@ deltay = L_y/Ny;               % uniform mesh size y-direction
 x      = nonuniform_grid(deltax,x1,x2,sx);
 y      = nonuniform_grid(deltay,y1,y2,sy);
 
+% for testing on non-uniform (but periodic)  meshes:
+% x      = (L_x/2) * (1 - cos(pi*x/L_x));
+% y      = (L_y/2) * (1 - cos(pi*y/L_y));
 
 end

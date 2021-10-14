@@ -13,29 +13,38 @@ elseif (options.rom.weighted_norm == 1)
     Diag = ones(NV,1);
 end
 
-% this is the projector for the momentum equations:
-P = B'*spdiags(Diag,0,NV,NV);
+if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
+    options.rom.precompute_force == 1)
+    % this is the projector for the momentum equations:
+    P = B'*spdiags(Diag,0,NV,NV);
 
-
+end
 
 %% diffusion
-[yDiff,Diff] = operator_rom_diffusion(P,options);
+if (options.rom.precompute_diffusion == 1)
+    [yDiff,Diff] = operator_rom_diffusion(P,options);
 
-options.rom.Diff  = Diff;
-options.rom.yDiff = yDiff;
+    options.rom.Diff  = Diff;
+    options.rom.yDiff = yDiff;
+end
 
 %% convection 
-[conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
+if (options.rom.precompute_convection == 1)
+    [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
 
-options.rom.Conv_quad   = conv_quad;
-options.rom.Conv_linear = conv_linear;
-options.rom.yConv       = conv_bc;
+    options.rom.Conv_quad   = conv_quad;
+    options.rom.Conv_linear = conv_linear;
+    options.rom.yConv       = conv_bc;
+end
 
 %% body force
-% construct at t=t_start with dummy velocity field
-[Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
-F        = P*[Fx;Fy];
-options.rom.F = F;
+% always precomputed if forcing is steady
+if (options.rom.precompute_force == 1)
+    % construct at t=t_start with dummy velocity field
+    [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
+    F        = P*[Fx;Fy];
+    options.rom.F = F;
+end
 
 %% pressure
 % the pressure gradient term in the momentum equation disappears in the ROM

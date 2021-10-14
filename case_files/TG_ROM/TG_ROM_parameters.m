@@ -1,7 +1,7 @@
 % input file                
 % project = 'TG';   % project name used in filenames
-run_multiple = 0;
-mesh_list    = 100; %[10 20 40 80];
+run_multiple = 1;
+mesh_list    = [40]; % 20 40 80];
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,9 +19,9 @@ mesh_list    = 100; %[10 20 40 80];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 2*pi;
+    x2      = 2;
     y1      = 0;
-    y2      = 2*pi;
+    y2      = 2;
 
     Nx      = mesh_list(j);         % number of volumes in the x-direction
     Ny      = mesh_list(j);         % number of volumes in the y-direction
@@ -50,20 +50,20 @@ mesh_list    = 100; %[10 20 40 80];
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    rom_type = 'FDG';
-    M      = 49;     % number of modes used
+    rom_type = 'FDG'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
+    M      = 2;     % number of modes used (not used for FDG)
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
 
-    precompute_convection = 1;
-    precompute_diffusion  = 1;
-    precompute_force      = 1;
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0;
     pressure_recovery     = 0;
     pressure_precompute   = 0;
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
-    weighted_norm         = 0;    
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation)     
+    weighted_norm         = 1;    
 %     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
 %     mom_cons              = 0; %j>4;
     
