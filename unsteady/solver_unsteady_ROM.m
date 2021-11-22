@@ -499,6 +499,9 @@ end
 
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
+%pfusch
+V_true = V;
+%
 
 if (options.rom.process_iteration_FOM == 1)
     % map back to velocity space to get statistics of initial velocity field
@@ -579,6 +582,8 @@ disp('starting time-stepping...');
 
 time_start = toc
 
+coefficients = zeros(M,nt);
+
 while(n<=nt)
     
     %% dynamic timestepping:
@@ -596,18 +601,23 @@ while(n<=nt)
     % perform one time step with the time integration method
     if (method == 20)
         %pfusch
-        if options.rom.bc_recon ==2
-            time_ERK;
-        else
+%         if options.rom.bc_recon ==2
+%             Vn = R;
+%             pn = p;
+%             tn = t;
+%             [R,p]=time_ERK(Vn,pn,tn,dt,options);
+% %             [R,p,V_true]=time_ERK(Vn,pn,tn,dt,options,V_true);
+%         else
             time_ERK_ROM;
-        end
+%         end
     elseif (method == 21)
         time_IRK_ROM;
     else
         error('time integration method unknown');
     end
-    
-    
+     
+    coefficients(:,n) = R;
+        
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:
     t = t + dt;

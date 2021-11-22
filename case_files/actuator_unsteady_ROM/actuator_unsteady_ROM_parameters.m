@@ -1,8 +1,9 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-M_list = [10 10 10 10];
+run_multiple = 1;
+% M_list = [10 10];
+% M_list = [10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-% M_list = kron([2 5 10 20 40],[1 1]);
+M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 
 
@@ -18,6 +19,7 @@ Mbc = 20;
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
 if mod(j,2)==0 %j>4 %false %j>4
+% if false %j>4
 %     suffix = " mc";
 %     suffix = " CC";
 %     suffix = " without lifting function";
@@ -27,6 +29,7 @@ else
     suffix = " Mbc = "+num2str(Mbc);
 end
 % suffix = " Mbc = "+num2str(Mbc);
+% suffix = "POD";
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -79,12 +82,15 @@ end
     % 1:Nskip:Nsnapshots
     t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
-    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-%     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_convection = 0;
+%     precompute_diffusion  = 0;
+%     precompute_force      = 0;
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
@@ -105,6 +111,7 @@ end
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
+%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq

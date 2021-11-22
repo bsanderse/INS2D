@@ -1,4 +1,5 @@
 function [Vnew,pnew] = time_ERK(Vn,pn,tn,dt,options)
+% function [Vnew,pnew,V_true2] = time_ERK(Vn,pn,tn,dt,options,V_true)
 
 %% general explicit Runge-Kutta method
 
@@ -43,7 +44,10 @@ end
 % tn     = t;
 % Vn     = V;
 % pn     = p;
-V = Vn;
+
+% V = Vn;
+% V = V_true;
+% Vn = V_true;
 p = pn;
 
 % right hand side evaluations, initialized at zero
@@ -62,6 +66,8 @@ M      = options.discretization.M;
 % boundary condition for divergence operator (known from last time step)
 yMn    = options.discretization.yM;
 yM     = yMn;
+
+% norm(M*V_true+yM)
 
 ti = tn;
 
@@ -125,9 +131,13 @@ for i_RK=1:s_RK
     
     % update velocity current stage, which is now divergence free
     V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
+    norm(M*V+yM)
+%     V_true2 = V_true + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
+%     norm(M*V_true2+yM)
     %pfusch
     if options.rom.bc_recon == 2
         R = Rn + dt*phi'*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
+        V = getFOM_velocity(R,tn,options);
     end
 end
 

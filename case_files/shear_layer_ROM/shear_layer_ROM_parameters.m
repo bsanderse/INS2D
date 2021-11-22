@@ -4,9 +4,10 @@ run_multiple = 1;
 % M_list = [2 4 8 16];
 % M_list = 16;
 % M_list = [36 16];
-M_list = [22 2 24 4 28 8 36 16];
+% M_list = [22 2 24 4 28 8 36 16];
 % M_list = [32 64 32 64];
 % M_list = [16 16 18];
+M_list = [32 32];
 % M_list = [32 32 34];
 % M_list = [64 64 66];
 % M_list = [2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
@@ -16,12 +17,17 @@ mesh_list = ones(length(M_list),1);
 % method_list = {'Mid00','Mid00','Mid00','Mid00','RK44','RK44','RK44','RK44'};
 
 if mod(j,2)~=0 %false %j>4
+% if ~(j>4)
 % if j>1 %false %j>4
 %     suffix = " mc";
-    suffix = " CC";
+%     suffix = " CC";
+%     suffix = " MI-PE";
 %     suffix = " without lifting function";
+    suffix = " POD";
+
 else
-    suffix = "";
+    suffix = " MI-PE";
+%     suffix = " POD";
 end
 
 % fig_destination = '../numerical experiments/generalization of shear layer roll up/train Re=100+200/test Re = 150 3/';
@@ -31,10 +37,10 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1e100;                  % Reynolds number
+%     Re      = 1e100;                  % Reynolds number
 %     Re      = 200;                  % Reynolds number
 %     Re      = 100;                  % Reynolds number
-%     Re      = 190;                  % Reynolds number
+    Re      = 190;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -90,11 +96,11 @@ end
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
-    mom_cons              =  0;%j>1;
+    mom_cons              =  j>1;
     
-        carl_cons = mod(j,2)~=0;% j<2;%j>1; % enforce Carlberg conservation according to specified constraint matrix
-%         carl_cons = 0; % enforce Carlberg conservation according to specified constraint matrix
-self_checked_CC_consistency = 1;
+%         carl_cons = mod(j,2)~=0;% j<2;%j>1; % enforce Carlberg conservation according to specified constraint matrix
+        carl_cons = 0; % enforce Carlberg conservation according to specified constraint matrix
+self_checked_CC_consistency = 0;
         
     rom_bc = 0;%pfusch % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -108,25 +114,25 @@ self_checked_CC_consistency = 1;
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
-    snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_1/matlab_data.mat';% Re=1e100;
+%     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_1/matlab_data.mat';% Re=1e100;
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_1/matlab_data.mat';
-    test_data = snapshot_data;
+%     test_data = snapshot_data;
 
 
 %     snapshot_data = 'results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat'; %Re=200
-%     snapshot_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
+    snapshot_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
 %     test_data = 'results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat'; %Re=100
 %     test_data = 'results/shear_layer_ROM_1.500e+02_200x200_1/matlab_data.mat'; %Re=150
-%     test_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
+    test_data = 'results/shear_layer_ROM_1.900e+02_200x200/matlab_data.mat'; %Re=190
 
 
 %     snapshot_data = [ ...
 %         "results/shear_layer_ROM_2.000e+02_200x200/matlab_data.mat" ... %200
-% %         "results/shear_layer_ROM_1.500e+02_200x200_1/matlab_data.mat" ... %150
+% % %         "results/shear_layer_ROM_1.500e+02_200x200_1/matlab_data.mat" ... %150
 %         "results/shear_layer_ROM_1.000e+02_200x200/matlab_data.mat" ... %100
 %         ];
     
-    vary_re = 0;
+    vary_re = 1;
     multiple_train_data = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

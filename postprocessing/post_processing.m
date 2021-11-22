@@ -28,6 +28,17 @@ line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.','g--','g-.'};
 color = char(line(j));
 color2 = char(line2(j));
 
+
+%% plot ROM coefficients
+% figure(313)
+figure
+t_vec = t_start:dt:t_end;
+for i =1:M
+    semilogy(t_vec,abs(coefficients(i,:)),'displayname',num2str(i))
+    hold on
+    legend
+end
+
 %% additional Reduced-Order Model postprocessing
 if (options.rom.rom == 1)
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
@@ -103,35 +114,38 @@ if (options.rom.rom == 1)
                     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
           
                     %%      pfusch   
-if mod(j,2)==0
-figure(77)
-subplot(2,2,j/2)
-% plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
-plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors"); %(2:end)./error_V_2_norm(2:end));
-hold on
-% plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
-plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors"); %(2:end)./error_V_2_norm(2:end));
-legend('show')
-xlabel('t')
-ylabel('error difference (M+20 CC) - M')
-ylabel('error difference')
-
-else
-                    error_V_2_old = error_V_2;
-                    error_V_best_2_old = error_V_best_2;
-end
+% if mod(j,2)==0
+% figure(77)
+% subplot(2,2,j/2)
+% % plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors "+M); %(2:end)./error_V_2_norm(2:end));
+% plot(t_vec,error_V_2-error_V_2_old,color,'displayname',"difference of ROM errors"); %(2:end)./error_V_2_norm(2:end));
+% hold on
+% % plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors "+M); %(2:end)./error_V_2_norm(2:end));
+% plot(t_vec,error_V_best_2-error_V_best_2_old,color2,'displayname',"difference of best approx errors"); %(2:end)./error_V_2_norm(2:end));
+% legend('show')
+% xlabel('t')
+% ylabel('error difference (M+20 CC) - M')
+% ylabel('error difference')
+% 
+% else
+%                     error_V_2_old = error_V_2;
+%                     error_V_best_2_old = error_V_best_2;
+% end
 %%
                     
                     figure(101)
                     if j==1
-%                         ax1 = axes('Position',[.1 .1 .12 .7]);
+                        ax1 = axes('Position',[.1 .1 .12 .7]);
 % %                         ax2 = axes('Position',[.3 .1 .65 .8]);
-%                         ax2 = axes('Position',[.35 .1 .55 .7]);
-% %                         ax1 = axes('Position',[.1 .1 .82 .8]);
-% %                         ax2 = axes('Position',[.5 .1 .15 .8]);
-                           ax2 = axes('Position',[.1 .1 .8 .8]);
-%                            ax1 = axes('Position',[.5 .2 .3 .3]);   
-                           ax1 = axes('Position',[.4 .2 .45 .45]);
+                        ax2 = axes('Position',[.35 .1 .55 .7]);
+                        
+%                         ax1 = axes('Position',[.1 .1 .82 .8]);
+%                         ax2 = axes('Position',[.5 .1 .15 .8]);
+
+%                            ax2 = axes('Position',[.1 .1 .8 .8]);
+% % %                            ax1 = axes('Position',[.5 .2 .3 .3]);   
+%                            ax1 = axes('Position',[.4 .2 .45 .45]);
+%                         ax2 = axes %('Position',[.1 .1 .8 .8]) %quasi default
                     end
 %                     plot(ax1,x,y)
 %                     plot(ax2,x,y)
@@ -146,33 +160,67 @@ end
 % %                         suffix = " mc";
 % %                         suffix = " CC";
 %                         suffix = " without lifting function";
-% for kk = 1:2
-for kk = 1:1
+for kk = 1:2
+% for kk = 1:1
 
     if kk == 1
         ax = ax2;
-        hold on
+%         hold on
     else
         ax = ax1;
-        hold on
+%         hold on
+        color = [color 'x'];
+        color2 = [color2 'x'];
     end
-%                       if mod(j,2)
+%                       if j<5 %mod(j,2)
+                      if mod(j,2)
                         plot(ax,t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
-                        hold on
+%                         hold on
                         hold(ax,'on')
                         plot(ax,t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
-%                       else
-%                           plot(ax,t_vec,error_V_2,color,'LineWidth',1.5,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
+                      else
+                        linewidth = 1.1; 
+%                         linewidth = .5; 
+                        plot(ax,t_vec,error_V_2,color,'LineWidth',linewidth,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
 %                         hold on
-%                         plot(ax,t_vec,error_V_best_2,color2,'LineWidth',1.5,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
+                        hold(ax,'on')
+                        plot(ax,t_vec,error_V_best_2,color2,'LineWidth',linewidth,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
+                      end
+                                          set(ax,'Yscale','log');
+                         xlabel(ax,'t')
+                         ylabel(ax,'velocity error')
+                         
+%                          xlim(ax1,[0 0.08])
+% %                          ylim(ax2,[0.003 0.03])
+%                          ylim(ax2,[2*1e-5 .8])
+%                          xlim([0 13])
+                         
+%                          xlim(ax1,[3.1 4])
+%                          ylim(ax1,[1.55 3]*1e-4)
+                      %% greatest botch
+%                       figure(234)
+%                       if j<5 %mod(j,2)
+%                         plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
+%                         hold on
+%                         hold('on')
+%                         plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
+%                       else
+%                         linewidth = 1.2; 
+%                         plot(t_vec,error_V_2,color,'LineWidth',linewidth,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
+%                         hold on
+%                         plot(t_vec,error_V_best_2,color2,'LineWidth',linewidth,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
 %                       end
+%                       set(ax,'Yscale','log');
+                      %%
+                      
+                      
                         %                     else
 %                         suffix = '';
 %                         plot(t_vec,error_V_2,color,'displayname',"ROM M="+M); %(2:end)./error_V_2_norm(2:end));
 %                         hold on
 %                         plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M);%,'displayname',"L2 error in best approximation velocity M="+M);
 %                     end
-                    set(ax,'Yscale','log');
+%                     set(ax,'Yscale','log');
 
 %                     set(gca,'Yscale','log');
 %                     legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
@@ -180,16 +228,16 @@ for kk = 1:1
 %                         legend('show')
 %                         legend('show','NumColumns',2,'Orientation','horizontal')
 %                         legend(ax,'show','NumColumns',4,'Orientation','horizontal')
-                         xlabel(ax,'t')
-                         ylabel(ax,'velocity error')
+%                          xlabel(ax,'t')
+%                          ylabel(ax,'velocity error')
 %                         title(ax,"\Omega_h-norm of velocity error")
 %                         
 %                         if (exist('fig_destination') && j==Nsim)
 %                             savefig([fig_destination '/velocity error'])
 %                         end
 end
-                        legend('show','NumColumns',2,'Orientation','horizontal')
-%                         legend('show','NumColumns',4,'Orientation','horizontal')
+%                         legend('show','NumColumns',2,'Orientation','horizontal')
+                        legend('show','NumColumns',4,'Orientation','horizontal')
 %                          xlabel('t')
 %                          ylabel(ax1,'velocity error')
 %                         title("\Omega_h-norm of velocity error")
@@ -197,9 +245,6 @@ end
                         if (exist('fig_destination') && j==Nsim)
                             savefig([fig_destination '/velocity error'])
                         end
-% xlim(ax1,[0 0.08])
-xlim(ax1,[3.1 4])
-ylim(ax1,[1.55 3]*1e-4)
 
 
 %                       if mod(j,2)
