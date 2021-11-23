@@ -92,6 +92,7 @@ voi = {
     'y_c',  0; ... % y-coordinate of body
     'Ct',   0; ... % thrust coefficient for actuator disk computations
     'D',    1; ... % actuator disk diameter
+    'force_unsteady', 0; ... % steady (0) or unsteady (1) force
 };
 
 accumulate_object;
