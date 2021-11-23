@@ -247,9 +247,10 @@ if (~strcmp(visc,'keps'))
     end
     if (poisson==1)
         fprintf(fcw,'LU decomposition of pressure matrix...\n');
-        [L, U] = lu(A);
-        options.solversettings.L = L;
-        options.solversettings.U = U;
+%         [L, U] = lu(A);
+%         options.solversettings.L = L;
+%         options.solversettings.U = U;
+        options.solversettings.decomp = decomposition(A);
     end
     
     if (poisson==5)
