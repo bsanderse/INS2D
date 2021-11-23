@@ -2,7 +2,11 @@ function [V] = getFOM_velocity(R,t,options)
 % get FOM velocity based on ROM coefficients
 
 B   = options.rom.B;
-Vbc = options.rom.Vbc;
+if (options.rom.rom_bc == 2)
+    Vbc = get_unsteadyVbc(t,options);
+else
+    Vbc = options.rom.Vbc;
+end
 
 V   = B*R + Vbc;
 

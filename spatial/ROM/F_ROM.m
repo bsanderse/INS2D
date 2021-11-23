@@ -1,6 +1,8 @@
 function [maxres,Fres,dFres] = F_ROM(R,~,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
+
+% warning pressure contribution for outflow BC not included
 if (nargin<5)
     getJacobian = 0;
 end
@@ -24,9 +26,9 @@ end
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
-    if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0)
+    if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0)
         options = set_bc_vectors(t,options);
-    else
+    elseif (options.rom.bc_recon ~= 1 && options.rom.bc_recon ~= 3)
         error('unsteady BC with precomputing not fully tested');
     end
 end
@@ -34,37 +36,48 @@ end
 % convection:
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
-    [conv, dconv] = convectionROM(R,t,options,getJacobian);
+    if (options.rom.rom_bc == 2)
+        if options.rom.bc_recon == 3
+            [conv, dconv] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
+        else 
+            [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
+        end
+    else
+        [conv, dconv] = convectionROM(R,t,options,getJacobian);
+    end
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
     conv  = B'*(Diag.*[convu;convv]);
-    if (getJacobian == 1)
-        dconv = B'*(Diag.*[dconvu;dconvv])*B;    
-    end
+    dconv = B'*(Diag.*[dconvu;dconvv])*B;  
 end
 
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
-    [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
+    if (options.rom.rom_bc == 2)
+        if options.rom.bc_recon == 3
+            [Diff, dDiff] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
+        else 
+            [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
+        end
+    else
+        [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
+    end
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
-    [d2u,d2v,dDiffu,dDiffv] = diffusion(V,t,options,getJacobian);
+    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
     Diff  = B'*(Diag.*[d2u;d2v]);
-    if (getJacobian == 1)
-        dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
-    end
+    dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
 
-% body force 
+% body force
 if (options.rom.precompute_force == 1)
     F = options.rom.F;
     % this is a bit of a hack for the actuator ROM case with time dependent
     % body force, which prevents computing the projection of the force at
     % each time step
-    if (options.force.force_unsteady == 1)
-        warning('scaling unsteady force - actuator disk test case only!');
+    if (options.case.force_unsteady == 1)
         F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
     end
     if (getJacobian == 1)
@@ -73,40 +86,15 @@ if (options.rom.precompute_force == 1)
         M  = options.rom.M;
         dF = spalloc(M,M,0);
     end
-else % no precomputing, use FOM expression and project to ROM (expensive)
+else
     [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
     F   = B'*(Diag.*[Fx;Fy]);
-    if (getJacobian == 1)
-        dF  = B'*(Diag.*[dFx;dFy])*B;
-    end
+    dF  = B'*(Diag.*[dFx;dFy])*B;
 %     dFy = spalloc(Nv,Nu+Nv,0);    
 end
-% else
-%     F = options.rom.F;
-%     if (getJacobian == 1)
-%         M  = options.rom.M;
-%         dF = spalloc(M,M,0);
-%     end
-% end
 
 % residual of ROM
 Fres    = - conv + Diff + F;
-
-% for the case of non-orthogonal basis, we have to multiply with the
-% inverse of (B'*B)
-switch options.rom.rom_type
-    
-    case {'POD', 'Fourier'}
-        
-        
-    case 'FDG' 
-         
-        % non-orthogonal basis, pre-multiply with (B^T*B)^{-1}
-        Fres = options.rom.B_inv \ Fres;
-
-    otherwise
-        error ('wrong ROM type')
-end
 
 maxres  = max(abs(Fres));
 
@@ -122,19 +110,6 @@ if (getJacobian==1)
     %         dF = spdiags(Om_inv,0,NV,NV)*dF;
     %     end
     
-    switch options.rom.rom_type
-        
-        case {'POD', 'Fourier'}
-            
-            
-        case 'FDG'
-            
-            dFres = options.rom.B_inv \ dFres;
-            
-        otherwise
-            error ('wrong ROM type')
-    end
-
 else
     
     dFres = 0;

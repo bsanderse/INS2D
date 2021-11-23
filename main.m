@@ -153,6 +153,14 @@ for j=1:Nsim
     %% boundary conditions
     options = set_bc_vectors(t,options);
     
+    %% initialize basis for lifting function Vbc
+    if (options.rom.rom_bc == 2 && options.rom.bc_recon == 1)... % could also be used for rom = 0, pro_rom = 1
+        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 3) ... %only in debug mode
+        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 2)  
+        run([folder_cases '/' case_name '/' case_name '_init_unsteady_Vbc.m']);
+    end
+        
+    
     
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m
@@ -161,11 +169,12 @@ for j=1:Nsim
     if (exist(file_name_force,'file'))
         % create function handle with name bodyforce
         options.force.isforce   = 1;
-        options.force.bodyforce = str2func(file_name_force); 
+        options.force.bodyforce = str2func(file_name_force);
         % steady force can be precomputed once:
         if (options.force.force_unsteady==0)
             [options.force.Fx,options.force.Fy] = force(V_start,t,options,0);
-        end        
+        end
+
     else
         options.force.isforce   = 0;
     end
@@ -251,7 +260,8 @@ for j=1:Nsim
     
     %% post-processing
     fprintf(fcw,'post-processing...\n');
-    post_processing;
+%     post_processing;
+    post_processing2;
     
     % save all data to a matlab file
     if (save_file == 1)

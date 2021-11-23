@@ -49,7 +49,16 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
     % note that input p is not used in F_ROM
-    [~,F_rhs]  = F_ROM(R,p,ti,options);
+    if (options.rom.bc_recon == 2)
+        [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
+    else
+        [~,F_rhs]  = F_ROM(R,p,ti,options);
+    end
+    
+%     options.rom.precompute_diffusion = 0;
+%     [~,F_rhs1]  = F_ROM(R,p,ti,options);
+%     options.rom.precompute_diffusion = 1;
+%     norm(F_rhs-F_rhs1)
     
     % store right-hand side of stage i
     kR(:,i_RK) = F_rhs;

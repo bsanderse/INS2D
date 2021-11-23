@@ -8,6 +8,18 @@ if (restart.load == 0 && options.output.save_results==1)
 end
 
 %% plot initial solution
+
+% compute V_bc snapshot if BC unsteady and snapshots are wanted
+Om_inv = options.grid.Om_inv;
+if (options.BC.BC_unsteady == 1 && options.rom.pro_rom == 1)
+%     options = set_bc_vectors(t,options);
+%     f       = options.discretization.yM;
+%     dp      = pressure_poisson(f,t,options);
+%     Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
+Vbc(:,n) = get_unsteadyVbc(t,options);
+end
+
+
 if (rtp.show==1)
     run(rtp.file);
     % for movies, capture this frame
@@ -103,7 +115,15 @@ while(n<=nt)
     p_old = pn;                
     Vn = V;
     pn = p;
-    tn = t;        
+    tn = t;      
+    
+    % compute V_bc snapshot if BC unsteady and snapshots are wanted
+    if (options.BC.BC_unsteady == 1 && options.rom.pro_rom == 1)
+        options = set_bc_vectors(t,options);
+        f       = options.discretization.yM;
+        dp      = pressure_poisson(f,t,options);
+        Vbc(:,n)= - Om_inv.*(options.discretization.G*dp);
+    end
     
     % check residuals, conservation, set timestep, write output files
     process_iteration;

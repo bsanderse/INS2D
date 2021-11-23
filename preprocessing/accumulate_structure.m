@@ -25,8 +25,8 @@ voi={
     'steady',       [];...    % 0: unsteady; 1: steady
     'visc',         [];...    % 'laminar', 'keps','ML','LES,'qr'
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
-    'ibm', 0; ... % 0: no immersed boundary method; 1: immersed boundary method
-%     'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing    
+    'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing
+    'ibm', 0; % 0: no immersed boundary method; 1: immersed boundary method
     };
 
 accumulate_object;
@@ -92,8 +92,6 @@ voi = {
     'y_c',  0; ... % y-coordinate of body
     'Ct',   0; ... % thrust coefficient for actuator disk computations
     'D',    1; ... % actuator disk diameter
-    'isforce', 0; ... % presence of a force file 
-    'force_unsteady', 0; ... % steady (0) or unsteady (1) force
 };
 
 accumulate_object;
@@ -103,7 +101,7 @@ object = 'rom';
 
 voi = {
     'rom', 0; ... % if 1, use reduced order model
-    'rom_type', 'POD'; ... % 'POD', 'Fourier'
+    'pro_rom', 0; ... % set to 1 to provide V_h,inhom snapshots
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model
     'precompute_convection', 1; ... % precomputed convection matrices
@@ -113,6 +111,7 @@ voi = {
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD
     'rom_bc', 0; ... % 0: homogeneous (no-slip, periodic); 1: non-homogeneous, time-independent; 2: non-homogeneous, time-dependent
+    'bc_recon', 0; ... % 0: unsteady is always computed by solving a poisson eq, 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides, 2: no lifting function is used, 3: boundary conditions are approximated by POD approach
     'weighted_norm', 1; ... % 0: unweighted norm; 1: weighted norm (using finite volumes as weights)
     'pressure_recovery', 0; ... % 0: no pressure computation; 1: compute pressure with PPE-ROM
     'pressure_precompute', 0; ... % in case of pressure_recovery=1: compute RHS Poisson equation based on FOM (0) or ROM (1)
@@ -203,7 +202,8 @@ voi={
     'plotgrid', 0; ...       % plot gridlines and pressure points    
     'rtp_show', 1; ...         % real time plotting 
     'rtp_type', 'velocity'; ... % velocity, quiver, vorticity or pressure
-    'rtp_n', 10;     
+    'rtp_n', 10; 
+    'show_sigmas', '1'; ... % show singular value distribution
     };
 
 accumulate_object;

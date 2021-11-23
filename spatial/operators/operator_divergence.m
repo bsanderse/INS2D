@@ -194,8 +194,9 @@ end
 %% Pressure matrix for pressure correction method;
 % also used to make initial data divergence free or compute additional poisson solve
 
-if (steady == 0 && ~strcmp(visc,'keps'))
-    
+% if (steady == 0 && ~strcmp(visc,'keps'))
+if (~strcmp(visc,'keps'))
+
         
     fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;
@@ -211,7 +212,7 @@ if (steady == 0 && ~strcmp(visc,'keps'))
     
     % ROM does not require Poisson solve for simple BC
     % for rom_bc>0, we need Poisson solve to determine the V_bc field
-    if (options.rom.rom == 1 && options.rom.rom_bc == 0 && strcmp(options.rom.rom_type,'POD')==1) 
+    if (options.rom.rom == 1 && options.rom.rom_bc == 0) 
         return;
     end
     
@@ -245,15 +246,10 @@ if (steady == 0 && ~strcmp(visc,'keps'))
         options.solversettings.U = U;        
     end
     if (poisson==1)
-        fprintf(fcw,'Decomposition of pressure matrix...\n');
-        if (verLessThan('matlab','9.3'))
-            warning('You use a relatively old Matlab version (older than 2017b), LU decomposition will be used');
-            [L, U] = lu(A);
-            options.solversettings.L = L;
-            options.solversettings.U = U;
-        else            
-            options.solversettings.decomp = decomposition(A);
-        end
+        fprintf(fcw,'LU decomposition of pressure matrix...\n');
+        [L, U] = lu(A);
+        options.solversettings.L = L;
+        options.solversettings.U = U;
     end
     
     if (poisson==5)

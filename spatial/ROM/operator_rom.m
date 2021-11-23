@@ -1,8 +1,4 @@
 function options = operator_rom(options)
-% we construct the ROM operators in  'non-intrusive' way, i.e.
-% we hardly require any knowledge of the exact FOM discretization. we
-% simply make calls to diffusion and convection with the modes phi as input
-% arguments
 
 NV  = options.grid.Nu+options.grid.Nv;
 B   = options.rom.B;
@@ -13,38 +9,69 @@ elseif (options.rom.weighted_norm == 1)
     Diag = ones(NV,1);
 end
 
-if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
-    options.rom.precompute_force == 1)
-    % this is the projector for the momentum equations:
-    P = B'*spdiags(Diag,0,NV,NV);
+% this is the projector for the momentum equations:
+P = B'*spdiags(Diag,0,NV,NV);
 
-end
+
 
 %% diffusion
-if (options.rom.precompute_diffusion == 1)
+if options.rom.rom_bc == 2
+    if options.rom.bc_recon == 3
+            [yDiff2,Diff2,DiffBC2] = operator_rom_diffusion_unsteadyBC2(P,options);
+  
+            options.rom.Diff2   = Diff2;
+            options.rom.DiffBC2 = DiffBC2;
+            options.rom.yDiff2  = yDiff2;
+    else 
+    [yDiff,Diff,DiffBC] = operator_rom_diffusion_unsteadyBC(P,options);
+  
+    options.rom.Diff   = Diff;
+    options.rom.DiffBC = DiffBC;
+    options.rom.yDiff  = yDiff;
+    end
+else
     [yDiff,Diff] = operator_rom_diffusion(P,options);
-
+    
     options.rom.Diff  = Diff;
     options.rom.yDiff = yDiff;
 end
-
 %% convection 
-if (options.rom.precompute_convection == 1)
+if options.rom.rom_bc == 2
+    if options.rom.bc_recon == 3
+        [C_hom2,C_hom_inhom2,C_hom_bc2,C_inhom2,C_inhom_bc2,C_bc2] = ...
+            operator_rom_convection_unsteadyBC2(P,options);
+        
+        options.rom.C_hom2       = C_hom2;
+        options.rom.C_hom_inhom2 = C_hom_inhom2;
+        options.rom.C_hom_bc2    = C_hom_bc2;
+        options.rom.C_inhom2     = C_inhom2;
+        options.rom.C_inhom_bc2  = C_inhom_bc2;
+        options.rom.C_bc2        = C_bc2;
+    else
+    [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
+        operator_rom_convection_unsteadyBC(P,options);
+    
+    options.rom.C_hom       = C_hom;
+    options.rom.C_hom_inhom = C_hom_inhom;
+    options.rom.C_hom_bc    = C_hom_bc;
+    options.rom.C_inhom     = C_inhom;
+    options.rom.C_inhom_bc  = C_inhom_bc;
+    options.rom.C_bc        = C_bc;
+    end
+else
     [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
-
+    
     options.rom.Conv_quad   = conv_quad;
     options.rom.Conv_linear = conv_linear;
     options.rom.yConv       = conv_bc;
 end
 
+
 %% body force
-% always precomputed if forcing is steady
-if (options.rom.precompute_force == 1)
-    % construct at t=t_start with dummy velocity field
-    [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
-    F        = P*[Fx;Fy];
-    options.rom.F = F;
-end
+% construct at t=t_start with dummy velocity field
+[Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
+F        = P*[Fx;Fy];
+options.rom.F = F;
 
 %% pressure
 % the pressure gradient term in the momentum equation disappears in the ROM
