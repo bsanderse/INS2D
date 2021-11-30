@@ -223,7 +223,18 @@ for j=1:Nsim
                     fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                     solver_unsteady;
                 elseif (options.rom.rom==1)
-                    fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                    switch options.rom.rom_type
+                        case 'POD'
+                            fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                        case 'FDG'
+                            fprintf(fcw,'Unsteady flow with Finite Difference Galerkin method (discrete curl)\n');
+                        case 'Fourier'
+                            fprintf(fcw,'Unsteady flow with discrete Fourier basis\n');
+                        case 'FDG-Fourier'
+                            fprintf(fcw,'Unsteady flow with discrete curl - Fourier basis\n');                            
+                        otherwise
+                            error('wrong value for ROM type');
+                    end
                     solver_unsteady_ROM;
                 else
                     error('wrong value for rom parameter');

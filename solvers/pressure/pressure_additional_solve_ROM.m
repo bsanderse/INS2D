@@ -1,9 +1,8 @@
 function q = pressure_additional_solve_ROM(R,t,options)
 % additional pressure solve
+% input: R, ROM coefficients of velocity field
 % returns ROM pressure coefficients; to get pressure use getROM_pressure(q)
         
-
-
 
     if (options.rom.pressure_precompute==0)        
         % without precomputing:
@@ -25,6 +24,7 @@ function q = pressure_additional_solve_ROM(R,t,options)
 %             [Fx, Fy] = force(V,t,options,getJacobian);
 %             options.rom.ppe_force = options.rom.P_PPE*[Fx;Fy];
 %         end
+        warning('scaling unsteady force - actuator disk test case only!');
         options.rom.ppe_force = options.rom.ppe_force*(1+sin(pi*t)); % see also F_ROM.m
         
         f   = options.rom.ppe_force + options.rom.ppe_bc + options.rom.ppe_linear*R + options.rom.ppe_quad*kron(R,R);
@@ -36,12 +36,12 @@ function q = pressure_additional_solve_ROM(R,t,options)
         f = f - options.rom.ppe_mean;
     end
         
-        
-    
-    L   = options.rom.L;
-    U   = options.rom.U;
-    b   = L\f;
     % pressure coefficients of reduced order model    
-    q   = U\b; 
+%     % using LU decomposition:
+%     L   = options.rom.L;
+%     U   = options.rom.U;
+%     b   = L\f;
+%     q   = U\b; 
+    q = options.rom.A_decomp \ f;
 
 end

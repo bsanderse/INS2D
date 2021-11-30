@@ -120,7 +120,7 @@ else
         end
     end
     
-    % ROM: uses the IC for the pressure; note that in solver_unsteady the pressure will be
+    % ROM: uses the IC for the pressure; note that in solver_unsteady the pressure can be
     % computed from the ROM PPE, after the ROM basis has been set-up
     if (options.rom.rom==1)
         if (options.case.steady==1)

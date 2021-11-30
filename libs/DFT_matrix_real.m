@@ -155,8 +155,9 @@ end
 % truncate if necessary
 if (nargin>1 && (~isempty(Ntrunc) || ~isempty(vec_trunc)) )
     
-    if (~isempty(Ntrunc) && Ntrunc>N)
-        error('truncation number should be smaller than matrix dimension');
+    if (~isempty(Ntrunc) && Ntrunc>=N)
+        warning('truncation number should be smaller or equal to matrix dimension, not truncating');
+        return;
     end
     
     if (~exist('vec_trunc') ||  isempty(vec_trunc))

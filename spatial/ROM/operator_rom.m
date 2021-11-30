@@ -37,6 +37,7 @@ if (options.rom.precompute_convection == 1)
     options.rom.yConv       = conv_bc;
 end
 
+
 %% body force
 % always precomputed if forcing is steady
 if (options.rom.precompute_force == 1)
@@ -52,50 +53,66 @@ end
 % a Poisson equation on the ROM level
 % the right hand side of this pressure equation consists of the ROM
 % momentum equation projected onto the pressure basis
-if (options.rom.pressure_recovery == 1)
+if (options.rom.div_free == 1)
 
-    % generate Poisson matrix on ROM level
-    Bp = options.rom.Bp;
-    A_ROM = Bp'*options.discretization.A*Bp;
-    % get LU decomposition
-    [L,U] = lu(A_ROM);
-    options.rom.L = L;
-    options.rom.U = U;
-        
-    
-    if (options.rom.pressure_precompute == 1)
-        % operators for right-hand side pressure equation
+    if (options.rom.pressure_recovery == 1)
 
-        % this is the projector for the Poisson equation:
-        P_PPE = Bp'*options.discretization.M * spdiags(options.grid.Om_inv,0,NV,NV);    
+        % generate Poisson matrix on ROM level
+        Bp = options.rom.Bp;
+        A_ROM = Bp'*options.discretization.A*Bp;
+        % get LU decomposition
+    %     [L,U] = lu(A_ROM);
+    %     options.rom.L = L;
+    %     options.rom.U = U;
+        options.rom.A_decomp = decomposition(A_ROM);
 
-        [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P_PPE,options);
-        [yDiff,Diff] = operator_rom_diffusion(P_PPE,options);    
-        [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
-        F = P_PPE*[Fx;Fy];
+        if (options.rom.pressure_precompute == 1)
+            % operators for right-hand side pressure equation
 
-        % note: for sign convention see F.m or F_ROM.m
-        
-        % constant terms in rhs 
-        % we distinguish between force and BC, in order to allow time
-        % varying forces
-        options.rom.ppe_force  =  F;
-        options.rom.ppe_bc     = -conv_bc + yDiff;
-        % terms to be multiplied with R
-        options.rom.ppe_linear = -conv_linear + Diff;
-        % terms to be multiplied with kron(R,R)
-        options.rom.ppe_quad   = -conv_quad;   
-        
-        % this is useful to do projection of time-varying quantities, e.g.
-        % the force
-        options.rom.P_PPE = P_PPE;
-        
-        % this is useful for evaluating int ( p u*n ) dS (pressure work):
-        options.rom.yM = Bp'*options.discretization.yM;
+            % this is the projector for the Poisson equation:
+            P_PPE = Bp'*options.discretization.M * spdiags(options.grid.Om_inv,0,NV,NV);    
+
+            [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P_PPE,options);
+            [yDiff,Diff] = operator_rom_diffusion(P_PPE,options);    
+            [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
+            F = P_PPE*[Fx;Fy];
+
+            % note: for sign convention see F.m or F_ROM.m
+
+            % constant terms in rhs 
+            % we distinguish between force and BC, in order to allow time
+            % varying forces
+            options.rom.ppe_force  =  F;
+            options.rom.ppe_bc     = -conv_bc + yDiff;
+            % terms to be multiplied with R
+            options.rom.ppe_linear = -conv_linear + Diff;
+            % terms to be multiplied with kron(R,R)
+            options.rom.ppe_quad   = -conv_quad;   
+
+            % this is useful to do projection of time-varying quantities, e.g.
+            % the force
+            options.rom.P_PPE = P_PPE;
+
+            % this is useful for evaluating int ( p u*n ) dS (pressure work):
+            options.rom.yM = Bp'*options.discretization.yM;
+        end
+
+        if (options.rom.pressure_mean == 1)
+            options.rom.ppe_mean = Bp'*options.discretization.A*options.rom.p_mean;
+        end
+
     end
     
-    if (options.rom.pressure_mean == 1)
-        options.rom.ppe_mean = Bp'*options.discretization.A*options.rom.p_mean;
-    end
-
+elseif (options.rom.div_free == 0)
+    
+    % here we always precompute:
+    options.rom.Mdiv = options.rom.Bp'*options.discretization.M*options.rom.B;
+    options.rom.G = -options.rom.Mdiv';
+    % note that the following Poisson matrix is different from the one in
+    % pressure_additional solve (which only uses Bp for projection)
+    A_ROM = options.rom.Mdiv*options.rom.G;
+    options.rom.A_decomp = decomposition(A_ROM);
+    
+    
 end
+    

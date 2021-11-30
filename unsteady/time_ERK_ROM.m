@@ -31,6 +31,7 @@ end
 % store variables at start of time step
 tn     = t;
 Rn     = R;
+qn     = q;
 
 % right hand side evaluations, initialized at zero
 kR     = zeros(M,s_RK);
@@ -48,8 +49,8 @@ for i_RK=1:s_RK
     
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
-    % note that input p is not used in F_ROM
-    [~,F_rhs]  = F_ROM(R,p,ti,options);
+    % note that input q is not used in F_ROM if the basis is div-free
+    [~,F_rhs]  = F_ROM(R,q,ti,options);
     
     % store right-hand side of stage i
     kR(:,i_RK) = F_rhs;
@@ -62,13 +63,38 @@ for i_RK=1:s_RK
     % time level of the computed stage
     ti         = tn + c_RK(i_RK)*dt;
     
-    % update ROM coefficients current stage
-    R  = Rn + dt*Rtemp;
+    if (options.rom.div_free == 0)
+
+        f  = (options.rom.Mdiv*(Rn/dt + Rtemp))/c_RK(i_RK);
+        dq = pressure_poisson_ROM(f,t,options);
+
+%         if (options.rom.precompute_pressure == 1)
+            % approach 1: (with precomputed matrices)
+%             Gq = options.rom.G*q;
+%         elseif (options.rom.precompute_pressure == 0)
+%             % approach 2: evaluate convection on FOM level, then map back
+%             Gp = options.rom.B' * options.discretization.G * p;
+%         end        
+        
+        R  = Rn + dt*(Rtemp - c_RK(i_RK)*(options.rom.G*dq));
+
+    else
+        % div-free ROM, no pressure needed
+        % update ROM coefficients current stage
+        R  = Rn + dt*Rtemp;
+    end
+    
+
     
 end
 
 
-if (options.rom.pressure_recovery == 1)
-    q = pressure_additional_solve_ROM(R,tn+dt,options);
-    p = getFOM_pressure(q,t,options);
+if (options.rom.div_free == 1)
+    if (options.rom.pressure_recovery == 1)
+        q = pressure_additional_solve_ROM(R,tn+dt,options);
+        p = getFOM_pressure(q,t,options);
+    end
+else
+    % this might be improved like in FOM methods
+    q = dq;
 end

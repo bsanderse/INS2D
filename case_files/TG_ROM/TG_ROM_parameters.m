@@ -50,8 +50,8 @@ mesh_list    = [40]; % 20 40 80];
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    rom_type = 'FDG'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
-    M      = 2;     % number of modes used (not used for FDG)
+    rom_type = 'FDG-Fourier'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
+    M      = 4; %Nx*Ny;     % number of modes used (not relevant for FDG)
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = 4;  % part of snapshot matrix used for building SVD
@@ -59,6 +59,7 @@ mesh_list    = [40]; % 20 40 80];
 
     precompute_convection = 0;
     precompute_diffusion  = 0;
+    precompute_pressure   = 0;
     precompute_force      = 0;
     pressure_recovery     = 0;
     pressure_precompute   = 0;
@@ -184,7 +185,7 @@ mesh_list    = [40]; % 20 40 80];
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'TG'; % movie name
     rtp.movierate    = 15;         % frame rate (/s)    
     

@@ -34,6 +34,11 @@ switch options.rom.rom_type
 %         % where omega = curl V
 %         R = options.rom.Phi' * (L \ (options.rom.C'*(Om*V)));
         
+    case 'FDG-Fourier' % non-orthogonal basis, oblique projection
+        % similar to FDG, but now B_inv is diagonal
+        
+        R  = options.rom.B_inv .* (options.rom.B' * (options.grid.Om .* V));
+        
     otherwise
         
         error('wrong choice for ROM type');

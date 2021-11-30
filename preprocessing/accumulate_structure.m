@@ -108,6 +108,7 @@ voi = {
     'Mp', 10; ... % number of pressure modes for reduced order model
     'precompute_convection', 1; ... % precomputed convection matrices
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
+    'precompute_pressure', 0; ... % precomputed pressure matrix (only needed for non div-free basis)
     'precompute_force', 1;... % precomputed forcing term
     't_snapshots', 0; ... % snapshots 
     'dt_snapshots', 0; ...

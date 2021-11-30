@@ -1,7 +1,7 @@
 %  Main solver file for unsteady calculations with reduced order model
 
 
-switch rom_type
+switch options.rom.rom_type
     
     case 'POD'
         
@@ -208,13 +208,17 @@ switch rom_type
         % note that yM should not be included here, it was already used in
         % subtracting Vbc from the snapshots matrix
         div_basis = max(abs(options.discretization.M*B),[],1); %
-        % max over all snapshots:
+        % max over all columns:
         maxdiv_basis = max(div_basis);
         if (maxdiv_basis > 1e-14)
-            warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+            warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
+            warning('Adding basis for pressure\n');
+            options.rom.div_free = 0;
+        else     
+            options.rom.div_free = 1;
         end
         
-        %% pressure recovery
+        %% pressure recovery (postprocessing)
         if (options.rom.pressure_recovery == 1)
             disp('computing SVD of pressure snapshots...');
             svd_start2 = toc;
@@ -285,40 +289,94 @@ switch rom_type
         
     case 'Fourier'
         
-        % construct B from discrete Fourier transform
-        Phi = getFourierBasis(options,M);
-        B   = [Phi; Phi];
-        options.rom.B = B;
-        M   = size(Phi,2);
-        options.rom.M = M;
-
         Nu  = options.grid.Nu;
         Nv  = options.grid.Nv;
-        Vbc = zeros(Nu+Nv,1);
+
+        NV  = options.grid.NV;
+        Vbc = zeros(NV,1);
         options.rom.Vbc = Vbc;
+
+        % construct velocity basis B from discrete Fourier transform
+        % note that we have V = B*R, which we split into two components
+        % u = B_u*R_u, v = B_v*Rv
+        Phi = getFourierBasis(options); %,M);
+        % scale with sqrt(Omega) in order to get Phi'*Om*Phi = I
+        Phi = 1/sqrt(options.grid.Om(1)) * Phi;
+        B   = [Phi spalloc(Nu,M,0); ...
+               spalloc(Nv,M,0) Phi];
+        options.rom.B = B;
+        M   = size(B,2);
+        options.rom.M = M;
+
+        % we also need to make a pressure basis Bp because B is not
+        % divergence-free
+%         Bp = B;
+        options.rom.Bp = Phi;
         
-        % make the basis divergence free
-        Om_inv = options.grid.Om_inv;
-        G  = options.discretization.G;
-        for i=1:M
-           
-            % make velocity field divergence free            
-        
-            f  = options.discretization.M*B(:,i) + options.discretization.yM;
-            dp = pressure_poisson(f,t,options);
-            
-            % look at the resulting modes, before and after projection
-            figure(1)
-            surf(reshape(B(options.grid.indu,i),Nx,Ny)')
-            
-            B(:,i)  = B(:,i) - Om_inv.*(G*dp);
-            % turns out that they effectively become 0!
-            figure(2)
-            surf(reshape(B(options.grid.indu,i),Nx,Ny)')
-            
+        % set pressure_recovery to 2 in order that reduced Poisson operator
+        % is constructed
+        div_basis = max(abs(options.discretization.M*B),[],1); %
+        % max over all columns:
+        maxdiv_basis = max(div_basis);
+        if (maxdiv_basis > 1e-14)
+            disp(['Fourier basis is not divergence free: ' num2str(maxdiv_basis)]);
+            disp('Adding basis for pressure');
+            options.rom.div_free = 0;
+        else     
+            options.rom.div_free = 1;
         end
         
+%        
+%         % make the basis divergence free
+%         Om_inv = options.grid.Om_inv;
+%         G  = options.discretization.G;
+%         for i=1:M
+%            
+%             % make velocity field divergence free            
+%         
+%             f  = options.discretization.M*B(:,i) + options.discretization.yM;
+%             dp = pressure_poisson(f,t,options);
+%             
+%             % look at the resulting modes, before and after projection
+% %             figure(1)
+% %             surf(reshape(B(options.grid.indu,i),Nx,Ny)')
+%             
+%             B(:,i)  = B(:,i) - Om_inv.*(G*dp);
+%             % turns out that they effectively become 0!
+% %             figure(2)
+% %             surf(reshape(B(options.grid.indu,i),Nx,Ny)')
+%         end
+%         
+%         % make orthogonal
+%         [Bnew,R] = qr(B);
+% %         B = Bnew/sqrt(options.grid.Om(1));
+%         
+%         [B,R] = mwgson(B,options.grid.Om);
+        
+        div_basis = max(abs(options.discretization.M*B),[],1); %
+        % max over all columns:
+        maxdiv_basis = max(div_basis);
+        if (maxdiv_basis > 1e-14)
+            disp(['Fourier basis is not divergence free: ' num2str(maxdiv_basis)]);
+            disp('Adding basis for pressure');
+            options.rom.div_free = 0;
+        else     
+            options.rom.div_free = 1;
+        end
+        
+        disp('orthogonality of reduced basis B wrt omega:');
+        Om     = options.grid.Om;
+        Om_mat = spdiags(Om,0,Nu+Nv,Nu+Nv);
+        B_orth = max(max(abs(B'*Om_mat*B-speye(size(B,2)))))
+        if (B_orth>1e-13)
+            warning('Reduced basis B not orthogonal wrt Omega');
+        end
+        
+        keyboard
+        
     case 'FDG'
+        
+        % Finite Difference Galerkin = reformulation in streamfunction form
         
 %         % generate null vectors
 %         Null_u = zeros(options.grid.Nu,1);
@@ -332,15 +390,92 @@ switch rom_type
         % note: need to get rid of extra periodic entries
         
         %% for periodic BC, not covering entire mesh
+        
+        Nu  = options.grid.Nu;
+        Nv  = options.grid.Nv;
+        
         % du/dy, like Su_uy
-        diag1  = ones(Ny,1); %1./options.grid.gyd(1:end-1);
+        % note that we use hy here, and not gyd; this is to make sure that
+        % W' is a null vector of M
+        diag1  = 1./options.grid.hy;
         W1D    = spdiags([-diag1 diag1],[-1 0],Ny,Ny);
         W1D(1,end) = -W1D(1,1);
         % extend to 2D
         Wu_uy  = kron(W1D,speye(Nx));
 
         % dv/dx, like Sv_vx
-        diag1  = ones(Nx,1); %1./options.grid.gxd(1:end-1);
+        % note that we use hx here, and not gxd; this is to make sure that
+        % W' is a null vector of M
+        diag1  = 1./options.grid.hx;
+        W1D    = spdiags([-diag1 diag1],[-1 0],Nx,Nx);
+        W1D(1,end) = -W1D(1,1);
+        % extend to 2D
+        Wv_vx  = kron(speye(Ny),W1D);
+
+        % curl operator that acts on velocity fields
+        W = [-Wu_uy Wv_vx];
+        % null space is then given by W'
+        B = W';
+        % is the divergence of B indeed zero?
+
+        div_basis = max(abs(options.discretization.M*B),[],1); %
+        % max over all columns:
+        maxdiv_basis = max(div_basis);        
+        if (maxdiv_basis > 1e-14)
+            warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
+            warning('Adding basis for pressure\n');
+            options.rom.div_free = 0;
+        else     
+            options.rom.div_free = 1;
+        end            
+        
+        
+        % we can thus expand V, such that M*V=M*B*psi=0 for any psi:
+        % V = B*psi
+        % and
+        % psi = (B'*Om*B)^{-1} * B^T * Om * V
+                
+        Om     = options.grid.Om;
+        Om_mat = spdiags(Om,0,Nu+Nv,Nu+Nv);
+       
+        % ROM dimension (=NV - Np)
+        % there is no real dimension reduction as in the case of
+        % truncation, it's just going from velocity to streamfunction space
+        M = size(B,2);
+      
+      
+        % get the oblique projection (since B is not
+        % orthonormal)
+        options.rom.B_inv = decomposition(B.'*Om_mat*B);
+        
+
+        options.rom.B = B;
+        options.rom.M = M;
+
+        Vbc = zeros(Nu+Nv,1);
+        options.rom.Vbc = Vbc;
+        
+        
+    case 'FDG-Fourier'
+        
+        %% for periodic BC, not covering entire mesh
+        
+        Nu  = options.grid.Nu;
+        Nv  = options.grid.Nv;
+        
+        % du/dy, like Su_uy
+        % note that we use hy here, and not gyd; this is to make sure that
+        % W' is a null vector of M
+        diag1  = 1./options.grid.hy;
+        W1D    = spdiags([-diag1 diag1],[-1 0],Ny,Ny);
+        W1D(1,end) = -W1D(1,1);
+        % extend to 2D
+        Wu_uy  = kron(W1D,speye(Nx));
+
+        % dv/dx, like Sv_vx
+        % note that we use hx here, and not gxd; this is to make sure that
+        % W' is a null vector of M
+        diag1  = 1./options.grid.hx;
         W1D    = spdiags([-diag1 diag1],[-1 0],Nx,Nx);
         W1D(1,end) = -W1D(1,1);
         % extend to 2D
@@ -352,21 +487,62 @@ switch rom_type
         % null space is then given by W'
         C = W';
         % is the divergence of C indeed zero?
+        disp('divergence of curl matrix:')
         max(max(abs(options.discretization.M*C)))
-        
+        max(max(abs(C'*options.discretization.G)))
         % we can thus expand V, such that M*V=M*C*psi=0 for any psi
         % V = C*psi
         
-        % build a Fourier basis for psi (streamfunction)
-        % V = C*psi = C*Phi*R = B*R, where R are Fourier coefficients for
-        % streamfunction,
-        % to get 
+        % now build a Fourier basis for psi (streamfunction)
+        % psi = Phi*R,
+        % where R are Fourier coefficients for streamfunction,
+        % and Phi is the INVERSE Fourier transform
         Phi = getFourierBasis(options,M);
-        M   = size(Phi,2);
-        B   = C*Phi;
         
-        % is B orthonormal?
-        max(max(B'*B-speye(M)))
+        M   = size(Phi,2);
+
+        disp(['reduced size M = ' num2str(M)]);
+       
+        % in all cases, we get the final basis as follows
+        % split the Omega contribution symmetrically
+        
+        Om     = options.grid.Om;
+%         Om_invsqrt = spdiags(1./sqrt(Om),0,Nu+Nv,Nu+Nv);
+        Om_mat     = spdiags(Om,0,Nu+Nv,Nu+Nv);
+%         if (options.rom.weighted_norm==1)
+%             C   = sqrt(hx(1)*hy(1))*C;
+%         end
+%         C   = Om_invsqrt*C;
+        
+        % then the final basis is given by
+        % V = C*psi = C*Phi*R = B*R
+        B   = C*Phi;
+       
+
+        
+%         is B orthonormal?
+%         disp('orthogonality of reduced basis B:');
+%         B_orth = max(max(abs(B'*B-speye(size(B,2)))))
+%         if (B_orth>1e-14)
+%             warning('Reduced basis B not orthogonal');
+%         end
+        
+%          is B' * Om_mat * B diagonal?
+        disp('is B^T * Om * B diagonal?');
+        mass_matrix = B'*Om_mat*B;
+        diag_mass_matrix = diag(mass_matrix);
+        B_diag = max(max(abs(mass_matrix - diag(diag_mass_matrix))))
+        if (B_diag>1e-12)
+            warning('not diagonal');
+        end
+        % check for zero eigenvalues
+        if (min(abs(diag_mass_matrix)) < 1e-12)
+            warning('zero eigenvalue in diagonal matrix');
+        end
+        
+        % get the oblique projection (for the case that B is not
+        % orthonormal)
+%         options.rom.B_inv = decomposition(B.'*Om_mat*B);
         
         % get nullspace of div-operator (all vectors v such that M*v=0)
 %         NullSpace = null(full(options.discretization.M));
@@ -376,11 +552,17 @@ switch rom_type
 
         options.rom.B = B;
         options.rom.M = M;
+%         options.rom.C = C;
+%         options.rom.Phi = Phi;
 
-        Nu  = options.grid.Nu;
-        Nv  = options.grid.Nv;
         Vbc = zeros(Nu+Nv,1);
-        options.rom.Vbc = Vbc;
+        options.rom.Vbc = Vbc;  
+        
+        options.rom.B_inv = 1./diag_mass_matrix; %(abs(mass_matrix)>1e-8); %spdiags(mass_matrix(abs(mass_matrix)>1e-8),0,options.grid.Np,options.grid.Np-1);
+        
+        options.rom.div_free = 1;
+
+        
         
     otherwise
         error ('wrong ROM type')
@@ -399,7 +581,7 @@ precompute_end(j) = toc-precompute_start
 % we expand the part of the solution vector that is div-free in terms of
 % B*R
 % V = B*R + Vbc
-
+V_orig = V;
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
@@ -419,14 +601,24 @@ if (options.rom.process_iteration_FOM == 1)
     end
 end
 
-if (options.rom.pressure_recovery == 1)
-    % get initial pressure that corresponds to the ROM velocity field
-    q = pressure_additional_solve_ROM(R,t,options);
-    p = getFOM_pressure(q,t,options);
+
+if (options.rom.div_free == 0)
+    % get initial ROM pressure by projecting initial presssure
+    q = getROM_pressure(p,t,options);
     
-    % overwrite the arrays with total solutions
-    if (save_unsteady == 1)
-        p_total(n,:)  = p;
+elseif (options.rom.div_free == 1)
+    if (options.rom.pressure_recovery == 1)
+        % get initial pressure that corresponds to the ROM velocity field
+        q = pressure_additional_solve_ROM(R,t,options);
+        p = getFOM_pressure(q,t,options);
+
+        % overwrite the arrays with total solutions
+        if (save_unsteady == 1)
+            p_total(n,:)  = p;
+        end
+    else
+        % q is not used, set to arbitrary value
+        q = 0;
     end
 end
 

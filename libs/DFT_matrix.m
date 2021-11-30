@@ -40,8 +40,8 @@ if (nargin>1)
 
         if (Ntrunc<=0)
             error(['check value for truncation parameter, Ntrunc=' Ntrunc]);
-        elseif (Ntrunc==N)
-            warning('truncation parameter equal to N, no truncation');
+        elseif (Ntrunc>=N)
+            warning('truncation parameter greater than or equal to N, no truncation');
             ind_trunc = 1:N;
         else
             % check whether Ntrunc is odd, but leave the case of Ntrunc=1 intact

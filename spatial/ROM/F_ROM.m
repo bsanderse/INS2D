@@ -1,6 +1,9 @@
-function [maxres,Fres,dFres] = F_ROM(R,~,t,options,getJacobian)
+function [maxres,Fres,dFres] = F_ROM(R,q,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
+% inputs: R = ROM coefficients of velocity field; V = B*R
+%         q = ROM coefficients of pressure field; p = Bp*q
+
 if (nargin<5)
     getJacobian = 0;
 end
@@ -20,6 +23,11 @@ end
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
     options.rom.precompute_force == 0)
     V = getFOM_velocity(R,t,options);
+end
+
+% FOM pressure field (only needed when not precomputing)
+if (options.rom.div_free == 0 && options.rom.precompute_pressure == 0)
+    p = getFOM_pressure(q,t,options);
 end
 
 % unsteady BC
@@ -57,6 +65,18 @@ elseif (options.rom.precompute_diffusion == 0)
     end
 end
 
+% pressure gradient
+% only needed if basis is not div-free
+% if (options.rom.div_free == 0)
+%     if (options.rom.precompute_pressure == 1)
+%         % approach 1: (with precomputed matrices)
+%         Gp = options.rom.G*q;
+%     elseif (options.rom.precompute_pressure == 0)
+%         % approach 2: evaluate convection on FOM level, then map back
+%         Gp = options.rom.B' * options.discretization.G * p;
+%     end
+% end
+
 % body force 
 if (options.rom.precompute_force == 1)
     F = options.rom.F;
@@ -92,6 +112,12 @@ end
 % residual of ROM
 Fres    = - conv + Diff + F;
 
+% for the case of a non div-free basis, we have to add the pressure
+% gradient
+% if (options.rom.div_free == 0)
+%     Fres = Fres - Gp;
+% end
+
 % for the case of non-orthogonal basis, we have to multiply with the
 % inverse of (B'*B)
 switch options.rom.rom_type
@@ -104,6 +130,10 @@ switch options.rom.rom_type
         % non-orthogonal basis, pre-multiply with (B^T*B)^{-1}
         Fres = options.rom.B_inv \ Fres;
 
+    case 'FDG-Fourier'
+        
+        Fres = options.rom.B_inv .* Fres; 
+        
     otherwise
         error ('wrong ROM type')
 end
