@@ -150,38 +150,88 @@ u_back3 = phi_real_inv*u_hat3;
 max(abs(u_back3-u_back))
 
 
-%% truncation of phi and phi_real
-M = 8;
+%% test differentiation
 
-% truncate the complex exponential form
+% see how fourier transforming affects the derivative
+% assume we have a signal in Fourier space, which is transformed to
+% physical space, then we take derivative, then we transform back to
+% Fourier space
+
+% d^2/dx^2
+d = ones(N,1);
+D = spdiags([d -2*d d],[-1 0 1],N,N);
+D(1,end)=1;
+D(end,1)=1;
+
+% effective diagonal matrix (diagonalisation)
+Dk_complex  = phi*D*phi_inv;
+% same result with real transform, but the order can be different
+Dk_real     = phi_real*D*phi_real_inv;
+Dk_analytic = 2*cos(2*pi*(0:N-1)/N)-2;
+
+% since D is circulant, the diagonalized form can be obtained directly as follows
+D_circ      = D(:,1);
+eig_complex = sqrt(N)*(phi')*D_circ; % this should correspond to Dk_complex and to eig(D)
+% get back the original matrix using eigenvectors and eigenvalue matrix
+Dtest_complex = sqrt(N)*(phi')*diag((phi')*D_circ)*phi;
+% similarly, for the real case
+% however, we don't have a good expression for the eigenvalues in terms of
+% phi_real yet, so we use phi for now; however the ordering is not yet correct
+% Dtest_real    = sqrt(N)*(phi_real.')*diag((phi')*D_circ)*phi_real;
+
+
+figure
+plot(diag(Dk_real),'x-')
+hold on
+plot(real(diag(Dk_complex)),'s-');
+plot(Dk_analytic,'o-')
+legend('real transform','complex transform','analytic');
+
+
+%% test truncation of phi and phi_real
+Ntrunc = 8; % should be even
+
+% truncate the complex exponential form;
+% u_hat_trunc will just be a subset of u_hat, which should match
+% u_hat(ind_trunc)
+% ind_trunc = [1:Ntrunc/2 (N-Ntrunc/2+1):N];
+
 
 % index truncation set, simply based on frequency ordering (not on PSD)
 % ind_trunc     = [1:M+1 (N-M+1):N]; 
 % phi_inv_trunc = phi_inv(:,ind_trunc);
 % phi_trunc     = phi(ind_trunc,:);
-
-[phi_trunc,phi_trunc_inv] = DFT_matrix(N,M);
+[phi_trunc,phi_trunc_inv] = DFT_matrix(N,Ntrunc);
 u_hat_trunc   = phi_trunc*u;
 u_back_trunc  = phi_trunc_inv*u_hat_trunc;
+% the following quantity should be 0:
+M = size(phi_trunc,1);
+max(max(abs(phi_trunc*phi_trunc_inv - eye(M))))
+% the following quantity is generally nonzero, as an error is made due to
+% truncation
+max(abs(u_back_trunc - u))
+
 
 % truncate the real form
 % phi_real_inv_trunc = [phi_real_inv(:,1:M+1) phi_real_inv(:,end-M+1:end)];
 % phi_real_trunc = [phi_real(1:M+1,:); phi_real(end-M+1:end,:)];
-[phi_real_trunc,phi_real_inv_trunc] = DFT_matrix_real(N,2*M);
+[phi_real_trunc,phi_real_trunc_inv] = DFT_matrix_real(N,Ntrunc);
 u_hat_trunc3   = phi_real_trunc*u;
-u_back_trunc3  = phi_real_inv_trunc*u_hat_trunc3;
+u_back_trunc3  = phi_real_trunc_inv*u_hat_trunc3;
 
 
 % we should still have phi*phi_inv = I_M
-max(max(abs(phi_real_trunc*phi_real_inv_trunc - eye(2*M+1))))
+max(max(abs(phi_real_trunc*phi_real_trunc_inv - eye(M))))
 % but phi_inv*phi does NOT equal I_N
 % phi_real_inv_trunc*phi_real_trunc
-
+max(abs(u_back_trunc3 - u))
+% compare with complex exponential truncation:
 max(abs(u_back_trunc3 - u_back_trunc))
 
 
 %% 
 figure
+title('frequency truncation')
 plotstyle ={'LineWidth',1,'MarkerSize',10};
 plot(u,plotstyle{:})
 hold on
@@ -192,7 +242,12 @@ plot(u_back_trunc3,'s',plotstyle{:})
 
 legend('original','complex DFT+iDFT','real DFT+iDFT','complex DFT+iDFT truncated','real DFT+iDFT truncated');
 
-%%
+%% more complex example, where we filter based on PSD, instead of purely on frequencies
+% select 2*n_keep indices, where the factor 2 is needed because we need the
+% coefficients associated with negative frequencies as well to do the inverse
+n_keep = 5;
+
+% note that u_hat is given by fft(u)*sqrt(N)
 psd  = u_hat.*conj(u_hat); %/(n^2); % n^2 disappears if it we do fft/n
 
 % power in time and in frequency domain (should match)
@@ -204,17 +259,15 @@ figure
 semilogy(fVals,psd(1:N/2))
 
 % select indices with largest PSD by sorting the PSD
-[val,ind] = sort(psd,'desc');
-%
+[val,ind]  = sort(psd,'desc');
 ind_select = ones(N,1);
 % select 2*n_keep indices, where the factor 2 is needed because we need the
 % coefficients associated with negative frequencies as well to do the inverse
 % transform
-n_keep = 3;
 ind_select(ind(2*n_keep:end)) = 0;
 % set other indices to 0
 fhat_new = ind_select.*u_hat;
-fnew    = N*ifft(fhat_new,N);
+fnew    = sqrt(N)*ifft(fhat_new,N); % we use sqrt(N) because this has been used in the forward transform as well
 
 % note: if we want physical meaning out of the Fourier coefficients
 % (amplitude, angle) we need to divide by n (and multiply by 2 if we don't
@@ -240,8 +293,27 @@ threshold = max(abs(f2))/1e4; %tolerance threshold
 f2(abs(f2)<threshold) = 0; %maskout values that are below the threshold
 angle(f2(ind_keep(ind_pos)))*180/pi;
 
+% alternative approach uses the truncated fft matrix, either in complex or
+% real form
+% complex form:
+[phi_trunc_psd,phi_trunc_psd_inv] = DFT_matrix(N,[],ind_keep);
+u_hat_trunc_psd   = phi_trunc_psd*u;
+u_trunc_psd = phi_trunc_psd_inv*u_hat_trunc_psd;
+% real form:
+% only use the positive frequencies
+ind_keep_real = [ind_keep(ind_keep<=N/2); ind_keep(ind_keep<=N/2 & ind_keep>1) + N/2];
+[phi_trunc_real_psd,phi_trunc_real_psd_inv] = DFT_matrix_real(N,[],ind_keep_real);
+u_hat_real_trunc_psd   = phi_trunc_real_psd*u;
+u_real_trunc_psd = phi_trunc_real_psd_inv*u_hat_real_trunc_psd;
+
 
 figure
+title('psd truncation');
 plot(x,u);
 hold on
-plot(x,fnew);
+plot(x,fnew,'x-');
+plot(x,u_trunc_psd,'s-')
+plot(x,u_real_trunc_psd,'o-')
+legend('original signal','first few modes based on taking fft and then truncating',...
+    'first few modes based on using truncated complex fft matrix',...
+    'first few modes based on using truncated real fft matrix');
