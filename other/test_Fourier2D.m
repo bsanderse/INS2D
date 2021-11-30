@@ -17,10 +17,10 @@ clearvars
 close all
 
 %%
-Nx = 50; % number of points, assume EVEN
-Lx = 2;
-Ny = 20; % number of points, assume EVEN
-Ly = 1;
+Nx = 20; % number of points, assume EVEN
+Lx = 2*pi;
+Ny = 12; % number of points, assume EVEN
+Ly = 2*pi;
 x  = linspace(0,Lx-Lx/Nx,Nx)';
 y  = linspace(0,Ly-Ly/Ny,Ny)';
 % dx = x(2)-x(1);
@@ -30,14 +30,20 @@ y  = linspace(0,Ly-Ly/Ny,Ny)';
 I = sqrt(-1);
 
 % freq = 1/dx; %sampling frequency should be at least 2*highest frequency in signal
-u    = 2 + 0.1*cos(2*pi*5*(X-0.2).^2 + 10*pi/180) + 0.6*sin(2*pi*120*X) + sin(2*pi*Y.^2) ;
+% u    = 2 + 0.1*cos(2*pi*5*(X-0.2).^2 + 10*pi/180) + 0.6*sin(2*pi*120*X) + sin(2*pi*Y.^2) ;
+u     = sin(X).*sin(Y);
 Nx    = length(x);
 Ny    = length(y);
+
+
+%% truncation
+M = 4;
 
 
 %% method 1: use Matlab FFT
 % for physical interpretation, one could add scaling of 1/N in the definition of uhat
 % if scaling is included it needs to be added also in ifft
+% we use the 1/sqrt(N) scaling to get an orthonormal basis
 u_hat = fft2(u)/sqrt(Nx*Ny); 
 
 % inverse transform
@@ -137,7 +143,6 @@ max(abs(u_back3-u_back(:)))
 
 
 %% truncation of phi and phi_real
-M = 8;
 
 % truncate the complex exponential form
 % index truncation set, simply based on frequency ordering (not on PSD)
@@ -197,6 +202,21 @@ surf(x,y,reshape(u_back5,Nx,Ny)')
 xlabel('x')
 ylabel('y')
 legend('original','real DFT+iDFT truncated');
+
+figure
+surf(x,y,u'-reshape(u_back5,Nx,Ny)');
+title('error')
+xlabel('x')
+ylabel('y')
+
+%% plot solution in frequency domain
+figure
+surf(1:Nx,1:Ny,reshape(u_hat3,Nx,Ny)')
+figure
+Mx = size(phi_real_x_trunc,1);
+My = size(phi_real_y_trunc,1);
+surf(1:Mx,1:My,reshape(u_hat5,Mx,My)')
+
 
 %%
 % psd  = u_hat.*conj(u_hat); %/(n^2); % n^2 disappears if it we do fft/n
