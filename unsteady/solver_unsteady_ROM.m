@@ -518,16 +518,8 @@ switch options.rom.rom_type
         % V = C*psi = C*Phi*R = B*R
         B   = C*Phi;
        
-
         
-%         is B orthonormal?
-%         disp('orthogonality of reduced basis B:');
-%         B_orth = max(max(abs(B'*B-speye(size(B,2)))))
-%         if (B_orth>1e-14)
-%             warning('Reduced basis B not orthogonal');
-%         end
-        
-%          is B' * Om_mat * B diagonal?
+        % is B' * Om_mat * B diagonal?
         disp('is B^T * Om * B diagonal?');
         mass_matrix = B'*Om_mat*B;
         diag_mass_matrix = diag(mass_matrix);
@@ -539,6 +531,38 @@ switch options.rom.rom_type
         if (min(abs(diag_mass_matrix)) < 1e-12)
             warning('zero eigenvalue in diagonal matrix');
         end
+        
+        % an alternative construction that does not use the explicit
+        % formation of B is as follows:
+        % we want to compute Phi^T*C^T*Om*C*Phi = Phi^T*Lpsi*Psi
+        % where Lpsi is the Poisson matrix for the streamfunction:
+        Lpsi  = C'*Om_mat*C;
+        % now convert to Fourier domain
+        % first left-multiply with Phi^T, the forward FFT transform
+        Lpsi_hat = zeros(M,size(Lpsi,2));
+        for i=1:size(Lpsi,2)
+             LFourier = RDFT2(reshape(full(Lpsi(:,i)),Nx,Ny).',2,2).'; 
+             Lpsi_hat(:,i) = LFourier(:);
+        end
+        % now right-multiply, Lpsi_hat*Psi, which is rewritten as
+        % (Phi^T * Lpsi_hat^T)^T = (RDFT(Lpsi_hat^T)^T)
+        % this leads to the following "mass matrix"
+        Mpsi_hat = zeros(M,M);
+        for i=1:size(Lpsi_hat,1)
+             LFourier = RDFT2(reshape(full(Lpsi_hat(i,:)),Nx,Ny).',2,2).'; 
+             Mpsi_hat(:,i) = LFourier(:);
+        end
+       
+        % with these routines, we can also build B alternatively as follows
+        Balt = zeros(size(B));
+        for i=1:size(C,1)
+            CFourier = RDFT2(reshape(full(C(i,:)),Nx,Ny).',2,2).'; 
+            Balt(i,:) = CFourier(:);
+        end
+        
+        max(max(abs(mass_matrix-Mpsi_hat)))
+        max(max(abs(B-Balt)))
+
         
         % get the oblique projection (for the case that B is not
         % orthonormal)

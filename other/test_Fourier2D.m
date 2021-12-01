@@ -176,7 +176,9 @@ u_hat_trunc   = phi_trunc_2D*u(:);
 u_back_trunc  = phi_trunc_inv_2D*u_hat_trunc;
 
 u_hat_trunc2  = DFT(DFT(u,M).',M).';
+u_hat_trunc2  = DFT2(u,M,M);
 u_back_trunc2 = IDFT(IDFT(u_hat_trunc2.',Ny).',Nx);
+u_back_trunc2 = IDFT2(u_hat_trunc2,Nx,Ny);
 
 max(abs(u_hat_trunc(:) - u_hat_trunc2(:)))
 max(abs(u_back_trunc2(:) - u_back_trunc(:)))
@@ -210,7 +212,9 @@ u_hat7  = phi_real_trunc_2D*u(:);
 u_back7 = phi_real_trunc_inv_2D*u_hat7;
 
 u_hat8  = RDFT(RDFT(u,2*M).',2*M).';
+u_hat8  = RDFT2(u,2*M,2*M);
 u_back8 = IRDFT(IRDFT(u_hat8.',Ny).',Nx);
+u_back8 = IRDFT2(u_hat8,Nx,Ny);
 
 max(abs(u_back7 - u_back_trunc(:)))
 
