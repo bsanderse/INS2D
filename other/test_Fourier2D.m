@@ -17,9 +17,9 @@ clearvars
 close all
 
 %%
-Nx = 20; % number of points, assume EVEN
+Nx = 12; % number of points, assume EVEN
 Lx = 2*pi;
-Ny = 12; % number of points, assume EVEN
+Ny = 8; % number of points, assume EVEN
 Ly = 2*pi;
 x  = linspace(0,Lx-Lx/Nx,Nx)';
 y  = linspace(0,Ly-Ly/Ny,Ny)';
@@ -37,7 +37,7 @@ Ny    = length(y);
 
 
 %% truncation
-M = 4;
+M = 2;
 
 
 %% method 1: use Matlab FFT
@@ -64,6 +64,12 @@ u_hat2  = phi_x*u*phi_y;
 u_back2 = phi_x_inv*u_hat2*phi_y_inv;
 
 
+% alternative
+% phi_x * u * phi_y = (phi_x *u) * phi_y = (phi_y.' * (phi_x*u).').'
+% = (phi_y * (phi_x*u).').' = DFT( DFT(u).').';
+u_hat5  = DFT( DFT(u).').';
+u_back5 = IDFT( IDFT(u_hat5.') .');
+
 % full 2D matrix form
 % note that this uses the symmetry of phi_y
 % phi_full = kron(phi_y,speye(Nx))*kron(speye(Ny),phi_x);
@@ -79,10 +85,12 @@ u_back4  = reshape(phi_inv_2D*u_hat4(:),Nx,Ny);
 
 % uhat2 should equal uhat:
 max(max(abs(u_hat2-u_hat)))
+max(max(abs(u_hat5-u_hat)))
 max(max(abs(u_hat4-u_hat)))
 
 % uback2 should equal uback
 max(max(abs(u_back2-u_back)))
+max(max(abs(u_back5-u_back)))
 max(max(abs(u_back4-u_back)))
 
 % note the ordering of uhat:
@@ -141,6 +149,14 @@ u_back3 = phi_real_inv_2D*u_hat3;
 
 max(abs(u_back3-u_back(:)))
 
+% alternatively:
+u_hat6  = RDFT( RDFT(u).').';
+u_back6  = IRDFT( IRDFT(u_hat6.').');
+
+
+max(abs(u_hat6(:)-u_hat3(:)))
+max(abs(u_back6(:)-u_back(:)))
+
 
 %% truncation of phi and phi_real
 
@@ -158,6 +174,13 @@ phi_trunc_inv_2D  = kron(phi_y_trunc_inv,phi_x_trunc_inv);
 
 u_hat_trunc   = phi_trunc_2D*u(:);
 u_back_trunc  = phi_trunc_inv_2D*u_hat_trunc;
+
+u_hat_trunc2  = DFT(DFT(u,M).',M).';
+u_back_trunc2 = IDFT(IDFT(u_hat_trunc2.',Ny).',Nx);
+
+max(abs(u_hat_trunc(:) - u_hat_trunc2(:)))
+max(abs(u_back_trunc2(:) - u_back_trunc(:)))
+
 
 %% truncate the real form
 % phi_real_inv_trunc = [phi_real_x_inv(:,1:M+1) phi_real_x_inv(:,end-M+1:end)];
@@ -183,11 +206,16 @@ u_back_trunc  = phi_trunc_inv_2D*u_hat_trunc;
 phi_real_trunc_2D     = kron(phi_real_y_trunc,phi_real_x_trunc);
 phi_real_trunc_inv_2D = kron(phi_real_y_trunc_inv,phi_real_x_trunc_inv);
 
-u_hat5  = phi_real_trunc_2D*u(:);
-u_back5 = phi_real_trunc_inv_2D*u_hat5;
+u_hat7  = phi_real_trunc_2D*u(:);
+u_back7 = phi_real_trunc_inv_2D*u_hat7;
 
-max(abs(u_back5 - u_back_trunc(:)))
+u_hat8  = RDFT(RDFT(u,2*M).',2*M).';
+u_back8 = IRDFT(IRDFT(u_hat8.',Ny).',Nx);
 
+max(abs(u_back7 - u_back_trunc(:)))
+
+max(abs(u_hat8(:) - u_hat7(:)))
+max(abs(u_back8(:) - u_back7(:)))
 
 %% 
 figure
@@ -215,7 +243,7 @@ surf(1:Nx,1:Ny,reshape(u_hat3,Nx,Ny)')
 figure
 Mx = size(phi_real_x_trunc,1);
 My = size(phi_real_y_trunc,1);
-surf(1:Mx,1:My,reshape(u_hat5,Mx,My)')
+surf(1:Mx,1:My,reshape(u_hat7,Mx,My)')
 
 
 %%

@@ -59,7 +59,7 @@ if (nargin>1)
     
     u_hat = u_hat(ind_trunc,:);
     
-    N_hat = length(u_hat);
+    N_hat = size(u_hat,1);
     
     % N_hat is typically odd, and Nyquist frequency will be missing
     ind_cos  = 1:floor(N_hat/2)+1;

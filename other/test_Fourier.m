@@ -321,8 +321,8 @@ angle(f2(ind_keep(ind_pos)))*180/pi;
 u_hat_trunc_psd   = phi_trunc_psd*u;
 u_trunc_psd = phi_trunc_psd_inv*u_hat_trunc_psd;
 % alternatives:
-% u_hat_trunc_psd = DFT(u,[],ind_keep);
-% u_trunc_psd = IDFT(u_hat_trunc_psd,[],ind_keep);
+u_hat_trunc_psd = DFT(u,[],ind_keep);
+u_trunc_psd = IDFT(u_hat_trunc_psd,N,ind_keep);
 
 % real form:
 % only use the positive frequencies

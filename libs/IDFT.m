@@ -17,7 +17,7 @@ N_vec = size(u_hat,2);
 if (nargin>1)
     
     if (isempty(N))
-        error('N needs to specified');
+        error('N needs to be specified');
     end
 
     u_hat_full = zeros(N,N_vec);    
