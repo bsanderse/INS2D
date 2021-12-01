@@ -34,10 +34,12 @@ N    = length(x);
 % note that the Matlab definition uses 1/N in the ifft and 1 in the fft
 % to get to the symmetric form with 1/sqrt(N) in both, we need to add
 % 1/sqrt(N) in the fft and *sqrt(N) in the ifft
-u_hat = fft(u,N)/sqrt(N); 
+% u_hat = fft(u,N)/sqrt(N); 
+u_hat = DFT(u);
 
 % inverse transform
-u_back = ifft(u_hat,N)*sqrt(N);
+% u_back = ifft(u_hat,N)*sqrt(N);
+u_back = IDFT(u_hat);
 
 %% method 2: program the DFT matrix Phi and Phi_inv, such that
 % u_hat = Phi*u
@@ -50,6 +52,7 @@ u_back = ifft(u_hat,N)*sqrt(N);
 
 u_hat2  = phi*u;
 u_back2 = phi_inv*u_hat2;
+
 
 % note that phi' = phi_inv, where ' is the complex conjugate transpose
 % this is because we use 1/sqrt(N) scaling in definition of the DFT
@@ -145,7 +148,9 @@ max(max(abs(phi_real.'-phi_real_inv)))
 % end
 
 u_hat3  = phi_real*u;
+u_hat33 = RDFT(u);
 u_back3 = phi_real_inv*u_hat3;
+u_back33 = IRDFT(u_hat33);
 
 max(abs(u_back3-u_back))
 
@@ -189,7 +194,7 @@ legend('real transform','complex transform','analytic');
 
 
 %% test truncation of phi and phi_real
-Ntrunc = 8; % should be even
+Ntrunc = 8; % should be even; note that the truncated signal has typically  length Ntrunc+1
 
 % truncate the complex exponential form;
 % u_hat_trunc will just be a subset of u_hat, which should match
@@ -203,7 +208,9 @@ Ntrunc = 8; % should be even
 % phi_trunc     = phi(ind_trunc,:);
 [phi_trunc,phi_trunc_inv] = DFT_matrix(N,Ntrunc);
 u_hat_trunc   = phi_trunc*u;
+% or: u_hat_trunc = DFT(u,Ntrunc);
 u_back_trunc  = phi_trunc_inv*u_hat_trunc;
+% or: u_back_trunc = IDFT(u_hat_trunc,N);
 % the following quantity should be 0:
 M = size(phi_trunc,1);
 max(max(abs(phi_trunc*phi_trunc_inv - eye(M))))
@@ -218,7 +225,8 @@ max(abs(u_back_trunc - u))
 [phi_real_trunc,phi_real_trunc_inv] = DFT_matrix_real(N,Ntrunc);
 u_hat_trunc3   = phi_real_trunc*u;
 u_back_trunc3  = phi_real_trunc_inv*u_hat_trunc3;
-
+% or u_hat_trunc3 = RDFT(u,Ntrunc)
+% or: u_back_trunc3 = IRDFT(u_hat_trunc3,N); 
 
 % we should still have phi*phi_inv = I_M
 max(max(abs(phi_real_trunc*phi_real_trunc_inv - eye(M))))
@@ -241,6 +249,7 @@ plot(real(u_back_trunc),plotstyle{:})
 plot(u_back_trunc3,'s',plotstyle{:})
 
 legend('original','complex DFT+iDFT','real DFT+iDFT','complex DFT+iDFT truncated','real DFT+iDFT truncated');
+
 
 %% more complex example, where we filter based on PSD, instead of purely on frequencies
 % select 2*n_keep indices, where the factor 2 is needed because we need the
@@ -299,13 +308,21 @@ angle(f2(ind_keep(ind_pos)))*180/pi;
 [phi_trunc_psd,phi_trunc_psd_inv] = DFT_matrix(N,[],ind_keep);
 u_hat_trunc_psd   = phi_trunc_psd*u;
 u_trunc_psd = phi_trunc_psd_inv*u_hat_trunc_psd;
+% alternatives:
+% u_hat_trunc_psd = DFT(u,[],ind_keep);
+% u_trunc_psd = IDFT(u_hat_trunc_psd,[],ind_keep);
+
 % real form:
 % only use the positive frequencies
+% we select the cosine and sine terms to be kept after the fft has been
+% applied by using ind_keep_real
 ind_keep_real = [ind_keep(ind_keep<=N/2); ind_keep(ind_keep<=N/2 & ind_keep>1) + N/2];
 [phi_trunc_real_psd,phi_trunc_real_psd_inv] = DFT_matrix_real(N,[],ind_keep_real);
 u_hat_real_trunc_psd   = phi_trunc_real_psd*u;
 u_real_trunc_psd = phi_trunc_real_psd_inv*u_hat_real_trunc_psd;
-
+% alternatives:
+% u_hat_real_trunc_psd = RDFT(u,[],ind_keep_real);
+u_real_trunc_psd = IRDFT(u_hat_real_trunc_psd,N,ind_keep_real);
 
 figure
 title('psd truncation');
