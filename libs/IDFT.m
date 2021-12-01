@@ -10,7 +10,8 @@ function u = IDFT(u_hat,N,vec_trunc)
 % selection that is not based on frequency but e.g. on power spectral density
 % of the signal, or to skip positive or negative frequencies
 
-N_hat = length(u_hat);
+N_hat = size(u_hat,1);
+N_vec = size(u_hat,2);
 
 % extend the transformed value u_hat
 if (nargin>1)
@@ -19,7 +20,7 @@ if (nargin>1)
         error('N needs to specified');
     end
 
-    u_hat_full = zeros(N,1);    
+    u_hat_full = zeros(N,N_vec);    
 
     if (nargin==2)
     % extend to N modes
@@ -52,7 +53,7 @@ if (nargin>1)
     
         
     end
-    u_hat_full(ind_trunc) = u_hat;
+    u_hat_full(ind_trunc,:) = u_hat;
     
 else
     N = N_hat;

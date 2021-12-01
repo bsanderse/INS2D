@@ -20,7 +20,7 @@ function u_hat_real = RDFT(u,N_hat,vec_trunc)
 % selection that is not based on frequency but e.g. on power spectral density
 % of the signal, or to skip positive or negative frequencies
 
-N     = length(u);
+N     = size(u,1);
 u_hat = fft(u)/sqrt(N);
 
 % truncate the transformed value u_hat
@@ -57,7 +57,7 @@ if (nargin>1)
         
     end
     
-    u_hat = u_hat(ind_trunc);
+    u_hat = u_hat(ind_trunc,:);
     
     N_hat = length(u_hat);
     
@@ -66,20 +66,20 @@ if (nargin>1)
     ind_sin  = 2:floor(N_hat/2)+1;
     
     % introduce sqrt(2) scaling for orthonormaltiy
-    u_hat_cos  = real(u_hat(ind_cos));
-    u_hat_cos(2:end) = u_hat_cos(2:end)*sqrt(2);
-    u_hat_sin  = imag(u_hat(ind_sin))*sqrt(2);
+    u_hat_cos  = real(u_hat(ind_cos,:));
+    u_hat_cos(2:end,:) = u_hat_cos(2:end,:)*sqrt(2);
+    u_hat_sin  = imag(u_hat(ind_sin,:))*sqrt(2);
     u_hat_real = [u_hat_cos; u_hat_sin];
     
 else       
 
     ind_cos  = 1:N/2+1;
     ind_sin  = 2:N/2;
-    u_hat_cos = real(u_hat(ind_cos));
+    u_hat_cos = real(u_hat(ind_cos,:));
     
     % introduce sqrt(2) scaling for orthonormaltiy
-    u_hat_cos(2:end-1) = u_hat_cos(2:end-1)*sqrt(2);
-    u_hat_sin  = imag(u_hat(ind_sin))*sqrt(2);
+    u_hat_cos(2:end-1,:) = u_hat_cos(2:end-1,:)*sqrt(2);
+    u_hat_sin  = imag(u_hat(ind_sin,:))*sqrt(2);
     
     u_hat_real = [u_hat_cos; u_hat_sin];
     

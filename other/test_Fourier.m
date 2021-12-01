@@ -25,7 +25,11 @@ dx = x(2)-x(1);
 I = sqrt(-1);
 
 freq = 1/dx; %sampling frequency should be at least 2*highest frequency in signal
-u    = 2 + 0.1*cos(2*pi*5*(x-0.2).^2 + 10*pi/180) + 0.6*sin(2*pi*120*x);
+u    = zeros(N,2);
+u(:,1)   = 2 + 0.1*cos(2*pi*5*(x-0.2).^2 + 10*pi/180) + 0.6*sin(2*pi*120*x);
+u(:,2)   = 3 + 0.1*cos(2*pi*4*(x-0.7).^2 + 10*pi/180) + 0.6*sin(2*pi*200*x);
+
+N_vec = size(u,2);
 N    = length(x);
 
 %% method 1: use Matlab FFT
@@ -207,10 +211,13 @@ Ntrunc = 8; % should be even; note that the truncated signal has typically  leng
 % phi_inv_trunc = phi_inv(:,ind_trunc);
 % phi_trunc     = phi(ind_trunc,:);
 [phi_trunc,phi_trunc_inv] = DFT_matrix(N,Ntrunc);
-u_hat_trunc   = phi_trunc*u;
-% or: u_hat_trunc = DFT(u,Ntrunc);
-u_back_trunc  = phi_trunc_inv*u_hat_trunc;
-% or: u_back_trunc = IDFT(u_hat_trunc,N);
+u_hat_trunc  = phi_trunc*u;
+% or:
+u_hat_trunc  = DFT(u,Ntrunc);
+% back:
+u_back_trunc = phi_trunc_inv*u_hat_trunc;
+% or: 
+u_back_trunc = IDFT(u_hat_trunc,N);
 % the following quantity should be 0:
 M = size(phi_trunc,1);
 max(max(abs(phi_trunc*phi_trunc_inv - eye(M))))
@@ -225,8 +232,10 @@ max(abs(u_back_trunc - u))
 [phi_real_trunc,phi_real_trunc_inv] = DFT_matrix_real(N,Ntrunc);
 u_hat_trunc3   = phi_real_trunc*u;
 u_back_trunc3  = phi_real_trunc_inv*u_hat_trunc3;
-% or u_hat_trunc3 = RDFT(u,Ntrunc)
-% or: u_back_trunc3 = IRDFT(u_hat_trunc3,N); 
+% or 
+u_hat_trunc3 = RDFT(u,Ntrunc);
+% or:
+u_back_trunc3 = IRDFT(u_hat_trunc3,N); 
 
 % we should still have phi*phi_inv = I_M
 max(max(abs(phi_real_trunc*phi_real_trunc_inv - eye(M))))
@@ -268,12 +277,15 @@ figure
 semilogy(fVals,psd(1:N/2))
 
 % select indices with largest PSD by sorting the PSD
-[val,ind]  = sort(psd,'desc');
+[val,ind]  = sort(psd(:,1),'desc');
 ind_select = ones(N,1);
 % select 2*n_keep indices, where the factor 2 is needed because we need the
 % coefficients associated with negative frequencies as well to do the inverse
 % transform
+% for now we use the first vector in u to select, and leave the option to
+% the index selection for each vector separately for later
 ind_select(ind(2*n_keep:end)) = 0;
+
 % set other indices to 0
 fhat_new = ind_select.*u_hat;
 fnew    = sqrt(N)*ifft(fhat_new,N); % we use sqrt(N) because this has been used in the forward transform as well
@@ -295,7 +307,7 @@ abs(f_keep);
 
 % get only positive frequencies and mean
 ind_pos = 2:2:2*(n_keep-1);
-abs(u_hat(1));
+abs(u_hat(1,:));
 abs(u_hat(ind_keep(ind_pos)))*2;
 f2 = u_hat;
 threshold = max(abs(f2))/1e4; %tolerance threshold
@@ -321,7 +333,7 @@ ind_keep_real = [ind_keep(ind_keep<=N/2); ind_keep(ind_keep<=N/2 & ind_keep>1) +
 u_hat_real_trunc_psd   = phi_trunc_real_psd*u;
 u_real_trunc_psd = phi_trunc_real_psd_inv*u_hat_real_trunc_psd;
 % alternatives:
-% u_hat_real_trunc_psd = RDFT(u,[],ind_keep_real);
+u_hat_real_trunc_psd = RDFT(u,[],ind_keep_real);
 u_real_trunc_psd = IRDFT(u_hat_real_trunc_psd,N,ind_keep_real);
 
 figure

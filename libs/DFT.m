@@ -20,7 +20,7 @@ function u_hat = DFT(u,N_hat,vec_trunc)
 % selection that is not based on frequency but e.g. on power spectral density
 % of the signal, or to skip positive or negative frequencies
 
-N     = length(u);
+N     = size(u,1);
 u_hat = fft(u)/sqrt(N);
 
 % truncate the transformed value u_hat
@@ -56,7 +56,7 @@ if (nargin>1)
         
     end
     
-    u_hat = u_hat(ind_trunc);
+    u_hat = u_hat(ind_trunc,:);
        
     
 end

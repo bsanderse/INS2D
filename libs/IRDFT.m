@@ -10,15 +10,15 @@ function u = IRDFT(u_hat_real,N,vec_trunc)
 % selection that is not based on frequency but e.g. on power spectral density
 % of the signal, or to skip positive or negative frequencies
 
-N_hat     = length(u_hat_real);
-
+N_hat     = size(u_hat_real,1);
+N_vec = size(u_hat_real,2);
 I = sqrt(-1);
 
 
 % extend the transformed value u_hat
 if (nargin>1)
     
-    u_hat = zeros(N,1);    
+    u_hat = zeros(N,N_vec);    
 
     
     if (nargin==2)
@@ -65,20 +65,20 @@ if (nargin>1)
           
     % scale back the sqrt(2) term that was introduced in the forward
     % transform; note: not for k=0 
-    u_hat_real(ind_cos(2:end)) = u_hat_real(ind_cos(2:end))/sqrt(2);
-    u_hat_real(ind_sin) = u_hat_real(ind_sin)/sqrt(2); 
+    u_hat_real(ind_cos(2:end),:) = u_hat_real(ind_cos(2:end),:)/sqrt(2);
+    u_hat_real(ind_sin,:) = u_hat_real(ind_sin,:)/sqrt(2); 
 
 
     % set real component, positive frequencies
-    u_hat(ind_pos) = u_hat_real(ind_cos);
+    u_hat(ind_pos,:) = u_hat_real(ind_cos,:);
     % add imaginary component, positive frequencies
-    u_hat(ind_pos(2:end)) = u_hat(ind_pos(2:end)) + I*u_hat_real(ind_sin);
+    u_hat(ind_pos(2:end),:) = u_hat(ind_pos(2:end),:) + I*u_hat_real(ind_sin,:);
 
     % for negative frequencies, we have to 'flip'
     % set real component, negative frequencies
-    u_hat(ind_neg) = u_hat_real(flip(ind_cos(2:end)));
+    u_hat(ind_neg,:) = u_hat_real(flip(ind_cos(2:end)),:);
     % add imaginary component, negative frequencies
-    u_hat(ind_neg) = u_hat(ind_neg) - I*u_hat_real(flip(ind_sin));
+    u_hat(ind_neg,:) = u_hat(ind_neg,:) - I*u_hat_real(flip(ind_sin),:);
 
     % then do the ifft on the complex vector
     u = ifft(u_hat)*sqrt(N);    
@@ -90,23 +90,23 @@ else
     ind_sin  = floor(N_hat/2)+2:N_hat;
     ind_pos  = ind_cos;
     ind_neg  = ind_sin;
-    u_hat = zeros(N_hat,1);
+    u_hat = zeros(N_hat,N_vec);
     
     % scale back the sqrt(2) term that was introduced in the forward
     % transform; note: not for k=0 and k=N/2
-    u_hat_real(ind_cos(2:end-1)) = u_hat_real(ind_cos(2:end-1))/sqrt(2);
-    u_hat_real(ind_sin) = u_hat_real(ind_sin)/sqrt(2);
+    u_hat_real(ind_cos(2:end-1),:) = u_hat_real(ind_cos(2:end-1),:)/sqrt(2);
+    u_hat_real(ind_sin,:) = u_hat_real(ind_sin,:)/sqrt(2);
    
     % set real component, positive frequencies
-    u_hat(ind_pos) = u_hat_real(ind_cos);
+    u_hat(ind_pos,:) = u_hat_real(ind_cos,:);
     % add imaginary component, positive frequencies
-    u_hat(ind_pos(2:end-1)) = u_hat(ind_pos(2:end-1)) + I*u_hat_real(ind_sin);
+    u_hat(ind_pos(2:end-1),:) = u_hat(ind_pos(2:end-1),:) + I*u_hat_real(ind_sin,:);
 
     % for negative frequencies, we have to 'flip'
     % set real component, negative frequencies
-    u_hat(ind_neg) = u_hat_real(flip(ind_cos(2:end-1)));
+    u_hat(ind_neg,:) = u_hat_real(flip(ind_cos(2:end-1)),:);
     % add imaginary component, negative frequencies
-    u_hat(ind_neg) = u_hat(ind_neg) - I*u_hat_real(flip(ind_sin));
+    u_hat(ind_neg,:) = u_hat(ind_neg,:) - I*u_hat_real(flip(ind_sin),:);
 
     % then do the ifft on the complex vector
     u = ifft(u_hat)*sqrt(N_hat);
