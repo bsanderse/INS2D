@@ -101,7 +101,7 @@ else
         [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);        
     end
     
-    [symmetry_flag, symmetry_error] = check_symmetry(uh,vh,t,options);
+    [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);
     
     %% initialize pressure
     if (options.rom.rom == 0)

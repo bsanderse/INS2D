@@ -1,4 +1,4 @@
-function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian,nopressure)
+function [maxres,Fres,dF] = myF(V,C,p,t,options,getJacobian,nopressure)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 % V: velocity field
@@ -18,7 +18,6 @@ end
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
-NV = options.grid.NV;
 
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
@@ -39,25 +38,12 @@ end
 [convu, convv, dconvu, dconvv] = convection(V,C,t,options,getJacobian);
 
 % diffusion
-% [d2u, d2v, dDiffu, dDiffv] = diffusion(V,t,options,getJacobian);
+% addpath('spatial/')
+% import spatial.diffusion
 [d2u, d2v, dDiffu, dDiffv] = mydiffusion(V,t,options,getJacobian);
 
 % body force
-if (options.force.isforce == 1)
-    if (options.force.force_unsteady == 1)
-        [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
-    else
-        Fx = options.force.Fx;
-        Fy = options.force.Fy;
-        dFx = spalloc(Nu,NV,0);
-        dFy = spalloc(Nv,NV,0);            
-    end
-else
-    Fx  = zeros(Nu,1);
-    Fy  = zeros(Nv,1);
-    dFx = spalloc(Nu,NV,0);
-    dFy = spalloc(Nv,NV,0);      
-end
+[Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
 
 % residual in Finite Volume form, including the pressure contribution
 Fu   = - convu + d2u + Fx;

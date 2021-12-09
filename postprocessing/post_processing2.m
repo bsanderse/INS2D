@@ -31,13 +31,13 @@ color2 = char(line2(j));
 
 %% plot ROM coefficients
 % figure(313)
-figure
-t_vec = t_start:dt:t_end;
-for i =1:M
-    semilogy(t_vec,abs(coefficients(i,:)),'displayname',num2str(i))
-    hold on
-    legend
-end
+% figure
+% t_vec = t_start:dt:t_end;
+% for i =1:M
+%     semilogy(t_vec,abs(coefficients(i,:)),'displayname',num2str(i))
+%     hold on
+%     legend
+% end
 
 %% additional Reduced-Order Model postprocessing
 if (options.rom.rom == 1)

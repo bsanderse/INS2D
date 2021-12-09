@@ -64,7 +64,20 @@ if (j==1)
             if (isfield(snapshots,'Vbc'))
                 Vbc = snapshots.Vbc;
             else
-                error('Vbc data not provided');
+                %error('Vbc data not provided');
+                disp('computing snapshot.Vbc')
+                dt = snapshots.dt;
+                t_end = snapshots.t_end;
+                t_js = 0:dt:t_end;
+                for jj=1:length(t_js)
+                    t_j = t_js(jj);
+                    options = set_bc_vectors(t_j,options);
+                    f       = options.discretization.yM;
+                    dp      = pressure_poisson(f,t_j,options);
+                    Vbc(:,jj)  = - Om_inv.*(options.discretization.G*dp);
+%                     Vbc(:,jj)  = Om_inv.*(options.discretization.G*dp); %pfusch
+                    snapshots.Vbc = Vbc;
+                end 
             end
             V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
         else
