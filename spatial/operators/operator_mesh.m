@@ -578,7 +578,7 @@ end
 id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential values
 
 options.grid.id_normal = [id_u_normal; id_v_normal];
-options.grid.id_tangential = [id_v_normal; id_v_tangential];
+options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
 
 

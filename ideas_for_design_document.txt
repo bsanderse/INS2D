@@ -7,3 +7,4 @@ ideas for design document:
           -> wrong: y_D depends on Dirichlet BC, composition y_O = nu*y_D-y_G in general not possible
     -> possibility to make boundary contribution terms dependent on V_h (at leat V_h^normal and V_h^tangential required!) 
 - remove prefix in case files (e.g. actuator_unsteady_ROM_BCtype.m -> BCtype.m) -> simplifies copying case files
+- use testing routines

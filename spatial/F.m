@@ -83,7 +83,7 @@ id_n_t = id_normal+id_tangential;
 V_n_t = id_n_t.*V;
 gO = options.BC.gO;
 
-y_O = diag(K_h*diag(I_h*V_h+y_I)*A_h)*V_n_t-V_n_t.*gO(V);
+y_O = diag(K_h*diag(I_h*V+y_I)*A_h).*V_n_t-V_n_t.*gO(V);
 Fres = Fres + y_O;
 %%
 
