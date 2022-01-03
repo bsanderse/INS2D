@@ -263,7 +263,7 @@ hyi         = hy;
 
 
 % restrict Ny+2 to Nvy_in+1 points
-if (sum(strcmp(BC.v.low,active_BC)) && sum(strcmp(BC.v.up,active_BC)))
+if (sum(strcmp(BC.v.low,active_BC)) && sumstrcmp(BC.v.up,active_BC))
     yin = y(2:end-1);
     hyd = hy;
     gyi = gy(2:end-1);
@@ -277,19 +277,19 @@ if (sum(strcmp(BC.v.low,active_BC)) && sum(strcmp(BC.v.up,active_BC)))
         gyi3  = gy3(2:end-1);
     end
 end
-if (sum(strcmp(BC.v.low,active_BC)) && sum(strcmp(BC.v.up,passive_BC)))
+if (strcmp(BC.v.low,active_BC) && strcmp(BC.v.up,passive_BC))
     yin = y(2:end);
     hyd = [hy; hy(end)];
     gyi = gy(2:end);
     diagpos = 1;
 end
-if (sum(strcmp(BC.v.low,passive_BC)) && sum(strcmp(BC.v.up,active_BC)))
+if (strcmp(BC.v.low,passive_BC) && strcmp(BC.v.up,active_BC))
     yin = y(1:end-1);
     hyd = [hy(1); hy];
     gyi = gy(1:end-1);
     diagpos = 0;
 end
-if (sum(strcmp(BC.v.low,passive_BC)) && sum(strcmp(BC.v.up,passive_BC)))
+if (strcmp(BC.v.low,passive_BC) && strcmp(BC.v.up,passive_BC))
     yin = y(1:end);
     hyd = [hy(1); hy; hy(end)];
     gyi = gy;

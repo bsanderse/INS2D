@@ -62,13 +62,13 @@ M1D         = spdiags([-diag1 diag1],[0 1],Nux_t-1,Nux_t);
 % we only need derivative at inner pressure points, so we map the resulting
 % boundary matrix (restrict)
 diagpos = 0;
-if (strcmp(BC.u.right,passive_BC) && strcmp(BC.u.left,passive_BC) )
+if (sum(strcmp(BC.u.right,passive_BC)) && sum(strcmp(BC.u.left,passive_BC)))
     diagpos = 1;
 end
-if (~strcmp(BC.u.right,passive_BC) && strcmp(BC.u.left,passive_BC) )
+if (~sum(strcmp(BC.u.right,passive_BC)) && sum(strcmp(BC.u.left,passive_BC)))
     diagpos = 1;
 end
-if (strcmp(BC.u.right,passive_BC) && ~strcmp(BC.u.left,passive_BC) )
+if (sum(strcmp(BC.u.right,passive_BC)) && ~sum(strcmp(BC.u.left,passive_BC)))
     diagpos = 0;
 end
 if (strcmp(BC.u.right,'per') && strcmp(BC.u.left,'per') ) % like pressure left
@@ -109,13 +109,13 @@ M1D    = spdiags([-diag1 diag1],[0 1],Nvy_t-1,Nvy_t);
 % we only need derivative at inner pressure points, so we map the resulting
 % boundary matrix (restriction)
 diagpos = 0;
-if (strcmp(BC.v.up,passive_BC) && strcmp(BC.v.low,passive_BC) )
+if (sum(strcmp(BC.v.up,passive_BC)) && sum(strcmp(BC.v.low,passive_BC)))
     diagpos = 1;
 end
-if (~strcmp(BC.v.up,passive_BC) && strcmp(BC.v.low,passive_BC) )
+if (~sum(strcmp(BC.v.up,passive_BC)) && sum(strcmp(BC.v.low,passive_BC)))
     diagpos = 1;
 end
-if (strcmp(BC.v.up,passive_BC) && ~strcmp(BC.v.low,passive_BC) )
+if (sum(strcmp(BC.v.up,passive_BC)) && ~sum(strcmp(BC.v.low,passive_BC)))
     diagpos = 0;
 end
 if (strcmp(BC.v.up,'per') && strcmp(BC.v.low,'per') ) % like pressure low
@@ -294,8 +294,8 @@ if (~strcmp(visc,'keps'))
     
     % check if all the row sums of the pressure matrix are zero, which
     % should be the case if there are no pressure boundary conditions
-    if (~strcmp(BC.v.low,passive_BC) && ~strcmp(BC.v.up,passive_BC) && ...
-            ~strcmp(BC.u.right,passive_BC) && ~strcmp(BC.u.left,passive_BC))
+    if (~sum(strcmp(BC.v.low,passive_BC)) && ~sum(strcmp(BC.v.up,passive_BC)) && ...
+            ~sum(strcmp(BC.u.right,passive_BC)) && ~sum(strcmp(BC.u.left,passive_BC)))
         if (max(abs(A*ones(Np,1)))>1e-10)
             fprintf(fcw,'warning: pressure matrix: not all rowsums are zero!\n');
         end
