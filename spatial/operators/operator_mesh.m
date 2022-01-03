@@ -44,10 +44,10 @@ Np          = Npx*Npy;
 % x-dir
 Nux_b       = 2;               % boundary points
 Nux_in      = Nx+1;            % inner points
-if (strcmp(BC.u.left,'dir') || strcmp(BC.u.left,'sym') || strcmp(BC.u.left,'mvp-obc'))
+if (strcmp(BC.u.left,'dir') || strcmp(BC.u.left,'sym'))% || strcmp(BC.u.left,'mvp-obc'))
     Nux_in  = Nux_in-1;
 end
-if (strcmp(BC.u.right,'dir') || strcmp(BC.u.right,'sym') || strcmp(BC.u.right,'mvp-obc'))
+if (strcmp(BC.u.right,'dir') || strcmp(BC.u.right,'sym'))% || strcmp(BC.u.right,'mvp-obc'))
     Nux_in  = Nux_in-1;
 end
 if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
@@ -74,10 +74,10 @@ Nvx_t       = Nvx_in + Nvx_b;  % total number
 % y-dir
 Nvy_b       = 2;               % boundary points
 Nvy_in      = Ny+1;            % inner points
-if (strcmp(BC.v.low,'dir') || strcmp(BC.v.low,'sym') || strcmp(BC.v.low,'mvp-obc'))
+if (strcmp(BC.v.low,'dir') || strcmp(BC.v.low,'sym'))% || strcmp(BC.v.low,'mvp-obc'))
     Nvy_in  = Nvy_in-1;
 end
-if (strcmp(BC.v.up,'dir') || strcmp(BC.v.up,'sym') || strcmp(BC.v.up,'mvp-obc'))
+if (strcmp(BC.v.up,'dir') || strcmp(BC.v.up,'sym'))% || strcmp(BC.v.up,'mvp-obc'))
     Nvy_in  = Nvy_in-1;
 end
 if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per'))
