@@ -83,8 +83,18 @@ id_n_t = id_normal+id_tangential;
 V_n_t = id_n_t.*V;
 gO = options.BC.gO;
 
-y_O = diag(K_h*diag(I_h*V+y_I)*A_h).*V_n_t-V_n_t.*gO(V);
+% y_O1 = diag(K_h*diag(I_h*V+y_I)*A_h).*V_n_t; % too (storage+time) expensive implementation
+% y_O2 = diag(K_h*((I_h*V+y_I).*A_h)).*V_n_t; % too (time) expensive implementation
+y_O3 = dot(K_h',(I_h*V+y_I).*A_h)'.*V_n_t; % too (time) expensive implementation
+
+y_O  = y_O3 - V_n_t.*gO(V);
 Fres = Fres + y_O;
+%% tests
+Conv = [convu; convv];
+if (V'*(-Conv+y_O3)>1e-14)
+    warning('convection skew-symmetry not fixed by mvp-obc')
+end
+% norm(y_O1-y_O3)
 %%
 
 % norm of residual

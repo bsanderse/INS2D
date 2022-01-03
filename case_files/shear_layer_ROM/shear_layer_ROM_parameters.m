@@ -24,8 +24,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 2;                   % number of volumes in the x-direction
-    Ny      = 3;                   % number of volumes in the y-direction
+    Nx      = 200;                   % number of volumes in the x-direction
+    Ny      = 200;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -50,16 +50,19 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
 
-    precompute_convection = 1;
-    precompute_diffusion  = 1;
-    precompute_force      = 1;
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0;
+%     precompute_convection = 1;
+%     precompute_diffusion  = 1;
+%     precompute_force      = 1;
     pressure_recovery     = 0;
     pressure_precompute   = 0;
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
