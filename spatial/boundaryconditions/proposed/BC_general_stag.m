@@ -47,7 +47,7 @@ if (Nb==2) % normal situation, 2 boundary points
             Bbc(1,1)    = 1/2;    
             Bbc(1,2)    = 1/2;    
             ybc1_1D(1)  = 1;        % uLo
-        case {'sym'}
+        case {'sym','mvp-obc'}
             Bbc(1,1)    = -1;
             Bbc(1,2)    = 1;
             ybc1_1D(1)  = h1;     % duLo
@@ -65,7 +65,7 @@ if (Nb==2) % normal situation, 2 boundary points
             Bbc(end,end-1) = 1/2;
             Bbc(end,end)   = 1/2;   
             ybc2_1D(2)     = 1;     % uUp
-        case {'sym'}
+        case {'sym','mvp-obc'}
             Bbc(2,end-1)   = -1;
             Bbc(2,end)     = 1;
             ybc2_1D(2)     = h2;     % duUp
@@ -91,7 +91,7 @@ elseif (Nb==1)  % one boundary point
             Bbc(1,2)    = 1/2;
             ybc1_1D(1)  = 1;        % uLe    
             Bb(1,1)     = 1;
-        case {'sym'}
+        case {'sym','mvp-obc'}
             Bbc(1,1)    = -1;
             Bbc(1,2)    = 1;
             ybc1_1D(1)  = h1;       % duLo
@@ -110,7 +110,7 @@ elseif (Nb==1)  % one boundary point
             Bbc(Nb,end)   = 1/2;   
             ybc2_1D(1)    = 1;        % uRi   
             Bb(end,Nb)    = 1;
-        case {'sym'}
+        case {'sym','mvp-obc'}
             Bbc(Nb,end-1) = -1;
             Bbc(Nb,end)   = 1;
             ybc2_1D(1)    = h2;        % duUp
