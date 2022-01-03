@@ -24,7 +24,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 5;                   % number of volumes in the x-direction
+    Nx      = 2;                   % number of volumes in the x-direction
     Ny      = 3;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor

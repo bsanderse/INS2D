@@ -520,42 +520,65 @@ if (options.visualization.plotgrid==1)
 end
 
 %% determine V_h^{normal} and V_h^{tangential}
-% Nu          = Nux_in*Nuy_in;
-% Nv          = Nvx_in*Nvy_in;
-% BC.u.left right up low
+
+%% u
 [X,Y] = meshgrid(1:Nux_in,1:Nuy_in);
 u_indices = X+Nux_in*(Y-1);
 
-id_normal = zeros(Nu,1);
-id_tangential = zeros(Nu,1);
+id_u_normal = zeros(Nu,1);
+id_u_tangential = zeros(Nu,1);
 if strcmp(BC.u.left,'mvp-obc')
     temps = u_indices(:,2);
-    id_tangential(temps) = 1;
+    id_u_tangential(temps) = 1;
     temps = u_indices(:,1);
-    id_normal(temps) = 1; 
+    id_u_normal(temps) = 1; 
 end
 if strcmp(BC.u.right,'mvp-obc')
     temps = u_indices(:,end-1);
-    id_tangential(temps) = 1;
+    id_u_tangential(temps) = 1;
     temps = u_indices(:,end);
-    id_normal(temps) = 1; 
+    id_u_normal(temps) = 1; 
 end
 if strcmp(BC.u.low,'mvp-obc')
-    temps = u_indices(2,:);
-    id_tangential(temps) = 1;
     temps = u_indices(1,:);
-    id_normal(temps) = 1; 
+    id_u_tangential(temps) = 1;
 end
 if strcmp(BC.u.up,'mvp-obc')
-    temps = u_indices(end-1,:);
-    id_tangential(temps) = 1;
     temps = u_indices(end,:);
-    id_normal(temps) = 1; 
+    id_u_tangential(temps) = 1;
 end
-id_tangential(id_normal==1) = 0; % normal values are not also tangential values
+id_u_tangential(id_u_normal==1) = 0; % normal values are not also tangential values
 
-options.grid.id_normal = id_normal;
-options.grid.id_tangential = id_tangential;
+%% v
+[X,Y] = meshgrid(1:Nvx_in,1:Nvy_in);
+v_indices = X+Nvx_in*(Y-1);
+
+id_v_normal = zeros(Nv,1);
+id_v_tangential = zeros(Nv,1);
+if strcmp(BC.v.left,'mvp-obc')
+    temps = v_indices(:,1);
+    id_v_tangential(temps) = 1;
+end
+if strcmp(BC.v.right,'mvp-obc')
+    temps = v_indices(:,end);
+    id_v_tangential(temps) = 1;
+end
+if strcmp(BC.v.low,'mvp-obc')
+    temps = v_indices(2,:);
+    id_v_tangential(temps) = 1;
+    temps = v_indices(1,:);
+    id_v_normal(temps) = 1; 
+end
+if strcmp(BC.v.up,'mvp-obc')
+    temps = v_indices(end-1,:);
+    id_v_tangential(temps) = 1;
+    temps = v_indices(end,:);
+    id_v_normal(temps) = 1; 
+end
+id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential values
+
+options.grid.id_normal = [id_u_normal; id_v_normal];
+options.grid.id_tangential = [id_v_normal; id_v_tangential];
 
 
 
