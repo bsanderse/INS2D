@@ -85,6 +85,10 @@ gO = options.BC.gO;
 
 y_O = diag(K_h*diag(I_h*V_h+y_I)*A_h)*V_n_t-V_n_t.*gO(V);
 Fres = Fres + y_O;
+
+% test
+
+
 %%
 
 % norm of residual
