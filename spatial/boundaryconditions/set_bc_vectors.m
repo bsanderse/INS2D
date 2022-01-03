@@ -228,6 +228,9 @@ options.discretization.yAu_uy = yAu_uy;
 options.discretization.yAv_vx = yAv_vx;
 options.discretization.yAv_vy = yAv_vy;
 
+y_A = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
+options.discretization.y_A = y_A;
+
 if (order4==1)
     options.discretization.yAu_ux3 = yAu_ux3;
     options.discretization.yAu_uy3 = yAu_uy3;
@@ -525,6 +528,9 @@ options.discretization.yIu_ux = yIu_ux;
 options.discretization.yIv_uy = yIv_uy;
 options.discretization.yIu_vx = yIu_vx;
 options.discretization.yIv_vy = yIv_vy;
+
+y_I = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
+options.discretization.y_I = y_I;
 
 if (order4==1)
     options.discretization.yIu_ux3 = yIu_ux3;
