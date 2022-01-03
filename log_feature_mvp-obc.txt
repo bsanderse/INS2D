@@ -1,0 +1,7 @@
+log: feature mvp-obc in ins2d
+
+- boundary conditions: 
+    add as valid type 
+    no change on uBC and vBC required -> not relevant for open BC
+
+idea: use same operators as for 'pres', only different y_D and y_G (y_D = 0, y_G=y_O)

@@ -20,3 +20,4 @@ function BC = shear_layer_ROM_BCtype
     BC.v.low   = 'per';   % valid options: dir, per, pres
     BC.v.up    = 'per';   % valid options: dir, per, pres
 
+    BC.g0 = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters

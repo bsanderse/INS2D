@@ -15,7 +15,7 @@ end
 
 % check types
 normal_BC = {'dir','per','pres','mvp-obc'};
-tangen_BC = {'dir','per','sym','mvp-obc'};
+tangential_BC = {'dir','per','sym','mvp-obc'};
 if ( max(strcmp(options.BC.u.left,normal_BC))==0)
     error('wrong BC for u-left');
 end
