@@ -446,7 +446,7 @@ if (order4==1)
     elseif (strcmp(BC.v.low,'per'))
         vLe_ext     = [0;vLe];
         vRi_ext     = [0;vRi];
-    elseif (strcmp(BC.v.low,'pres'))
+    elseif (strcmp(BC.v.low,{'pres','mvp-obc'}))
         vLe_ext     = [vLe(2);vLe]; % zero gradient
         vRi_ext     = [vRi(2);vRi]; % zero gradient
     end
@@ -456,7 +456,7 @@ if (order4==1)
     elseif (strcmp(BC.v.up,'per'))
         vLe_ext     = [vLe_ext;0];
         vRi_ext     = [vRi_ext;0];
-    elseif (strcmp(BC.v.up,'pres'))
+    elseif (strcmp(BC.v.up,{'pres','mvp-obc'}))
         vLe_ext     = [vLe_ext;vLe(end-1)]; % zero gradient
         vRi_ext     = [vRi_ext;vRi(end-1)]; % zero gradient
     end
@@ -488,7 +488,7 @@ if (order4==1)
     elseif (strcmp(BC.u.left,'per'))
         uLo_ext     = [0;uLo];
         uUp_ext     = [0;uUp];
-    elseif (strcmp(BC.u.left,'pres'))
+    elseif (strcmp(BC.u.left,{'pres','mvp-obc'}))
         uLo_ext     = [uLo(2);uLo]; % zero gradient
         uUp_ext     = [uUp(2);uUp]; % zero gradient
     end
@@ -498,7 +498,7 @@ if (order4==1)
     elseif (strcmp(BC.u.right,'per'))
         uLo_ext     = [uLo_ext;0];
         uUp_ext     = [uUp_ext;0];
-    elseif (strcmp(BC.u.right,'pres'))
+    elseif (strcmp(BC.u.right,{'pres','mvp-obc'}))
         uLo_ext     = [uLo_ext;uLo(end-1)]; % zero gradient
         uUp_ext     = [uUp_ext;uUp(end-1)]; % zero gradient
     end
