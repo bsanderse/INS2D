@@ -46,7 +46,7 @@ if (Nb==2) % normal situation, 2 boundary points
         case {'dir'}
             Bbc(1,1)    = 1;    
             ybc1_1D(1)  = 1;        % uLe    
-        case {'pres'}
+        case {'pres','mvp-obc'}
             Bbc(1,1)    = -1;
             Bbc(1,2)    = 1;
             ybc1_1D(1)  = 2*h1;     % duLe
@@ -63,7 +63,7 @@ if (Nb==2) % normal situation, 2 boundary points
         case {'dir'}
             Bbc(Nb,end) = 1;   
             ybc2_1D(2)  = 1;        % uRi   
-        case {'pres'}
+        case {'pres','mvp-obc'}
             Bbc(Nb,end-1)= -1;
             Bbc(Nb,end)  = 1;
             ybc2_1D(2)   = 2*h2;     % duRi
@@ -86,7 +86,7 @@ elseif (Nb==1) % one boundary point
             Bbc(1,1)    = 1;    
             ybc1_1D(1)  = 1;        % uLe    
             Bb(1,1)     = 1;
-        case {'pres'}
+        case {'pres','mvp-obc'}
             diagpos     = 0;
         case {'per'}
             diagpos     = 0;
@@ -102,7 +102,7 @@ elseif (Nb==1) % one boundary point
             Bbc(Nb,end) = 1;   
             ybc2_1D(1)  = 1;        % uRi   
             Bb(end,Nb)  = 1;    
-        case {'pres'}
+        case {'pres','mvp-obc'}
     
         case {'per'} % actually redundant
             diagpos     = 0;
