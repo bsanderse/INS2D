@@ -145,9 +145,7 @@ options.discretization.Au_ux_BC = Au_ux_BC;
 options.discretization.Au_uy_BC = Au_uy_BC;
 options.discretization.Av_vx_BC = Av_vx_BC;
 options.discretization.Av_vy_BC = Av_vy_BC;
-
-A_h = blkdiag([Au_ux; Au_uy],[Av_vx; Av_vy]);
-options.discretization.A_h = A_h;
+o
 
 if (order4==1)
     options.discretization.Au_ux3 = Au_ux3;

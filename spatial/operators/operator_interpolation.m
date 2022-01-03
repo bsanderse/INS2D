@@ -325,6 +325,9 @@ options.discretization.Iv_uy_BC_lu = Iv_uy_BC_lu;
 options.discretization.Iu_vx_BC_lr = Iu_vx_BC_lr;
 options.discretization.Iu_vx_BC_lu = Iu_vx_BC_lu;
 
+I_h = [blkdiag(Iu_ux,Iv_uy);blkdiag(Iu_vx,Iv_vy)]; 
+options.discretization.I_h = I_h;
+
 if (order4==1)
     options.discretization.Iu_ux3 = Iu_ux3;
     options.discretization.Iv_uy3 = Iv_uy3;

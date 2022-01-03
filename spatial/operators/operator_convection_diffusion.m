@@ -492,6 +492,10 @@ options.discretization.Cux   = Cux;
 options.discretization.Cuy   = Cuy;
 options.discretization.Cvx   = Cvx;
 options.discretization.Cvy   = Cvy;
+
+K_h = blkdiag([Cux Cuy],[Cvx Cvy]);
+options.discretization.K_h = K_h;
+
 options.discretization.Su_ux = Su_ux;
 options.discretization.Su_uy = Su_uy;
 options.discretization.Sv_vx = Sv_vx;
