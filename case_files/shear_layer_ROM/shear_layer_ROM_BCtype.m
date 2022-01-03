@@ -10,7 +10,7 @@ function BC = shear_layer_ROM_BCtype
     % left/right: x-direction
     % low/up: y-direction
 
-    BC.u.left  = 'mvp-obc';   % valid options: dir, per, pres 
+    BC.u.left  = 'mvp-obc';%'mvp-obc';   % valid options: dir, per, pres 
     BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
     BC.u.low   = 'per';   % valid options: dir, per, sym
     BC.u.up    = 'per';   % valid options: dir, per, sym

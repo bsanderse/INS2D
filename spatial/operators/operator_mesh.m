@@ -518,3 +518,45 @@ end
 if (options.visualization.plotgrid==1)
     plot_staggered(x,y);
 end
+
+%% determine V_h^{normal} and V_h^{tangential}
+% Nu          = Nux_in*Nuy_in;
+% Nv          = Nvx_in*Nvy_in;
+% BC.u.left right up low
+[X,Y] = meshgrid(1:Nux_in,1:Nuy_in);
+u_indices = X+Nux_in*(Y-1);
+
+id_normal = zeros(Nu,1);
+id_tangential = zeros(Nu,1);
+if strcmp(BC.u.left,'mvp-obc')
+    temps = u_indices(:,2);
+    id_tangential(temps) = 1;
+    temps = u_indices(:,1);
+    id_normal(temps) = 1; 
+end
+if strcmp(BC.u.right,'mvp-obc')
+    temps = u_indices(:,end-1);
+    id_tangential(temps) = 1;
+    temps = u_indices(:,end);
+    id_normal(temps) = 1; 
+end
+if strcmp(BC.u.low,'mvp-obc')
+    temps = u_indices(2,:);
+    id_tangential(temps) = 1;
+    temps = u_indices(1,:);
+    id_normal(temps) = 1; 
+end
+if strcmp(BC.u.up,'mvp-obc')
+    temps = u_indices(end-1,:);
+    id_tangential(temps) = 1;
+    temps = u_indices(end,:);
+    id_normal(temps) = 1; 
+end
+id_tangential(id_normal==1) = 0; % normal values are not also tangential values
+
+options.grid.id_normal = id_normal;
+options.grid.id_tangential = id_tangential;
+
+
+
+

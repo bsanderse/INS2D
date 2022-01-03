@@ -44,10 +44,10 @@ Np          = Npx*Npy;
 % x-dir
 Nux_b       = 2;               % boundary points
 Nux_in      = Nx+1;            % inner points
-if (strcmp(BC.u.left,'dir') || strcmp(BC.u.left,'sym'))
+if (strcmp(BC.u.left,'dir') || strcmp(BC.u.left,'sym'))% || strcmp(BC.u.left,'mvp-obc'))
     Nux_in  = Nux_in-1;
 end
-if (strcmp(BC.u.right,'dir') || strcmp(BC.u.right,'sym'))
+if (strcmp(BC.u.right,'dir') || strcmp(BC.u.right,'sym'))% || strcmp(BC.u.right,'mvp-obc'))
     Nux_in  = Nux_in-1;
 end
 if (strcmp(BC.u.left,'per') && strcmp(BC.u.right,'per'))
@@ -74,10 +74,10 @@ Nvx_t       = Nvx_in + Nvx_b;  % total number
 % y-dir
 Nvy_b       = 2;               % boundary points
 Nvy_in      = Ny+1;            % inner points
-if (strcmp(BC.v.low,'dir') || strcmp(BC.v.low,'sym'))
+if (strcmp(BC.v.low,'dir') || strcmp(BC.v.low,'sym'))% || strcmp(BC.v.low,'mvp-obc'))
     Nvy_in  = Nvy_in-1;
 end
-if (strcmp(BC.v.up,'dir') || strcmp(BC.v.up,'sym'))
+if (strcmp(BC.v.up,'dir') || strcmp(BC.v.up,'sym'))% || strcmp(BC.v.up,'mvp-obc'))
     Nvy_in  = Nvy_in-1;
 end
 if (strcmp(BC.v.low,'per') && strcmp(BC.v.up,'per'))
@@ -518,3 +518,45 @@ end
 if (options.visualization.plotgrid==1)
     plot_staggered(x,y);
 end
+
+%% determine V_h^{normal} and V_h^{tangential}
+% Nu          = Nux_in*Nuy_in;
+% Nv          = Nvx_in*Nvy_in;
+% BC.u.left right up low
+[X,Y] = meshgrid(1:Nux_in,1:Nuy_in);
+u_indices = X+Nux_in*(Y-1);
+
+% observe that 1's are overwritten by 2's for tangential values in 
+% corners which are at the same time normal values on adjacent boundaries
+id_u = zeros(Nu,1);
+if strcmp(BC.u.left,'mvp-obc')
+    temps = u_indices(:,2);
+    id_u(temps) = 1; % 1 : tangential
+    temps = u_indices(:,1);
+    id_u(temps) = 2; % 2 : normal
+end
+if strcmp(BC.u.right,'mvp-obc')
+    temps = u_indices(:,end-1);
+    id_u(temps) = 1; % 1 : tangential
+    temps = u_indices(:,end);
+    id_u(temps) = 2; % 2 : normal
+end
+if strcmp(BC.u.low,'mvp-obc')
+    temps = u_indices(2,:);
+    id_u(temps) = 1; % 1 : tangential
+    temps = u_indices(1,:);
+    id_u(temps) = 2; % 2 : normal
+end
+if strcmp(BC.u.left,'mvp-obc')
+    temps = u_indices(end-1,:);
+    id_u(temps) = 1; % 1 : tangential
+    temps = u_indices(end,:);
+    id_u(temps) = 2; % 2 : normal
+end
+id_normal = zeros(Nu,1);
+id_tangential = zeros(Nu,1);
+id_normal(id_u==2) = 1;
+id_tangential(id_u==1) = 1;
+
+
+
