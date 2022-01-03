@@ -18,7 +18,7 @@ options = operator_divergence(options);
 options = operator_convection_diffusion(options);
 
 
-%% trbulence
+%% turbulence
 
 % regularization modelling - this changes the convective term
 if (regularize>0)
