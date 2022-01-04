@@ -528,14 +528,10 @@ u_indices = X+Nux_in*(Y-1);
 id_u_normal = zeros(Nu,1);
 id_u_tangential = zeros(Nu,1);
 if strcmp(BC.u.left,'mvp-obc')
-    temps = u_indices(:,2);
-    id_u_tangential(temps) = 1;
     temps = u_indices(:,1);
     id_u_normal(temps) = 1; 
 end
 if strcmp(BC.u.right,'mvp-obc')
-    temps = u_indices(:,end-1);
-    id_u_tangential(temps) = 1;
     temps = u_indices(:,end);
     id_u_normal(temps) = 1; 
 end
@@ -564,14 +560,10 @@ if strcmp(BC.v.right,'mvp-obc')
     id_v_tangential(temps) = 1;
 end
 if strcmp(BC.v.low,'mvp-obc')
-    temps = v_indices(2,:);
-    id_v_tangential(temps) = 1;
     temps = v_indices(1,:);
     id_v_normal(temps) = 1; 
 end
 if strcmp(BC.v.up,'mvp-obc')
-    temps = v_indices(end-1,:);
-    id_v_tangential(temps) = 1;
     temps = v_indices(end,:);
     id_v_normal(temps) = 1; 
 end
@@ -580,6 +572,8 @@ id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential val
 options.grid.id_normal = [id_u_normal; id_v_normal];
 options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
-
+%% efficient computation of convection diagonal
+% if strcmp(BC.v.right,'mvp-obc')
+%     normal
 
 

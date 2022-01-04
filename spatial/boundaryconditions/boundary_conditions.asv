@@ -14,32 +14,35 @@ else
 end
 
 % check types
-hori_BC = {'dir','per','pres'};
-vert_BC = {'dir','per','sym'};
-if ( max(strcmp(options.BC.u.left,hori_BC))==0)
+normal_BC = {'dir','per','pres','mvp-obc'};
+tangential_BC = {'dir','per','sym','mvp-obc'};
+if ( max(strcmp(options.BC.u.left,normal_BC))==0)
     error('wrong BC for u-left');
 end
-if ( max(strcmp(options.BC.u.right,hori_BC))==0)
+if ( max(strcmp(options.BC.u.right,normal_BC))==0)
     error('wrong BC for u-right');
 end
-if ( max(strcmp(options.BC.u.low,{'dir','per','sym'}))==0)
+if ( max(strcmp(options.BC.u.low,tangential_BC))==0)
     error('wrong BC for u-low');
 end
-if ( max(strcmp(options.BC.u.up,{'dir','per','sym'}))==0)
+if ( max(strcmp(options.BC.u.up,tangential_BC))==0)
     error('wrong BC for u-up');
 end
-if ( max(strcmp(options.BC.v.left,{'dir','per','sym'}))==0)
+if ( max(strcmp(options.BC.v.left,tangential_BC))==0)
     error('wrong BC for v-left');
 end
-if ( max(strcmp(options.BC.v.right,{'dir','per','sym'}))==0)
+if ( max(strcmp(options.BC.v.right,tangential_BC))==0)
     error('wrong BC for v-right');
 end
-if ( max(strcmp(options.BC.v.low,{'dir','per','pres'}))==0)
+if ( max(strcmp(options.BC.v.low,normal_BC))==0)
     error('wrong BC for v-low');
 end
-if ( max(strcmp(options.BC.v.up,{'dir','per','pres'}))==0)
+if ( max(strcmp(options.BC.v.up,normal_BC))==0)
     error('wrong BC for v-up');
 end
+
+%% check whether mvp-obc in u iff mvp-obc in v
+if strcmp(options.BC.u.left
 
 %% set BC functions
 
