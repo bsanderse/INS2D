@@ -572,7 +572,7 @@ id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential val
 options.grid.id_normal = [id_u_normal; id_v_normal];
 options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
-%% efficient computation of convection diagonal
+%% efficient computation of convection diagonal (needed for mvp-obc)
 % goal: (sparse) matrix C such that yO1 = (C*V_h).*V_h
 C = sparse(NV,NV);
 if strcmp(BC.u.left,'mvp-obc')
@@ -594,14 +594,69 @@ if strcmp(BC.u.left,'mvp-obc')
         tangentials = [tangentials(end); tangentials];
         tangentials = [tangentials; tangentials(1)];
     end
-%     tangentialsA = tangentials(1:end-1);
-%     tangentialsB = tangentials(2:end);
-% 
-%     % normal contributions
-%     C = C + direction*.5 *facet_area*sparse(normals,normals,1,NV,NV);
-%     % tangential contributions
-%     C = C + direction*.25*facet_area*tangential_contribution(tangentialsA,normals,NV);
-%     C = C + direction*.25*facet_area*tangential_contribution(tangentialsB,normals,NV);
-    C = obc_contributions(tangentials,normals,C,NV,direction,facet_area)
-
+    C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
+end
+if strcmp(BC.u.right,'mvp-obc')
+    direction = 1;
+    warning('assumes homogeneous grid') 
+    facet_area = hy(1);
+    
+    normals = u_indices(:,end); normals = normals(:);
+    tangentials = v_indices(:,end); tangentials = tangentials(:);
+    tangentials = tangentials + Nu; % important!
+    warning('assume only bc types mvp-obc, diri and per')
+    if strcmp(BC.u.low,'dir')
+        tangentials = [-1; tangentials];
+    end
+    if strcmp(BC.u.up,'dir')
+        tangentials = [tangentials; -1];
+    end
+    if strcmp(BC.u.low,'per')
+        tangentials = [tangentials(end); tangentials];
+        tangentials = [tangentials; tangentials(1)];
+    end
+    C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
+end
+warning('assuming that periodic BC always hold for both u and v')
+if strcmp(BC.u.low,'mvp-obc')
+    direction = -1;
+    warning('assumes homogeneous grid') 
+    facet_area = hx(1);
+    
+    normals = v_indices(1,:); normals = normals(:);
+    tangentials = u_indices(1,:); tangentials = tangentials(:);
+    normals = normals + Nu; % important!
+    warning('assume only bc types mvp-obc, diri and per')
+    if strcmp(BC.u.left,'dir')
+        tangentials = [-1; tangentials];
+    end
+    if strcmp(BC.u.right,'dir')
+        tangentials = [tangentials; -1];
+    end
+    if strcmp(BC.u.left,'per')
+        tangentials = [tangentials(end); tangentials];
+        tangentials = [tangentials; tangentials(1)];
+    end
+    C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
+end
+if strcmp(BC.u.left,'mvp-obc')
+    direction = -1;
+    warning('assumes homogeneous grid') 
+    facet_area = hy(1);
+    
+    normals = u_indices(:,1); normals = normals(:);
+    tangentials = v_indices(:,1); tangentials = tangentials(:);
+    tangentials = tangentials + Nu; % important!
+    warning('assume only bc types mvp-obc, diri and per')
+    if strcmp(BC.u.low,'dir')
+        tangentials = [-1; tangentials];
+    end
+    if strcmp(BC.u.up,'dir')
+        tangentials = [tangentials; -1];
+    end
+    if strcmp(BC.u.low,'per')
+        tangentials = [tangentials(end); tangentials];
+        tangentials = [tangentials; tangentials(1)];
+    end
+    C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
 end
