@@ -42,16 +42,16 @@ if ( max(strcmp(options.BC.v.up,normal_BC))==0)
 end
 
 %% check whether mvp-obc in u iff mvp-obc in v
-if ~xor(strcmp(options.BC.u.left,'mvp-obc'),strcmp(options.BC.v.left,'mvp-obc'))
+if xor(strcmp(options.BC.u.left,'mvp-obc'),strcmp(options.BC.v.left,'mvp-obc'))
     error('BC mvp-obc must be set for both u and v')
 end
-if ~xor(strcmp(options.BC.u.right,'mvp-obc'),strcmp(options.BC.v.right,'mvp-obc'))
+if xor(strcmp(options.BC.u.right,'mvp-obc'),strcmp(options.BC.v.right,'mvp-obc'))
     error('BC mvp-obc must be set for both u and v')
 end
-if ~xor(strcmp(options.BC.u.low,'mvp-obc'),strcmp(options.BC.v.low,'mvp-obc'))
+if xor(strcmp(options.BC.u.low,'mvp-obc'),strcmp(options.BC.v.low,'mvp-obc'))
     error('BC mvp-obc must be set for both u and v')
 end
-if ~xor(strcmp(options.BC.u.up,'mvp-obc'),strcmp(options.BC.v.up,'mvp-obc'))
+if xor(strcmp(options.BC.u.up,'mvp-obc'),strcmp(options.BC.v.up,'mvp-obc'))
     error('BC mvp-obc must be set for both u and v')
 end
 

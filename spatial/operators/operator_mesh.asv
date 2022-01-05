@@ -573,6 +573,19 @@ options.grid.id_normal = [id_u_normal; id_v_normal];
 options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
 %% efficient computation of convection diagonal
-
-
+% goal: (sparse) matrix C such that yO1 = (C*V_h).*V_h
+C = sparse(N_V,N_V);
+if strcmp(BC.u.left,'mvp-obc')
+    normals = u_indices(:,1); normals = normals(:);
+    tangentials = v_indices(:,1); tangentials = tangentials(:);
+    if ~strcmp(BC.u.low,'mvp-obc')
+        tangentials = [-1; tangentials];
+    end
+    if ~strcmp(BC.u.up,'mvp-obc')
+        tangentials = [tangentials; -1];
+    end
+    tangentialsA = tangentials(1:end-1);
+    tangentialsB = tangentials(2:end);
+    warning('assumes homogeneous grid') 
+    facet_area = 
 
