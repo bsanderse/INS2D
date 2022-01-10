@@ -25,23 +25,7 @@ clear all
 %% 
 profile on
 N = 40000;
-a = (1:N)';
-A = spdiags(a,0,N,N);
-a.*A;
-A.*a;
-spdiags(a,0,N,N)*A;
-profile off
-profile viewer
-
-%%
-% profile on
-% N = 40000;
-% a = 4;
-% A = 1:N^2;
-% a.*A;
-% a*A;
-% profile off
-% profile viewer
+A = spdiags(a,0,N,N)
 
 
 

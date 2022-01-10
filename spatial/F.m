@@ -84,14 +84,29 @@ V_n_t = id_n_t.*V;
 gO = options.BC.gO;
 % gO = @(u) 0; % botch
 
-% conv_Diag1 = diag(K_h*diag(I_h*V+y_I)*A_h);
-conv_Diag11 = diag(K_h*((I_h*V+y_I).*A_h));
+% % conv_Diag1 = diag(K_h*diag(I_h*V+y_I)*A_h);
+% conv_Diag11 = diag(K_h*((I_h*V+y_I).*A_h));
 NF = length(y_I);
 conv_Diag1 = diag(K_h*spdiags(I_h*V+y_I,0,NF,NF)*A_h);
-conv_Diag12 = diag(K_h*(spdiags(I_h*V+y_I,0,NF,NF)*A_h));
-norm(conv_Diag12-conv_Diag1)
-norm(conv_Diag11-conv_Diag1)
-% conv_Diag1 = dot(K_h',(I_h*V+y_I).*A_h)';
+% conv_Diag12 = diag(K_h*(spdiags(I_h*V+y_I,0,NF,NF)*A_h));
+% norm(conv_Diag12-conv_Diag1)
+% norm(conv_Diag11-conv_Diag1)
+% % conv_Diag1 = dot(K_h',(I_h*V+y_I).*A_h)';
+
+%% performance testing
+% profile on
+% (I_h*V+y_I).*A_h;
+% spdiags(I_h*V+y_I,0,NF,NF)*A_h;
+% 
+% (I_h*V+y_I).*A_h(:,1);
+% spdiags(I_h*V+y_I,0,NF,NF)*A_h(:,1);
+% 
+% (y_I).*A_h(:,1);
+% spdiags(y_I,0,NF,NF)*A_h(:,1);
+% 
+% profile off
+% profile viewer
+%%
 
 y_O1 = conv_Diag1.*V_n_t; % too (storage+time) expensive implementation
 % y_O2 = diag(K_h*((I_h*V+y_I).*A_h)).*V_n_t; % too (time) expensive implementation
@@ -105,19 +120,21 @@ Fres = Fres + y_O;
 %% tests
 Conv = [convu; convv];
 if (V'*(-Conv + y_O_diag )>1e-14)
-    warning('convection skew-symmetry not fixed by mvp-obc')
+    warning('convection skew-symmetry not fixed by mvp-obc') %only works in absence of Dirichlet BC
+    V'*(-Conv + y_O_diag)
 end
-V'*(-Conv + y_O_diag )
-norm(y_O1-y_O_diag)  %error of 1e-5 for 3x3 grid, error of 1e-7 for 20x20
-norm(conv_Diag1.*V-y_O_diag)
+% V'*(-Conv + y_O_diag )
+% norm(y_O1-y_O_diag)  %error of 1e-5 for 3x3 grid, error of 1e-7 for 20x20
+% norm(conv_Diag1.*V-y_O_diag)
 %%
 options.solversettings.Newton_factor = 3;
 [~,~,~,~, diag_] = convection(V,V,t,options,1);
-profile off
-profile viewer
+% profile off
+% profile viewer
 
 hx = options.grid.hx;
 NF = length(y_I);
+
 
 % norm of residual
 maxres  = max(abs(Fres));

@@ -22,8 +22,8 @@ Npy = options.grid.Npy;
 % colorbar
 % % grid
 
-profile off
-profile viewer
+% profile off
+% profile viewer
 
 figure(2)
 [up,vp,qp] = get_velocity(V,t,options);
