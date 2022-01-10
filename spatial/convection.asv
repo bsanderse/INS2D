@@ -4,8 +4,6 @@ function [convu, convv, Jacu, Jacv, diag] = convection(V,C,t,options,getJacobian
 % C: 'convection' field: e.g. d(c_x u)/dx + d(c_y u)/dy; usually c_x = u,
 % c_y=v
 
-diag = -666;
-
 alfa     = options.discretization.alfa;
 order4   = options.discretization.order4;
 
@@ -35,7 +33,7 @@ switch regularize
 
 
         % no regularization
-        [convu,convv,Jacu,Jacv,diag] = convection_components(C,V,options,getJacobian,0);
+        [convu,convv,Jacu,Jacv] = convection_components(C,V,options,getJacobian,0);
 
         if (order4==1)
             [convu3,convv3,Jacu3,Jacv3] = convection_components(C,V,options,getJacobian,1);
@@ -123,8 +121,7 @@ end
 
 end
 
-function [convu,convv,Jacu,Jacv,diag_] = convection_components(C,V,options,getJacobian,order4)
-diag_ = -666;
+function [convu,convv,Jacu,Jacv] = convection_components(C,V,options,getJacobian,order4)
 
 if (nargin<=4)
     order4 = 0;
@@ -231,14 +228,10 @@ if (getJacobian==1)
     C2         = Cux*spdiags(u_ux,0,N1,N1)*Newton;
     Conv_ux_11 = C1*Au_ux + C2*Iu_ux;
     
-    Cdiag_u = C1*Au_ux;
-    
     C1         = Cuy*spdiags(vf_uy,0,N2,N2);
     C2         = Cuy*spdiags(u_uy,0,N2,N2)*Newton;
     Conv_uy_11 = C1*Au_uy;
     Conv_uy_12 = C2*Iv_uy;
-    
-    Cdiag_u = Cdiag_u + C1*Au_uy;
     
     Jacu       = [Conv_ux_11 + Conv_uy_11 Conv_uy_12];
     
@@ -248,17 +241,13 @@ if (getJacobian==1)
     Conv_vx_21 = C2*Iu_vx;
     Conv_vx_22 = C1*Av_vx;
     
-    Cdiag_v = C1*Av_vx;
-    
     C1         = Cvy*spdiags(vf_vy,0,N4,N4);
     C2         = Cvy*spdiags(v_vy,0,N4,N4)*Newton;
     Conv_vy_22 = C1*Av_vy + C2*Iv_vy;
     
-    Cdiag_v = Cdiag_v + C1*Av_vy;
-    
     Jacv       = [Conv_vx_21 Conv_vx_22 + Conv_vy_22];
     
-    diag_ = blkdiag(Cdiag_u,Cdiag_v); %[Cdiag_u; Cdiag_v];
+    
 end
 
 end

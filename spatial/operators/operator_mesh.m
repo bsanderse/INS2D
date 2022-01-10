@@ -656,3 +656,4 @@ if strcmp(BC.u.up,'mvp-obc')
     end
     C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
 end
+options.grid.C = C;

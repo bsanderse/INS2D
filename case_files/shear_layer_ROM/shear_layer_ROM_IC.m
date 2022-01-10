@@ -14,5 +14,9 @@ u   = 1 + tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
 v   = e*sin(xv);
 p   = zeros(Npx,Npy);
 
+% botch
+% u = 0*u + 1;
+% v = 0*v + 1;
+
     
 end
