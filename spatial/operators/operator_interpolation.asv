@@ -82,10 +82,10 @@ if (order4==0)
     % 2022: bug discovered by Henrik due to size of half-volumes at open
     % boundaries; the fix is below, i.e. to divide the interpolation formula at the
     % half cells by 2
-    if (max(strcmp(BC.u.right,{'pres','mvp-obc'})))
+    if (sum(strcmp(BC.u.right,{'pres','mvp-obc'})))
         I1D(end,:) = I1D(end,:)/2;
     end
-    if (max(strcmp(BC.u.left,{'pres','mvp-obc'})))
+    if (strcmp(BC.u.left,{'pres','mvp-obc'})))
         I1D(1,:) = I1D(1,:)/2;
     end
     % the restriction is essentially 1D so it can be directly applied to I1D
@@ -122,10 +122,10 @@ if (order4==0)
     % 2022: bug discovered by Henrik due to size of half-volumes at open
     % boundaries; the fix is below, i.e. to divide the interpolation formula at the
     % half cells by 2
-    if (max(strcmp(BC.v.up,{'pres','mvp-obc'})))
+    if (strcmp(BC.v.up,{'pres','mvp-obc'}))
         I1D(end,:) = I1D(end,:)/2;
     end
-    if (max(strcmp(BC.v.low,{'pres','mvp-obc'})))
+    if (strcmp(BC.v.low,{'pres','mvp-obc'}))
         I1D(1,:) = I1D(1,:)/2;
     end
 
@@ -214,7 +214,7 @@ if (order4==1)
     diag1           = weight1*ones(Nvx_t,1);
     diag2           = weight2*ones(Nvx_t,1);
     I1D             = spdiags([diag2 diag1 diag1 diag2],[0 1 2 3],Nvx_t-1,Nvx_t+2);
-    if (max(strcmp(BC.u.right,{'pres','mvp-obc'})) || max(strcmp(BC.u.left,{'pres','mvp-obc'})))
+    if (strcmp(BC.u.right,{'pres','mvp-obc'}) || strcmp(BC.u.left,{'pres','mvp-obc'}))
         warning('suggested to check the interpolation bug at outflow BC for 4th order scheme');
     end
     % restrict to u-points
@@ -263,7 +263,7 @@ if (order4==1)
     diag1           = weight1*ones(Nuy_t,1);
     diag2           = weight2*ones(Nuy_t,1);
     I1D             = spdiags([diag2 diag1 diag1 diag2],[0 1 2 3],Nuy_t-1,Nuy_t+2);
-    if (max(strcmp(BC.v.up,{'pres','mvp-obc'})) || max(strcmp(BC.v.low,{'pres','mvp-obc'})))
+    if (strcmp(BC.v.up,{'pres','mvp-obc'}) || strcmp(BC.v.low,{'pres','mvp-obc'}))
         warning('suggested to check the interpolation bug at outflow BC for 4th order scheme');
     end 
     % restrict to v-points

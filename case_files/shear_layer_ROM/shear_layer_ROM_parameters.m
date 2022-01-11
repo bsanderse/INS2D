@@ -24,8 +24,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 2;                   % number of volumes in the x-direction
-    Ny      = 2;                   % number of volumes in the y-direction
+    Nx      = 20;                   % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -194,7 +194,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'inviscid_shear_layer_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -211,7 +211,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
