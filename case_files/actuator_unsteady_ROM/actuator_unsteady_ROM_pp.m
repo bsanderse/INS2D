@@ -156,7 +156,7 @@ end
 
 %% kinetic energy
 figure
-plot(0:dt:t_end,k/k(1));
+plot(t_start:dt:t_end,k/k(1));
 title('normalised kinetic energy')
 if save_file == 1
     savefig(strcat('../../',path_results,'/ kinetic energy.fig'))

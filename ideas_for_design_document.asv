@@ -1,5 +1,0 @@
-ideas for design document:
-
-- no global variables, function instead of scripts (maybe with few exceptions)
-- matrices mentioned in theory exist also in code
-- Benjamin: maybe separate all BC values from V

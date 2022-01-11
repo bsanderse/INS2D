@@ -27,7 +27,15 @@ Npy = options.grid.Npy;
 
 figure(2)
 [up,vp,qp] = get_velocity(V,t,options);
+
 subplot(1,2,1)
-contour(up)
+contour(xp,yp,up')
+axis square
+colorbar
 subplot(1,2,2)
-contour(vp)
+contour(xp,yp,vp')
+axis square
+colorbar
+
+% Om = options.grid.Om;
+% kinetic_energy = V'*(Om.*V)

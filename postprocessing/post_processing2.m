@@ -9,7 +9,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-%     run(full_name);
+    run(full_name);
 % %     actuator_unsteady_ROM_pp;
 else
     

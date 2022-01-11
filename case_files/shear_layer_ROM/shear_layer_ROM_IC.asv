@@ -18,12 +18,8 @@ p   = zeros(Npx,Npy);
 % u = 0*u + 1;
 % v = 0*v + 1;
 
-% % other botch: horizontal periodic
-% u = yu;
-% v = e*sin(xv);
-% 
-% % other botch: vertical periodic
-% u = e*sin(yu);
-% v = xv;
+% other botch: horizontal periodic
+u = yu;
+
     
 end

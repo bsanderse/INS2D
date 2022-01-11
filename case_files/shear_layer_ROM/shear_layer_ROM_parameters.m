@@ -24,8 +24,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     y1      = 0;
     y2      = 2*pi;
 
-    Nx      = 200;                   % number of volumes in the x-direction
-    Ny      = 200;                   % number of volumes in the y-direction
+    Nx      = 20;                   % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -104,10 +104,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     % only for unsteady problems:
 
-        dt            = 0.01;       % time step (for explicit methods it can be
+        dt            = 0.01/10;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 4;         % end time
+        t_end         = 4;%4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -122,7 +122,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 21-(j>4);
+        method            = 20; %21-(j>4);
         RK                = method_list{j}; %'RK44';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -194,8 +194,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name
+    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.moviename    = 'inviscid_shear_layer_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
