@@ -79,6 +79,15 @@ if (order4==0)
     %% Iv_uy
     diag1           = weight*ones(Nvx_t,1);
     I1D             = spdiags([diag1 diag1],[0 1],Nvx_t-1,Nvx_t);
+    % 2022: bug discovered by Henrik due to size of half-volumes at open
+    % boundaries; the fix is below, i.e. to divide the interpolation formula at the
+    % half cells by 2
+    if (strcmp(BC.u.right,'pres'))
+        I1D(end,:) = I1D(end,:)/2;
+    end
+    if (strcmp(BC.u.left,'pres'))
+        I1D(1,:) = I1D(1,:)/2;
+    end
     % the restriction is essentially 1D so it can be directly applied to I1D
     I1D             = Bvux*I1D*mat_hx2;
     I2D             = kron(speye(Nuy_t-1),I1D);
@@ -103,13 +112,23 @@ if (order4==0)
     % resulting operator:
     Iv_uy           = Iv_uy_BC_lr.B2D*Iv_uy_BC_lu.B2D;
     
-    
+  
     
     %% Interpolation operators, v-component
     
     %% Iu_vx
     diag1           = weight*ones(Nuy_t,1);
     I1D             = spdiags([diag1 diag1],[0 1],Nuy_t-1,Nuy_t);
+    % 2022: bug discovered by Henrik due to size of half-volumes at open
+    % boundaries; the fix is below, i.e. to divide the interpolation formula at the
+    % half cells by 2
+    if (strcmp(BC.v.up,'pres'))
+        I1D(end,:) = I1D(end,:)/2;
+    end
+    if (strcmp(BC.v.low,'pres'))
+        I1D(1,:) = I1D(1,:)/2;
+    end
+    
     I1D             = Buvy*I1D*mat_hy2;
     I2D             = kron(I1D,speye(Nvx_t-1));
     
@@ -196,6 +215,9 @@ if (order4==1)
     diag2           = weight2*ones(Nvx_t,1);
     I1D             = spdiags([diag2 diag1 diag1 diag2],[0 1 2 3],Nvx_t-1,Nvx_t+2);
     % restrict to u-points
+    if (strcmp(BC.u.right,'pres') || strcmp(BC.u.left,'pres'))
+        warning('suggested to check the interpolation bug at outflow BC for 4th order scheme');
+    end
     % the restriction is essentially 1D so it can be directly applied to I1D
     I1D             = Bvux*I1D*mat_hx2;
     I2D             = kron(speye(Nuy_t-1),I1D);
@@ -241,6 +263,9 @@ if (order4==1)
     diag1           = weight1*ones(Nuy_t,1);
     diag2           = weight2*ones(Nuy_t,1);
     I1D             = spdiags([diag2 diag1 diag1 diag2],[0 1 2 3],Nuy_t-1,Nuy_t+2);
+    if (strcmp(BC.v.up,'pres') || strcmp(BC.v.low,'pres'))
+        warning('suggested to check the interpolation bug at outflow BC for 4th order scheme');
+    end    
     % restrict to v-points
     I1D             = Buvy*I1D*mat_hy2;
     I2D             = kron(I1D,speye(Nvx_t-1));
