@@ -1,5 +1,5 @@
 function [C_hom,C_hom_inhom,C_hom_bc,C_inhom,C_inhom_bc,C_bc] = ...
-    operator_rom_convection_unsteadyBC2(P,options)
+    operator_rom_convection_unsteadyBC(P,options)
 
 Cux = options.discretization.Cux;
 Cuy = options.discretization.Cuy;
@@ -21,31 +21,40 @@ I = [blkdiag(Iu_ux,Iv_uy);blkdiag(Iu_vx,Iv_vy)]; %not efficient but intuitive
 K = blkdiag([Cux Cuy],[Cvx Cvy]); %not efficient but intuitive
 
 B = options.rom.B;
-M1  = size(P,1);   
+M1  = size(P,1);  
 M   = options.rom.M;
+Vbc0 = options.rom.Vbc0;
+M_inhom = size(Vbc0,2);
 
-phi_bc = options.rom.phi_bc;
-M_bc = size(phi_bc,2);
-phi_inhom = options.rom.phi_inhom;
-M_inhom = size(phi_inhom,2);
+yAu_ux = options.bc_options1.discretization.yAu_ux;
+yAu_uy = options.bc_options1.discretization.yAu_uy;
+yAv_vx = options.bc_options1.discretization.yAv_vx;
+yAv_vy = options.bc_options1.discretization.yAv_vy;
 
-for i=1:M_bc
-    yBC = phi_bc(:,i);
-    options = set_bc_vectors_from_yBC(options,yBC);
-    
-    yAu_ux = options.discretization.yAu_ux;
-    yAu_uy = options.discretization.yAu_uy;
-    yAv_vx = options.discretization.yAv_vx;
-    yAv_vy = options.discretization.yAv_vy;
-    
-    yIu_ux = options.discretization.yIu_ux;
-    yIv_uy = options.discretization.yIv_uy;
-    yIu_vx = options.discretization.yIu_vx;
-    yIv_vy = options.discretization.yIv_vy;
-    
-    y_A(:,i) = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
-    y_I(:,i) = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
-end 
+yIu_ux = options.bc_options1.discretization.yIu_ux;
+yIv_uy = options.bc_options1.discretization.yIv_uy;
+yIu_vx = options.bc_options1.discretization.yIu_vx;
+yIv_vy = options.bc_options1.discretization.yIv_vy;
+
+y_A1 = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
+y_I1 = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
+
+yAu_ux = options.bc_options2.discretization.yAu_ux;
+yAu_uy = options.bc_options2.discretization.yAu_uy;
+yAv_vx = options.bc_options2.discretization.yAv_vx;
+yAv_vy = options.bc_options2.discretization.yAv_vy;
+
+yIu_ux = options.bc_options2.discretization.yIu_ux;
+yIv_uy = options.bc_options2.discretization.yIv_uy;
+yIu_vx = options.bc_options2.discretization.yIu_vx;
+yIv_vy = options.bc_options2.discretization.yIv_vy;
+
+y_A2 = [yAu_ux;yAu_uy;yAv_vx;yAv_vy];
+y_I2 = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
+
+y_A = [y_A1 y_A2];
+y_I = [y_I1 y_I2];
+M_bc = size(y_A,2); 
 
 C_hom = zeros(M1,M*M);
 for i=1:M
@@ -57,12 +66,13 @@ for i=1:M
     end
 end
 
+
 % observe that this implementation is different to the theoretical
 % description in the Master thesis
 C_hom_inhom = zeros(M1,M*M_inhom);
 for i=1:M
     for j=1:M_inhom
-        Conv = K*((I*B(:,i)).*(A*phi_inhom(:,j))) + K*((I*phi_inhom(:,j)).*(A*B(:,i)));
+        Conv = K*((I*B(:,i)).*(A*Vbc0(:,j))) + K*((I*Vbc0(:,j)).*(A*B(:,i)));
         % convert third order tensor to a matrix via the following indexing:
         k = sub2ind([M_inhom,M],j,i); % first loop over j,  then over i
         C_hom_inhom(:,k) = P*Conv;        
@@ -82,7 +92,7 @@ end
 C_inhom = zeros(M1,M_inhom*M_inhom);
 for i=1:M_inhom
     for j=1:M_inhom
-        Conv = K*((I*phi_inhom(:,i)).*(A*phi_inhom(:,j)));
+        Conv = K*((I*Vbc0(:,i)).*(A*Vbc0(:,j)));
         % convert third order tensor to a matrix via the following indexing:
         k = sub2ind([M_inhom,M_inhom],j,i); % first loop over j,  then over i
         C_inhom(:,k) = P*Conv;        
@@ -92,7 +102,7 @@ end
 C_inhom_bc = zeros(M1,M_inhom*M_bc);
 for i=1:M_inhom
     for j=1:M_bc
-        Conv = K*((I*phi_inhom(:,i)).*y_A(:,j)) + K*((y_I(:,j)).*(A*phi_inhom(:,i)));
+        Conv = K*((I*Vbc0(:,i)).*y_A(:,j)) + K*((y_I(:,j)).*(A*Vbc0(:,i)));
         % convert third order tensor to a matrix via the following indexing:
         k = sub2ind([M_bc,M_inhom],j,i); % first loop over j,  then over i
         C_inhom_bc(:,k) = P*Conv;        

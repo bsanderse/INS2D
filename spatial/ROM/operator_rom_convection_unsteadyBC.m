@@ -66,6 +66,8 @@ for i=1:M
     end
 end
 
+% observe that this implementation is different to the theoretical
+% description in the Master thesis
 C_hom_inhom = zeros(M1,M*M_inhom);
 for i=1:M
     for j=1:M_inhom

@@ -147,10 +147,14 @@ if obc
                 case 0
                     % nothin to do
                 case 1
-                    [gO_hom,gO_inhom] = operator_rom_gO(P,options);
+                    [] = operator_rom_diffusion_unsteadyBC2(P,options);
                     
-                    options.rom.gO_hom   = gO_hom;
-                    options.rom.gO_inhom = gO_inhom;
+                    options.rom.Diff2   = Diff2;
+                    options.rom.DiffBC2 = DiffBC2;
+                    options.rom.yDiff2  = yDiff2;
+                    
+                    [gO_hom,gO_inhom]
+                    gO_ROM = gO_ROM(R,t,options);
                 case 2
                     error('Sorry, obc offline decomposition for more complex gO not implemented')
             end
