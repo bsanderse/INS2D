@@ -51,7 +51,6 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
     rom    = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
@@ -64,7 +63,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %     precompute_convection = 1;
 %     precompute_diffusion  = 1;
 %     precompute_force      = 1;
-    precompute_obc        = 0;
+    pr
     pressure_recovery     = 0;
     pressure_precompute   = 0;
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     

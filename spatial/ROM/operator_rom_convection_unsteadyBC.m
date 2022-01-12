@@ -21,7 +21,7 @@ I = [blkdiag(Iu_ux,Iv_uy);blkdiag(Iu_vx,Iv_vy)]; %not efficient but intuitive
 K = blkdiag([Cux Cuy],[Cvx Cvy]); %not efficient but intuitive
 
 B = options.rom.B;
-M1  = size(P,1);   
+M1  = size(P,1);  
 M   = options.rom.M;
 Vbc0 = options.rom.Vbc0;
 M_inhom = size(Vbc0,2);

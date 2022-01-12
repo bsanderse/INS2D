@@ -102,7 +102,7 @@ end
 if (options.rom.precompute_obc == 1) && obc
     if (options.rom.rom_bc == 2)
         if options.rom.bc_recon == 3
-            [y_O_ROM, Jac_y_O_ROM] = obcROM(R,t,options,getJacobian);
+            [y_O_ROM, ] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
         else 
             error('Sorry, precomputation of obc not implemented for bc_recon=/=3')
         end

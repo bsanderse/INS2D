@@ -108,6 +108,7 @@ voi = {
     'precompute_convection', 1; ... % precomputed convection matrices
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
     'precompute_force', 1;... % precomputed forcing term
+    'precompute_obc', 1; ... % precomputed open boundary condition contribution
     't_snapshots', 0; ... % snapshots 
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD

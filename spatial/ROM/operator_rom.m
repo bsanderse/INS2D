@@ -126,3 +126,26 @@ if (options.rom.pressure_recovery == 1)
     end
 
 end
+
+%% open boundary condition contribution
+% check whether open boundary conditions occur
+BC = options.BC;
+obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc')); 
+if obc
+    if options.rom.rom_bc == 2
+        if options.rom.bc_recon == 3
+            [obc_hom,obc_inhom,obc_hom_inhom,obc_inhom_hom,obc_hom_inhom2] ...
+            = operator_rom_obc(P,options);
+        
+            options.rom.obc_hom = obc_hom;
+            options.rom.obc_inhom = obc_inhom;
+            options.rom.obc_hom_inhom = obc_hom_inhom;
+            options.rom.obc_inhom_hom = obc_inhom_hom;
+            options.rom.obc_hom_inhom2 = obc_hom_inhom2;
+        else
+            error('Sorry, precomputation not implemented for bc_recon =/= 3')
+        end
+    else
+        error('Sorry, precomputation not implemented for rom_bc =/= 2')
+    end
+end

@@ -41,7 +41,7 @@ psiLe  = psiLe(1:end-1);
 if (strcmp(BC.v.up,'dir')) 
 %     v1 = interp1(x,vUp,xp);
     v1 = vBC(xp,y(end),t,options);
-elseif (strcmp(BC.v.up,'pres'))
+elseif (max(strcmp(BC.v.up,{'pres','mvp-obc'})))
     v1 = vh(end-Nvx_in+1:end);
 elseif (strcmp(BC.v.up,'per'))
     v1 = vh(1:Nvx_in);
@@ -54,7 +54,7 @@ psiUp  = psiUp(1:end-1);
 if (strcmp(BC.u.right,'dir')) 
 %     u2 = interp1(y,uRi,yp);
     u2 = uBC(x(end),yp,t,options);
-elseif (strcmp(BC.u.right,'pres'))
+elseif (max(strcmp(BC.u.right,{'pres','mvp-obc'})))
     u2 = uh(Nux_in:Nux_in:end);
 elseif (strcmp(BC.u.right,'per'))
     u2 = uh(1:Nux_in:end);
@@ -67,7 +67,7 @@ psiRi  = psiRi(end-1:-1:1);
 if (strcmp(BC.v.low,'dir')) 
 %     v2 = interp1(x,vLo,xp);
     v2 = vBC(xp,y(1),t,options);
-elseif (strcmp(BC.v.low,'pres') || strcmp(BC.v.low,'per'))
+elseif (max(strcmp(BC.v.low,{'pres','mvp-obc'})) || strcmp(BC.v.low,'per'))
     v2 = vh(1:Nvx_in);
 end
 psiLo  = psiLoRi + cumsum(hx(end:-1:1).*v2(end:-1:1)); 

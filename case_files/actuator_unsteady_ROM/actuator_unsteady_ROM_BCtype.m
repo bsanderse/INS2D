@@ -11,14 +11,14 @@ function BC = actuator_unsteady_ROM_BCtype
     % low/up: y-direction
 
     BC.u.left  = 'dir';   % valid options: dir, per, pres 
-    BC.u.right = 'pres';  % valid options: dir, per, pres
-    BC.u.low   = 'sym';   % valid options: dir, per, sym
-    BC.u.up    = 'sym';   % valid options: dir, per, sym
+    BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
+    BC.u.low   = 'mvp-obc';   % valid options: dir, per, sym
+    BC.u.up    = 'mvp-obc';   % valid options: dir, per, sym
 
     BC.v.left  = 'dir';   % valid options: dir, per, sym
-    BC.v.right = 'sym';   % valid options: dir, per, sym
-    BC.v.low   = 'pres';   % valid options: dir, per, pres
-    BC.v.up    = 'pres';   % valid options: dir, per, pres
+    BC.v.right = 'mvp-obc';   % valid options: dir, per, sym
+    BC.v.low   = 'mvp-obc';   % valid options: dir, per, pres
+    BC.v.up    = 'mvp-obc';   % valid options: dir, per, pres
 
 %     BC.k.left  = 'dir';   % valid options: dir, sym, per
 %     BC.k.right = 'dir';   % valid options: dir, sym, per
@@ -52,3 +52,9 @@ function BC = actuator_unsteady_ROM_BCtype
 %     nuBa        = 0;
 %     nuFr        = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    BC.gO = @(u) abs(u); % non-negative function, dissipation model %% maybe move to parameters
+%     BC.gO = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters
+%     BC.gO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
+
+    BC.dgO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
