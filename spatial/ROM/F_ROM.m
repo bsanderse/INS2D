@@ -106,10 +106,16 @@ if (options.rom.precompute_obc == 1) && obc
             switch BC.gO_type
                 case 0
                     gO_ROM = 0;
+                    Jac_gO_ROM = 0;
                 case 1
                     gO_ROM = gO_ROM(R,t,options);
+                    Jac_gO_ROM = 0;
                 case 2
                     error('Sorry, obc offline decomposition for more complex gO not implemented')
+            end
+            y_O_ROM = y_O_diag_ROM + gO_ROM;
+            if (getJacobian==1)
+                Jac_y_O_ROM = Jac_y_O_diag_ROM + Jac_gO_ROM;
             end
         else 
             error('Sorry, precomputation of obc not implemented for bc_recon=/=3')
