@@ -1,0 +1,15 @@
+name: Run INS2D unit tests
+on: [push]
+jobs:
+  test-INS:
+    name: Run INS2D unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Run script
+        uses: matlab-actions/run-command@v1
+        with:
+          command: test

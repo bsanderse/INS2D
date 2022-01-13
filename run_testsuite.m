@@ -1,4 +1,4 @@
-function [ output_args ] = run_testsuite( casefiles )
+function [ errorV, errorp ] = run_testsuite( casefiles )
 %RUN_TESTSUITE run test cases given by casefiles 
 % casefiles can be a string of cases to run
 % which should be present as folders in the testsuite folder
