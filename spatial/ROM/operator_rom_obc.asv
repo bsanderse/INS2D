@@ -1,5 +1,4 @@
-% function [obc_hom,obc_inhom,obc_hom_inhom2,obc_hom_inhom,obc_inhom_hom] ...
-function [obc_hom,obc_inhom,obc_hom_inhom2] ...
+function [obc_hom,obc_inhom,obc_hom_inhom2,obc_hom_inhom,obc_inhom_hom] ...
     = operator_rom_obc(P,options)
 
 M1  = size(P,1);   % P =/= B' possible
@@ -20,7 +19,6 @@ for i=1:M
 end
 
 obc_inhom = 0;
-obc_hom_inhom2 = 0;
 
 if options.rom.rom_bc == 2
     if options.rom.bc_recon == 3

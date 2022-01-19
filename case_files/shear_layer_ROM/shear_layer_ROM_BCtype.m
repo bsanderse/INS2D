@@ -11,7 +11,7 @@ function BC = shear_layer_ROM_BCtype
     % left/right: x-direction
     % low/up: y-direction
 % 
-if j == 1
+% if j == 1
     BC.u.left  = 'per';%'mvp-obc';   % valid options: dir, per, pres 
     BC.u.right = 'per';  % valid options: dir, per, pres
     BC.u.low   = 'mvp-obc';   % valid options: dir, per, sym
@@ -22,17 +22,17 @@ if j == 1
     BC.v.low   = 'mvp-obc';   % valid options: dir, per, pres
     BC.v.up    = 'mvp-obc';   % valid options: dir, per, pres
 %%  
-else
-    BC.u.left  = 'pres';%'mvp-obc';   % valid options: dir, per, pres 
-    BC.u.right = 'pres';  % valid options: dir, per, pres
-    BC.u.low   = 'per';   % valid options: dir, per, sym
-    BC.u.up    = 'per';   % valid options: dir, per, sym
-
-    BC.v.left  = 'sym';   % valid options: dir, per, sym
-    BC.v.right = 'sym';   % valid options: dir, per, sym
-    BC.v.low   = 'per';   % valid options: dir, per, pres
-    BC.v.up    = 'per';   % valid options: dir, per, pres
-end
+% else
+%     BC.u.left  = 'pres';%'mvp-obc';   % valid options: dir, per, pres 
+%     BC.u.right = 'pres';  % valid options: dir, per, pres
+%     BC.u.low   = 'per';   % valid options: dir, per, sym
+%     BC.u.up    = 'per';   % valid options: dir, per, sym
+% 
+%     BC.v.left  = 'sym';   % valid options: dir, per, sym
+%     BC.v.right = 'sym';   % valid options: dir, per, sym
+%     BC.v.low   = 'per';   % valid options: dir, per, pres
+%     BC.v.up    = 'per';   % valid options: dir, per, pres
+% end
 %%
 %     BC.u.left  = 'per';%'mvp-obc';   % valid options: dir, per, pres 
 %     BC.u.right = 'per';  % valid options: dir, per, pres

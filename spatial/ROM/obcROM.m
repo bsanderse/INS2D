@@ -5,14 +5,25 @@ if getJacobian
     error('Jacobian not implemented in offline decomposition')
 end
 
-R_inhom = get_a_inhom(t,options);
+y_O_ROM =   options.rom.obc_hom*kron(R,R);
 
-y_O_ROM =   options.rom.obc_hom*kron(R,R)   ...
-          + options.rom.obc_inhom*kron(R_inhom,R_inhom) ...
-%           + options.rom.obc_hom_inhom*kron(R,R_inhom)   ...
-%           + options.rom.obc_inhom_hom*kron(R_inhom,R);
-          + options.rom.obc_hom_inhom2*kron(R,R_inhom);
-            
+if options.rom.rom_bc == 2
+    if options.rom.bc_recon == 3
+        
+        R_inhom = get_a_inhom(t,options);
+        
+        y_O_ROM =   y_O_ROM   ...
+            + options.rom.obc_inhom*kron(R_inhom,R_inhom) ...
+            ... %           + options.rom.obc_hom_inhom*kron(R,R_inhom)   ...
+            ... %           + options.rom.obc_inhom_hom*kron(R_inhom,R);
+            + options.rom.obc_hom_inhom2*kron(R,R_inhom);
+        
+    else
+        error('Sorry, precomputation not implemented for bc_recon =/= 3')
+    end
+end
+
+%%
 % test -> if nonzero, fix convection!
 %  norm(options.rom.obc_hom_inhom*kron(R,R_inhom)   ...
 %      + options.rom.obc_inhom_hom*kron(R_inhom,R) ...

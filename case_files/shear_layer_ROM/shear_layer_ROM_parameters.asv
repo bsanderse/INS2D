@@ -81,11 +81,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent 
                 
-                %% botch
-%                 rom_bc = 2;
-%                 bc_recon = 3;
-%                 Mbc = 0;
-                %%
+                rom_bc = 2
+                bc_recon = 3
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';

@@ -134,16 +134,14 @@ obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc'));
 if obc
 %     if options.rom.rom_bc == 2
 %         if options.rom.bc_recon == 3
-
-%             [obc_hom,obc_inhom,obc_hom_inhom2,obc_hom_inhom,obc_inhom_hom] ...
-            [obc_hom,obc_inhom,obc_hom_inhom2] ...
+            [obc_hom,obc_inhom,obc_hom_inhom,obc_inhom_hom,obc_hom_inhom2] ...
             = operator_rom_obc(P,options);
         
             options.rom.obc_hom = obc_hom;
             options.rom.obc_inhom = obc_inhom;
+            options.rom.obc_hom_inhom = obc_hom_inhom;
+            options.rom.obc_inhom_hom = obc_inhom_hom;
             options.rom.obc_hom_inhom2 = obc_hom_inhom2;
-%             options.rom.obc_hom_inhom = obc_hom_inhom;
-%             options.rom.obc_inhom_hom = obc_inhom_hom;
             
             switch BC.gO_type
                 case 0
@@ -156,10 +154,10 @@ if obc
                 case 2
                     error('Sorry, obc offline decomposition for more complex gO not implemented')
             end
-%         else
-%             error('Sorry, precomputation not implemented for bc_recon =/= 3')
-%         end
-%     else
-%         error('Sorry, precomputation not implemented for rom_bc =/= 2')
-%     end
+        else
+            error('Sorry, precomputation not implemented for bc_recon =/= 3')
+        end
+    else
+        error('Sorry, precomputation not implemented for rom_bc =/= 2')
+    end
 end
