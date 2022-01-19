@@ -99,11 +99,12 @@ y_O  = y_O_diag.*V - V_n_t.*gO(V);
 Fres = Fres + y_O;
 
 %% tests
-Conv = [convu; convv];
-if (V'*(-Conv + y_O_diag.*V )>1e-14)
-    warning('convection skew-symmetry not fixed by mvp-obc') %only works in absence of Dirichlet BC
-    V'*(-Conv + y_O_diag.*V)
-end
+% Conv = [convu; convv];
+% if (V'*(-Conv + y_O_diag.*V )>1e-14)
+%     warning('convection skew-symmetry not fixed by mvp-obc') %only works in absence of Dirichlet BC
+%     V'*(-Conv + y_O_diag.*V)
+% end
+
 % if (V'*(-Conv + conv_Diag1.*V )>1e-14)
 %     warning('convection skew-symmetry not fixed by mvp-obc') %only works in absence of Dirichlet BC
 %     V'*(-Conv + conv_Diag1.*V)

@@ -48,9 +48,10 @@ hold off
 
 Axes(2) = axes;
 % pcolor(xp,yp,qp')
-list = linspace(0.68,1.2,18);
 [up,vp,qp] = get_velocity(V,t,options);
-[~,c]=contour(Axes(2),xp,yp,up',list);
+% list = linspace(0.68,1.2,18);
+% [~,c]=contour(Axes(2),xp,yp,up',list);
+[~,c]=contour(Axes(2),xp,yp,up');
 c.LineWidth = 1;
 axis equal
 axis([x1 x2 y1 y2]);
@@ -90,7 +91,8 @@ hold off
 Axes(2) = axes;
 % pcolor(xp,yp,qp')
 list = linspace(0.6,1.1,20);
-[~,c]=contour(Axes(2),xp,yp,qp',list);
+% [~,c]=contour(Axes(2),xp,yp,qp',list);
+[~,c]=contour(Axes(2),xp,yp,qp');
 c.LineWidth = 1;
 axis equal
 axis([x1 x2 y1 y2]);

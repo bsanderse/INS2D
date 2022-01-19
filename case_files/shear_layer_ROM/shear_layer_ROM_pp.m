@@ -3,11 +3,28 @@ Npx = options.grid.Npx;
 Npy = options.grid.Npy;
 
 %% kinetic energy
-figure
+figure(13)
+% plot(time,(k-k(1))/k(1),'s-','displayname',"dt = "+num2str(dt))
 plot(time,(k-k(1))/k(1),'s-')
+% semilogy(time,abs((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
+
+hold on
 grid
 xlabel('t');
 ylabel('(k(t)-k(0))/k(0)');
+legend('show')
+
+%% kinetic energy error
+figure(14)
+% plot(time,(k-k(1))/k(1),'s-','displayname',"dt = "+num2str(dt))
+plot(time,abs(k-k(1))/k(1),'s-')
+% semilogy(time,abs((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
+
+hold on
+grid
+xlabel('t');
+ylabel('abs(k(t)-k(0))/k(0)');
+legend('show')
 
 %% vorticity
 % compare e.g. with PhD thesis figure 3.4

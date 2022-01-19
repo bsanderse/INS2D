@@ -6,6 +6,7 @@ if (exist(file_name,'file'))
     
     BCtype     = str2func(file_name);
     options.BC = BCtype();
+%     options.BC = BCtype(j);
     
 else
     
