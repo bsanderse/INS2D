@@ -1,9 +1,9 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [2 4 8 16 2 4 8 16];
-M_list = 16;
-% M_list = [16 16 16];
+% M_list = 16;
+M_list = [16 16 16];
 % M_list = [16 16];
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
@@ -119,8 +119,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % only for unsteady problems:
 
         dt            = 0.01;       % time step (for explicit methods it can be
-%         dts = dt*[10 1 .1];
-%         dt = dts(j);
+        dts = dt*[10 1 .1];
+        dt = dts(j);
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 4;%4;         % end time
@@ -209,7 +209,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name

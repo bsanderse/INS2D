@@ -56,6 +56,17 @@ elseif (options.rom.precompute_convection == 0)
     conv  = B'*(Diag.*[convu;convv]);
     dconv = B'*(Diag.*[dconvu;dconvv])*B;  
 end
+%% testing
+    options = set_bc_vectors(t,options);
+    V = getFOM_velocity(R,t,options);
+    B  = options.rom.B;
+    NV   = options.grid.Nu + options.grid.Nv;
+    Diag = ones(NV,1);
+
+    [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
+    conv_test  = B'*(Diag.*[convu;convv]);
+    norm(conv-conv_test)
+%%
 
 % diffusion
 if (options.rom.precompute_diffusion == 1)
@@ -75,6 +86,11 @@ elseif (options.rom.precompute_diffusion == 0)
     Diff  = B'*(Diag.*[d2u;d2v]);
     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
+%% testing
+    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
+    Diff_test  = B'*(Diag.*[d2u;d2v]);
+    norm(Diff-Diff_test)
+%%
 
 % body force
 if (options.rom.precompute_force == 1)
@@ -98,6 +114,12 @@ else
 %     dFy = spalloc(Nv,Nu+Nv,0);    
 end
 
+%% testing
+    [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+    F_test   = B'*(Diag.*[Fx;Fy]); 
+    norm(F-F_test)
+%%
+
 % open boundaries
 if obc
     if (options.rom.precompute_obc == 1)
@@ -109,14 +131,14 @@ if obc
                         gO_ROM = 0;
                         Jac_gO_ROM = 0;
                     case 1
-                        gO_ROM = gO_ROM(R,t,options);
+                        gO_ROM = gOROM(R,t,options);
                         Jac_gO_ROM = 0;
                     case 2
                         error('Sorry, obc offline decomposition for more complex gO not implemented')
                 end
-                y_O_ROM = y_O_diag_ROM + gO_ROM;
+                y_O_ROM = y_O_diag_ROM - gO_ROM;
                 if (getJacobian==1)
-                    Jac_y_O_ROM = Jac_y_O_diag_ROM + Jac_gO_ROM;
+                    Jac_y_O_ROM = Jac_y_O_diag_ROM - Jac_gO_ROM;
                 end
 %             else
 %                 error('Sorry, precomputation of obc not implemented for bc_recon=/=3')
@@ -143,6 +165,22 @@ if obc
             Jac_y_O_ROM = B'*(Diag.*Jac_y_O);
         end
     end
+    %% testing
+        gO = options.BC.gO;
+        dgO = options.BC.gO;
+        
+        Conv_diag = options.grid.C;
+        y_O_diag = Conv_diag*V;
+        
+        id_normal = options.grid.id_normal;
+        id_tangential = options.grid.id_tangential;
+        id_n_t = id_normal+id_tangential;
+        V_n_t = id_n_t.*V;
+        
+        y_O  = y_O_diag.*V - V_n_t.*gO(V);
+        y_O_ROM_test = B'*(Diag.*y_O);
+        norm(y_O_ROM-y_O_ROM_test)
+    %%
 end
 
 % residual of ROM

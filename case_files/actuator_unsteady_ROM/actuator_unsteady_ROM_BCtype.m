@@ -53,8 +53,11 @@ function BC = actuator_unsteady_ROM_BCtype
 %     nuFr        = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    BC.gO = @(u) abs(u); % non-negative function, dissipation model %% maybe move to parameters
-%     BC.gO = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters
+%     BC.gO = @(u) abs(u); % non-negative function, dissipation model %% maybe move to parameters
+    BC.gO = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters
 %     BC.gO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
 
     BC.dgO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
+    
+    BC.gO_type = 1; % 0: gO=0, 1: gO=const, 2: gO more complex -> DEIM required
+
