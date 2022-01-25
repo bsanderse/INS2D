@@ -5,7 +5,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-    run(full_name);
+%     run(full_name);
     
 else
     
@@ -60,7 +60,7 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                     error_V_2 = weightedL2norm(error_V,options.grid.Om)./V_2_ref;
                     
                     
-                    % best possible approximation given the projection:
+                    % 101 possible approximation given the projection:
                     % note that the norm should be consistent with the
                     % optimization problem used in the SVD
                     V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);

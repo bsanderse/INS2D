@@ -1,6 +1,8 @@
 function [y_O_ROM, Jac_y_O_ROM] = obcROM(R,t,options,getJacobian)
 
+Jac_y_O_ROM = -666;
 if getJacobian
+    error('Jacobian not implemented in offline decomposition')
     M   = options.rom.M;
     E   = speye(M);
     
@@ -8,15 +10,17 @@ if getJacobian
     
     if options.rom.rom_bc == 2
         if options.rom.bc_recon == 3
+            
             R_inhom = get_a_inhom(t,options);
             
-            Jac_y_O_ROM = Jac_y_O_ROM + options.rom.obc_hom_inhom2*kron(E,R_inhom);
+            y_O_ROM =   y_O_ROM   ...
+                + options.rom.obc_inhom*kron(R_inhom,R_inhom) ...
+                + options.rom.obc_hom_inhom2*kron(R,R_inhom);
+            
         else
             error('Sorry, precomputation not implemented for bc_recon =/= 3')
         end
-    end
-else
-    Jac_y_O_ROM = -666;
+end
 end
 
 y_O_ROM =   options.rom.obc_hom*kron(R,R);

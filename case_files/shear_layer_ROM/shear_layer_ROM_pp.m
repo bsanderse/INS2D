@@ -5,8 +5,9 @@ Npy = options.grid.Npy;
 %% kinetic energy
 figure(13)
 % plot(time,(k-k(1))/k(1),'s-','displayname',"dt = "+num2str(dt))
+plot(time,(k-k(1))/k(1),'s-','displayname',"ROM M="+M+suffix)
 % plot(time,(k-k(1))/k(1),'s-')
-semilogy(time,((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
+% semilogy(time,((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
 % semilogy(time,(k-k(1))/k(1),'s-')
 
 
@@ -20,7 +21,8 @@ legend('show')
 figure(14)
 % plot(time,(k-k(1))/k(1),'s-','displayname',"dt = "+num2str(dt))
 % plot(time,abs(k-k(1))/k(1),'s-')
-semilogy(time,abs((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
+% semilogy(time,abs((k-k(1))/k(1)),'s-','displayname',"dt = "+num2str(dt))
+semilogy(time,abs((k-k(1))/k(1)),'s-','displayname',"ROM M="+M+suffix)
 % semilogy(time,abs(k-k(1))/k(1),'s-')
 
 

@@ -1,6 +1,11 @@
 function [Conv, Jac] = convectionROM_unsteadyBC(R,t,options,getJacobian)
 % evaluate convective terms and, optionally, Jacobians
-Jac = -666;
+
+if getJacobian
+    error('Jacobian not implemented in offline decomposition')
+else
+    Jac = -666;
+end
 
 R_inhom = options.rom.abc(t);
 R_bc    = [options.rom.abc1(t); options.rom.abc2(t)];

@@ -1,11 +1,11 @@
 function [Vbc] = get_unsteadyVbc(t,options)
 % get FOM pressure based on ROM coefficients
 
-if options.rom.bc_recon == 1
+if options.rom.bc_recon == 1 && options.rom.rom == 1
     Vbc = options.rom.Vbc0*options.rom.abc(t);
-elseif options.rom.bc_recon == 2
+elseif options.rom.bc_recon == 2 && options.rom.rom == 1
     Vbc = 0;
-elseif options.rom.bc_recon == 3
+elseif options.rom.bc_recon == 3 && options.rom.rom == 1
     phi_inhom = options.rom.phi_inhom;
     Vbc = phi_inhom*get_a_inhom(t,options);
 else

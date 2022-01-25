@@ -3,8 +3,10 @@
 run_multiple = 1;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
-M_list = [16 16 16];
+% M_list = [16 16 16];
 % M_list = [16 16];
+% M_list = [4 -1];% 8 16 32];
+M_list = [4 8 16 32 -1];
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -52,7 +54,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
@@ -94,7 +96,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
-    snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_FOMdata/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_g=.1_implicit/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -119,8 +122,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % only for unsteady problems:
 
         dt            = 0.01;       % time step (for explicit methods it can be
-        dts = dt*[10 1 .1];
-        dt = dts(j);
+%         dts = dt*[10 1 .1];
+%         dt = dts(j);
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 4;%4;         % end time
@@ -138,9 +141,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 20; %21-(j>4);
+%         method            = 20; %21-(j>4);
+        method            = 21; %21-(j>4);
 %         RK                = method_list{j}; %'RK44';
-        RK                = 'RK44';
+%         RK                = 'RK44';
+        RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.

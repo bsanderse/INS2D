@@ -1,8 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = [10 10 10 10];
-% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 
@@ -75,7 +75,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
@@ -85,12 +85,14 @@ end
     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_obc       = 1;
 %     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_convection = 0;
 %     precompute_diffusion  = 0;
 %     precompute_force      = 0;
+%     precompute_obc       = 0;
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
@@ -106,7 +108,9 @@ end
 %     'results/actuator_unsteady_ROM_manipulatedBC/matlab_data.mat';
 %     %M2S4R4 2nd pc wrong initial condition
 %     snapshot_data = 'results/actuator_unsteady_ROM_manipulatedBC_2/matlab_data.mat'; %M2S4R4 2nd pc
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -144,7 +148,7 @@ end
     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
-    t_end         = 4*pi*3;        % end time
+    t_end         = 4*pi*10;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -157,8 +161,10 @@ end
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
+%     method        = 20;
+%     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
+    method = 21;
+    RK = 'GL1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.
@@ -233,7 +239,7 @@ end
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name

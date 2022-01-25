@@ -133,19 +133,14 @@ if (options.rom.rom == 1)
 % end
 %%
 figure(97)
-% if j==1
-%     ax1 = axes('Position',[.1 .1 .8 .8]);
-% end
-% ax = ax1;
-plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
-% hold(ax,'on')
-hold on
-plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
+ax = axes('Position',[.1 .1 .9 .]);
+plot(ax,t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); %(2:end)./error_V_2_norm(2:end));
+hold(ax,'on')
+plot(ax,t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'displayname',"L2 error in best approximation velocity M="+M);
 
-set(gca,'Yscale','log');
-xlabel('t')
-ylabel('velocity error')
-legend('show','NumColumns',4,'Orientation','horizontal')
+set(ax,'Yscale','log');
+xlabel(ax,'t')
+ylabel(ax,'velocity error')
 %%
                     
                     figure(101)
@@ -185,8 +180,8 @@ for kk = 1:2
     else
         ax = ax1;
 %         hold on
-%         color = [color 'x'];
-%         color2 = [color2 'x'];
+        color = [color 'x'];
+        color2 = [color2 'x'];
     end
 %                       if j<5 %mod(j,2)
                       if mod(j,2)

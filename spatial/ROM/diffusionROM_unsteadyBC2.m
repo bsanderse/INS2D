@@ -9,8 +9,6 @@ Diff  = options.rom.Diff2;
 DiffBC  = options.rom.DiffBC2;
 yDiff = options.rom.yDiff2;
 
-Jac = 0;
-
 switch visc
     
     case 'laminar'
@@ -18,6 +16,8 @@ switch visc
         
         if (getJacobian == 1)
             Jac    = Diff;
+        else
+            Jac = -666;
         end
         
     otherwise

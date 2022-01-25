@@ -45,9 +45,11 @@ function BC = shear_layer_ROM_BCtype
 %     BC.v.up    = 'pres';   % valid options: dir, per, pres
 %%
     
-%     BC.gO = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters
-    BC.gO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
+%     BC.gO = @(u) abs(u); % non-negative function, dissipation model %% maybe move to parameters
+    BC.gO = @(u) .01; % non-negative function, dissipation model %% maybe move to parameters
+%     BC.gO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
 
     BC.dgO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
+%     BC.dgO = @(u) sign(u); % non-negative function, dissipation model %% maybe move to parameters
     
-    BC.gO_type = 0; % 0: gO=0, 1: gO=const, 2: gO more complex -> DEIM required
+    BC.gO_type = 1; % 0: gO=0, 1: gO=const, 2: gO more complex -> DEIM required

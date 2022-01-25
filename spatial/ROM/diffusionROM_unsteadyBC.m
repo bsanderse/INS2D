@@ -10,7 +10,7 @@ Diff  = options.rom.Diff;
 DiffBC  = options.rom.DiffBC;
 yDiff = options.rom.yDiff;
 
-Jac = 0;
+
 
 switch visc
     
@@ -19,6 +19,8 @@ switch visc
         
         if (getJacobian == 1)
             Jac    = Diff;
+        else
+            Jac = -666;
         end
         
     otherwise

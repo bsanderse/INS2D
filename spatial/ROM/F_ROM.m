@@ -57,15 +57,15 @@ elseif (options.rom.precompute_convection == 0)
     dconv = B'*(Diag.*[dconvu;dconvv])*B;  
 end
 %% testing
-    options = set_bc_vectors(t,options);
-    V = getFOM_velocity(R,t,options);
-    B  = options.rom.B;
-    NV   = options.grid.Nu + options.grid.Nv;
-    Diag = ones(NV,1);
-
-    [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
-    conv_test  = B'*(Diag.*[convu;convv]);
-    norm(conv-conv_test)
+%     options = set_bc_vectors(t,options);
+%     V = getFOM_velocity(R,t,options);
+%     B  = options.rom.B;
+%     NV   = options.grid.Nu + options.grid.Nv;
+%     Diag = ones(NV,1);
+% 
+%     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
+%     conv_test  = B'*(Diag.*[convu;convv]);
+%     norm(conv-conv_test)
 %%
 
 % diffusion
@@ -87,9 +87,9 @@ elseif (options.rom.precompute_diffusion == 0)
     dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
 end
 %% testing
-    [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
-    Diff_test  = B'*(Diag.*[d2u;d2v]);
-    norm(Diff-Diff_test)
+%     [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
+%     Diff_test  = B'*(Diag.*[d2u;d2v]);
+%     norm(Diff-Diff_test)
 %%
 
 % body force
@@ -115,9 +115,9 @@ else
 end
 
 %% testing
-    [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
-    F_test   = B'*(Diag.*[Fx;Fy]); 
-    norm(F-F_test)
+%     [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+%     F_test   = B'*(Diag.*[Fx;Fy]); 
+%     norm(F-F_test)
 %%
 
 % open boundaries
@@ -148,7 +148,7 @@ if obc
 %         end
     else
         gO = options.BC.gO;
-        dgO = options.BC.gO;
+        dgO = options.BC.dgO;
         
         Conv_diag = options.grid.C;
         y_O_diag = Conv_diag*V;
@@ -166,20 +166,20 @@ if obc
         end
     end
     %% testing
-        gO = options.BC.gO;
-        dgO = options.BC.gO;
-        
-        Conv_diag = options.grid.C;
-        y_O_diag = Conv_diag*V;
-        
-        id_normal = options.grid.id_normal;
-        id_tangential = options.grid.id_tangential;
-        id_n_t = id_normal+id_tangential;
-        V_n_t = id_n_t.*V;
-        
-        y_O  = y_O_diag.*V - V_n_t.*gO(V);
-        y_O_ROM_test = B'*(Diag.*y_O);
-        norm(y_O_ROM-y_O_ROM_test)
+%         gO = options.BC.gO;
+%         dgO = options.BC.dgO;
+%         
+%         Conv_diag = options.grid.C;
+%         y_O_diag = Conv_diag*V;
+%         
+%         id_normal = options.grid.id_normal;
+%         id_tangential = options.grid.id_tangential;
+%         id_n_t = id_normal+id_tangential;
+%         V_n_t = id_n_t.*V;
+%         
+%         y_O  = y_O_diag.*V - V_n_t.*gO(V);
+%         y_O_ROM_test = B'*(Diag.*y_O);
+%         norm(y_O_ROM-y_O_ROM_test)
     %%
 end
 

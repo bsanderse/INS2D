@@ -84,7 +84,7 @@ id_tangential = options.grid.id_tangential;
 id_n_t = id_normal+id_tangential;
 V_n_t = id_n_t.*V;
 gO = options.BC.gO;
-dgO = options.BC.gO;
+dgO = options.BC.dgO;
 % gO = @(u) 0; % botch
 
 % NF = length(y_I);
