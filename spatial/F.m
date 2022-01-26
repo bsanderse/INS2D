@@ -152,8 +152,9 @@ if (getJacobian==1)
     dFv  = - dconvv + dDiffv + dFy;
     
     dF   = [dFu; dFv];
-    
-    Jac_y_O = Conv_diag*V + diag(Conv_diag*V)+ gO(V).*id_n_t + V_n_t.*dgO(V);
+
+    Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
+            - diag(id_n_t)*diag(gO(V)) - diag(id_n_t)*diag(dgO(V))*diag(V);
     dF   = dF + Jac_y_O;
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);

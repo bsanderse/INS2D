@@ -148,7 +148,7 @@ end
     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
-    t_end         = 4*pi*10;        % end time
+    t_end         = 4*pi;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -164,7 +164,8 @@ end
 %     method        = 20;
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
     method = 21;
-    RK = 'GL1';
+%     RK = 'GL1';
+    RK = 'RIA1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.
@@ -216,7 +217,7 @@ end
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
         
-    nonlinear_Newton       = 1;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+    nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
                                    % iteration
