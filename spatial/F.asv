@@ -82,7 +82,7 @@ Fres = [Fu;Fv];
 id_normal = options.grid.id_normal;
 id_tangential = options.grid.id_tangential;
 id_n_t = id_normal+id_tangential;
-% V_n_t = id_n_t.*V;
+V_n_t = id_n_t.*V;
 gO = options.BC.gO;
 dgO = options.BC.dgO;
 % gO = @(u) 0; % botch
@@ -92,10 +92,10 @@ dgO = options.BC.dgO;
 % conv_Diag1 = diag(K_h*spdiags(I_h*V+y_I,0,NF,NF)*A_h);
 
 Conv_diag = options.grid.C;
-% y_O_diag = Conv_diag*V;
+y_O_diag = Conv_diag*V;
 
 % y_O  = y_O_diag.*V - V_n_t.*gO(V);
-y_O = diag(V)*(Conv_diag*V) - diag(id_n_t)*diag(gO(V))*V;
+y_O = (Conv_diag*V).*V - diag(id_n_t)*diag(gO(V))*V;
 % y_O  = conv_Diag1.*V- V_n_t.*gO(V);
 Fres = Fres + y_O;
 

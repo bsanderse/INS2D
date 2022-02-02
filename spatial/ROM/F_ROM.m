@@ -184,7 +184,10 @@ if obc
 end
 
 % residual of ROM
-Fres    = - conv + Diff + F + y_O_ROM;
+Fres    = - conv + Diff + F;
+if obc
+    Fres = Fres + y_O_ROM;
+end
 
 maxres  = max(abs(Fres));
 

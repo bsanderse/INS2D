@@ -13,8 +13,7 @@ obc_hom = zeros(M1,M*M);
 for i=1:M
     for j=1:M
         obc = (Conv_diag*B(:,i)).*(B(:,j));
-%         obc1 = diag(B(:,j))*(Conv_diag*B(:,i));
-%         norm(obc-obc1)
+        obc = (Conv_diag*B(:,i))(B(:,j));
         % convert third order tensor to a matrix via the following indexing:
         k = sub2ind([M,M],j,i); % first loop over j,  then over i
         obc_hom(:,k) = P*obc;        

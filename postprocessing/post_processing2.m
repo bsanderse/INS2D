@@ -9,7 +9,7 @@ full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
-    run(full_name);
+%     run(full_name);
 % %     actuator_unsteady_ROM_pp;
 else
     
@@ -145,7 +145,7 @@ plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);%,'dis
 set(gca,'Yscale','log');
 xlabel('t')
 ylabel('velocity error')
-legend('show','NumColumns',4,'Orientation','horizontal')
+legend('show','NumColumns',2,'Orientation','horizontal')
 %%
                     
                     figure(101)
