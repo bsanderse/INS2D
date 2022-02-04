@@ -14,7 +14,7 @@ M_list = [2 5 10 20];% 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
 % Mbc_list = [2 4 10 20];
 % Mbc = Mbc_list(j);
-Mbc = 20;
+Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
@@ -111,7 +111,8 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -241,7 +242,7 @@ end
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name

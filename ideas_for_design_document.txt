@@ -10,3 +10,7 @@ ideas for design document:
 - use testing routines
 
 -save parameter file if save_file==1
+
+
+-> remove all function_handles from case_files. Otherwise, these function_handles cannot be retrieved for FOM_data,
+instead, the ROM function_handles are used.

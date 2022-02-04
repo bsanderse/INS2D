@@ -102,8 +102,9 @@ if (options.rom.precompute_force == 1)
         F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
     end
     if (getJacobian == 1)
-        % Jacobian is not straightforward for general non-linear forcing    
-        warning('precomputing Jacobian of force not available, using zero Jacobian');
+        % Jacobian is not straightforward for general non-linear forcing 
+%         botch:
+%         warning('precomputing Jacobian of force not available, using zero Jacobian');
         M  = options.rom.M;
         dF = spalloc(M,M,0);
     end
@@ -131,8 +132,7 @@ if obc
                         gO_ROM = 0;
                         Jac_gO_ROM = 0;
                     case 1
-                        gO_ROM = gOROM(R,t,options);
-                        Jac_gO_ROM = 0;
+                        [gO_ROM, Jac_gO_ROM] = gOROM(R,t,options,getJacobian);
                     case 2
                         error('Sorry, obc offline decomposition for more complex gO not implemented')
                 end

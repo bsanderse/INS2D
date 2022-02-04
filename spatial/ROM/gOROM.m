@@ -1,5 +1,12 @@
-function gO_ROM = gOROM(R,t,options)
+function [gO_ROM, Jac_gO_ROM] = gOROM(R,t,options,getJacobian)
 
+
+
+if getJacobian    
+    Jac_gO_ROM = options.rom.gO_hom;
+else
+    Jac_gO_ROM = -666;
+end
 
 if options.rom.rom_bc == 2
     if options.rom.bc_recon == 3

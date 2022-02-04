@@ -25,6 +25,9 @@ if (j==1)
         error('Reynolds numbers of snapshot data and current simulation do not match');
     end
     
+    options_FOM = load(snapshot_data,'options');
+    FOM_data_consistency_check(options,options_FOM.options)
+    
     
     %% check whether snapshots are divergence free
     if (options.BC.BC_unsteady==0)     % not working for unsteady BC
@@ -459,8 +462,9 @@ eps    = 1e-12;
 
 disp('starting time-stepping...');
 
-addpath 'C:\Users\20201213\Documents\Uni\Master thesis\clean_code\INS2D\debug_stuff'
-jacobian_test_ROM
+% addpath 'C:\Users\20201213\Documents\Uni\Master thesis\clean_code\INS2D\debug_stuff'
+% addpath 'debug_stuff'
+% jacobian_test_ROM
 
 time_start = toc
 
