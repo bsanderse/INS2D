@@ -14,8 +14,8 @@ V = getFOM_velocity(R,t,options);
 p = pressure_additional_solve(V,p,t,options);
 nopressure = 0;
 
-[maxres,Fres,dFres] = myF(V,V,p,t,options,getJacobian,nopressure);
-[maxres,Fres,dFres] = myF(V,V,p,t,options,getJacobian,nopressure);
+% [maxres,Fres,dFres] = myF(V,V,p,t,options,getJacobian,nopressure);
+[maxres,Fres,dFres] = F(V,V,p,t,options,getJacobian,nopressure);
 B = options.rom.B;
 Fres = B'*Fres;
 

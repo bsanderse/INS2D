@@ -65,8 +65,8 @@ dtn    = dt;
 method_temp = method;
 
 % addpath 'C:\Users\20201213\Documents\Uni\Master thesis\clean_code\INS2D\debug_stuff'
-addpath 'debug_stuff'
-jacobian_test
+% addpath 'debug_stuff'
+% jacobian_test
 
 
 %% start time stepping

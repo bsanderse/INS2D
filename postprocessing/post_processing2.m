@@ -4,12 +4,13 @@ if (~exist('suffix'))
     suffix = "";
 end
 
-file_name = [case_name '_pp.m'];
-full_name = [folder_cases '/' case_name '/' file_name];
+% file_name = [case_name '_pp.m'];
+% full_name = [folder_cases '/' case_name '/' file_name];
+full_name = [folder_cases '/' case_name '/' 'pp.m'];
 
 if (exist(full_name,'file'))
     
-%     run(full_name);
+    run(full_name);
 % %     actuator_unsteady_ROM_pp;
 else
     

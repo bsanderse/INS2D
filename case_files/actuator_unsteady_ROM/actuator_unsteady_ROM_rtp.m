@@ -29,6 +29,10 @@ psi = get_streamfunction(V,t,options);
 
 %% create 2D plots
 
+% energy fluxes
+% open BC dissipation
+% 
+
 %%
 figure(23)
 [up,vp,qp] = get_velocity(V,t,options);
