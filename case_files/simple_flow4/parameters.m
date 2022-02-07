@@ -1,5 +1,5 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
@@ -21,7 +21,7 @@ Mbc = 1;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 0;
-if true %false %mod(j,2)==0 %j>4 %false %j>4
+if false %mod(j,2)==0 %j>4 %false %j>4
 % if false %j>4
 %     suffix = " mc";
 %     suffix = " CC";
@@ -51,8 +51,8 @@ end
     y1      = -2;
     y2      = 2;
 
-    Nx      = 20; %200;                  % number of volumes in the x-direction
-    Ny      = 8; %80;                   % number of volumes in the y-direction
+    Nx      = 200; %200;                  % number of volumes in the x-direction
+    Ny      = 80; %80;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -78,24 +78,24 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
     dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
-%     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-%     precompute_obc       = 1;
+    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_obc       = 1;
 %     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_convection = 0;
-    precompute_diffusion  = 0;
-    precompute_force      = 0;
-    precompute_obc       = 0;
+%     precompute_convection = 0;
+%     precompute_diffusion  = 0;
+%     precompute_force      = 0;
+%     precompute_obc       = 0;
 
 %     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
@@ -116,15 +116,16 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
-snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
+% snapshot_data = 'results/simple_flow4_1.000e+02_20x8/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
+snapshot_data = 'results/simple_flow4_1.000e+02_200x80/matlab_data.mat';
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 2; %2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
+    bc_recon = 3; %2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
@@ -250,11 +251,11 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
     
     rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
-    show_sigmas = 1;
+    show_sigmas = (j<=1);
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

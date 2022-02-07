@@ -19,8 +19,8 @@ V0      = - options.grid.Om_inv.*(options.discretization.G*dp);
 u = V0(1:Nux_in*Nuy_in);
 v = V0(Nux_in*Nuy_in+1:end);
 
-u = V0(1:Nux_in*Nuy_in);
-v = V0(Nux_in*Nuy_in+1:end);
+% u = ones(Nux_in*Nuy_in,1);
+% v = zeros(Nvx_in*Nvy_in,1);
 
 u = reshape(u,Nux_in,Nuy_in);
 v = reshape(v,Nvx_in,Nvy_in);

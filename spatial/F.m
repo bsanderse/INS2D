@@ -72,7 +72,13 @@ end
 
 Fres = [Fu;Fv];
 
+% check whether open boundary conditions occur
+BC = options.BC;
+obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc')); 
+
+
 %% mvp-obc 
+if obc
 %%% problem: fixes skew-symmetry for all diagonal entries even without obc!
 %%% -> solved when we use options.grid.C
 % K_h = options.discretization.K_h;
@@ -98,6 +104,7 @@ Conv_diag = options.grid.C;
 y_O = diag(V)*(Conv_diag*V) - diag(id_n_t)*diag(gO(V))*V;
 % y_O  = conv_Diag1.*V- V_n_t.*gO(V);
 Fres = Fres + y_O;
+end
 
 %% tests
 % Conv = [convu; convv];
@@ -153,10 +160,11 @@ if (getJacobian==1)
     dFv  = - dconvv + dDiffv + dFy;
     
     dF   = [dFu; dFv];
-
-    Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
+    if obc
+        Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
             - diag(id_n_t)*diag(gO(V)) - diag(id_n_t)*diag(dgO(V))*diag(V);
-    dF   = dF + Jac_y_O;
+        dF   = dF + Jac_y_O;
+    end
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);
 end

@@ -9,8 +9,9 @@ end
 full_name = [folder_cases '/' case_name '/' 'pp.m'];
 
 if (exist(full_name,'file'))
-    
-    run(full_name);
+    if (options.rom.rom == 0)
+        run(full_name);
+    end
 % %     actuator_unsteady_ROM_pp;
 else
     

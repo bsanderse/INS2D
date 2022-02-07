@@ -1,8 +1,5 @@
 % disp('rtp.m is empty')
 
-% streamfunction
-psi = get_streamfunction(V,t,options);
-
 figure(23)
 [up,vp,qp] = get_velocity(V,t,options);
 
@@ -28,7 +25,7 @@ subplot(2,1,2)
 contour(xp,yp,vp')
 hold on
 colorbar
-% plot([2,2],[-0.5,0.5],'k-','LineWidth',3) % actuator disk
+plot([2,2],[-0.5,0.5],'k-','LineWidth',3) % actuator disk
 %%
 max_vis = max(vp,[],'all');
 min_vis = min(vp,[],'all');

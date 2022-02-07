@@ -63,7 +63,7 @@ function BC = actuator_unsteady_ROM_BCtype
 
 %     BC.gO = @(u) u.^2; % non-negative function, dissipation model %% maybe move to parameters
 %     BC.gO = @(u) abs(u); % non-negative function, dissipation model %% maybe move to parameters
-    BC.gO = @(u) 1; % non-negative function, dissipation model %% maybe move to parameters
+    BC.gO = @(u) 1/4; % non-negative function, dissipation model %% maybe move to parameters
 %     BC.gO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters
 % debugged Jacobian FOM data is with gO = 1!!!
     BC.dgO = @(u) 0; % non-negative function, dissipation model %% maybe move to parameters

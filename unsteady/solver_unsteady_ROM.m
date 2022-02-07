@@ -225,7 +225,7 @@ end
 disp('commented some information out')
 
 if (options.visualization.show_sigmas == 1)
-    figure(23)
+    figure(123)
     semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
 end
 
@@ -331,6 +331,18 @@ if (options.rom.bc_recon == 3)
             X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
         end
         [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
+        if (options.visualization.show_sigmas == 1)
+            Sigma_bc = diag(S_bc);
+            figure
+            semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', 'singular values Vbc snapshot matrix');
+            ylabel("\sigma_i/\sigma_1")
+            xlabel("mode index")
+            title('singular values')
+            legend('show')
+            if (exist('fig_destination') && j==Nsim)
+                savefig([fig_destination '/singular values'])
+            end
+        end
         phi_bc = U_bc(:,1:Mbc);
         a_bc = phi_bc'*X_bc;
         for jj = 1:Mbc
