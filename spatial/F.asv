@@ -96,7 +96,7 @@ dgO = options.BC.dgO;
 warning('assuming homogeneous grid')
 hx = options.grid.hx(1);
 hy = options.grid.hy(1);
-outward_faces = [hx*ones(Nu,1); hy*ones(Nv,1)];
+hxy_ = [hx*ones(
 
 % NF = length(y_I);
 % % conv_matrix = K_h*spdiags(I_h*V+y_I,0,NF,NF)*A_h;
@@ -106,8 +106,7 @@ Conv_diag = options.grid.C;
 % y_O_diag = Conv_diag*V;
 
 % y_O  = y_O_diag.*V - V_n_t.*gO(V);
-y_O = diag(V)*(Conv_diag*V)...
-    - diag(outward_faces)*diag(id_n_t)*diag(gO(V))*V;
+y_O = diag(V)*(Conv_diag*V) - diag(id_n_t)*diag(gO(V))*V;
 % y_O  = conv_Diag1.*V- V_n_t.*gO(V);
 Fres = Fres + y_O;
 end
@@ -168,8 +167,7 @@ if (getJacobian==1)
     dF   = [dFu; dFv];
     if obc
         Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
-            - diag(outward_faces)*diag(id_n_t)*diag(gO(V)) ...
-            - diag(outward_faces)*diag(id_n_t)*diag(dgO(V))*diag(V);
+            - diag(id_n_t)*diag(gO(V)) - diag(id_n_t)*diag(dgO(V))*diag(V);
         dF   = dF + Jac_y_O;
     end
 else
