@@ -155,7 +155,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
-    t_end         = 4*pi*3;        % end time
+    t_end         = 4*pi*3/200*10;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -250,7 +250,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
     
     rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

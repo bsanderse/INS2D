@@ -85,18 +85,19 @@ if obc
 % I_h = options.discretization.I_h;
 % A_h = options.discretization.A_h;
 % y_I = options.discretization.y_I;
-id_normal = options.grid.id_normal;
-id_tangential = options.grid.id_tangential;
-id_n_t = id_normal+id_tangential;
+% id_normal = options.grid.id_normal;
+% id_tangential = options.grid.id_tangential;
+% id_n_t = id_normal+id_tangential;
 % V_n_t = id_n_t.*V;
 gO = options.BC.gO;
 dgO = options.BC.dgO;
 % gO = @(u) 0; % botch
 
-warning('assuming homogeneous grid')
-hx = options.grid.hx(1);
-hy = options.grid.hy(1);
-hxy_ = [hx*ones(
+% warning('assuming homogeneous grid')
+% hx = options.grid.hx(1);
+% hy = options.grid.hy(1);
+% outward_faces = [hy*ones(Nu,1); hx*ones(Nv,1)];
+gO_factor = options.grid.gO_factor;
 
 % NF = length(y_I);
 % % conv_matrix = K_h*spdiags(I_h*V+y_I,0,NF,NF)*A_h;
@@ -105,10 +106,16 @@ hxy_ = [hx*ones(
 Conv_diag = options.grid.C;
 % y_O_diag = Conv_diag*V;
 
+% V.*(Conv_diag*V);
+% diag(V)*(Conv_diag*V);
+spdiags(V,0,NV,NV)*(Conv_diag*V);
+
 % y_O  = y_O_diag.*V - V_n_t.*gO(V);
-y_O = diag(V)*(Conv_diag*V) - diag(id_n_t)*diag(gO(V))*V;
+y_O = diag(V)*(Conv_diag*V)...
+    - gO_factor.*(diag(gO(V))*V);
 % y_O  = conv_Diag1.*V- V_n_t.*gO(V);
 Fres = Fres + y_O;
+
 end
 
 %% tests
@@ -167,7 +174,8 @@ if (getJacobian==1)
     dF   = [dFu; dFv];
     if obc
         Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
-            - diag(id_n_t)*diag(gO(V)) - diag(id_n_t)*diag(dgO(V))*diag(V);
+            - spdiags(gO_factor,0,)*diag(gO(V)) ...
+            - diag(gO_factor)*(diag(dgO(V))*diag(V));
         dF   = dF + Jac_y_O;
     end
 else

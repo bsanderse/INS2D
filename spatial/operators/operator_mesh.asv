@@ -572,6 +572,13 @@ id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential val
 options.grid.id_normal = [id_u_normal; id_v_normal];
 options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
+hx = options.grid.hx(1);
+hy = options.grid.hy(1);
+outward_faces = [hy*ones(Nu,1); hx*ones(Nv,1)];
+
+options.grid.gO_factor = .5*
+
+
 %% efficient computation of convection diagonal (needed for mvp-obc)
 % goal: (sparse) matrix C such that yO1 = (C*V_h).*V_h
 C = sparse(NV,NV);
@@ -656,4 +663,4 @@ if strcmp(BC.u.up,'mvp-obc')
     end
     C = obc_contributions(tangentials,normals,C,NV,direction,facet_area);
 end
-options.grid.C = sparseC;
+options.grid.C = sparse(C);
