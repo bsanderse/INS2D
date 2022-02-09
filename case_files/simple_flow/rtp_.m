@@ -1,5 +1,6 @@
 % disp('rtp.m is empty')
 
+%% nice velocity plot
 % streamfunction
 psi = get_streamfunction(V,t,options);
 
@@ -41,3 +42,7 @@ contour(x(2:end-1),y(2:end-1),reshape(psi_vis,Nx-1,Ny-1)','k'); %labels,'LineWid
 title('v velocity component')
 axis equal
 hold off
+
+%% kinetic energy (actually mostly computations)
+
+

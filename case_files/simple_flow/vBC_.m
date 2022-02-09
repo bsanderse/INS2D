@@ -1,4 +1,4 @@
-function v = vBC(x,y,t,options)
+function v = vBC_(x,y,t,options)
 % boundary conditions for v for actuator
   
     v = zeros(length(x)*length(y),1);    

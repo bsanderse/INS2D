@@ -1,4 +1,4 @@
-function dudt = dudtBC(x,y,t,options)
+function dudt = dudtBC_(x,y,t,options)
 % boundary conditions for u for actuator
 
 

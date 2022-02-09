@@ -1,6 +1,10 @@
 %% generation of a (non-)uniform mesh                      
 
-file_name = [options.case.project '_mesh'];
+if file_format == 1
+    file_name = 'mesh_';
+else
+    file_name = [options.case.project '_mesh'];
+end
 
 if (exist(file_name,'file'))
     

@@ -1,4 +1,4 @@
-function [V,p,options] = main(case_name,folder_cases)
+function [V,p,options] = main(case_name,folder_cases,file_format)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
@@ -17,7 +17,8 @@ if (nargin<1)
     error('please provide an input file');
 end
 
-if (nargin==1) 
+if (nargin==1) ...
+        || folder_cases==0 % botch
    folder_cases = 'case_files'; % default folder name 
 end
 
@@ -59,11 +60,18 @@ addpath('testsuite/');
 %     rmpath('inputfiles/');
 % end
 
-   
+if ~exist('file_format')
+    file_format = 0;
+end
+
 %% load input parameters and constants
 disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
-run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+if file_format==1
+    run([folder_cases '/' case_name '/' 'parameters_.m']);
+else
+    run([folder_cases '/' case_name '/' case_name '_parameters.m']);    
+end
 
 % check if multiple simulations should be run
 if (~exist('run_multiple','var') || run_multiple == 0)
@@ -78,7 +86,11 @@ for j=1:Nsim
     
     if (j>1)
         % run parameter file again in case we are doing a mesh or parametric study
-        run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+        if file_format==1
+                    run([folder_cases '/' case_name '/' 'parameters_.m']);
+        else
+            run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+        end
     end
     
     % save into a structure called 'options'
@@ -154,10 +166,14 @@ for j=1:Nsim
     options = set_bc_vectors(t,options);
     
     %% initialize basis for lifting function Vbc
-    if (options.rom.rom_bc == 2 && options.rom.bc_recon == 1)... % could also be used for rom = 0, pro_rom = 1
-...        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 3) ... %only in debug mode
-        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 2)  
-        run([folder_cases '/' case_name '/' case_name '_init_unsteady_Vbc.m']);
+    if (options.rom.rom_bc == 2 && options.rom.bc_recon == 1) % could also be used for rom = 0, pro_rom = 1
+% ...        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 3) ... %only in debug mode
+% ...        || (options.rom.rom_bc == 2 && options.rom.bc_recon == 2)  
+        if file_format == 1
+            run([folder_cases '/' case_name '/' 'init_unsteady_Vbc_.m']);
+        else
+            run([folder_cases '/' case_name '/' case_name '_init_unsteady_Vbc.m']);
+        end
     end
         
     
@@ -165,7 +181,8 @@ for j=1:Nsim
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m
     % here we create a handle to bodyforce file, if exists
-    file_name_force = [options.case.project '_force'];
+%     file_name_force = [options.case.project '_force'];
+    file_name_force =  'force_';
     if (exist(file_name_force,'file'))
         % create function handle with name bodyforce
         options.force.isforce   = 1;

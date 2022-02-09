@@ -321,7 +321,7 @@ if (options.visualization.show_sigmas == 1)
 end
 
 if (options.rom.bc_recon == 3) 
-%     if Mbc>0 % botch to take cases without Dirichlet BC into account
+    if options.rom.rom_bc == 2
         dt = snapshots.dt;
         t_end = snapshots.t_end;
         t_js = 0:dt:t_end;
@@ -376,7 +376,7 @@ if (options.rom.bc_recon == 3)
 %         
 %         options.rom.a_bc_matrix = 0;
 %         options.rom.a_inhom_matrix = 0;
-%     end
+    end
 end
 
 %% precompute ROM operators by calling operator_rom

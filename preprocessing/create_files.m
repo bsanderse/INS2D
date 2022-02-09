@@ -83,7 +83,11 @@ end
 
 % for real time video creation
 if (rtp.show == 1)
-    rtp.file  = [folder_cases '/' case_name '/' case_name '_rtp.m'];
+    if file_format==1
+        rtp.file = [folder_cases '/' case_name '/' 'rtp_.m'];
+    else
+        rtp.file  = [folder_cases '/' case_name '/' case_name '_rtp.m'];
+    end
     if (~exist(rtp.file,'file'))
         error(['real-time plotting is on, but no file ' rtp.file ' exists']);
     end

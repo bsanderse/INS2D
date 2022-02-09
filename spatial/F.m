@@ -89,8 +89,8 @@ if obc
 % id_tangential = options.grid.id_tangential;
 % id_n_t = id_normal+id_tangential;
 % V_n_t = id_n_t.*V;
-gO = options.BC.gO;
-dgO = options.BC.dgO;
+gO = @(V) options.BC.gO(V) + 0*V;
+dgO = @(V) options.BC.dgO(V) + 0*V;
 % gO = @(u) 0; % botch
 
 % warning('assuming homogeneous grid')
@@ -108,7 +108,7 @@ Conv_diag = options.grid.C;
 
 % y_O  = y_O_diag.*V - V_n_t.*gO(V);
 y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
-    - spdiags(gO_factor,0,NV,NV)*(gO(V)*V);
+    - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
 % y_O  = conv_Diag1.*V- V_n_t.*gO(V);
 Fres = Fres + y_O;
 
@@ -169,7 +169,8 @@ if (getJacobian==1)
     
     dF   = [dFu; dFv];
     if obc
-        Jac_y_O = diag(Conv_diag*V) + diag(V)*Conv_diag ...
+        Jac_y_O = spdiags(Conv_diag*V,0,NV,NV) ...
+            + spdiags(V,0,NV,NV)*Conv_diag ...
             - spdiags(gO_factor,0,NV,NV)*spdiags(gO(V),0,NV,NV) ...
             - spdiags(gO_factor,0,NV,NV)*spdiags(dgO(V),0,NV,NV) ...
               * spdiags(V,0,NV,NV);

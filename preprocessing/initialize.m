@@ -1,4 +1,8 @@
-file_name = [options.case.project '_IC'];
+if file_format == 1
+    file_name = 'IC_';
+else
+    file_name = [options.case.project '_IC'];
+end
 
 if (exist(file_name,'file'))
     

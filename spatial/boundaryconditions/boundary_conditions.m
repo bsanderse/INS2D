@@ -1,6 +1,10 @@
 %% get BC type
 
-file_name = [options.case.project '_BCtype'];
+if file_format == 1
+    file_name = 'BCtype_';
+else
+    file_name = [options.case.project '_BCtype'];
+end
 
 if (exist(file_name,'file'))
     
@@ -67,7 +71,12 @@ end
 % i.e. the corners of pressure volumes, so they cover the entire domain
 % including corners
 
-file_name = [options.case.project '_uBC'];
+if file_format == 1
+    file_name = 'uBC_';
+else
+    file_name = [options.case.project '_uBC'];
+end
+
 if (exist(file_name,'file'))
     % create function handle with name uBC
     uBC = str2func(file_name);
@@ -80,8 +89,12 @@ end
 % uLe      = uBC(x(1),y,t,options);
 % uRi      = uBC(x(end),y,t,options);
 
+if file_format == 1
+    file_name = 'vBC_';
+else
+    file_name = [options.case.project '_vBC'];
+end
 
-file_name = [options.case.project '_vBC'];
 if (exist(file_name,'file'))
     % create function handle with name vBC
     vBC   = str2func(file_name);
@@ -95,7 +108,13 @@ end
 
 % time derivative of boundary conditions is used for high accuracy of
 % pressure
-file_name = [options.case.project '_dudtBC'];
+
+if file_format == 1
+    file_name = 'dudtBC_';
+else
+    file_name = [options.case.project '_dudtBC'];
+end
+
 if (exist(file_name,'file'))
     % create function handle with name dudtBC
     dudtBC = str2func(file_name);
@@ -107,7 +126,13 @@ end
 
 % time derivative of boundary conditions is used for high accuracy of
 % pressure
-file_name = [options.case.project '_dvdtBC'];
+
+if file_format == 1
+    file_name = 'dvdtBC_';
+else
+    file_name = [options.case.project '_dvdtBC'];
+end
+
 if (exist(file_name,'file'))
     % create function handle with name dudtBC
     dvdtBC = str2func(file_name);

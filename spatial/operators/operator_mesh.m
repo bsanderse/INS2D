@@ -572,6 +572,7 @@ id_v_tangential(id_v_normal==1) = 0; % normal values are not also tangential val
 options.grid.id_normal = [id_u_normal; id_v_normal];
 options.grid.id_tangential = [id_u_tangential; id_v_tangential];
 
+%%
 warning('assuming homogeneous grid')
 hx1 = options.grid.hx(1);
 hy1 = options.grid.hy(1);

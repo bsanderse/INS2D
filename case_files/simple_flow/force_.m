@@ -1,4 +1,4 @@
-function [Fx,Fy,dFx,dFy] = force(~,t,options,~)
+function [Fx,Fy,dFx,dFy] = force_(~,t,options,~)
 
 % Nux_in = options.grid.Nux_in;
 % Nuy_in = options.grid.Nuy_in;

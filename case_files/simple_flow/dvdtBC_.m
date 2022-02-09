@@ -1,4 +1,4 @@
-function dvdt = dvdtBC(x,y,t,options)
+function dvdt = dvdtBC_(x,y,t,options)
 % boundary conditions for v for actuator
 
     

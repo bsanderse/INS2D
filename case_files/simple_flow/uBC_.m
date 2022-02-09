@@ -1,4 +1,4 @@
-function u = uBC(x,y,t,options)
+function u = uBC_(x,y,t,options)
 % boundary conditions for u for actuator
 
 % coordinate left side domain:

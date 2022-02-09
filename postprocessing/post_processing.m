@@ -1,7 +1,11 @@
 %% post-processing
 
-file_name = [case_name '_pp.m'];
-full_name = [folder_cases '/' case_name '/' file_name];
+if file_format == 1
+    file_name = 'pp_.m';
+else
+    file_name = [case_name '_pp.m'];
+    full_name = [folder_cases '/' case_name '/' file_name];
+end
 
 if (exist(full_name,'file'))
     
