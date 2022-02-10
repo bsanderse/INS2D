@@ -209,3 +209,10 @@ voi={
     };
 
 accumulate_object;
+
+%% verbosity
+object = 'verbosity';
+
+voi={
+    'energy_verbosity', 0; ... % 1: compute unrequired stuff
+    };

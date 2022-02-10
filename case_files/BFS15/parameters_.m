@@ -225,3 +225,7 @@ snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
     
     library_path     = '~/Dropbox/work/Programming/libs/'; % own written matlab libraries
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% verbosity
+energy_verbosity = 1; % compute unrequired stuff

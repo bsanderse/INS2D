@@ -550,6 +550,12 @@ if (order4 == 1)
     options.discretization.Diffvy_div = Diffvy_div;
 end
 
+D_h = blkdiag(Diff_u,Diff_v);
+options.discretization.D_h = D_h;
+if options.verbosity.energy_verbosity == 1
+    options.discretization.Q_h = chol(-D_h);
+end
+
 
 %% additional for implicit time stepping diffusion
 if (options.time.method==2 && strcmp(visc,'laminar'))
