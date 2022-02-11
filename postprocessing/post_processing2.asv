@@ -34,10 +34,6 @@ color = char(line(j));
 color2 = char(line2(j));
 
 
-%% kinetic energy analysis
-kinetic_energy_plots
-
-
 %% plot ROM coefficients
 % figure(313)
 % figure
@@ -50,10 +46,6 @@ kinetic_energy_plots
 
 %% additional Reduced-Order Model postprocessing
 if (options.rom.rom == 1)
-    
-    %% kinetic energy comparison
-ROM_FOM_kinetic_energy_comparison;
-    
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
     if (exist('test_data'))

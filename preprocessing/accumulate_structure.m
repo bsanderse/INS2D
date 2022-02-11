@@ -216,3 +216,6 @@ object = 'verbosity';
 voi={
     'energy_verbosity', 0; ... % 1: compute unrequired stuff
     };
+
+accumulate_object;
+

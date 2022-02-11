@@ -11,7 +11,7 @@ end
 
 % compute V_bc snapshot if BC unsteady and snapshots are wanted
 Om_inv = options.grid.Om_inv;
-if (options.BC.BC_unsteady == 1 && options.rom.pro_rom == 1)
+if (options.BC.BC_unsteady == 1 && options.rom.rom_bc == 2 && options.rom.pro_rom == 1)
 %     options = set_bc_vectors(t,options);
 %     f       = options.discretization.yM;
 %     dp      = pressure_poisson(f,t,options);
@@ -72,6 +72,8 @@ method_temp = method;
 %% start time stepping
 time_start = toc
 
+k_sum2 = zeros(nt,1);
+
 while(n<=nt)
     
     % time step counter
@@ -103,7 +105,7 @@ while(n<=nt)
     elseif (method==20)
         [V,p] = time_ERK(Vn,pn,tn,dt,options);
     elseif (method==21)
-        [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
+        [V,p,nonlinear_its(n),k_sum2(n)] = time_IRK(Vn,pn,tn,dt,options);
     else
         error('time integration method unknown');
     end

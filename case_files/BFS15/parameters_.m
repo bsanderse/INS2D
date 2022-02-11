@@ -1,6 +1,6 @@
 % project = 'BFS';   % project name used in filenames
 
-run_multiple = 1;
+run_multiple = 0;
 M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [60 80 100];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
@@ -35,8 +35,8 @@ end
     y1      = -0.5;
     y2      = 0.5;
 
-    Nx      = 600;                  % number of volumes in the x-direction
-    Ny      = 40;                   % number of volumes in the y-direction
+    Nx      = 100; %600;                  % number of volumes in the x-direction
+    Ny      = 20; %40;                   % number of volumes in the y-direction
 
     sx      = 1;                    % stretch factor
     sy      = 1;
@@ -89,7 +89,8 @@ end
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
         method            = 20;
-        RK                = 'RK44';
+%         RK                = 'RK44';
+        RK                = 'FE11';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -115,8 +116,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
+    rom    = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -192,9 +193,9 @@ snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 5;
-    rtp.movie        = 0;
+    rtp.movie        = 1;
     rtp.moviename    = 'BFS';       % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -212,9 +213,9 @@ snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
+    save_file        = 1;          % save all matlab data after program is completed
     save_unsteady    = 1;
     
     cw_output        = 1;          % command window output; 

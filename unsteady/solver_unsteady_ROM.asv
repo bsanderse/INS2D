@@ -25,7 +25,7 @@ if (j==1)
         error('Reynolds numbers of snapshot data and current simulation do not match');
     end
     
-    FOM_data_consistency_check(options,snapshots.options)
+    FOM_data_consistency_check(options,options_FOM.options)
     
     
     %% check whether snapshots are divergence free

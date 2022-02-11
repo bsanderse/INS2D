@@ -119,3 +119,6 @@ if (options.output.save_results == 1)
             n,maxres(n),maxdiv(n),umom(n),vmom(n),k(n));
     end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+kinetic_energy_analysis;

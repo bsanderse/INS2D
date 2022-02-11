@@ -1,6 +1,6 @@
 function BC = BCtype_
 
-    BC.BC_unsteady  = 1;
+    BC.BC_unsteady  = 0;
 
     % 'dir' : inflow, wall
     % 'sym' : symmetry

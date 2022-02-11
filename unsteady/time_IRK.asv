@@ -1,4 +1,4 @@
-function [Vnew,pnew,iterations,k_delta] = time_IRK(Vn,pn,tn,dt,options)
+function [Vnew,pnew,iterations] = time_IRK(Vn,pn,tn,dt,options)
 
 %% general implicit Runge-Kutta method
 
@@ -171,9 +171,7 @@ iterations = i;
 V = Vn + dt*Om_inv.*(b_RK_ext*F_rhs);
 
 if options.verbosity.energy_verbosity == 1
-    k_delta = Vn'*(Om_inv.*(b_RK_ext*F_rhs))*dt;
-else
-    k_delta = -666;
+    k_delta = Vn'*(b_RK_ext*F_rhs);
 end
 
 % make V satisfy the incompressibility constraint at n+1; this is only

@@ -16,4 +16,4 @@ ideas for design document:
 instead, the ROM function_handles are used.
 
 
-!!! remove bc.unsteady / rom.rom_bc redundancy
+!!! remove bc.unstead
