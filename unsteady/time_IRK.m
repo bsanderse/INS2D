@@ -1,4 +1,4 @@
-function [Vnew,pnew,iterations,k_delta] = time_IRK(Vn,pn,tn,dt,options)
+function [Vnew,pnew,iterations,k_delta,k_analysis] = time_IRK(Vn,pn,tn,dt,options,k_analysis)
 
 %% general implicit Runge-Kutta method
 
@@ -171,7 +171,19 @@ iterations = i;
 V = Vn + dt*Om_inv.*(b_RK_ext*F_rhs);
 
 if options.verbosity.energy_verbosity == 1
-    k_delta = Vn'*(Om_inv.*(b_RK_ext*F_rhs))*dt;
+%     k_delta = Vn'*(Om_inv.*(b_RK_ext*F_rhs))*dt;
+%     k_delta = 2*dt*(Vn'*(b_RK_ext*F_rhs));
+%     k_delta = 2*dt*(V'*(b_RK_ext*F_rhs));    
+%     k_delta = 2*dt*(Vj'*(b_RK_ext*F_rhs));
+    NV = options.grid.NV;
+    Vjj = reshape(Vj,NV,numel(Vj)/NV);
+    Fjj = reshape(F_rhs,NV,numel(Vj)/NV);
+    k_delta = 2*dt*sum(b_RK'*(Vjj'*Fjj)); 
+    
+    % only for GL1 !!!
+    [k_analysis,k_sum,p_h] = kinetic_energy_analysis(Vj,tj,dt,options,k_analysis);
+%     k_delta - k_sum
+%     norm(p_h-pj)
 else
     k_delta = -666;
 end

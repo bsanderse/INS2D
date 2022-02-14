@@ -121,4 +121,4 @@ if (options.output.save_results == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-kinetic_energy_analysis;
+% kinetic_energy_analysis;

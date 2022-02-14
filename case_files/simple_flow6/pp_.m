@@ -17,4 +17,3 @@ if save_file == 1
     savefig(strcat('../../',path_results,'/ divergence.fig'))
 end
 
-%% kinetic energy analysis

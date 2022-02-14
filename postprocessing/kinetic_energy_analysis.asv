@@ -44,19 +44,12 @@ if options.verbosity.energy_verbosity == 1
     
     k_force_ = V'*[Fx;Fy];
     
-    %%
-    BC = options.BC;
-    obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc'));
     if obc
     gO = @(V) options.BC.gO(V) + 0*V;
-    gO_factor = options.grid.gO_factor;
-
+    dgO = @(V) options.BC.dgO(V) + 0*V;
     Conv_diag = options.grid.C;
     y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
         - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-    k_obc_ = V'*y_O;
-    end
-    %%
     
     k_analysis.k_diff = dt*k_diff_;
     k_analysis.k_conv = dt*k_conv_;
@@ -64,10 +57,8 @@ if options.verbosity.energy_verbosity == 1
     k_analysis.k_presBC = dt*k_presBC_;
     k_analysis.k_diffBC = dt*k_diffBC_;
     k_analysis.k_force = dt*k_force_;
-    k_analysis.k_obc = dt*k_obc_;
     
-    k_sum = k_diff_ + k_conv_ + k_pres_ + k_force_ ...
-          + k_diffBC_ + k_presBC_ + k_obc_;
+    k_sum = k_diff_ + k_conv_ + k_pres_ + k_force_ + k_diffBC_ + k_presBC_;
     k_sum = 2*dt*k_sum;
 %     k_analysis.k_diff(n) = k_diff_;
 %     k_analysis.k_conv(n) = k_conv_;

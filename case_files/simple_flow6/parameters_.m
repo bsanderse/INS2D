@@ -36,8 +36,8 @@ end
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-%     Re      = 100;                  % Reynolds number
-    Re      = 10^100;                  % Reynolds number
+%     Re      = 10^100;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -52,8 +52,8 @@ end
     y1      = -2;
     y2      = 2;
 
-    Nx      = 20; %200;                  % number of volumes in the x-direction
-    Ny      = 8; %80;                   % number of volumes in the y-direction
+    Nx      = 10; %200;                  % number of volumes in the x-direction
+    Ny      = 16; %80;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -154,11 +154,14 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.
     order4  = 0;
 
     % only for unsteady problems:
-    dt            = 4*pi/200;      % time step (for explicit methods it can be
+%     dt            = 4*pi/200;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
 %     t_end         = 4*pi*3;        % end time
-    t_end         = 4*pi;        % end time
+    t_end         = 1;        % end time
+    
+    dt            = t_end/10;      % time step (for explicit methods it can be
+
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -177,6 +180,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
     method = 21;
     RK = 'GL1';
+%     RK = 'GL2';
 %     RK = 'BE11';
 %     RK = 'RIA1';
 

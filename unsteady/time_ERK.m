@@ -1,4 +1,4 @@
-function [Vnew,pnew] = time_ERK(Vn,pn,tn,dt,options)
+function [Vnew,pnew,k_delta] = time_ERK(Vn,pn,tn,dt,options)
 
 %% general explicit Runge-Kutta method
 
@@ -141,6 +141,13 @@ else
     % that saves a pressure solve for i=1 in the next time step
     p = pressure_additional_solve(V,p,tn+dt,options);
 end
+
+% if options.verbosity.energy_verbosity == 1
+% %     k_delta = Vn'*(Om_inv.*(b_RK_ext*F_rhs))*dt;
+%     k_delta = Vn'*(b_RK_ext*F_rhs)*dt;
+% else
+%     k_delta = -666;
+% end
 
 Vnew = V;
 pnew = p;
