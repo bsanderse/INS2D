@@ -162,7 +162,7 @@ if obc
         gO_factor = options.grid.gO_factor;
         y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
             - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-        norm(y_O-y_O2)
+%         norm(y_O-y_O2)
         y_O_ROM = B'*(Diag.*y_O);
         if (getJacobian==1)
             gO_factor = options.grid.gO_factor;
@@ -175,6 +175,35 @@ if obc
         end
     end
     %% testing
+        V = getFOM_velocity(R,t,options);
+        NV = options.grid.NV;
+        B = options.rom.B;
+            if (options.rom.weighted_norm == 0)
+        Diag = options.grid.Om_inv;
+    elseif (options.rom.weighted_norm == 1)
+        NV   = options.grid.Nu + options.grid.Nv;
+        Diag = ones(NV,1);
+    end
+
+            gO = @(V) options.BC.gO(V) + 0*V;
+        dgO = @(V) options.BC.dgO(V) + 0*V;
+        
+        Conv_diag = options.grid.C;
+        y_O_diag = Conv_diag*V;
+        
+        id_normal = options.grid.id_normal;
+        id_tangential = options.grid.id_tangential;
+        id_n_t = id_normal+id_tangential;
+        V_n_t = id_n_t.*V;
+        
+%         y_O2  = y_O_diag.*V - V_n_t.*gO(V);
+        gO_factor = options.grid.gO_factor;
+        y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
+            - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
+        y_O_ROM2 = B'*(Diag.*y_O);
+        norm(y_O_ROM2-y_O_ROM)
+        17
+            
 %         gO = options.BC.gO;
 %         dgO = options.BC.dgO;
 %         
