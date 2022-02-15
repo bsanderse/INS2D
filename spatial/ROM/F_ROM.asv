@@ -158,7 +158,7 @@ if obc
         id_n_t = id_normal+id_tangential;
         V_n_t = id_n_t.*V;
         
-%         y_O2  = y_O_diag.*V - V_n_t.*gO(V);
+        y_O2  = y_O_diag.*V - V_n_t.*gO(V);
         gO_factor = options.grid.gO_factor;
         y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
             - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);

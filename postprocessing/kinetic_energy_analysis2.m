@@ -1,5 +1,5 @@
 % function [k_diff_,k_conv_,k_pres_,k_presBC_,k_diffBC_,k_force_] ...
-function  [k_analysis,k_sum,p_h] = kinetic_energy_analysis(V,t,dt,options,k_analysis)
+function  [k_analysis,k_sum,p_h] = kinetic_energy_analysis2(V2,V,t,dt,options,k_analysis)
 %% kinetic energy (actually mostly computations)
 if options.verbosity.energy_verbosity == 1
     NV = options.grid.NV;
@@ -11,7 +11,7 @@ if options.verbosity.energy_verbosity == 1
 %     k_diff_ = - nu*norm(Q_h*V);
     
     D_h = options.discretization.D_h;
-    k_diff_ = (V'*D_h*V);
+    k_diff_ = (V2'*D_h*V);
     
     K_h = options.discretization.K_h;
     I_h = options.discretization.I_h;
@@ -21,14 +21,16 @@ if options.verbosity.energy_verbosity == 1
     
     NF = numel(y_I);
     
-    k_conv_ = -V'*(K_h*(spdiags(I_h*V+y_I,0,NF,NF)*(A_h*V+y_A)));
+    k_conv_ = -V2'*(K_h*(spdiags(I_h*V+y_I,0,NF,NF)*(A_h*V+y_A)));
     
     p_h = zeros(Np,1);
     p_h = pressure_additional_solve(V,p_h,t,options);
     
     M_h = options.discretization.M;
     
-    k_pres_ = +(M_h*V)'*p_h;
+    k_pres_ = +(M_h*V2)'*p_h;
+    warning('botch')
+    k_pres_ = 0;
     
     y_G = [options.discretization.y_px; ...
         options.discretization.y_py];
@@ -36,13 +38,13 @@ if options.verbosity.energy_verbosity == 1
     y_D = [options.discretization.yDiffu; ...
         options.discretization.yDiffv];
 
-    k_presBC_ = -V'*y_G;
+    k_presBC_ = -V2'*y_G;
     
-    k_diffBC_ = (V'*y_D);
+    k_diffBC_ = (V2'*y_D);
     
     [Fx, Fy] = force(V,t,options,0);
     
-    k_force_ = V'*[Fx;Fy];
+    k_force_ = V2'*[Fx;Fy];
     
     %%
     BC = options.BC;
@@ -54,8 +56,7 @@ if options.verbosity.energy_verbosity == 1
     Conv_diag = options.grid.C;
     y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
         - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-    k_obc_ = V'*y_O;
-    e
+    k_obc_ = V2'*y_O;
     end
     %%
     
@@ -70,12 +71,6 @@ if options.verbosity.energy_verbosity == 1
     k_sum = k_diff_ + k_conv_ + k_pres_ + k_force_ ...
           + k_diffBC_ + k_presBC_ + k_obc_;
     k_sum = 2*dt*k_sum;
-    
-    F_rhs = - (K_h*(spdiags(I_h*V+y_I,0,NF,NF)*(A_h*V+y_A))) ...
-            + D_h*V + M_h'*p_h - y_G + y_D + [Fx;Fy] + y_O;
-    (options.rom.B)'*F_rhs
-    17
-    
 %     k_analysis.k_diff(n) = k_diff_;
 %     k_analysis.k_conv(n) = k_conv_;
 %     k_analysis.k_pres(n) = k_pres_;

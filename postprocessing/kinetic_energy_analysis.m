@@ -29,6 +29,8 @@ if options.verbosity.energy_verbosity == 1
     M_h = options.discretization.M;
     
     k_pres_ = +(M_h*V)'*p_h;
+%     k_pres_ = 0; %+(M_h*V)'*p_h; %botch!!!
+% warning('botch here!')
     
     y_G = [options.discretization.y_px; ...
         options.discretization.y_py];
@@ -48,13 +50,16 @@ if options.verbosity.energy_verbosity == 1
     BC = options.BC;
     obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc'));
     if obc
-    gO = @(V) options.BC.gO(V) + 0*V;
-    gO_factor = options.grid.gO_factor;
-
-    Conv_diag = options.grid.C;
-    y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
-        - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-    k_obc_ = V'*y_O;
+        gO = @(V) options.BC.gO(V) + 0*V;
+        gO_factor = options.grid.gO_factor;
+        
+        Conv_diag = options.grid.C;
+        y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
+            - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
+        k_obc_ = V'*y_O;
+    else
+        k_obc_ = 0;
+        y_O = 0;
     end
     %%
     
@@ -69,6 +74,21 @@ if options.verbosity.energy_verbosity == 1
     k_sum = k_diff_ + k_conv_ + k_pres_ + k_force_ ...
           + k_diffBC_ + k_presBC_ + k_obc_;
     k_sum = 2*dt*k_sum;
+    
+%     F_rhs = - (K_h*(spdiags(I_h*V+y_I,0,NF,NF)*(A_h*V+y_A))) ...
+%             + D_h*V + M_h'*p_h - y_G + y_D + [Fx;Fy] + y_O; 
+        
+%     F_rhs = - (K_h*(spdiags(I_h*V+y_I,0,NF,NF)*(A_h*V+y_A))) ...
+%             + D_h*V - y_G + y_D + [Fx;Fy] + y_O;
+%     B = (options.rom.B);
+%     F_rhs1 = B'*F_rhs
+% %     
+%     R = getROM_velocity(V,t,options);
+%     [~,F_rhs2] = F_ROM(R,0,t,options,0);
+%     F_rhs2
+%     norm(F_rhs1-F_rhs2)
+%     17
+    
 %     k_analysis.k_diff(n) = k_diff_;
 %     k_analysis.k_conv(n) = k_conv_;
 %     k_analysis.k_pres(n) = k_pres_;

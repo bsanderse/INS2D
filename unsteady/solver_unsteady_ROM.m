@@ -481,6 +481,9 @@ time_start = toc
 
 coefficients = zeros(M,nt);
 
+k_sum2 = zeros(nt,1);
+k_analysis = [];
+
 while(n<=nt)
     
     %% dynamic timestepping:
@@ -500,6 +503,14 @@ while(n<=nt)
             time_ERK_ROM;
     elseif (method == 21)
         time_IRK_ROM;
+        k_sum2(n-1) = k_delta;
+        k_diff(n) = k_analysis.k_diff;
+        k_conv(n) = k_analysis.k_conv;
+        k_pres(n) = k_analysis.k_pres;
+        k_presBC(n) = k_analysis.k_presBC;
+        k_diffBC(n) = k_analysis.k_diffBC;
+        k_force(n) = k_analysis.k_force;
+        k_obc(n) = k_analysis.k_obc;
     else
         error('time integration method unknown');
     end

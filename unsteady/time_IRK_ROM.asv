@@ -126,14 +126,11 @@ if options.verbosity.energy_verbosity == 1
     Fjj = F_rhs; %reshape(F_rhs,NV,numel(Rj)/NV);
     k_delta = 2*dt*sum(b_RK'*(Rjj'*Fjj)); 
     
-    F_rhs
-    
-    Vj = getFOM_velocity(Rj,tj,options);
+%     Vj = getFOM_velocity(Rj,tj,options);
     B = options.rom.B;
-    Vj2 = B*Rj;
+    Vj = B*Rj;
     % only for GL1 !!!
     [k_analysis,k_sum,p_h] = kinetic_energy_analysis(Vj,tj,dt,options,k_analysis);
-%     [k_analysis,k_sum,p_h] = kinetic_energy_analysis2(Vj2,Vj,tj,dt,options,k_analysis);
 %     k_delta - k_sum
 %     norm(p_h-pj)
 else

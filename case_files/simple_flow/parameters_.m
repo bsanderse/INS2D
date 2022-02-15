@@ -1,9 +1,9 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-% M_list = [10 10];
+M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = 1;
@@ -36,8 +36,8 @@ end
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-%     Re      = 100;                  % Reynolds number
-    Re      = 10^100;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
+%     Re      = 10^100;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -79,7 +79,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
+    rom     = 1;      % set to 1 to use ROM solver
     pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
@@ -118,7 +118,9 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
-snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
+snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_without_obc/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
@@ -155,6 +157,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.
 
     % only for unsteady problems:
     dt            = 4*pi/200;      % time step (for explicit methods it can be
+%     dt            = 4*pi/100;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
 %     t_end         = 4*pi*3;        % end time
