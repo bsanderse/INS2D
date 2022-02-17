@@ -17,3 +17,5 @@ instead, the ROM function_handles are used.
 
 
 !!! remove bc.unsteady / rom.rom_bc redundancy
+
+- introduce debug mode -> all test are run
