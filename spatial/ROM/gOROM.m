@@ -8,7 +8,7 @@ else
     Jac_gO_ROM = -666;
 end
 
-if options.rom.rom_bc == 2
+if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
     if options.rom.bc_recon == 3
         R_inhom = get_a_inhom(t,options);
     else
