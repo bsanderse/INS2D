@@ -320,7 +320,7 @@ if (options.visualization.show_sigmas == 1)
 end
 
 if (options.rom.bc_recon == 3) 
-%     if options.rom.rom_bc == 2
+    if options.rom.rom_bc == 2
         dt = snapshots.dt;
         t_end = snapshots.t_end;
         if options.rom.rom_bc == 2
@@ -334,24 +334,20 @@ if (options.rom.bc_recon == 3)
             t_j = t_js(jj);
             X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
         end
-        if options.rom.rom_bc == 2
-            [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
-            if (options.visualization.show_sigmas == 1)
-                Sigma_bc = diag(S_bc);
-                figure
-                semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', 'singular values Vbc snapshot matrix');
-                ylabel("\sigma_i/\sigma_1")
-                xlabel("mode index")
-                title('singular values')
-                legend('show')
-                if (exist('fig_destination') && j==Nsim)
-                    savefig([fig_destination '/singular values'])
-                end
+        if options
+        [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
+        if (options.visualization.show_sigmas == 1)
+            Sigma_bc = diag(S_bc);
+            figure
+            semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', 'singular values Vbc snapshot matrix');
+            ylabel("\sigma_i/\sigma_1")
+            xlabel("mode index")
+            title('singular values')
+            legend('show')
+            if (exist('fig_destination') && j==Nsim)
+                savefig([fig_destination '/singular values'])
             end
-        else
-            U_bc = X_bc/norm(X_bc);
         end
-
         phi_bc = U_bc(:,1:Mbc);
         for jj = 1:Mbc
             yBC = phi_bc(:,jj);
@@ -376,27 +372,27 @@ if (options.rom.bc_recon == 3)
         
 %         options.rom.a_bc_matrix = a_bc;
 %         options.rom.a_inhom_matrix = a_inhom;
-% % %     else
-% % %         X_bc = get_bc_vector_yBC(0,options);
-% % %         U_bc = X_bc/norm(X_bc);
-% % %         %%
-% % %         phi_bc = U_bc;
-% % %         yBC = phi_bc;
-% % %         Y_M = get_yM(options,yBC);
-% % %                 L = options.discretization.A;
-% % %         Gx   = options.discretization.Gx;
-% % %         Gy   = options.discretization.Gy;
-% % %         G = [Gx;Gy];
-% % %         Om = options.grid.Om;
-% % %         Om_inv = options.grid.Om_inv;
-% % %         %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
-% % %         tilde_phi_inhom = -Om_inv.*(G*(L\Y_M));
-% % %         [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
-% % %         phi_inhom = sqrt(Om_inv).*Q_inhom(1,:);
-% % %         R_inhom = - R_inhom(1);
-% % %         options.rom.phi_bc = phi_bc;
-% % %         options.rom.phi_inhom = phi_inhom;
-% % %         options.rom.R_inhom = R_inhom;
+    else
+        X_bc = get_bc_vector_yBC(0,options);
+        U_bc = X_bc/norm(X_bc);
+        %%
+        phi_bc = U_bc;
+        yBC = phi_bc;
+        Y_M = get_yM(options,yBC);
+                L = options.discretization.A;
+        Gx   = options.discretization.Gx;
+        Gy   = options.discretization.Gy;
+        G = [Gx;Gy];
+        Om = options.grid.Om;
+        Om_inv = options.grid.Om_inv;
+        %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+        tilde_phi_inhom = -Om_inv.*(G*(L\Y_M));
+        [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
+        phi_inhom = sqrt(Om_inv).*Q_inhom(1,:);
+        R_inhom = - R_inhom(1);
+        options.rom.phi_bc = phi_bc;
+        options.rom.phi_inhom = phi_inhom;
+        options.rom.R_inhom = R_inhom;
         %%
 %         options.rom.phi_bc = U_bc;
 %         options.rom.phi_inhom = options.rom.Vbc;
@@ -410,7 +406,7 @@ if (options.rom.bc_recon == 3)
 % 
 %         options.rom.a_bc_matrix = a_bc*ones(1,no_steps);
 %         options.rom.a_inhom_matrix = a_inhom*ones(1,no_steps);
-% % %     end
+    end
 end
 
 %% precompute ROM operators by calling operator_rom

@@ -24,7 +24,7 @@ end
 obc_inhom = 0;
 obc_hom_inhom2 = 0;
 
-if options.rom.rom_bc == 2
+if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
     if options.rom.bc_recon == 3
         phi_inhom = options.rom.phi_inhom;
         M_inhom = size(phi_inhom,2);

@@ -13,7 +13,8 @@ obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc'));
 
 
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
-    options.rom.precompute_force == 0      || (obc && options.rom.precompute_obc == 0))
+    options.rom.precompute_force == 0      || (obc && options.rom.precompute_obc == 0)) ...
+    || options.verbosity.debug_mode == 1
     B  = options.rom.B;
     if (options.rom.weighted_norm == 0)
         Diag = options.grid.Om_inv;
@@ -25,7 +26,8 @@ end
     
 % FOM velocity field (only needed when not precomputing)
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
-    options.rom.precompute_force == 0      || (obc && options.rom.precompute_obc == 0))
+    options.rom.precompute_force == 0      || (obc && options.rom.precompute_obc == 0)) ...
+    || options.verbosity.debug_mode == 1
     V = getFOM_velocity(R,t,options);
 end
 
@@ -175,35 +177,26 @@ if obc
         end
     end
     %% testing
-        V = getFOM_velocity(R,t,options);
-        NV = options.grid.NV;
-        B = options.rom.B;
-            if (options.rom.weighted_norm == 0)
-        Diag = options.grid.Om_inv;
-    elseif (options.rom.weighted_norm == 1)
-        NV   = options.grid.Nu + options.grid.Nv;
-        Diag = ones(NV,1);
-    end
-
+if options.verbosity.debug_mode == 1
             gO = @(V) options.BC.gO(V) + 0*V;
-        dgO = @(V) options.BC.dgO(V) + 0*V;
+%         dgO = @(V) options.BC.dgO(V) + 0*V;
         
         Conv_diag = options.grid.C;
-        y_O_diag = Conv_diag*V;
+%         y_O_diag = Conv_diag*V;
         
-        id_normal = options.grid.id_normal;
-        id_tangential = options.grid.id_tangential;
-        id_n_t = id_normal+id_tangential;
-        V_n_t = id_n_t.*V;
-        
+%         id_normal = options.grid.id_normal;
+%         id_tangential = options.grid.id_tangential;
+%         id_n_t = id_normal+id_tangential;
+%         V_n_t = id_n_t.*V;
+%         
 %         y_O2  = y_O_diag.*V - V_n_t.*gO(V);
         gO_factor = options.grid.gO_factor;
         y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
             - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-        y_O_ROM2 = B'*(Diag.*y_O);
+        y_O_ROM2 = B'*(Diag.*y_O); % works for actuatro_unsteady_ROM
         norm(y_O_ROM2-y_O_ROM)
         17
-            
+end
 %         gO = options.BC.gO;
 %         dgO = options.BC.dgO;
 %         

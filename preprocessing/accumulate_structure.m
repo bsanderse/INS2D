@@ -215,6 +215,7 @@ object = 'verbosity';
 
 voi={
     'energy_verbosity', 0; ... % 1: compute unrequired stuff
+    'debug_mode', 0; ... % 1: consistency checks
     };
 
 accumulate_object;

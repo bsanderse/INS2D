@@ -6,7 +6,7 @@ if getJacobian
     
     Jac_y_O_ROM = options.rom.obc_hom*kron(E,R) + options.rom.obc_hom*kron(R,E);
     
-    if options.rom.rom_bc == 2
+    if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
         if options.rom.bc_recon == 3
             R_inhom = get_a_inhom(t,options);
             
@@ -21,7 +21,7 @@ end
 
 y_O_ROM =   options.rom.obc_hom*kron(R,R);
 
-if options.rom.rom_bc == 2
+if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
     if options.rom.bc_recon == 3
         
         R_inhom = get_a_inhom(t,options);

@@ -293,3 +293,4 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % verbosity
 energy_verbosity = 1; % compute unrequired stuff
+debug_mode = 1; % perform all kinds of consistency checks -> far more expensive!
