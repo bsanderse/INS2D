@@ -22,6 +22,7 @@ if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion =
         NV   = options.grid.Nu + options.grid.Nv;
         Diag = ones(NV,1);
     end
+    P = B'*spdiags(Diag,0,NV,NV);
 end
     
 % FOM velocity field (only needed when not precomputing)
@@ -55,8 +56,8 @@ if (options.rom.precompute_convection == 1)
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
-    conv  = B'*(Diag.*[convu;convv]);
-    dconv = B'*(Diag.*[dconvu;dconvv])*B;  
+    conv  = P*(Diag.*[convu;convv]);
+    dconv = P*(Diag.*[dconvu;dconvv])*B;  
 end
 %% testing
 %     options = set_bc_vectors(t,options);
@@ -85,8 +86,8 @@ if (options.rom.precompute_diffusion == 1)
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
-    Diff  = B'*(Diag.*[d2u;d2v]);
-    dDiff = B'*(Diag.*[dDiffu;dDiffv])*B;
+    Diff  = P*(Diag.*[d2u;d2v]);
+    dDiff = P*(Diag.*[dDiffu;dDiffv])*B;
 end
 %% testing
 %     [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
@@ -112,8 +113,10 @@ if (options.rom.precompute_force == 1)
     end
 else
     [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
-    F   = B'*(Diag.*[Fx;Fy]);
-    dF  = B'*(Diag.*[dFx;dFy]);
+    F   = P*(Diag.*[Fx;Fy]);
+    M  = options.rom.M;
+    dF = spalloc(M,M,0);
+%     dF  = B'*(Diag.*[dFx;dFy]);
 %     dFy = spalloc(Nv,Nu+Nv,0);    
 end
 
@@ -165,7 +168,7 @@ if obc
         y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
             - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
 %         norm(y_O-y_O2)
-        y_O_ROM = B'*(Diag.*y_O);
+        y_O_ROM = P*(Diag.*y_O);
         if (getJacobian==1)
             gO_factor = options.grid.gO_factor;
             Jac_y_O = spdiags(Conv_diag*V,0,NV,NV) ...
@@ -173,11 +176,11 @@ if obc
             - spdiags(gO_factor,0,NV,NV)*spdiags(gO(V),0,NV,NV) ...
             - spdiags(gO_factor,0,NV,NV)*spdiags(dgO(V),0,NV,NV) ...
               * spdiags(V,0,NV,NV);
-          Jac_y_O_ROM = B'*(Diag.*Jac_y_O)*B; % just a guess
+          Jac_y_O_ROM = P*(Diag.*Jac_y_O)*B; % just a guess
         end
     end
     %% testing
-if options.verbosity.debug_mode == 1
+if options.verbosity.debug_mode == 1 % move this test blog outside of F_ROM
             gO = @(V) options.BC.gO(V) + 0*V;
 %         dgO = @(V) options.BC.dgO(V) + 0*V;
         
@@ -193,7 +196,7 @@ if options.verbosity.debug_mode == 1
         gO_factor = options.grid.gO_factor;
         y_O = spdiags(V,0,NV,NV)*(Conv_diag*V)...
             - spdiags(gO_factor,0,NV,NV)*(spdiags(gO(V),0,NV,NV)*V);
-        y_O_ROM2 = B'*(Diag.*y_O); % works for actuatro_unsteady_ROM
+        y_O_ROM2 = P*(Diag.*y_O); % works for actuatro_unsteady_ROM
         norm(y_O_ROM2-y_O_ROM)
         17
 end

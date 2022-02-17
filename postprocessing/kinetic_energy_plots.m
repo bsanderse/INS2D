@@ -24,6 +24,25 @@ plot(ts(1:end-1),k_obc(2:end),'displayname','k pres BC');
 
 plot(ts(1:end-1),k_sum(2:end),'s','displayname','k sum');
 
+if options.rom.rom == 1
+    snapshots.delta_k = (snapshots.k(2:end)-snapshots.k(1:end-1));
+    
+    plot(ts(1:end-1),snapshots.delta_k,'x','displayname','FOM k(n+1)-k(n)/dt');
+    hold on
+    plot(ts(1:end-1),snapshots.k_diff(2:end),'displayname','FOM k diff');
+    plot(ts(1:end-1),snapshots.k_conv(2:end),'displayname','FOM k conv');
+    plot(ts(1:end-1),snapshots.k_pres(2:end),'displayname','FOM k pres');
+    plot(ts(1:end-1),snapshots.k_force(2:end),'displayname','FOM k force');
+    plot(ts(1:end-1),snapshots.k_diffBC(2:end),'displayname','FOM k diff BC');
+    plot(ts(1:end-1),snapshots.k_presBC(2:end),'displayname','FOM k pres BC');
+    plot(ts(1:end-1),snapshots.k_obc(2:end),'displayname','FOM k pres BC');
+ 
+    snapshots.k_sum = snapshots.k_diff + snapshots.k_conv ...
+        + snapshots.k_pres + snapshots.k_force + snapshots.k_diffBC ...
+        + snapshots.k_presBC + snapshots.k_obc;
+    
+    plot(ts(1:end-1),snapshots.k_sum(2:end),'s','displayname','k sum');
+end
 
 legend('show')
 %%

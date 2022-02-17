@@ -126,7 +126,7 @@ if options.verbosity.energy_verbosity == 1
     Fjj = F_rhs; %reshape(F_rhs,NV,numel(Rj)/NV);
     k_delta = 2*dt*sum(b_RK'*(Rjj'*Fjj)); 
     
-    F_rhs
+%     F_rhs
     
     Vj = getFOM_velocity(Rj,tj,options);
     B = options.rom.B;

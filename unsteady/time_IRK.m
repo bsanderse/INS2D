@@ -114,7 +114,7 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % form iteration matrix, which is now fixed during iterations
     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     %
-    Z = [dfm om Gtot; ...
+    Z = [dfmom Gtot; ...
          Mtot Z2];
     % determine LU decomposition; often this is too slow
 %     [L,U] = lu(Z);

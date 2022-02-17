@@ -18,7 +18,7 @@ nopressure = 0;
 [maxres,Fres,dFres] = F(V,V,p,t,options,getJacobian,nopressure);
 B = options.rom.B;
 Fres = B'*Fres;
-dFres= B'*dFres*B; % not exactly
+dFres= B'*dFres*B; % not exacl
 
 maxres  = max(abs(Fres));
 
