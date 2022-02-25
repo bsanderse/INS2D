@@ -203,8 +203,20 @@ for j=1:Nsim
     
     
 %% main part
+vis_velo(V,options);
+
 vis_velo(options.grid.id_V_inbc,options);
 V_delta = background_flow1(options);
+
+M_h = options.discretization.M;
+y_M = options.discretization.yM;
+
+norm(M_h*V-y_M)
+
+V_hom = V-V_delta;
+
+norm(M_h*V_hom);
+
 17
 
 

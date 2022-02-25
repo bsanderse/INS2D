@@ -10,11 +10,14 @@ y_inbc = y_M(id_p_eff);
 M_inbc = M_h(id_p_eff,id_V_eff);
 
 sum(y_inbc)
+figure
+heatmap(M_inbc)
 
 y_inbc(1) = 0;
 % y_inbc(1) = 1;
-% M_inbc(1,1) = 0;
-M_inbc(1,:) = nonzeros(options.grid.id_V_inbc_signed);
+M_inbc(1,1) = 0;
+% M_inbc(1,:) = 1; %nonzeros(options.grid.id_V_inbc_signed);
+% M_inbc(1,:) = nonzeros(options.grid.id_V_inbc_signed);
 
 
 figure

@@ -47,22 +47,16 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
-%     x1      = 0;
-%     x2      = 10;
-%     y1      = -2;
-%     y2      = 2;
-
     x1      = 0;
-    x2      = 3;
-    y1      = 0;
-    y2      = 3;
+    x2      = 10;
+    y1      = -2;
+    y2      = 2;
 
     fac = 1/2
 %     Nx      = fac*20; %200;                  % number of volumes in the x-direction
 %     Ny      = fac*8; %80;                   % number of volumes in the y-direction
 
-    Nx = 3;
-    Ny = 3;
+    
 
     sx      = 1;                  % stretch factor
     sy      = 1;
