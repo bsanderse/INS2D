@@ -669,18 +669,15 @@ end
 options.grid.C = sparse(C);
 
 %% 
+u_indices
+v_indices
 
 id_u_inbc = zeros(Nu,1);
 id_v_inbc = zeros(Nv,1);
 
-id_u_inbc(u_indices(1,:)) = 1;
-id_u_inbc(u_indices(end,:)) = 1;
-id_u_inbc(u_indices(:,1)) = 1;
-id_u_inbc(u_indices(:,end)) = 1;
-
-id_v_inbc(v_indices(1,:)) = 1;
-id_v_inbc(v_indices(end,:)) = 1;
-id_v_inbc(v_indices(:,1)) = 1;
-id_v_inbc(v_indices(:,end)) = 1;
-
-options.grid.id_inbc = [id_u_bc; id_v_bc];
+id_v_inbc(v_indices(1,:) = 1;
+id_v_inbc(v_indices(end,:) = 1;
+id_v_inbc(v_indices(:,1) = 1;
+id_v_inbc(v_indices(:,end) = 1;
+    temps = v_indices(end,:);
+    id_v_inbc(temps) = 1; 

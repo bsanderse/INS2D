@@ -170,11 +170,11 @@ end
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK = 'RK44';
+%     method        = 20;
+%     RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-%     method = 21;
-%     RK = 'GL1';
+    method = 21;
+    RK = 'GL1';
 %     RK = 'RIA1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -285,4 +285,4 @@ end
 
 % verbosity
 energy_verbosity = 1; % compute unrequired stuff
-debug_mode = 1; % perform all kinds of consistency checks -> far more expensive!
+debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
