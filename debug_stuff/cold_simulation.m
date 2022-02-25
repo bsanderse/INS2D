@@ -203,8 +203,8 @@ for j=1:Nsim
     
     
 %% main part
-
-V_delta = background_flow1(options)
+vis_velo(options.grid.id_V_inbc,options);
+V_delta = background_flow1(options);
 17
 
 
