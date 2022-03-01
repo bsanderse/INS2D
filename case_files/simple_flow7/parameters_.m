@@ -81,7 +81,7 @@ end
     sy      = 1;
     
 %     layer_no = 2; % used to compute V_delta (see Foias)
-    layer_nos = [1 2 3 4];
+    layer_nos = [1 2 3 4 5 6 7 8];
     layer_no = layer_nos(j);
     mesh_list = ones(length(layer_nos),1);
 

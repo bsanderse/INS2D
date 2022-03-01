@@ -29,10 +29,10 @@ matrix = Om_inv_inbc.*(G_inbc*L_inbc_inv);
 V_delta_ = Om_inv_inbc.*(G_inbc*(L_inbc\y_inbc));
 
 %% debugging
-norm(M_inbc*V_delta_-y_inbc)
-A =M_inbc*matrix;
-figure
-heatmap(A)
+% norm(M_inbc*V_delta_-y_inbc)
+% A =M_inbc*matrix;
+% figure
+% heatmap(A)
 
 
 %%

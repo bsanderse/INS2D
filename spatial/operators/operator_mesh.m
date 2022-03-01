@@ -722,9 +722,9 @@ options.grid.id_V_inbc2 = [id_u_inbc; id_v_inbc];
 p_indices = X+Npx*(Y-1);
 
 id_p_inbc = zeros(Np,1);
-id_p_inbc(p_indices(1:layer_no,:)) = 1;
-id_p_inbc(p_indices(end-layer_no+1:end,:)) = 1;
-id_p_inbc(p_indices(:,1:layer_no)) = 1;
-id_p_inbc(p_indices(:,end-layer_no+1:end)) = 1;
+id_p_inbc(p_indices(1:layer_no+1,:)) = 1;
+id_p_inbc(p_indices(end-layer_no:end,:)) = 1;
+id_p_inbc(p_indices(:,1:layer_no+1)) = 1;
+id_p_inbc(p_indices(:,end-layer_no:end)) = 1;
 
 options.grid.id_p_inbc2 = id_p_inbc;
