@@ -1,6 +1,6 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-M_list = [10 10];
+run_multiple = 1;
+% M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
@@ -8,6 +8,7 @@ M_list = [10 10];
 % M_list = [40 40];
 % M_list = 1;
 % M_list = 20;
+M_list = ones(1,20);
 
 
 % M_list = [2 5 10 20 2 5 10 20];
@@ -19,7 +20,9 @@ M_list = [10 10];
 % Mbc = Mbc_list(j);
 Mbc = 1;
 
-mesh_list = ones(length(M_list),1);
+% mesh_list = ones(length(M_list),1);
+% mesh_list = ones(length(facs),1);
+
 changing_snapshotdata = 0;
 % if true %false %mod(j,2)==0 %j>4 %false %j>4
 if false %j>4
@@ -53,19 +56,35 @@ end
 %     y2      = 2;
 
     x1      = 0;
-    x2      = 3;
+    x2      = 1;
     y1      = 0;
-    y2      = 3;
+    y2      = 1;
 
-    fac = 1/2
-%     Nx      = fac*20; %200;                  % number of volumes in the x-direction
-%     Ny      = fac*8; %80;                   % number of volumes in the y-direction
+%     facs = [1 2 4 8 16 32 64 128];
+%     facs = [1 2 4 8 16];
+%     facs = 1/2;
+%     facs = 2;
+%     facs = 4;
+    facs = 8;
+%     fac = facs(j)
+    fac = facs
+    
+%     mesh_list = ones(length(facs),1);
 
-    Nx = 3;
-    Ny = 3;
+%     Nx      = fac*5; %200;                  % number of volumes in the x-direction
+%     Ny      = fac*2; %80;                   % number of volumes in the y-direction
+
+    Nx = fac*2;
+    Ny = fac*2;
 
     sx      = 1;                  % stretch factor
     sy      = 1;
+    
+%     layer_no = 2; % used to compute V_delta (see Foias)
+    layer_nos = [1 2 3 4];
+    layer_no = layer_nos(j);
+    mesh_list = ones(length(layer_nos),1);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -88,7 +107,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
+    rom     = 0;      % set to 1 to use ROM solver
     pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index

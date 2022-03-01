@@ -55,6 +55,8 @@ addpath('spatial/ROM/');
 addpath('steady/');
 addpath('unsteady/');
 addpath('testsuite/');
+addpath('debug_stuff/');
+addpath('debug_stuff/lions');
 
 % path for inputfiles will be determined based on the value of 'restart'
 % if (~isempty(strfind(path,'inputfiles')))
@@ -203,19 +205,161 @@ for j=1:Nsim
     
     
 %% main part
-vis_velo(V,options);
+divide = @(x) x(2:end)./x(1:end-1);
 
-vis_velo(options.grid.id_V_inbc,options);
-V_delta = background_flow1(options);
+% vis_velo(options.grid.id_V_inbc2,options);
+% vis_p(options.grid.id_p_inbc2,options)
 
-M_h = options.discretization.M;
-y_M = options.discretization.yM;
+[V_delta,matrix,y_inbc] = background_flow2(options);
 
-norm(M_h*V-y_M)
 
-V_hom = V-V_delta;
+vis_velo(V_delta,options);
 
-norm(M_h*V_hom);
+matrix_norm(j) = svds(matrix,1);
+
+
+17
+
+
+%%
+% vis_velo(V,options);
+% 
+% vis_velo(options.grid.id_V_inbc,options);
+% [V_delta,M_inbc,y_inbc] = background_flow1(options);
+% 
+% M_h = options.discretization.M;
+% y_M = options.discretization.yM;
+% 
+% yM_norms(j) = norm(y_M)
+% M_inbc_inv_norm3(j) = 1/sqrt(abs(eigs(M_inbc,1,'smallestabs'))) %wrong
+% % M_inbc_inv_norm(j) = 1/sqrt(abs(svds(M_inbc*M_inbc',1,'smallest')))
+% M_inbc_inv_norm(j) = 1/(svds(M_inbc,1,'smallest'))
+% M_inbc_inv_norm2(j) = norm(full(inv(M_inbc)))
+% 
+% V_delta_norm(j) = norm(M_inbc\y_inbc)
+% V_delta_norm2(j) = norm(inv(M_inbc)*y_inbc)
+% y_inbc_norm(j) = norm(y_inbc)
+% 
+% norm(M_h*V+y_M)
+% 
+% V_hom = V-V_delta;
+% 
+% V_hom_norm(j) = norm(V_hom)
+% V_hom_norm_omega(j) = sqrt(V_hom'*(Om.*V_hom))
+% 
+% norm_omega(j) = norm(Om)
+% 
+% norm(M_h*V_hom)
+
+% vis_velo(V_hom,options)
+% vis_velo(V_delta,options)
+% vis_velo(V,options)
+% 
+% V_hom2 = V-V_inhom;
+% vis_velo(V_hom2,options)
+% vis_velo(V_inhom,options)
+
+%%
+% delta_norms(j) = norm(V_delta)
+% 
+% delta_norms_omega(j) = V_delta'*(Om.*V_delta);
+% 
+% if j == length(facs)
+%     figure
+%     loglog(facs,delta_norms)
+%     loglog(facs,facs.^(1.5)*10)
+%     legend('show')
+%     
+%     delta_norms./facs.^(1.5)
+% end
+
+%%
+% K_h = options.discretization.K_h;
+% I_h = options.discretization.I_h;
+% A_h = options.discretization.A_h;
+% y_I = options.discretization.y_I;
+% y_A = options.discretization.y_A;
+% NF = length(y_A);
+% 
+% ya_norm(j) = norm(y_A)
+% AV_delta_norm(j) = norm(A_h*V_delta)
+% advec_norm(j) = norm(A_h*V_delta+y_A)
+% VKIV_norm(j) = norm(V_hom'*K_h*spdiags(I_h*V_hom,0,NF,NF))
+% 
+% advec2(j) = norm(A_h*V_inhom+y_A)
+% 
+% % b_uvu(j) = V_hom'*K_h*diag(I_h*V_hom)*(A_h*V_delta+y_A)
+% b_uvu(j) = V_hom'*K_h*spdiags(I_h*V_hom,0,NF,NF)*(A_h*V_delta+y_A)
+% 
+% b_uvu2(j) = V_hom'*K_h*spdiags(I_h*V_hom,0,NF,NF)*(A_h*V_inhom+y_A)
+% 
+% % b_vuu(j) = V_hom'*K_h*diag(I_h*V_delta+y_I)*(A_h*V_hom)
+% b_vuu(j) = V_hom'*K_h*spdiags(I_h*V_delta+y_I,0,NF,NF)*(A_h*V_hom)
+% 
+% b_uuu(j) = V_hom'*K_h*spdiags(I_h*V_hom,0,NF,NF)*(A_h*V_hom)
+% 
+% matrix1 = K_h*spdiags(I_h*V_hom,0,NF,NF)*(A_h);
+% max(matrix1+matrix1',[],'all')
+% 
+% k_(j) = V'*(Om.*V)
+% k_hom(j) = V_hom'*(Om.*V_hom)
+% % 
+% D_h = options.discretization.D_h;
+% diff_(j) = V_hom'*(D_h*V_hom)
+% 
+% if j == length(facs)
+%     figure
+% 
+%     loglog(facs,abs(b_uvu))
+%     hold on
+%     loglog(facs,abs(b_vuu))
+%     loglog(facs,abs(b_uuu))
+%     
+%     legend('show')
+%     17
+% end
+
+%% 
+
+% V_inhom = V;
+% V_inhom_norm(j) = norm(V_inhom)
+% 
+% Om = options.grid.Om;
+
+% L = options.discretization.A;
+% L(1,:) = 1;
+% Gx   = options.discretization.Gx;
+% Gy   = options.discretization.Gy;
+% G = [Gx;Gy];
+% Om = options.grid.Om;
+% Om_inv = options.grid.Om_inv;
+% NV = options.grid.NV;
+% 
+% Om_inv_norm2(j) = norm(Om_inv);
+% Om_inv_norm(j) = svds(spdiags(Om_inv,0,NV,NV),1);
+% G_norm(j) = svds(G,1);
+% L_inv_norm(j) = 1/svds(L,1,'smallest');
+% L_inv = inv(L);
+% L_inv_norm2(j) = svds(L_inv,1);
+% PPE_matrix_norm(j) = svds(Om_inv.*(G*L_inv),1);
+
+%%
+% inv_D_h = inv(D_h);
+% lamda_h(j) = eigs(inv_D_h,1)
+
+% lambda_h(j) = eigs(D_h,1,'smallestabs')
+
+if j == length(facs)
+%     figure
+% 
+%     loglog(facs,abs(lambda_h))
+%     hold on
+%     
+%     legend('show')
+    17
+end
+
+%%
 
 17
 
