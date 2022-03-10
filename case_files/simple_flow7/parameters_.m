@@ -63,9 +63,10 @@ end
 %     facs = [1 2 4 8 16 32 64 128];
 %     facs = [1 2 4 8 16];
 %     facs = 1/2;
+    facs = 1;
 %     facs = 2;
 %     facs = 4;
-    facs = 8;
+%     facs = 8;
 %     fac = facs(j)
     fac = facs
     
