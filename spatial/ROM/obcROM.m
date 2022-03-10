@@ -11,6 +11,8 @@ if getJacobian
             R_inhom = get_a_inhom(t,options);
             
             Jac_y_O_ROM = Jac_y_O_ROM + options.rom.obc_hom_inhom2*kron(E,R_inhom);
+        elseif options.rom.bc_recon == 2
+            % nothing to do
         else
             error('Sorry, precomputation not implemented for bc_recon =/= 3')
         end
@@ -31,7 +33,8 @@ if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
             ... %           + options.rom.obc_hom_inhom*kron(R,R_inhom)   ...
             ... %           + options.rom.obc_inhom_hom*kron(R_inhom,R);
             + options.rom.obc_hom_inhom2*kron(R,R_inhom);
-        
+    elseif options.rom.bc_recon == 2
+        % nothing to do
     else
         error('Sorry, precomputation not implemented for bc_recon =/= 3')
     end

@@ -75,6 +75,4 @@ end
         error('Sorry, precomputation not implemented for bc_recon =/= 2,3')
     end
 else
-    obc_inhom = -666;
-    obc_hom_inhom2 = -666;
 end

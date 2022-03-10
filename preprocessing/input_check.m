@@ -174,14 +174,14 @@ if (steady==0)
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Henrik's checks
-if (options.rom.precompute_diffusion == 1 || ...
-    options.rom.precompute_convection == 1 || ...
-    options.rom.precompute_force == 1)
-    if (options.rom.rom_bc == 2 && (options.rom.bc_recon ~= 1 && options.rom.bc_recon ~= 3))
-        error('to precompute ROM operators for unsteady BC use bc_recon = 1');
-    end
-    if (options.rom.bc_recon == 2)
-        error('bc_recon == 2 does not support operator precomputation');
-    end
-end
+% Henrik's checks: depracted
+% if (options.rom.precompute_diffusion == 1 || ...
+%     options.rom.precompute_convection == 1 || ...
+%     options.rom.precompute_force == 1)
+%     if (options.rom.rom_bc == 2 && (options.rom.bc_recon ~= 1 && options.rom.bc_recon ~= 3))
+%         error('to precompute ROM operators for unsteady BC use bc_recon = 1');
+%     end
+%     if (options.rom.bc_recon == 2)
+%         error('bc_recon == 2 does not support operator precomputation');
+%     end
+% end

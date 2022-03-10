@@ -52,6 +52,10 @@ for i_RK=1:s_RK
 %     if (options.rom.bc_recon == 2)
 %         [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
 %     else
+if options.rom.bc_recon == 2 %botch
+    f       = options.discretization.yM;
+    p = pressure_poisson(f,ti,options);
+end
         [~,F_rhs]  = F_ROM(R,p,ti,options);
 %     end
     
@@ -81,8 +85,12 @@ for i_RK=1:s_RK
         % new formulation, prevents growth of constraint errors:
         % instead of -yMn we use +M*Vn; they are the same up to machine
         % precision but using the latter prevents error accumulation
+        
         B = options.rom.B;
-        f       = (M*B*(Rn/dt+Rtemp) + yM/dt)/c_RK(i_RK);
+        % divergence operator
+        M_h      = options.discretization.M; 
+        
+        f       = (M_h*B*(Rn/dt+Rtemp) + yM/dt)/c_RK(i_RK);
         % note: we should have sum(f) = 0 for periodic and no-slip BC
         
         % solve the Poisson equation for the pressure, but not for the first
@@ -91,13 +99,18 @@ for i_RK=1:s_RK
             % the time ti below is only for output writing
             dp = pressure_poisson(f,ti,options);
         else % BC steady AND i_RK=1
-            dp = pn;
+%             dp = pn;
+            dp = pressure_poisson(f,ti,options); % not efficient but safe
         end
         % store pressure
         kp(:,i_RK) = dp;
         
+        % gradient operator
+        G_h      = options.discretization.G;
+        
         % update ROM coefficients current stage
-        R  = Rn + dt*(Rtemp - c_RK(i_RK)*Om_inv.*(G*dp));
+        P = options.rom.P;
+        R  = Rn + dt*(Rtemp - P*(c_RK(i_RK)*Om_inv.*(G_h*dp)));
     else
     
         % update ROM coefficients current stage

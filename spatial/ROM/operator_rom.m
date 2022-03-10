@@ -12,11 +12,13 @@ end
 % this is the projector for the momentum equations:
 P = B'*spdiags(Diag,0,NV,NV);
 
+options.rom.P = P;
+
 
 
 %% diffusion
-if options.rom.rom_bc == 2
-    if options.rom.bc_recon == 3
+% if options.rom.rom_bc == 2
+    if options.rom.bc_recon ~= 1
             [yDiff2,Diff2,DiffBC2] = operator_rom_diffusion_unsteadyBC2(P,options);
   
             options.rom.Diff2   = Diff2;
@@ -29,15 +31,15 @@ if options.rom.rom_bc == 2
     options.rom.DiffBC = DiffBC;
     options.rom.yDiff  = yDiff;
     end
-else
-    [yDiff,Diff] = operator_rom_diffusion(P,options);
-    
-    options.rom.Diff  = Diff;
-    options.rom.yDiff = yDiff;
-end
+% else
+%     [yDiff,Diff] = operator_rom_diffusion(P,options);
+%     
+%     options.rom.Diff  = Diff;
+%     options.rom.yDiff = yDiff;
+% end
 %% convection 
-if options.rom.rom_bc == 2
-    if options.rom.bc_recon == 3
+% if options.rom.rom_bc == 2
+    if options.rom.bc_recon ~= 1
         [C_hom2,C_hom_inhom2,C_hom_bc2,C_inhom2,C_inhom_bc2,C_bc2] = ...
             operator_rom_convection_unsteadyBC2(P,options);
         
@@ -58,13 +60,13 @@ if options.rom.rom_bc == 2
     options.rom.C_inhom_bc  = C_inhom_bc;
     options.rom.C_bc        = C_bc;
     end
-else
-    [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
-    
-    options.rom.Conv_quad   = conv_quad;
-    options.rom.Conv_linear = conv_linear;
-    options.rom.yConv       = conv_bc;
-end
+% else
+%     [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
+%     
+%     options.rom.Conv_quad   = conv_quad;
+%     options.rom.Conv_linear = conv_linear;
+%     options.rom.yConv       = conv_bc;
+% end
 
 
 %% body force

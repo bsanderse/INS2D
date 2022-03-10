@@ -1,8 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-% M_list = [10 10];
+M_list = [10 10];
 % M_list = [10 10 10 10];
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -20,8 +20,8 @@ Mbc = 10;
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
 % if mod(j,2)==0 %j>4 %false %j>4
-% if true %mod(j,2)==0 %j>4 %false %j>4
-if false %j>4
+if true %mod(j,2)==0 %j>4 %false %j>4
+% if false %j>4
 %     suffix = " mc";
 %     suffix = " CC";
 %     suffix = " without lifting function";
@@ -124,8 +124,8 @@ end
     rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
@@ -170,11 +170,11 @@ end
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-%     method        = 20;
-%     RK = 'RK44';
+    method        = 20;
+    RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-    method = 21;
-    RK = 'GL1';
+%     method = 21;
+%     RK = 'GL1';
 %     RK = 'RIA1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -284,5 +284,5 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % verbosity
-energy_verbosity = 1; % compute unrequired stuff
+energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
