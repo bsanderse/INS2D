@@ -1,0 +1,3 @@
+test ideas
+
+- for time-independent BC, time_discB4pres_elim = 0 should have same results as time_discB4pres_elim = 1

@@ -104,6 +104,7 @@ end
         if (options.BC.BC_unsteady == 1) || i_RK==1
             options = set_bc_vectors(ti,options);
             yM      = options.discretization.yM;
+            ydM     = options.discretization.ydM;
         end
         % divergence of intermediate velocity field is directly calculated with M
         % old formulation:
@@ -118,7 +119,13 @@ end
     
 %         f       = (M_h*B*(Rn/dt+Rtemp) + yM/dt)/c_RK(i_RK);
 %         f       = (M_h*B*Rtemp + (yM-yMn)/dt)/c_RK(i_RK);
-        f       = (M_h*Rtemp_FOM + (yM-yMn)/dt)/c_RK(i_RK);
+        if options.rom.time_discB4pres_elim == 1
+            yM_diff = (yM-yMn)/dt;
+        else
+            yM_diff = ydM;
+        end
+        f       = (M_h*Rtemp_FOM + yM_diff)/c_RK(i_RK);
+
 %         f       = (M_h*B*R + (yM-yMn)/dt)/c_RK(i_RK); %botch
 %         f       = (M_h*V + (yM-yMn)/dt)/c_RK(i_RK); %botch
         % note: we should have sum(f) = 0 for periodic and no-slip BC

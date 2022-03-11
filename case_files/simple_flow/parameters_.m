@@ -174,12 +174,12 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK = 'FE11';
+%     method        = 20;
+%     RK = 'FE11';
 %     RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-%     method = 21;
-%     RK = 'GL1';
+    method = 21;
+    RK = 'GL1';
 %     RK = 'BE11';
 %     RK = 'RIA1';
 

@@ -131,10 +131,7 @@ end
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
                   
-    time_discB4pres_elim = 0; 
-    % affects: pressure computation in notvelocityonly RHS computation
-    % 0: time derivative of mass equation RHS
-    % 1: time difference quations of mass equations RHS's
+    time_discB4pres_elim = 1; % 1: 
                 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
@@ -175,11 +172,11 @@ end
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-%     method        = 20;
-%     RK = 'RK44';
+    method        = 20;
+    RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-    method = 21;
-    RK = 'GL1';
+%     method = 21;
+%     RK = 'GL1';
 %     RK = 'RIA1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg

@@ -1,4 +1,4 @@
-function [maxres,Fres,dF] = F_multiple(V,C,p,t,options,getJacobian)
+function [maxres,Fres,dF] = F_multiple(V,C,p,t,options,getJacobian,nopressure)
 % call F.m for multiple (V,p) pairs, as required for example in implicit RK
 % methods
 
@@ -29,7 +29,7 @@ for i=1:s_RK
     ti    = t(i);
     
     % compute residual and Jacobian for this stage
-    [maxresi,Fresi,dFi] = F(Vi,Ci,pi,ti,options,getJacobian);
+    [maxresi,Fresi,dFi] = F(Vi,Ci,pi,ti,options,getJacobian,nopressure);
 
     maxres(i)   = maxresi;
     Fres(indxV) = Fresi;

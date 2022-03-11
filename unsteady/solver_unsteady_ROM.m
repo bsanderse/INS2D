@@ -538,15 +538,22 @@ while(n<=nt)
     if (method == 20)
             time_ERK_ROM;
     elseif (method == 21)
-        time_IRK_ROM;
-        k_sum2(n-1) = k_delta;
-        k_diff(n) = k_analysis.k_diff;
-        k_conv(n) = k_analysis.k_conv;
-        k_pres(n) = k_analysis.k_pres;
-        k_presBC(n) = k_analysis.k_presBC;
-        k_diffBC(n) = k_analysis.k_diffBC;
-        k_force(n) = k_analysis.k_force;
-        k_obc(n) = k_analysis.k_obc;
+        if options.rom.bc_recon == 2
+            time_IRK_ROM_notvelocityonly;
+        else
+            time_IRK_ROM;
+        end
+        
+        if options.verbosity.energy_verbosity == 1
+            k_sum2(n-1) = k_delta;
+            k_diff(n) = k_analysis.k_diff;
+            k_conv(n) = k_analysis.k_conv;
+            k_pres(n) = k_analysis.k_pres;
+            k_presBC(n) = k_analysis.k_presBC;
+            k_diffBC(n) = k_analysis.k_diffBC;
+            k_force(n) = k_analysis.k_force;
+            k_obc(n) = k_analysis.k_obc;
+        end
     else
         error('time integration method unknown');
     end
