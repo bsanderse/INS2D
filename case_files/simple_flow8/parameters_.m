@@ -21,8 +21,8 @@ Mbc = 1;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 0;
-if true %false %mod(j,2)==0 %j>4 %false %j>4
-% if false %j>4
+% if true %false %mod(j,2)==0 %j>4 %false %j>4
+if false %j>4
 %     suffix = " mc";
 %     suffix = " CC";
 %     suffix = " without lifting function";
@@ -126,8 +126,8 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
@@ -174,12 +174,12 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK = 'FE11';
+%     method        = 20;
+%     RK = 'FE11';
 %     RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-%     method = 21;
-%     RK = 'GL1';
+    method = 21;
+    RK = 'GL1';
 %     RK = 'BE11';
 %     RK = 'RIA1';
 
@@ -292,5 +292,5 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % verbosity
-energy_verbosity = 0; % compute unrequired stuff
-debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
+energy_verbosity = 1; % compute unrequired stuff
+debug_mode = 1; % perform all kinds of consistency checks -> far more expensive!

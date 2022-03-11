@@ -45,15 +45,15 @@ end
 % convection:
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
-    if (options.rom.rom_bc == 2)
+%     if (options.rom.rom_bc == 2)
         if options.rom.bc_recon ~= 1
             [conv, dconv] = convectionROM_unsteadyBC2(R,t,options,getJacobian);
         else 
             [conv, dconv] = convectionROM_unsteadyBC(R,t,options,getJacobian);
         end
-    else
-        [conv, dconv] = convectionROM(R,t,options,getJacobian);
-    end
+%     else
+%         [conv, dconv] = convectionROM(R,t,options,getJacobian);
+%     end
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V,t,options,getJacobian);
@@ -75,15 +75,15 @@ end
 % diffusion
 if (options.rom.precompute_diffusion == 1)
     % approach 1: (with precomputed matrices)
-    if (options.rom.rom_bc == 2)
+%     if (options.rom.rom_bc == 2)
         if options.rom.bc_recon ~= 1
             [Diff, dDiff] = diffusionROM_unsteadyBC2(R,t,options,getJacobian);
         else 
             [Diff, dDiff] = diffusionROM_unsteadyBC(R,t,options,getJacobian);
         end
-    else
-        [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
-    end
+%     else
+%         [Diff, dDiff] = diffusionROM(R,t,options,getJacobian);
+%     end
 elseif (options.rom.precompute_diffusion == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [d2u,d2v,dDiffu,dDiffv] = mydiffusion(V,t,options,getJacobian);
