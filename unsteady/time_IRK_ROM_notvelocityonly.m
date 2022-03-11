@@ -35,7 +35,7 @@ b_RK_ext  = kron(b_RK',speye(NV));
 c_RK_ext  = spdiags(c_RK,0,s_RK,s_RK);
 
 c_RK_ext_p  = kron(c_RK_ext,speye(Np));
-c_RK_ext_p  = kron(c_RK_ext,speye(NV));
+c_RK_ext_V  = kron(c_RK_ext,speye(NV));
 A_RK_ext_p  = kron(A_RK,speye(Np));
 
 %% rom input
@@ -44,6 +44,7 @@ P = options.rom.P;
 M_ROM = options.rom.M;
 
 B_ext  = kron(speye(s_RK),B);
+P_ext  = kron(speye(s_RK),P);
 
 %% preprocessing
 
@@ -131,11 +132,11 @@ Qj    = [Rj;pj];
 % initialize mass residual
 % fmass  = - (Mtot*Vj + yMtot);
 % Mass conservation does in general not hold for standard POD Galerkin ROM
-% Hence, use (7.1) and (7.2) in Sanderse PhD instead
-fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext+V*Gtot2*pj;
+% Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
+fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
 fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - yMtot/dt;
 % f      = [fmom;fmass];
-f      = [P*fmom;fmass];
+f      = [P_ext*fmom;fmass];
 
 if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % Jacobian based on current solution un 
@@ -144,20 +145,24 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
 %     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdp = c_RK_ext_V*Gtot;
-    dfmasdV = kron(A_RK,M*Jn);
+    dfmasdV = -kron(A_RK,M*Jn);
     dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
 %          Mtot Z2];
 %     Z = [P*dfmom*B P*Gtot; ...
 %          Mtot*B Z2];
-    Z = [dfmomdV dfmomdp; dfmasdV dfmasdp];
+    Z = [P_ext*dfmomdV*B_ext P_ext*dfmomdp; dfmasdV*B_ext dfmasdp];
     % determine LU decomposition; often this is too slow
 %     [L,U] = lu(Z);
 end
 
 while (max(abs(f))> options.solversettings.nonlinear_acc)
-   
+    
+%     if options.verbosity.debug_mode == 1
+        max(abs(f))
+%     end
+    
     if (options.solversettings.nonlinear_Newton == 1) 
         % approximate Newton   
         % do not rebuild Z
@@ -176,16 +181,16 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
 %         Z = [P*dfmom*B P*Gtot; ...
 %             Mtot*B Z2];
 
-    dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
-    dfmomdp = c_RK_ext*Gtot;
-    dfmasdV = kron(A_RK,M*Jn);
-    dfmasdp = c_RK_ext*Ltot;
+    dfmomdV = Om_sNV/dt - A_RK_ext*J;
+    dfmomdp = c_RK_ext_V*Gtot2;
+    dfmasdV = -A_RK_ext_p*Mtot*J;
+    dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
 %          Mtot Z2];
 %     Z = [P*dfmom*B P*Gtot; ...
 %          Mtot*B Z2];
-    Z = [dfmomdV dfmomdp; dfmasdV dfmasdp];
+    Z = [P_ext*dfmomdV*B_ext P_ext*dfmomdp; dfmasdV*B_ext dfmasdp];
 
         % get change
         dQj = Z\f;
@@ -208,11 +213,18 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     % evaluate rhs for next iteration and check residual based on
     % computed Vj, pj
     [~,F_rhs,~] = F_multiple(Vj,Vj,pj,tj,options,0);
-    fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
-    fmass  = - (Mtot*Vj + yMtot);
+%     fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
+%     fmass  = - (Mtot*Vj + yMtot);
+%     
+% %     f = [fmom; fmass];
+%     f      = [P*fmom;fmass];
     
-%     f = [fmom; fmass];
-    f      = [P*fmom;fmass];
+    % Mass conservation does in general not hold for standard POD Galerkin ROM
+    % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
+    fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
+    fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - yMtot/dt;
+    % f      = [fmom;fmass];
+    f      = [P_ext*fmom;fmass];
 
     
     error_nonlinear(i) = max(abs(f));

@@ -2,8 +2,13 @@ function [maxres,Fres,dF] = F_multiple(V,C,p,t,options,getJacobian,nopressure)
 % call F.m for multiple (V,p) pairs, as required for example in implicit RK
 % methods
 
-if (nargin<5)
+if (nargin<6)
     getJacobian = 0;
+    nopressure = 0;
+end
+
+if (nargin<7)
+    nopressure = 0;
 end
 
 s_RK = options.time.s_RK;

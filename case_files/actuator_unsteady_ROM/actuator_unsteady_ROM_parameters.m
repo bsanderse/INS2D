@@ -228,9 +228,11 @@ end
     % for steady problems or unsteady problems with implicit methods:
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    nonlinear_acc          = 1e-14;
+%     nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-13;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+%     nonlinear_maxit        = 10;
+    nonlinear_maxit        = 100;
         
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
