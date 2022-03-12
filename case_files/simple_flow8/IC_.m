@@ -12,15 +12,16 @@ Nvy_in = options.grid.Nvy_in;
 % u  = ones(Nux_in,Nuy_in);  %wrong for manipulated BC
 % v  = zeros(Nvx_in,Nvy_in);
 
-options = set_bc_vectors(0,options);
-f       = options.discretization.yM;
-dp      = pressure_poisson(f,0,options);
-V0      = - options.grid.Om_inv.*(options.discretization.G*dp);
-u = V0(1:Nux_in*Nuy_in);
-v = V0(Nux_in*Nuy_in+1:end);
+% options = set_bc_vectors(0,options);
+% f       = options.discretization.yM;
+% dp      = pressure_poisson(f,0,options);
+% V0      = - options.grid.Om_inv.*(options.discretization.G*dp);
+% u = V0(1:Nux_in*Nuy_in);
+% v = V0(Nux_in*Nuy_in+1:end);
 
-% u = ones(Nux_in*Nuy_in,1);
-% v = zeros(Nvx_in*Nvy_in,1);
+u = ones(Nux_in*Nuy_in,1);
+% u = zeros(Nux_in*Nuy_in,1);
+v = zeros(Nvx_in*Nvy_in,1);
 
 u = reshape(u,Nux_in,Nuy_in);
 v = reshape(v,Nvx_in,Nvy_in);

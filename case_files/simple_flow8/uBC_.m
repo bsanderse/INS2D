@@ -7,10 +7,11 @@ x1 = options.grid.x1;
 % y1 = options.grid.y1;
 
 
-if ( (length(x)==1 && abs(x-x1)<1e-10))
+% if ( (length(x)==1 && abs(x-x1)<1e-10))
+    u = t*ones(length(x)*length(y),1);
     u = ones(length(x)*length(y),1);
-else
-    u = zeros(length(x)*length(y),1);
-end
+% else
+%     u = zeros(length(x)*length(y),1);
+% end
 
 end

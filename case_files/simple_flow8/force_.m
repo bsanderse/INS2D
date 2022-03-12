@@ -13,7 +13,11 @@ function [Fx,Fy,dFx,dFy] = force_(~,t,options,~)
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 
-Fx = zeros(Nu,1);
-Fy = zeros(Nv,1);
+% Fx = zeros(Nu,1);
+% Fy = zeros(Nv,1);
+
+Fx = ones(Nu,1);
+Fy = ones(Nv,1);
+
 dFx = zeros(Nu,1);
 dFy = zeros(Nv,1);

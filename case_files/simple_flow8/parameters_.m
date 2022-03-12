@@ -36,8 +36,8 @@ end
 % dispName = "ROM M ="+M+suffix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
-%     Re      = 10^100;                  % Reynolds number
+%     Re      = 100;                  % Reynolds number
+    Re      = 10^100;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -52,8 +52,8 @@ end
     y1      = -2;
     y2      = 2;
 
-    Nx      = 20; %200;                  % number of volumes in the x-direction
-    Ny      = 8; %80;                   % number of volumes in the y-direction
+    Nx      = 10; %200;                  % number of volumes in the x-direction
+    Ny      = 4; %80;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -79,8 +79,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -174,12 +174,12 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-%     method        = 20;
-%     RK = 'FE11';
+    method        = 20;
+    RK = 'FE11';
 %     RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-    method = 21;
-    RK = 'GL1';
+%     method = 21;
+%     RK = 'GL1';
 %     RK = 'BE11';
 %     RK = 'RIA1';
 
@@ -256,9 +256,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % requires rtp.show = 1
+    rtp.movie        = 1;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -275,9 +275,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
@@ -292,5 +292,5 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % verbosity
-energy_verbosity = 1; % compute unrequired stuff
-debug_mode = 1; % perform all kinds of consistency checks -> far more expensive!
+energy_verbosity = 0; % compute unrequired stuff
+debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!

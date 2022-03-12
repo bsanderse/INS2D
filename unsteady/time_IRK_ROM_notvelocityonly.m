@@ -64,7 +64,7 @@ tj    = tn + c_RK*dt;
 
 % gradient operator
 G      = options.discretization.G;
-Gtot   = kron(A_RK,G); % could also use 1 instead of c_RK and later scale the pressure
+% Gtot   = kron(A_RK,G); % could also use 1 instead of c_RK and later scale the pressure
 Gtot2  = kron(Is,G); % could also use 1 instead of c_RK and later scale the pressure
 % divergence operator
 M      = options.discretization.M;
@@ -144,7 +144,7 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % form iteration matrix, which is now fixed during iterations
 %     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
-    dfmomdp = c_RK_ext_V*Gtot;
+    dfmomdp = c_RK_ext_V*Gtot2;
     dfmasdV = -kron(A_RK,M*Jn);
     dfmasdp = c_RK_ext_p*Ltot;
     %

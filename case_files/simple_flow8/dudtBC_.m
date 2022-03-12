@@ -4,4 +4,7 @@ function dudt = dudtBC_(x,y,t,options)
 
     dudt = zeros(length(x)*length(y),1);
 
+%     dudt = ones(length(x)*length(y),1);
+
+
 end

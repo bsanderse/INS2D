@@ -11,28 +11,44 @@ function BC = BCtype_
     % low/up: y-direction
 
     BC.u.left  = 'dir';   % valid options: dir, per, pres 
-    BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
+    BC.u.right = 'dir';  % valid options: dir, per, pres
+    BC.u.low   = 'dir';   % valid options: dir, per, sym
+    BC.u.up    = 'dir';   % valid options: dir, per, sym
+
+%     BC.u.left  = 'per';   % valid options: dir, per, pres 
+%     BC.u.right = 'per';  % valid options: dir, per, pres
+%     BC.u.low   = 'per';   % valid options: dir, per, sym
+%     BC.u.up    = 'per';   % valid options: dir, per, sym
+
+%     BC.u.left  = 'mvp-obc';   % valid options: dir, per, pres
+%     BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
 %     BC.u.low   = 'mvp-obc';   % valid options: dir, per, sym
 %     BC.u.up    = 'mvp-obc';   % valid options: dir, per, sym
     
+%     BC.u.left  = 'pres';   % valid options: dir, per, pres 
 %     BC.u.right = 'pres';  % valid options: dir, per, pres
-    BC.u.low   = 'sym';   % valid options: dir, per, sym
-    BC.u.up    = 'sym';   % valid options: dir, per, sym
-    
-%     BC.u.low   = 'dir';   % valid options: dir, per, sym
-%     BC.u.up    = 'dir';   % valid options: dir, per, sym
+%     BC.u.low   = 'sym';   % valid options: dir, per, sym
+%     BC.u.up    = 'sym';   % valid options: dir, per, sym
 
     BC.v.left  = 'dir';   % valid options: dir, per, sym
-    BC.v.right = 'mvp-obc';   % valid options: dir, per, sym
+    BC.v.right = 'dir';   % valid options: dir, per, sym
+    BC.v.low   = 'dir';   % valid options: dir, per, pres
+    BC.v.up    = 'dir';   % valid options: dir, per, pres
+
+%     BC.v.left  = 'per';   % valid options: dir, per, sym
+%     BC.v.right = 'per';   % valid options: dir, per, sym
+%     BC.v.low   = 'per';   % valid options: dir, per, pres
+%     BC.v.up    = 'per';   % valid options: dir, per, pres
+
+%     BC.v.left  = 'mvp-obc';   % valid options: dir, per, sym
+%     BC.v.right = 'mvp-obc';   % valid options: dir, per, sym
 %     BC.v.low   = 'mvp-obc';   % valid options: dir, per, pres
 %     BC.v.up    = 'mvp-obc';   % valid options: dir, per, pres
 
+%     BC.v.left  = 'sym';   % valid options: dir, per, sym
 %     BC.v.right = 'sym';   % valid options: dir, per, sym
-    BC.v.low   = 'pres';   % valid options: dir, per, pres
-    BC.v.up    = 'pres';   % valid options: dir, per, pres
-
-%     BC.v.low   = 'dir';   % valid options: dir, per, pres
-%     BC.v.up    = 'dir';   % valid options: dir, per, pres
+%     BC.v.low   = 'pres';   % valid options: dir, per, pres
+%     BC.v.up    = 'pres';   % valid options: dir, per, pres
 
 %     BC.k.left  = 'dir';   % valid options: dir, sym, per
 %     BC.k.right = 'dir';   % valid options: dir, sym, per

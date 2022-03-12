@@ -79,8 +79,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -119,11 +119,12 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
-snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_without_obc/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
+snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
 
-    rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
+    rom_bc = 1; % 0: homogeneous (no-slip, periodic);
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
@@ -231,7 +232,8 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     
     nonlinear_acc          = 1e-14;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+%     nonlinear_maxit        = 10;
+    nonlinear_maxit        = 100;
         
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
