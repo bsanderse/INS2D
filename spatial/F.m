@@ -58,13 +58,14 @@ else
     dFy = spalloc(Nv,NV,0);      
 end
 
-% residual in Finite Volume form, including the pressure contribution
+% residual in Finite Volume form
 Fu   = - convu + d2u + Fx;
 Fv   = - convv + d2v + Fy;
 
 % nopressure=0 is the most common situation, in which we return the entire 
 % right-hand side vector
 if (nopressure == 0) 
+    %residual including the pressure contribution
     Fu = Fu - Gpx;
     Fv = Fv - Gpy;
 end

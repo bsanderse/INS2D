@@ -18,10 +18,25 @@ CG_acc   = options.solversettings.CG_acc;
 CG_maxit = options.solversettings.CG_maxit;
 
 % check if a Poisson solve is necessary
-A   = options.discretization.A;
-tol = 1e-14;
-if (max(abs(A*dp-f))<tol)
-    return;
+if options.solversettings.poisson == 6
+    Npx    = options.grid.Npx;
+    Npy    = options.grid.Npy;
+    Npz    = options.grid.Npz;
+    Ahat   = options.solversettings.Ahat;
+    % fourier transform of right hand side
+    fhat   = fftn(reshape(f,Npx,Npy,Npz));
+    dphat  = reshape(dp,Npx,Npy,Npz); %fourier is also needed but now it's just 0 anyway...
+
+    tol = 1e-14;
+    if (max(max(max(abs(Ahat.*dphat +fhat))))<tol)
+        return;
+    end
+else
+    A   = options.discretization.A;
+    tol = 1e-14;
+    if (max(abs(A*dp-f))<tol)
+        return;
+    end
 end
 
 % choose a method to solve the Poisson equation
