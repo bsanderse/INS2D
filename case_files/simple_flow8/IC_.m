@@ -19,8 +19,8 @@ Nvy_in = options.grid.Nvy_in;
 % u = V0(1:Nux_in*Nuy_in);
 % v = V0(Nux_in*Nuy_in+1:end);
 
-u = ones(Nux_in*Nuy_in,1);
-% u = zeros(Nux_in*Nuy_in,1);
+% u = ones(Nux_in*Nuy_in,1);
+u = zeros(Nux_in*Nuy_in,1);
 v = zeros(Nvx_in*Nvy_in,1);
 
 u = reshape(u,Nux_in,Nuy_in);
