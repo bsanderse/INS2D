@@ -518,6 +518,7 @@ time_start = toc
 coefficients = zeros(M,nt);
 
 k_sum2 = zeros(nt,1);
+k_delta = [];
 k_analysis = [];
 
 while(n<=nt)
@@ -539,7 +540,10 @@ while(n<=nt)
             time_ERK_ROM;
     elseif (method == 21)
         if options.rom.bc_recon == 2
-            time_IRK_ROM_notvelocityonly;
+            pn = pressure_additional_solve(V,p,t,options);
+            [R,p,iterations,k_delta,k_analysis] ...
+                = time_IRK_ROM_notvelocityonly(R,p,t,dt,options,k_analysis);
+%             time_IRK_ROM_notvelocityonly;
         else
             time_IRK_ROM;
         end

@@ -1,4 +1,4 @@
-% function [Vnew,pnew,iterations,k_delta,k_analysis] = time_IRK(Rn,pn,tn,dt,options,k_analysis)
+function [Vnew,pnew,iterations,k_delta,k_analysis] = time_IRK_ROM_notvelocityonly(Rn,pn,tn,dt,options,k_analysis)
 
 %% general implicit Runge-Kutta method
 
@@ -49,13 +49,13 @@ P_ext  = kron(speye(s_RK),P);
 %% preprocessing
 
 % store variables at start of time step
-tn     = t;
+% tn     = t;
 % Vn     = V;
 % pn     = p;
 % qn     = [Vn; pn];
-Rn = R;
-Vn = getFOM_velocity(Rn,t,options);
-pn = pressure_additional_solve(V,p,t,options);
+% Rn = R;
+% Vn = B*Rn;
+% pn = pressure_additional_solve(V,p,t,options);
 
 p  = pn;
 
@@ -64,24 +64,24 @@ tj    = tn + c_RK*dt;
 
 % gradient operator
 G      = options.discretization.G;
-Gtot   = kron(A_RK,G); % could also use 1 instead of c_RK and later scale the pressure
+% Gtot   = kron(A_RK,G); % could also use 1 instead of c_RK and later scale the pressure
 Gtot2  = kron(Is,G); % could also use 1 instead of c_RK and later scale the pressure
 % divergence operator
-M      = options.discretization.M;
-Mtot   = kron(Is,M);
+M_h      = options.discretization.M;
+Mtot   = kron(Is,M_h);
 % finite volumes
 Omtot  = kron(ones(s_RK,1),Om);
 Om_invtot  = kron(ones(s_RK,1),Om_inv);
 % Laplace operator
-L = M*(Om_inv.*G);
+L = M_h*(Om_inv.*G);
 Ltot = kron(Is,L);
-
 
 % boundary condition for divergence operator
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn,options);
 end
 yMn    = options.discretization.yM;
+yMn_tot = kron(Is,yMn);
 
 % to make the velocity field u_(i+1) at t_(i+1) divergence-free we need 
 % the boundary conditions at t_(i+1)  
@@ -108,7 +108,8 @@ error_nonlinear = zeros(nonlinear_maxit,1);
 
 % Vtot contains all stages and is ordered as [u1;v1;u2;v2;...;us;vs];
 % initialize with the solution at tn
-Vtotn = kron(ones(s_RK,1),Vn);
+% Vtotn = kron(ones(s_RK,1),Vn);
+Rtotn = kron(ones(s_RK,1),Rn);
 ptotn = kron(ones(s_RK,1),pn);
 
 % index in global solution vector
@@ -119,24 +120,50 @@ indxp = M_ROM*s_RK+1:(M_ROM+Np)*s_RK;
 
 % starting guess for intermediate stages => this can be improved, see e.g.
 % the Radau,Gauss4, or Lobatto scripts
-Vj    = Vtotn;
+% Vj    = Vtotn;
+Rj    = Rtotn;
 pj    = ptotn;
 % Qj    = [Vj;pj];
-Rj    = B_ext'*Vj;
+% Rj    = P_ext*(Om.*Vj);
 Qj    = [Rj;pj];
 
-% initialize right-hand side for all stages
-[~,F_rhs,~]  = F_multiple(Vj,Vj,pj,tj,options,0,1);
-% initialize momentum residual
-% fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
-% initialize mass residual
-% fmass  = - (Mtot*Vj + yMtot);
-% Mass conservation does in general not hold for standard POD Galerkin ROM
-% Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
-fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
-fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - yMtot/dt;
-% f      = [fmom;fmass];
-f      = [P_ext*fmom;fmass];
+Vj = B_ext*Rj;
+Vtotn = B_ext*Rn;
+
+% % initialize right-hand side for all stages
+% [~,F_rhs,~]  = F_multiple(Vj,Vj,pj,tj,options,0,1);
+% % initialize momentum residual
+% % fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
+% % initialize mass residual
+% % fmass  = - (Mtot*Vj + yMtot);
+% % Mass conservation does in general not hold for standard POD Galerkin ROM
+% % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
+% fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
+% fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - (yMtot-yMn_tot)/dt;
+% % f      = [fmom;fmass];
+% f      = [P_ext*fmom;fmass];
+
+RHS_param.indxR = indxR;
+RHS_param.indxp = indxp;
+RHS_param.tj = tj;
+RHS_param.options = options;
+RHS_param.Omtot = Omtot;
+RHS_param.Vtotn = Vtotn;
+RHS_param.dt = dt;
+RHS_param.A_RK_ext = A_RK_ext;
+RHS_param.c_RK_ext_V = c_RK_ext_V;
+RHS_param.Gtot2 = Gtot2;
+RHS_param.c_RK_ext_p = c_RK_ext_p; 
+RHS_param.Ltot = Ltot;
+RHS_param.A_RK_ext_p = A_RK_ext_p;
+RHS_param.Mtot = Mtot;
+RHS_param.b = (yMtot-yMn_tot)/dt;
+RHS_param.P_ext = P_ext;
+RHS_param.B_ext = B_ext;
+
+% norm(f-RHS(Qj,RHS_param))
+    [f,F_rhs] = RHS(Qj,RHS_param);
+
 
 if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % Jacobian based on current solution un 
@@ -144,8 +171,8 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
     % form iteration matrix, which is now fixed during iterations
 %     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
-    dfmomdp = c_RK_ext_V*Gtot;
-    dfmasdV = -kron(A_RK,M*Jn);
+    dfmomdp = c_RK_ext_V*Gtot2;
+    dfmasdV = -kron(A_RK,M_h*Jn);
     dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
@@ -159,9 +186,9 @@ end
 
 while (max(abs(f))> options.solversettings.nonlinear_acc)
     
-    if options.verbosity.debug_mode == 1
+%     if options.verbosity.debug_mode == 1
         max(abs(f))
-    end
+%     end
     
     if (options.solversettings.nonlinear_Newton == 1) 
         % approximate Newton   
@@ -210,26 +237,29 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     % update iteration counter
     i   = i+1;    
     
-    % evaluate rhs for next iteration and check residual based on
-    % computed Vj, pj
-    [~,F_rhs,~] = F_multiple(Vj,Vj,pj,tj,options,0);
-%     fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
-%     fmass  = - (Mtot*Vj + yMtot);
+%     % evaluate rhs for next iteration and check residual based on
+%     % computed Vj, pj
+%     [~,F_rhs,~] = F_multiple(Vj,Vj,pj,tj,options,0,1);
+% %     fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs;
+% %     fmass  = - (Mtot*Vj + yMtot);
+% %     
+% % %     f = [fmom; fmass];
+% %     f      = [P*fmom;fmass];
 %     
-% %     f = [fmom; fmass];
-%     f      = [P*fmom;fmass];
-    
-    % Mass conservation does in general not hold for standard POD Galerkin ROM
-    % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
-    fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
-    fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - yMtot/dt;
-    % f      = [fmom;fmass];
-    f      = [P_ext*fmom;fmass];
+%     % Mass conservation does in general not hold for standard POD Galerkin ROM
+%     % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
+%     fmom   = - (Omtot.*Vj - Omtot.*Vtotn)/dt + A_RK_ext*F_rhs - c_RK_ext_V*Gtot2*pj;
+%     fmass = - c_RK_ext_p*Ltot*pj + A_RK_ext_p*Mtot*F_rhs - (yMtot-yMn_tot)/dt;
+%     % f      = [fmom;fmass];
+%     f      = [P_ext*fmom;fmass];
+% 
+%     norm(f-RHS(Qj,RHS_param))
+    [f,F_rhs] = RHS(Qj,RHS_param);
 
-    
     error_nonlinear(i) = max(abs(f));
     if (i>nonlinear_maxit)
-        error(['Newton not converged in ' num2str(nonlinear_maxit) ' iterations']);
+        Q = fsolve(@(Q) RHS(Q,RHS_param),Qj);
+         error(['Newton not converged in ' num2str(nonlinear_maxit) ' iterations']);
     end
     
 end
@@ -267,8 +297,8 @@ end
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn+dt,options);
     yM      = options.discretization.yM;
-    V = getFOM_velocity(R,t,options);
-    f       = (1/dt)*(M*V + yM);
+    V = B*R;
+    f       = (1/dt)*(M_h*V + yM);
 
     dp      = pressure_poisson(f,tn+dt,options);
 
@@ -280,7 +310,7 @@ end
 if (options.BC.BC_unsteady == 1)
     
     if (options.solversettings.p_add_solve == 1)
-        V = getFOM_velocity(R,t,options);
+        V = B*R;
         p = pressure_additional_solve(V,p,tn+dt,options);
     else
         
@@ -308,5 +338,43 @@ else
 
 end
 
-% Vnew = R;
-% pnew = p;
+Vnew = R;
+pnew = p;
+
+
+function [RHS_,F_rhs_] = RHS(Qj,RHS_param)
+    indxR_ = RHS_param.indxR;
+    indxp_ = RHS_param.indxp;
+    tj_ = RHS_param.tj;
+    options_ = RHS_param.options;
+    Omtot_ = RHS_param.Omtot;
+    Vtotn_ = RHS_param.Vtotn;
+    dt_ = RHS_param.dt;
+    A_RK_ext_ = RHS_param.A_RK_ext;
+    c_RK_ext_V_ = RHS_param.c_RK_ext_V;
+    Gtot2_ = RHS_param.Gtot2;
+    c_RK_ext_p_ = RHS_param.c_RK_ext_p; 
+    Ltot_ = RHS_param.Ltot;
+    A_RK_ext_p_ = RHS_param.A_RK_ext_p;
+    Mtot_ = RHS_param.Mtot;
+    b_ = RHS_param.b;
+    P_ext_ = RHS_param.P_ext;
+    B_ext_ = RHS_param.B_ext;
+
+    Rj_  = Qj(indxR_);
+    pj_  = Qj(indxp_);
+
+    Vj_ = B_ext_*Rj_;
+    [~,F_rhs_,~]  = F_multiple(Vj_,Vj_,pj_,tj_,options_,0,1);
+
+    % Mass conservation does in general not hold for standard POD Galerkin ROM
+    % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
+    fmom_   = - (Omtot_.*Vj_ - Omtot_.*Vtotn_)/dt_ ...
+            + A_RK_ext_*F_rhs_ - c_RK_ext_V_*Gtot2_*pj_;
+    fmass_ = - c_RK_ext_p_*Ltot_*pj_ + A_RK_ext_p_*Mtot_*F_rhs_ - b_;
+    % f      = [fmom;fmass];
+    f_      = [P_ext_*fmom_;fmass_];
+    RHS_ = f_;
+end
+
+end

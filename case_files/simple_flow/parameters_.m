@@ -76,75 +76,6 @@ end
     y_c     = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% reduced order model
-
-    rom     = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
-    M      = M_list(j); %20; %50;    % number of modes used
-    % the full snapshotdataset can be reduced by taking as index
-    % 1:Nskip:Nsnapshots
-    t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
-    dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
-    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-    precompute_obc       = 1;
-%     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_convection = 0;
-%     precompute_diffusion  = 0;
-%     precompute_force      = 0;
-%     precompute_obc       = 0;
-
-%     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_4/matlab_data.mat'; %M2S4R4
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_1/matlab_data.mat'; %   FE11
-    
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_17/matlab_data.mat'; %M2S4R4
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_2/matlab_data.mat'; %M2S4R4
-
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_3/matlab_data.mat'; %M2S4R4 2nd pc
-
-%     snapshot_data =
-%     'results/actuator_unsteady_ROM_manipulatedBC/matlab_data.mat';
-%     %M2S4R4 2nd pc wrong initial condition
-%     snapshot_data = 'results/actuator_unsteady_ROM_manipulatedBC_2/matlab_data.mat'; %M2S4R4 2nd pc
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
-% snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
-% snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
-% snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
-% snapshot_data = 'results/simple_flow_1.000e+02_20x8_without_obc/matlab_data.mat';
-% snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
-snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
-
-    rom_bc = 1; % 0: homogeneous (no-slip, periodic);
-                % 1: non-homogeneous, time-independent;
-                % 2: non-homogeneous, time-dependent
-    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
-                  % 0: unsteady is always computed by solving a poisson eq
-                  % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
-                  % 2: no lifting function is used
-                
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
-    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
-    weighted_norm         = 1;
-    
-    pressure_recovery     =  0; % compute pressure at each time step
-    pressure_precompute   =  0; % precompute PPE operator at ROM level
-    pressure_mean         =  0; % subtract mean pressure in constructing ROM
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,12 +88,14 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
     order4  = 0;
 
     % only for unsteady problems:
-    dt            = 4*pi/200;      % time step (for explicit methods it can be
-%     dt            = 4*pi/100;      % time step (for explicit methods it can be
-                               % determined during running with dynamic_dt)
     t_start       = 0;         % start time
 %     t_end         = 4*pi*3;        % end time
-    t_end         = 4*pi;        % end time
+    t_end         = 12;        % end time
+    dt            = t_end/200;      % time step (for explicit methods it can be
+%     dt            = t_end/400;      % time step (for explicit methods it can be
+%     dt            = 4*pi/100;      % time step (for explicit methods it can be
+                               % determined during running with dynamic_dt)
+
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -207,6 +140,79 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom     = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    M      = M_list(j); %20; %50;    % number of modes used
+    % the full snapshotdataset can be reduced by taking as index
+    % 1:Nskip:Nsnapshots
+    t_sample  = t_end;  % part of snapshot matrix used for building SVD
+    dt_sample = dt; % frequency of snapshots to be used for SVD
+%     dt_sample = t_end/200; % frequency of snapshots to be used for SVD
+    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_obc       = 1;
+%     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_convection = 0;
+%     precompute_diffusion  = 0;
+%     precompute_force      = 0;
+%     precompute_obc       = 0;
+
+%     snapshot_data = 'results/actuator_unsteady_snapshotdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_4/matlab_data.mat'; %M2S4R4
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_1/matlab_data.mat'; %   FE11
+    
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_17/matlab_data.mat'; %M2S4R4
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_2/matlab_data.mat'; %M2S4R4
+
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_3/matlab_data.mat'; %M2S4R4 2nd pc
+
+%     snapshot_data =
+%     'results/actuator_unsteady_ROM_manipulatedBC/matlab_data.mat';
+%     %M2S4R4 2nd pc wrong initial condition
+%     snapshot_data = 'results/actuator_unsteady_ROM_manipulatedBC_2/matlab_data.mat'; %M2S4R4 2nd pc
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_without_obc/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
+snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
+
+    rom_bc = 1; % 0: homogeneous (no-slip, periodic);
+                % 1: non-homogeneous, time-independent;
+                % 2: non-homogeneous, time-dependent
+    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
+                  % 0: unsteady is always computed by solving a poisson eq
+                  % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
+                  % 2: no lifting function is used
+                
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
+    weighted_norm         = 1;
+    
+    pressure_recovery     =  0; % compute pressure at each time step
+    pressure_precompute   =  0; % precompute PPE operator at ROM level
+    pressure_mean         =  0; % subtract mean pressure in constructing ROM
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% solver settings
 
     % pressure
@@ -230,7 +236,8 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
     % for steady problems or unsteady problems with implicit methods:
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    nonlinear_acc          = 1e-14;
+%     nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-13;
     nonlinear_relacc       = 1e-14;
 %     nonlinear_maxit        = 10;
     nonlinear_maxit        = 100;
@@ -258,9 +265,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % requires rtp.show = 1
+    rtp.movie        = 1;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -277,9 +284,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_FOMdata/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

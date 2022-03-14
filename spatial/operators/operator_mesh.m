@@ -669,34 +669,34 @@ end
 options.grid.C = sparse(C);
 
 %% background_flow1
-warning('only works for complete Dirichlet BC')
-
-id_u_inbc = zeros(Nu,1);
-id_v_inbc = zeros(Nv,1);
-
-id_u_inbc(u_indices(1,:)) = 1;
-id_u_inbc(u_indices(end,:)) = -1;
-% id_u_inbc(u_indices(:,1)) = 1;
-% id_u_inbc(u_indices(:,end)) = 1;
-
-% id_v_inbc(v_indices(1,:)) = 1;
-% id_v_inbc(v_indices(end,:)) = 1;
-id_v_inbc(v_indices(:,1)) = -1;
-id_v_inbc(v_indices(:,end)) = 1;
-
-options.grid.id_V_inbc = abs([id_u_inbc; id_v_inbc]);
-options.grid.id_V_inbc_signed = [id_u_inbc; id_v_inbc];
-
-[X,Y] = meshgrid(1:Npx,1:Npy);
-p_indices = X+Npx*(Y-1);
-
-id_p_inbc = zeros(Np,1);
-id_p_inbc(p_indices(1,:)) = 1;
-id_p_inbc(p_indices(end,:)) = 1;
-id_p_inbc(p_indices(:,1)) = 1;
-id_p_inbc(p_indices(:,end)) = 1;
-
-options.grid.id_p_inbc = id_p_inbc;
+% warning('only works for complete Dirichlet BC')
+% 
+% id_u_inbc = zeros(Nu,1);
+% id_v_inbc = zeros(Nv,1);
+% 
+% id_u_inbc(u_indices(1,:)) = 1;
+% id_u_inbc(u_indices(end,:)) = -1;
+% % id_u_inbc(u_indices(:,1)) = 1;
+% % id_u_inbc(u_indices(:,end)) = 1;
+% 
+% % id_v_inbc(v_indices(1,:)) = 1;
+% % id_v_inbc(v_indices(end,:)) = 1;
+% id_v_inbc(v_indices(:,1)) = -1;
+% id_v_inbc(v_indices(:,end)) = 1;
+% 
+% options.grid.id_V_inbc = abs([id_u_inbc; id_v_inbc]);
+% options.grid.id_V_inbc_signed = [id_u_inbc; id_v_inbc];
+% 
+% [X,Y] = meshgrid(1:Npx,1:Npy);
+% p_indices = X+Npx*(Y-1);
+% 
+% id_p_inbc = zeros(Np,1);
+% id_p_inbc(p_indices(1,:)) = 1;
+% id_p_inbc(p_indices(end,:)) = 1;
+% id_p_inbc(p_indices(:,1)) = 1;
+% id_p_inbc(p_indices(:,end)) = 1;
+% 
+% options.grid.id_p_inbc = id_p_inbc;
 
 %% background_flow2: not used currently
 % warning('only works for complete Dirichlet BC')

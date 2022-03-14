@@ -11,11 +11,11 @@ function BC = BCtype_
     % low/up: y-direction
 
     BC.u.left  = 'dir';   % valid options: dir, per, pres 
-    BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
+%     BC.u.right = 'mvp-obc';  % valid options: dir, per, pres
 %     BC.u.low   = 'mvp-obc';   % valid options: dir, per, sym
 %     BC.u.up    = 'mvp-obc';   % valid options: dir, per, sym
     
-%     BC.u.right = 'pres';  % valid options: dir, per, pres
+    BC.u.right = 'pres';  % valid options: dir, per, pres
     BC.u.low   = 'sym';   % valid options: dir, per, sym
     BC.u.up    = 'sym';   % valid options: dir, per, sym
     
@@ -23,11 +23,11 @@ function BC = BCtype_
 %     BC.u.up    = 'dir';   % valid options: dir, per, sym
 
     BC.v.left  = 'dir';   % valid options: dir, per, sym
-    BC.v.right = 'mvp-obc';   % valid options: dir, per, sym
+%     BC.v.right = 'mvp-obc';   % valid options: dir, per, sym
 %     BC.v.low   = 'mvp-obc';   % valid options: dir, per, pres
 %     BC.v.up    = 'mvp-obc';   % valid options: dir, per, pres
 
-%     BC.v.right = 'sym';   % valid options: dir, per, sym
+    BC.v.right = 'sym';   % valid options: dir, per, sym
     BC.v.low   = 'pres';   % valid options: dir, per, pres
     BC.v.up    = 'pres';   % valid options: dir, per, pres
 
