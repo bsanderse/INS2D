@@ -12,7 +12,8 @@ end
     full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
-    if (options.rom.rom == 0)
+%     if (options.rom.rom == 0)
+    if true
         run(full_name);
     end
 % %     actuator_unsteady_ROM_pp;
@@ -54,7 +55,9 @@ end
 if (options.rom.rom == 1)
     
     %% kinetic energy comparison
-ROM_FOM_kinetic_energy_comparison;
+if options.verbosity.energy_verbosity == 1
+    ROM_FOM_kinetic_energy_comparison;
+end
     
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it

@@ -1,12 +1,12 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
-% M_list = 1;
+M_list = 1;
 % M_list = 20;
 
 
@@ -21,8 +21,8 @@ Mbc = 1;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 0;
-% if true %false %mod(j,2)==0 %j>4 %false %j>4
-if false %j>4
+if true %false %mod(j,2)==0 %j>4 %false %j>4
+% if false %j>4
 %     suffix = " mc";
 %     suffix = " CC";
 %     suffix = " without lifting function";
@@ -181,15 +181,16 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_energy_analysis/matlab_data.mat';
-snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
+% snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_without_obc/matlab_data.mat';
 % snapshot_data = 'results/simple_flow_1.000e+02_20x8_1/matlab_data.mat';
+snapshot_data = 'results/simple_flow8_1.000e+100_10x4_step2/matlab_data.mat';
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
@@ -230,9 +231,11 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     % for steady problems or unsteady problems with implicit methods:
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    nonlinear_acc          = 1e-14;
+%     nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-13;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+%     nonlinear_maxit        = 10;
+    nonlinear_maxit        = 100;
         
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
@@ -259,7 +262,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     
     rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -276,9 +279,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

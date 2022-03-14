@@ -236,8 +236,16 @@ else
 end
 
 %% Henrik botch: enforce uniqueness of pressure via 0-average
-p_avg = sum(p)/numel(p);
-p = p-p_avg;
+BC = options.BC;
+non_p_bcs = sum(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up, ...
+                    BC.v.left,BC.v.right,BC.v.low,BC.v.up},'per')) ...
+          + sum(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up, ...
+                    BC.v.left,BC.v.right,BC.v.low,BC.v.up},'dir'));
+
+if non_p_bcs == 8
+    p_avg = sum(p)/numel(p);
+    p = p-p_avg;
+end
 %%
 
 Vnew = V;

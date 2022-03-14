@@ -67,15 +67,14 @@ G      = options.discretization.G;
 % Gtot   = kron(A_RK,G); % could also use 1 instead of c_RK and later scale the pressure
 Gtot2  = kron(Is,G); % could also use 1 instead of c_RK and later scale the pressure
 % divergence operator
-M      = options.discretization.M;
-Mtot   = kron(Is,M);
+M_h      = options.discretization.M;
+Mtot   = kron(Is,M_h);
 % finite volumes
 Omtot  = kron(ones(s_RK,1),Om);
 Om_invtot  = kron(ones(s_RK,1),Om_inv);
 % Laplace operator
-L = M*(Om_inv.*G);
+L = M_h*(Om_inv.*G);
 Ltot = kron(Is,L);
-
 
 % boundary condition for divergence operator
 if (options.BC.BC_unsteady == 1)
@@ -145,7 +144,7 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
 %     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdp = c_RK_ext_V*Gtot2;
-    dfmasdV = -kron(A_RK,M*Jn);
+    dfmasdV = -kron(A_RK,M_h*Jn);
     dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
@@ -268,7 +267,7 @@ if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn+dt,options);
     yM      = options.discretization.yM;
     V = getFOM_velocity(R,t,options);
-    f       = (1/dt)*(M*V + yM);
+    f       = (1/dt)*(M_h*V + yM);
 
     dp      = pressure_poisson(f,tn+dt,options);
 
