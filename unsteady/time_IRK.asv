@@ -235,9 +235,8 @@ else
 
 end
 
-%% Henrik botch: enforce uniqueness of pressure via 0-average
-p_avg = sum(p)/numel(p);
-p = p-p_avg;
+%% Henrik botch: enforce 
+
 %%
 
 Vnew = V;

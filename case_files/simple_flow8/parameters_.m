@@ -77,6 +77,67 @@ end
     y_c     = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% time and space discretization
+
+    % steady or unsteady solver
+    steady  = 0;         % steady(1) or unsteady(0)
+
+    % spatial accuracy: 2nd or 4th order
+    order4  = 0;
+
+    % only for unsteady problems:
+    t_start       = 0;         % start time
+%     t_end         = 4*pi*3;        % end time
+    t_end         = 4;        % end time
+
+%     dt            = t_end/200;      % time step (for explicit methods it can be
+    dt            = t_end/100;      % time step (for explicit methods it can be
+                               % determined during running with dynamic_dt)
+
+
+    CFL           = 1;              
+    timestep.set  = 0;         % time step determined in timestep.m, 
+                               % for explicit methods
+    timestep.n    = 1;         % determine dt every timestep.n iterations
+    
+    % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
+    %            explicit convection (Adams-Bashforth),
+    %            second order for theta=1/2
+    % method 5 : explicit one leg beta; 2nd order
+    % method 20 : generic explicit RK, can also be used for ROM
+    % method 21 : generic implicit RK, can also be used for ROM    
+%     method        = 20;
+%     RK = 'FE11';
+%     RK = 'RK44';
+%     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
+    method = 21;
+    RK = 'GL1';
+%     RK = 'BE11';
+%     RK = 'RIA1';
+
+    % for methods that are not self-starting, e.g. AB-CN or one-leg
+    % beta, we need a startup method.
+    % a good choice is for example explicit RK
+%     method_startup    = 20;
+%     method_startup_no = 2; % number of velocity fields necessary for start-up
+
+    % parameters for time integration methods:
+    % Adams Bashforth - Crank Nicolson (method 2):
+        % theta for diffusion:
+%             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
+        % coefficients for explicit convection
+        % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
+        % Forward Euler alfa1=1, alfa2=0
+%             alfa1   = 3/2;
+%             alfa2   = -1/2;
+    % one-leg beta (method 5):
+%             beta    = 0.5; % in fact, this should be Reynolds dependent    
+%     theta = 0.5;
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
@@ -85,8 +146,8 @@ end
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
-    t_sample  = 4*pi;  % part of snapshot matrix used for building SVD
-    dt_sample = 4*pi/200; % frequency of snapshots to be used for SVD
+    t_sample  = t_end;  % part of snapshot matrix used for building SVD
+    dt_sample = dt; % frequency of snapshots to be used for SVD
     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
@@ -141,67 +202,6 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_e_ana/matlab_data.mat';
     pressure_recovery     =  0; % compute pressure at each time step
     pressure_precompute   =  0; % precompute PPE operator at ROM level
     pressure_mean         =  0; % subtract mean pressure in constructing ROM
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% time and space discretization
-
-    % steady or unsteady solver
-    steady  = 0;         % steady(1) or unsteady(0)
-
-    % spatial accuracy: 2nd or 4th order
-    order4  = 0;
-
-    % only for unsteady problems:
-    dt            = 4*pi/200;      % time step (for explicit methods it can be
-%     dt            = 4*pi/100;      % time step (for explicit methods it can be
-                               % determined during running with dynamic_dt)
-    t_start       = 0;         % start time
-%     t_end         = 4*pi*3;        % end time
-    t_end         = 4*pi;        % end time
-
-    CFL           = 1;              
-    timestep.set  = 0;         % time step determined in timestep.m, 
-                               % for explicit methods
-    timestep.n    = 1;         % determine dt every timestep.n iterations
-    
-    % method 2 : IMEX AB-CN: implicit diffusion (Crank-Nicolson),
-    %            explicit convection (Adams-Bashforth),
-    %            second order for theta=1/2
-    % method 5 : explicit one leg beta; 2nd order
-    % method 20 : generic explicit RK, can also be used for ROM
-    % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK = 'FE11';
-%     RK = 'RK44';
-%     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-%     method = 21;
-%     RK = 'GL1';
-%     RK = 'BE11';
-%     RK = 'RIA1';
-
-    % for methods that are not self-starting, e.g. AB-CN or one-leg
-    % beta, we need a startup method.
-    % a good choice is for example explicit RK
-%     method_startup    = 20;
-%     method_startup_no = 2; % number of velocity fields necessary for start-up
-
-    % parameters for time integration methods:
-    % Adams Bashforth - Crank Nicolson (method 2):
-        % theta for diffusion:
-%             theta   = 0.5;  % theta=0.5 gives Crank-Nicolson
-        % coefficients for explicit convection
-        % Adams-Bashforth: alfa1=3/2, alfa2=-1/2 
-        % Forward Euler alfa1=1, alfa2=0
-%             alfa1   = 3/2;
-%             alfa2   = -1/2;
-    % one-leg beta (method 5):
-%             beta    = 0.5; % in fact, this should be Reynolds dependent    
-%     theta = 0.5;
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

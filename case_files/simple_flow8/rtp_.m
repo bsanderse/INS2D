@@ -3,5 +3,5 @@
 % nice_velocity_plots;
 
 %% 
-vis_velo(V,options)
-vis_p(p,options)
+% vis_p(p,options)
+% vis_velo(V,options)
