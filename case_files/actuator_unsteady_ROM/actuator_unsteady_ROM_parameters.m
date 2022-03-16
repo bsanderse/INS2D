@@ -1,8 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = [10 10 10 10];
-% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -18,7 +18,7 @@ M_list = [10 10];
 Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
-changing_snapshotdata = 1;
+changing_snapshotdata = 0;
 % if mod(j,2)==0 %j>4 %false %j>4
 if true %mod(j,2)==0 %j>4 %false %j>4
 % if false %j>4
@@ -118,10 +118,11 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_obc/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_obc/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
 
-    rom_bc = 2; % 0: homogeneous (no-slip, periodic); 
+    rom_bc = 2; % 0: homogeneous (no-slip, periodic);
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
