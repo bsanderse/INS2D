@@ -1,8 +1,8 @@
 % function [k_diff_,k_conv_,k_pres_,k_presBC_,k_diffBC_,k_force_] ...
 % function  [k_analysis,k_sum,p_h] = kinetic_energy_analysis(V,t,dt,options,k_analysis,initial)
-function  [k_analysis,k_sum] = kinetic_energy_analysis(V,p,t,dt,options,k_analysis,initial)
+function  [k_analysis,k_sum] = kinetic_energy_analysis(V,t,dt,options,k_analysis,initial)
 
-if nargin<7
+if nargin<6
     initial = 1;
 end
 

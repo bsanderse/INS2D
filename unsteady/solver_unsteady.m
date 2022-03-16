@@ -105,6 +105,15 @@ while(n<=nt)
 
     elseif (method==20)
         [V,p] = time_ERK(Vn,pn,tn,dt,options);
+        if options.verbosity.energy_verbosity == 1
+            k_diff(n) = k_analysis.k_diff;
+            k_conv(n) = k_analysis.k_conv;
+            k_pres(n) = k_analysis.k_pres;
+            k_presBC(n) = k_analysis.k_presBC;
+            k_diffBC(n) = k_analysis.k_diffBC;
+            k_force(n) = k_analysis.k_force;
+            k_obc(n) = k_analysis.k_obc;
+        end
         %% only for FE11
         [~,F_rhs]  = F(Vn,Vn,pn,tn,options);
         Om_inv = options.grid.Om_inv;

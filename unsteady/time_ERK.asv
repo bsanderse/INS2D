@@ -99,7 +99,7 @@ for i_RK=1:s_RK
     f       = (M*(Vn/dt+Vtemp) + yM/dt)/c_RK(i_RK);
     % note: we should have sum(f) = 0 for periodic and no-slip BC
     
-    % solve the Poisson equation for the pressure, but not for the first   
+    % solve the Poisson equation for the pressure, but not for the first
     % step if the boundary conditions are steady
     if (options.BC.BC_unsteady==1 || i_RK>1)
         % the time ti below is only for output writing
@@ -113,7 +113,6 @@ for i_RK=1:s_RK
     % update velocity current stage, which is now divergence free
     V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
     
-%     [k_analysis,k_sum,p_h] = kinetic_energy_analysis(Vj,tj,dt,options,k_analysis,(i_RK==1));
 end
 
 if options.verbosity.energy_verbosity == 1
@@ -127,12 +126,11 @@ if options.verbosity.energy_verbosity == 1
     k_delta = 2*dt*sum(b_RK'*(Vjj'*Fjj)); 
     
     % only for GL1 !!!
-    [k_analysis,k_sum,p_h] = kinetic_energy_analysis(Vj,tj,dt,options,k_analysis,(i_RK==1));
+    [k_analysis,k_sum,p_h] = kinetic_energy_analysis(Vj,tj,dt,options,k_analysis);
 %     k_delta - k_sum
 %     norm(p_h-pj)
 else
     k_delta = -666;
-    k_analysis = -666;
 end
 
 if (options.BC.BC_unsteady == 1)

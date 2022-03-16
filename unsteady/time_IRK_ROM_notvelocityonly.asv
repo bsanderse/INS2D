@@ -162,7 +162,7 @@ RHS_param.P_ext = P_ext;
 RHS_param.B_ext = B_ext;
 
 % norm(f-RHS(Qj,RHS_param))
-    [f,F_rhs] = RHS(Qj,RHS_param);
+    [f,F_rhs] = RHS(Q  j,RHS_param);
 
 
 if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
@@ -187,7 +187,7 @@ end
 while (max(abs(f))> options.solversettings.nonlinear_acc)
     
 %     if options.verbosity.debug_mode == 1
-        max(abs(f))
+%         max(abs(f))
 %     end
     
     if (options.solversettings.nonlinear_Newton == 1) 
@@ -258,7 +258,8 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
 
     error_nonlinear(i) = max(abs(f));
     if (i>nonlinear_maxit)
-        Q = fsolve(@(Q) RHS(Q,RHS_param),Qj);
+        Q1 = fsolve(@(Q) RHS(Q,RHS_param),Qj);
+        Q2 = fsolve(@(Q) RHS(Q,RHS_param),Qtotn);
          error(['Newton not converged in ' num2str(nonlinear_maxit) ' iterations']);
     end
     
@@ -266,6 +267,7 @@ end
 
 % store number of iterations
 iterations = i;
+iterations
 
 % solution at new time step with b-coefficients of RK method
 % R = Rn + dt*Om_inv.*(b_RK_ext*F_rhs);

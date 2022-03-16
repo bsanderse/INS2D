@@ -91,9 +91,9 @@ end
     t_start       = 0;         % start time
 %     t_end         = 4*pi*3;        % end time
     t_end         = 12;        % end time
-    dt            = t_end/200;      % time step (for explicit methods it can be
+%     dt            = t_end/200;      % time step (for explicit methods it can be
 %     dt            = t_end/400;      % time step (for explicit methods it can be
-%     dt            = 4*pi/100;      % time step (for explicit methods it can be
+    dt            = t_end/100;      % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
 
 
@@ -142,8 +142,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
