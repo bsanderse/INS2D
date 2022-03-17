@@ -1,6 +1,6 @@
 % project = 'BFS';   % project name used in filenames
 
-run_multiple = 1;
+run_multiple = 0;
 M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [60 80 100];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
@@ -10,8 +10,8 @@ Mbc = 1;
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 0;
 % if mod(j,2)==0 
-if true 
-% if false
+% if true 
+if false
     suffix = " POD";
 else
     suffix = " Mbc = "+num2str(Mbc);
@@ -88,12 +88,12 @@ end
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
-%         method            = 20;
-%         RK                = 'RK44';
+        method            = 20;
+        RK                = 'RK44';
 %         RK                = 'FE11';
 
-        method = 21;
-        RK = 'GL1';
+%         method = 21;
+%         RK = 'GL1';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -140,13 +140,16 @@ end
     precompute_obc       = 0;
 
 % snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
-snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
+% snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
+
+snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % system state pushed
+
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
