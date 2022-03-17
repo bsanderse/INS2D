@@ -119,8 +119,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -197,9 +197,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 5;
-    rtp.movie        = 0;
+    rtp.movie        = 1;
     rtp.moviename    = 'BFS';       % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -217,9 +217,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
+    save_file        = 1;          % save all matlab data after program is completed
     save_unsteady    = 1;
     
     cw_output        = 1;          % command window output; 
@@ -233,4 +233,4 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % verbosity
-energy_verbosity = 1; % compute unrequired stuff
+energy_verbosity = 0; % compute unrequired stuff

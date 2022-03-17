@@ -1,5 +1,5 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
 M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
@@ -77,8 +77,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -88,7 +88,7 @@ end
     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-    precompute_obc       = 1;
+    precompute_obc        = 1;
 %     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
@@ -120,19 +120,23 @@ end
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_obc/matlab_data.mat';
     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata_obc/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
+%     bc_recon = 4; 
     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
+                  % 3: POD-based Vbc approximation
+                  % 4: POD ROM with F_ROM_notvelocityonly
                   
-    time_discB4pres_elim = 1; 
+    time_discB4pres_elim = 0; 
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's
@@ -164,6 +168,7 @@ end
                                % determined during running with dynamic_dt)
     t_start       = 0;         % start time
     t_end         = 4*pi*4;        % end time
+%     t_end         = 4*pi;        % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -258,9 +263,9 @@ end
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -277,9 +282,9 @@ end
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

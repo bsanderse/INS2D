@@ -61,15 +61,18 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
     % note that input p is not used in F_ROM
-%     if (options.rom.bc_recon == 2)
-%         [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
-%     else
+    if (options.rom.bc_recon == 4)
+        [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
+    else
+        [~,F_rhs]  = F_ROM(R,p,ti,options);
+    end
 
 %% botch
 % V = getFOM_velocity(R,t,options);
 % p = pressure_additional_solve(V,p,t,options);
 %%
 if options.rom.bc_recon == 2
+% if false 
      V = getFOM_velocity(R,t,options);
     [~,F_rhs_FOM] = F(V,V,p,t,options,0,1);
     
@@ -93,6 +96,7 @@ end
     % this gives R_(i+1), and for i=s gives R_(n+1)
     Rtemp      = kR*A_RK(i_RK,:)';
     if options.rom.bc_recon == 2
+%     if false
         kR_FOM(:,i_RK) = F_rhs_FOM;
         Rtemp_FOM = kR_FOM*A_RK(i_RK,:)';
     end

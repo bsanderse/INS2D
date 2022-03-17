@@ -61,15 +61,18 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
     % note that input p is not used in F_ROM
-%     if (options.rom.bc_recon == 2)
-%         [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
-%     else
+    if (options.rom.bc_recon == 2)
+        [~,F_rhs]  = F_ROM_notvelocityonly(R,p,ti,options);
+    else
+        [~,F_rhs]  = F_ROM(R,p,ti,options);
+    end
 
 %% botch
 % V = getFOM_velocity(R,t,options);
 % p = pressure_additional_solve(V,p,t,options);
 %%
 if options.rom.bc_recon == 2
+if false ptions.rom.bc_recon == 2
      V = getFOM_velocity(R,t,options);
     [~,F_rhs_FOM] = F(V,V,p,t,options,0,1);
     
@@ -104,6 +107,7 @@ end
         if (options.BC.BC_unsteady == 1) || i_RK==1
             options = set_bc_vectors(ti,options);
             yM      = options.discretization.yM;
+            ydM     = options.discretization.ydM;
         end
         % divergence of intermediate velocity field is directly calculated with M
         % old formulation:
@@ -118,10 +122,19 @@ end
     
 %         f       = (M_h*B*(Rn/dt+Rtemp) + yM/dt)/c_RK(i_RK);
 %         f       = (M_h*B*Rtemp + (yM-yMn)/dt)/c_RK(i_RK);
+        if options.rom.time_discB4pres_elim == 1
+            yM_diff = (yM-yMn)/dt;
+        else
+            yM_diff = ydM;
+        end
+        f       = (M_h*Rtemp_FOM + yM_diff)/c_RK(i_RK);
+
 %         f       = (M_h*B*R + (yM-yMn)/dt)/c_RK(i_RK); %botch
-        f       = (M_h*V + (yM-yMn)/dt)/c_RK(i_RK); %botch
+%         f       = (M_h*V + (yM-yMn)/dt)/c_RK(i_RK); %botch
         % note: we should have sum(f) = 0 for periodic and no-slip BC
-        norm
+        if options.verbosity.debug_mode==1
+            norm(yM-yMn)
+        end
         
         % solve the Poisson equation for the pressure, but not for the first
         % step if the boundary conditions are steady
