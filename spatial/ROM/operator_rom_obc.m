@@ -68,7 +68,7 @@ for i=1:M
         obc_hom_inhom2(:,k) = P*obc;        
     end
 end
-    elseif options.rom.bc_recon == 2
+    elseif options.rom.bc_recon == 2 || options.rom.bc_recon == 0
         obc_inhom = -666;
         obc_hom_inhom2 = -666;
     else

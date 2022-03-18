@@ -1,6 +1,6 @@
 % project = 'BFS';   % project name used in filenames
 
-run_multiple = 0;
+run_multiple = 1;
 M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [60 80 100];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
@@ -11,11 +11,12 @@ mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 0;
 % if mod(j,2)==0 
 % if true 
-if false
-    suffix = " POD";
-else
-    suffix = " Mbc = "+num2str(Mbc);
-end
+% if false
+%     suffix = " POD";
+% else
+%     suffix = " Mbc = "+num2str(Mbc);
+% end
+suffix = "Sanderse";
 % dispName = "ROM M ="+M+suffix;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,37 +120,40 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
-%     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-%     precompute_obc        = 1;
+    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+    precompute_obc        = 1;
 %     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_obc        = mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_convection = 0;
-    precompute_diffusion  = 0;
-    precompute_force      = 0;
-    precompute_obc       = 0;
+%     precompute_convection = 0;
+%     precompute_diffusion  = 0;
+%     precompute_force      = 0;
+%     precompute_obc       = 0;
 
 % snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
 % snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
 
-snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % system state pushed
+% snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % system state pushed
+snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata_ERK/matlab_data.mat'; % system state pushed
 
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
+%     bc_recon = 4;
+    bc_recon = 0; % sanderse
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
@@ -200,9 +204,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % syst
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 5;
-    rtp.movie        = 1;
+    rtp.movie        = 0;
     rtp.moviename    = 'BFS';       % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -220,9 +224,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % syst
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
+    save_file        = 0;          % save all matlab data after program is completed
     save_unsteady    = 1;
     
     cw_output        = 1;          % command window output; 

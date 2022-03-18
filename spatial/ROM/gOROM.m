@@ -14,7 +14,7 @@ if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
         
         gO_ROM = gO_ROM  ...
             + options.rom.gO_inhom*R_inhom;
-    elseif options.rom.bc_recon == 2
+    elseif options.rom.bc_recon == 2 || options.rom.bc_recon == 0
         % nothing to do
     else
         error('Sorry, obc offline decomposition not implemented for rom_bc == 2, but bc_recon =/=3')
