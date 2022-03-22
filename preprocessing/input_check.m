@@ -128,6 +128,13 @@ else
         else
             p = p_start(:); 
         end
+        
+        if (options.BC.BC_unsteady==1 && options.rom.rom_bc < 2)
+            error('unsteady BC typically requires rom_bc=2');
+        end
+        if (options.rom.rom_bc== 2 && options.BC.BC_unsteady==0)
+            warning('unsteady BC set for ROM, but BC are steady');
+        end
     end
     
     %%

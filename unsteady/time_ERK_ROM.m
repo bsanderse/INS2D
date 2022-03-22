@@ -64,9 +64,11 @@ for i_RK=1:s_RK
     ti         = tn + c_RK(i_RK)*dt;
     
     if (options.rom.div_free == 0)
-
-        f  = (options.rom.Mdiv*(Rn/dt + Rtemp))/c_RK(i_RK);
-        dq = pressure_poisson_ROM(f,t,options);
+        % ROM not divergence free, e.g. in case of rom_bc = 2
+        % NOTE: would be nicer to do a call to a subroutine that returns
+        % options.rom.yMt at the required time instance
+        f  = (options.rom.Mdiv*(Rn/dt + Rtemp) + options.rom.yMt(:,n)/dt)/c_RK(i_RK);
+        dq = pressure_poisson_ROM(f,ti,options);
 
 %         if (options.rom.precompute_pressure == 1)
             % approach 1: (with precomputed matrices)

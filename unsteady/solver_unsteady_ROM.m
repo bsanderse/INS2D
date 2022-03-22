@@ -37,7 +37,7 @@ switch options.rom.rom_type
             div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
             % max over all snapshots:
             maxdiv_snapshots = max(div_snapshots);
-            if (maxdiv_snapshots > 1e-14)
+            if (maxdiv_snapshots > 1e-14 && options.rom.rom_bc<2)
                 warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
             end
             
@@ -60,9 +60,22 @@ switch options.rom.rom_type
                     Vbc     = - Om_inv.*(options.discretization.G*dp);
                 end
                 V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-            else
+                options.rom.yM = zeros(Np,1);
+            elseif (options.rom.rom_bc == 0)
+                % for rom_bc=0, we have homogeneous BC
                 Vbc = zeros(Nu+Nv,1);
+                options.rom.yM = zeros(Np,1);
+            elseif (options.rom.rom_bc == 2)
+                % for rom_bc=2, we have time-dep BC and an alternative
+                % method is used
+                Vbc = zeros(Nu+Nv,1);
+                % store yM = -M*V
+                options.rom.yM = -options.discretization.M*V_total_snapshots;
+                if (options.rom.Mp > rank(options.rom.yM))
+                    warning('Number of pressure modes larger than rank of divergence of snapshot matrix');
+                end
             end
+            
             
             % sample dt can be used to get only a subset of the snapshots
             if (rem(dt_sample,dt_snapshots) == 0)
@@ -210,16 +223,22 @@ switch options.rom.rom_type
         div_basis = max(abs(options.discretization.M*B),[],1); %
         % max over all columns:
         maxdiv_basis = max(div_basis);
-        if (maxdiv_basis > 1e-14)
-            warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
-            warning('Adding basis for pressure\n');
+        if (options.rom.rom_bc < 2)
+            if (maxdiv_basis > 1e-14)
+                warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
+                warning('Adding basis for pressure\n');
+                options.rom.div_free = 0;
+            else     
+                options.rom.div_free = 1;
+            end       
+        elseif (options.rom.rom_bc == 2)
+            % unsteady boundary conditions (of normal velocity component):        
+            
             options.rom.div_free = 0;
-        else     
-            options.rom.div_free = 1;
         end
         
         %% pressure recovery (postprocessing)
-        if (options.rom.pressure_recovery == 1)
+        if (options.rom.pressure_recovery == 1 || options.rom.div_free == 0)
             disp('computing SVD of pressure snapshots...');
             svd_start2 = toc;
             % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
@@ -353,17 +372,18 @@ switch options.rom.rom_type
 %         
 %         [B,R] = mwgson(B,options.grid.Om);
         
-        div_basis = max(abs(options.discretization.M*B),[],1); %
-        % max over all columns:
-        maxdiv_basis = max(div_basis);
-        if (maxdiv_basis > 1e-14)
-            disp(['Fourier basis is not divergence free: ' num2str(maxdiv_basis)]);
-            disp('Adding basis for pressure');
-            options.rom.div_free = 0;
-        else     
-            options.rom.div_free = 1;
-        end
+%         div_basis = max(abs(options.discretization.M*B),[],1); %
+%         % max over all columns:
+%         maxdiv_basis = max(div_basis);
+%         if (maxdiv_basis > 1e-14)
+%             disp(['Fourier basis is not divergence free: ' num2str(maxdiv_basis)]);
+%             disp('Adding basis for pressure');
+%             options.rom.div_free = 0;
+%         else     
+%             options.rom.div_free = 1;
+%         end
         
+        % we do not expect orthogonality but we do expect a diagonal structure
         disp('orthogonality of reduced basis B wrt omega:');
         Om     = options.grid.Om;
         Om_mat = spdiags(Om,0,Nu+Nv,Nu+Nv);

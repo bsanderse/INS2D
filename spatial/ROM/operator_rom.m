@@ -113,6 +113,8 @@ elseif (options.rom.div_free == 0)
     A_ROM = options.rom.Mdiv*options.rom.G;
     options.rom.A_decomp = decomposition(A_ROM);
     
+    options.rom.yMt = options.rom.Bp'*options.rom.yM;
+    
     
 end
     
