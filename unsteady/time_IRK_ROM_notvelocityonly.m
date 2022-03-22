@@ -161,8 +161,10 @@ RHS_param.b = (yMtot-yMn_tot)/dt;
 RHS_param.P_ext = P_ext;
 RHS_param.B_ext = B_ext;
 
+RHS_param.Om_invtot = Om_invtot;
+
 % norm(f-RHS(Qj,RHS_param))
-    [f,F_rhs] = RHS(Qj,RHS_param);
+    [f,F_rhs] = RHS(Q  j,RHS_param);
 
 
 if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
@@ -172,7 +174,7 @@ if (options.solversettings.nonlinear_Newton == 1) % approximate Newton
 %     dfmom = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdV = (Om_sNV/dt - kron(A_RK,Jn));
     dfmomdp = c_RK_ext_V*Gtot2;
-    dfmasdV = -kron(A_RK,M_h*Jn);
+    dfmasdV = -kron(A_RK,M_h*(Om_inv.*Jn));
     dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
@@ -210,7 +212,7 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
 
     dfmomdV = Om_sNV/dt - A_RK_ext*J;
     dfmomdp = c_RK_ext_V*Gtot2;
-    dfmasdV = -A_RK_ext_p*Mtot*J;
+    dfmasdV = -A_RK_ext_p*Mtot*(Om_invtot.*J);
     dfmasdp = c_RK_ext_p*Ltot;
     %
 %     Z = [dfmom Gtot; ...
@@ -259,6 +261,7 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
     error_nonlinear(i) = max(abs(f));
     if (i>nonlinear_maxit)
         Q1 = fsolve(@(Q) RHS(Q,RHS_param),Qj);
+        Q2 = fsolve(@(Q) RHS(Q,RHS_param),Qtotn);
          error(['Newton not converged in ' num2str(nonlinear_maxit) ' iterations']);
     end
     
@@ -362,6 +365,8 @@ function [RHS_,F_rhs_] = RHS(Qj,RHS_param)
     P_ext_ = RHS_param.P_ext;
     B_ext_ = RHS_param.B_ext;
 
+    Om_invtot_ = RHS_param.Om_invtot;
+
     Rj_  = Qj(indxR_);
     pj_  = Qj(indxp_);
 
@@ -372,7 +377,7 @@ function [RHS_,F_rhs_] = RHS(Qj,RHS_param)
     % Hence, use (7.1) (projected onto POD basis) and (7.2) in Sanderse PhD instead
     fmom_   = - (Omtot_.*Vj_ - Omtot_.*Vtotn_)/dt_ ...
             + A_RK_ext_*F_rhs_ - c_RK_ext_V_*Gtot2_*pj_;
-    fmass_ = - c_RK_ext_p_*Ltot_*pj_ + A_RK_ext_p_*Mtot_*F_rhs_ - b_;
+    fmass_ = - c_RK_ext_p_*Ltot_*pj_ + A_RK_ext_p_*Mtot_*(Om_invtot_.*F_rhs_) - b_;
     % f      = [fmom;fmass];
     f_      = [P_ext_*fmom_;fmass_];
     RHS_ = f_;
