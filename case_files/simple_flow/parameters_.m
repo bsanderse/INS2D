@@ -192,7 +192,8 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
     rom_bc = 1; % 0: homogeneous (no-slip, periodic);
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 5;
+%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
@@ -203,7 +204,7 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
-    pressure_recovery     =  0; % compute pressure at each time step
+    pressure_recovery     =  1; % compute pressure at each time step
     pressure_precompute   =  0; % precompute PPE operator at ROM level
     pressure_mean         =  0; % subtract mean pressure in constructing ROM
     
@@ -265,9 +266,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'simple_flow'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -284,9 +285,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

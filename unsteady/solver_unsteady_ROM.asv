@@ -307,14 +307,16 @@ if (options.rom.pressure_recovery == 1)
             Mp = M;
         end
         M_h = options.discretization.M;
+        if sum(abs(svd(M_h*B),'econ')) < Mp % maybe a bit expensive
+            warning('Sorry, pressure ROM basis is too big, is made smaller')
+            Mp = M;
+        end
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
-        rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
-        while rank<Mp
+        while sum(abs(svd(Bp'*M_h*B))>10^-10)<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
-            Mp = rank;
+            Mp = Mp-1;
             Bp = Wp(:,1:Mp);
-            rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
         end
     else
         Bp = Wp(:,1:Mp);
