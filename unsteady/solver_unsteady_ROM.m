@@ -2,7 +2,7 @@
 
 
 %% load snapshot data
-if (j==1)
+if (j==1) || changing_snapshotdata
     disp('loading data...');
     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options', ...
         'k_diff', 'k_conv', 'k_pres', 'k_force', 'k_diffBC', 'k_presBC','k_obc');
@@ -47,10 +47,11 @@ if (j==1)
     Om     = options.grid.Om;
     Om_inv = options.grid.Om_inv;
     
-    if (options.rom.bc_recon == 2)
-        Vbc = 0*Om;
+    if (options.rom.bc_recon == 2) || (options.rom.bc_recon == 4) ...
+            || (options.rom.bc_recon == 5)
+        Vbc = zeros(Nu+Nv,1);
         snapshots.Vbc = Vbc;
-    elseif (options.rom.bc_recon ~= 5)
+    else %if (options.rom.bc_recon ~= 5)
         if (options.rom.rom_bc == 1)
             % check if the Vbc field has been stored as part of the FOM
             if (isfield(snapshots,'Vbc'))
@@ -69,8 +70,8 @@ if (j==1)
             else
                 %error('Vbc data not provided');
                 disp('computing snapshot.Vbc')
-                dt = snapshots.dt;
-                t_end = snapshots.t_end;
+%                 dt = snapshots.dt;
+%                 t_end = snapshots.t_end;
                 t_js = 0:dt:t_end;
                 for jj=1:length(t_js)
                     t_j = t_js(jj);
@@ -87,9 +88,6 @@ if (j==1)
             Vbc = zeros(Nu+Nv,1);
             snapshots.Vbc = Vbc;
         end
-    else
-        Vbc = zeros(Nu+Nv,1);
-        snapshots.Vbc = Vbc;
     end
     
     % sample dt can be used to get only a subset of the snapshots
@@ -347,8 +345,8 @@ end
 %% compute boundary condition approximation and inhomogeneous ROM basis
 if (options.rom.bc_recon == 3) 
 %     if options.rom.rom_bc == 2
-        dt = snapshots.dt;
-        t_end = snapshots.t_end;
+%         dt = snapshots.dt;
+%         t_end = snapshots.t_end;
         if options.rom.rom_bc == 2
             t_js = t_start:dt:t_end;
         else

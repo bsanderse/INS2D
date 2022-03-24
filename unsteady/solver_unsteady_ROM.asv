@@ -2,7 +2,7 @@
 
 
 %% load snapshot data
-if (j==1)
+if (j==1) || changing_snapshotdata
     disp('loading data...');
     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options', ...
         'k_diff', 'k_conv', 'k_pres', 'k_force', 'k_diffBC', 'k_presBC','k_obc');
@@ -47,7 +47,8 @@ if (j==1)
     Om     = options.grid.Om;
     Om_inv = options.grid.Om_inv;
     
-    if (options.rom.bc_recon == 2)
+    if (options.rom.bc_recon == 2) || (options.rom.bc_recon == 4) ...
+            
         Vbc = 0*Om;
         snapshots.Vbc = Vbc;
     elseif (options.rom.bc_recon ~= 5)
@@ -69,8 +70,8 @@ if (j==1)
             else
                 %error('Vbc data not provided');
                 disp('computing snapshot.Vbc')
-                dt = snapshots.dt;
-                t_end = snapshots.t_end;
+%                 dt = snapshots.dt;
+%                 t_end = snapshots.t_end;
                 t_js = 0:dt:t_end;
                 for jj=1:length(t_js)
                     t_j = t_js(jj);
@@ -307,16 +308,14 @@ if (options.rom.pressure_recovery == 1)
             Mp = M;
         end
         M_h = options.discretization.M;
-        if sum(abs(svd(M_h*B),'econ')) < Mp % maybe a bit expensive
-            warning('Sorry, pressure ROM basis is too big, is made smaller')
-            Mp = M;
-        end
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
-        while sum(abs(svd(Bp'*M_h*B))>10^-10)<Mp
+        rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+        while rank<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
-            Mp = Mp-1;
+            Mp = rank;
             Bp = Wp(:,1:Mp);
+            rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
         end
     else
         Bp = Wp(:,1:Mp);
@@ -349,8 +348,8 @@ end
 %% compute boundary condition approximation and inhomogeneous ROM basis
 if (options.rom.bc_recon == 3) 
 %     if options.rom.rom_bc == 2
-        dt = snapshots.dt;
-        t_end = snapshots.t_end;
+%         dt = snapshots.dt;
+%         t_end = snapshots.t_end;
         if options.rom.rom_bc == 2
             t_js = t_start:dt:t_end;
         else
