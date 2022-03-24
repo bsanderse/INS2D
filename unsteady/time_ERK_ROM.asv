@@ -153,23 +153,22 @@ for i_RK=1:s_RK
         hatM = options.rom.hatM;
         yMn = options.discretization.yM;
         Bp = options.rom.Bp;
-%         norm(M_h*B*Rn+yMn)
-%         norm(hatM*Rn + Bp'*yMn)
+        norm(M_h*B*Rn+yMn)
+        norm(hatM*Rn + Bp'*yMn)
         options = set_bc_vectors(ti,options);
         yMi = options.discretization.yM;
+%         yMi = yMn;
+norm(yMn-yMi)
 
-% norm(yMn-yMi)
-
-        f = (hatM*(Rn/dt + Rtemp) + Bp'*yMi/dt)/c_RK(i_RK); % yM has opposite sign compared to theory
-%         f = (hatM*R/dt + Bp'*yMi/dt)/c_RK(i_RK);
-
+%         f = (hatM*(Rn/dt + Rtemp) + Bp'*yMi)/c_RK(i_RK); % yM has opposite sign compared to theory
+        f = (hatM*R/dt + Bp'*yMi)/c_RK(i_RK);
         hatG = - hatM;
         hatL = hatM*hatG;
         q = hatL\f;
 
         R = R - dt*c_RK(i_RK)*(hatG*q); % = R - hatG*inv(hatL)*(hatM R+hat yM)
-%         norm(hatM*R + Bp'*yMn) % = hatM R - hatM R - hat yM + hat yM = 0
-%         norm(hatM*R + Bp'*yMi)
+        norm(hatM*R + Bp'*yMn) % = hatM R - hatM R - hat yM + hat yM = 0
+        norm(hatM*R + Bp'*yMi)
     end
 
 end

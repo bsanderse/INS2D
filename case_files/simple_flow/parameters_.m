@@ -1,12 +1,12 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
-% M_list = 1;
+M_list = 1;
 % M_list = 20;
 
 
@@ -108,12 +108,12 @@ end
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-%     method        = 20;
+    method        = 20;
+    RK = 'RK44';
 %     RK = 'FE11';
-%     RK = 'RK44';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-    method = 21;
-    RK = 'GL1';
+%     method = 21;
+%     RK = 'GL1';
 %     RK = 'BE11';
 %     RK = 'RIA1';
 

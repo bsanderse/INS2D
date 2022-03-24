@@ -14,7 +14,12 @@ P = B'*spdiags(Diag,0,NV,NV);
 
 options.rom.P = P;
 
-
+%% divergence
+if options.rom.bc_recon == 5
+    Bp = options.rom.Bp;
+    hatM = Bp'*options.discretization.M*B;
+    options.rom.hatM = hatM;
+end
 
 %% diffusion
 % if options.rom.rom_bc == 2
