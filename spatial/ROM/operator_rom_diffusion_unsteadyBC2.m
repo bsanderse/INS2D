@@ -7,7 +7,8 @@ Diffv  = options.discretization.Diffv;
 
 Diff_   = P*blkdiag(Diffu, Diffv)*B;
 
-if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+% if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+if options.rom.bc_recon == 3
     phi_inhom = options.rom.phi_inhom;
     
     Diff_inhom_ = P*blkdiag(Diffu, Diffv)*phi_inhom;

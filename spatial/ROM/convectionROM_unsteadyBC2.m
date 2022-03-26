@@ -12,7 +12,8 @@ end
 
 Conv = options.rom.C_hom2*kron(R,R);
     
-if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+% if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+if options.rom.bc_recon == 3
     R_inhom = get_a_inhom(t,options);
     R_bc    = get_a_bc(t,options);
     

@@ -33,7 +33,8 @@ if options.rom.rom_bc == 2 || options.rom.rom_bc == 1
             ... %           + options.rom.obc_hom_inhom*kron(R,R_inhom)   ...
             ... %           + options.rom.obc_inhom_hom*kron(R_inhom,R);
             + options.rom.obc_hom_inhom2*kron(R,R_inhom);
-    elseif options.rom.bc_recon == 2 || options.rom.bc_recon == 0
+    elseif options.rom.bc_recon == 2 || options.rom.bc_recon == 0 || ...
+            options.rom.bc_recon == 4 || options.rom.bc_recon == 5
         % nothing to do
     else
         error('Sorry, precomputation not implemented for bc_recon =/= 3')

@@ -163,7 +163,7 @@ for i_RK=1:s_RK
         f = (hatM*(Rn/dt + Rtemp) + Bp'*yMi/dt)/c_RK(i_RK); % yM has opposite sign compared to theory
 %         f = (hatM*R/dt + Bp'*yMi/dt)/c_RK(i_RK);
 
-        hatG = - hatM;
+        hatG = - hatM';
         hatL = hatM*hatG;
         q = hatL\f;
 

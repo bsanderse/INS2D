@@ -23,7 +23,7 @@ end
 
 %% diffusion
 % if options.rom.rom_bc == 2
-    if options.rom.bc_recon == 0
+    if options.rom.bc_recon == 0 
             [yDiff,Diff] = operator_rom_diffusion(P,options);
     
             options.rom.Diff  = Diff;
@@ -49,7 +49,7 @@ end
 % end
 %% convection 
 % if options.rom.rom_bc == 2
-    if options.rom.bc_recon == 0
+    if options.rom.bc_recon == 0 
         [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
 
         options.rom.Conv_quad   = conv_quad;

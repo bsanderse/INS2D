@@ -2,11 +2,11 @@
 run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
-
+M_list = 10*ones(6,1);
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -126,17 +126,25 @@ end
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
+
+    time_discB4pres_elim = j>2;
+
+                bc_recons = [0 2 2 3 4 5];
+                bc_recon = bc_recons(j);
+                suffix = " bc recon = " + bc_recon;
+
 %     bc_recon = 4; 
-    bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
+                  % -> supposed to be Sanderse time-independent V inhom approach
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
                   % 3: POD-based Vbc approximation
                   % 4: POD ROM with F_ROM_notvelocityonly
-                  
-    time_discB4pres_elim = 0; 
+                  % 5: new standard ROM (= with projected mass equation)
+ 
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's

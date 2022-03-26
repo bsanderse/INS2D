@@ -9,6 +9,7 @@ run_multiple = 1;
 % M_list = 1;
 % M_list = 20;
 M_list = [1 1 1 1 1 1];
+% M_list = [1 1];
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -21,16 +22,16 @@ Mbc = 1;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1; % also for changing basis construction type
-if true %false %mod(j,2)==0 %j>4 %false %j>4
-% if false %j>4
-%     suffix = " mc";
-%     suffix = " CC";
-%     suffix = " without lifting function";
-    suffix = " POD";
-else
-%     suffix = " mc";
-    suffix = " Mbc = "+num2str(Mbc);
-end
+% if true %false %mod(j,2)==0 %j>4 %false %j>4
+% % if false %j>4
+% %     suffix = " mc";
+% %     suffix = " CC";
+% %     suffix = " without lifting function";
+%     suffix = " POD";
+% else
+% %     suffix = " mc";
+%     suffix = " Mbc = "+num2str(Mbc);
+% end
 % suffix = " Mbc = "+num2str(Mbc);
 % suffix = "POD";
 % dispName = "ROM M ="+M+suffix;
@@ -196,7 +197,9 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
     time_discB4pres_elim = j>2;
 
                 bc_recons = [0 2 2 3 4 5];
-                bc_recon = bc_recons(j);
+%                 bc_recons = [0 3];
+%                 bc_recon = bc_recons(j);
+%                 suffix = " bc recon = " + bc_recon;
 %     bc_recon = 5;
 %     bc_recon = 4;
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;

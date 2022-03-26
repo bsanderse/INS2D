@@ -34,7 +34,8 @@ for i=1:M
     end
 end
 
-if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+% if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+if options.rom.bc_recon == 3
     phi_bc = options.rom.phi_bc;
     M_bc = size(phi_bc,2);
     phi_inhom = options.rom.phi_inhom;

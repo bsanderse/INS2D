@@ -245,7 +245,7 @@ if (maxdiv_basis > 1e-14)
 end
 
 %% pressure recovery
-if (options.rom.pressure_recovery == 1)
+if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
     disp('computing SVD of pressure snapshots...');
     svd_start2 = toc;
     % note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
@@ -401,12 +401,14 @@ end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
-if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
-        options.rom.precompute_force == 1 || options.rom.pressure_recovery == 1)
-    disp('precomputing ROM operators...');
-    precompute_start = toc;
-    options = operator_rom(options);
-    precompute_end(j) = toc-precompute_start
+if options.rom.bc_recon ~= 4 || options.rom.bc_recon ~= 2
+    if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
+            options.rom.precompute_force == 1 || options.rom.pressure_recovery == 1)
+        disp('precomputing ROM operators...');
+        precompute_start = toc;
+        options = operator_rom(options);
+        precompute_end(j) = toc-precompute_start
+    end
 end
 
 %% initialize reduced order solution
@@ -416,6 +418,19 @@ end
 
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
+
+% for projected-divergence-free ROM, enforce projected divergence-freeness
+if options.rom.bc_recon == 5
+    B = options.rom.Bp;
+    hatM = options.rom.hatM;
+    hatG = -hatM';
+    hatL = hatM*hatG;
+    yM = options.discretization.yM;
+
+    bstar = hatL\(hatM*R-Bp'yM);
+    Rstar = R-hatG*bstar;
+    R = Rstar;
+end
 
 if (options.rom.process_iteration_FOM == 1)
     % map back to velocity space to get statistics of initial velocity field

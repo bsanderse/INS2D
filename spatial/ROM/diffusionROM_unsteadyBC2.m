@@ -9,7 +9,8 @@ switch visc
     case 'laminar'
         d2     = Diff*R;
         
-        if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+%         if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
+        if options.rom.bc_recon == 3
             R_inhom = get_a_inhom(t,options);
             R_bc    = get_a_bc(t,options);
             
