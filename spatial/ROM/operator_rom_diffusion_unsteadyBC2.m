@@ -8,11 +8,7 @@ Diffv  = options.discretization.Diffv;
 Diff_   = P*blkdiag(Diffu, Diffv)*B;
 
 % if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
-if options.rom.bc_recon == 3
-    phi_inhom = options.rom.phi_inhom;
-    
-    Diff_inhom_ = P*blkdiag(Diffu, Diffv)*phi_inhom;
-    
+if options.rom.bc_recon == 3 || options.rom.bc_recon == 5
     phi_bc = options.rom.phi_bc;
     M_bc = size(phi_bc,2);
     
@@ -25,8 +21,15 @@ if options.rom.bc_recon == 3
         yDiff_BC_(:,i) = P*[yDiffu1; yDiffv1];
     end
 else
-    Diff_inhom_ = -666;
     yDiff_BC_ = -666;
+end
+   
+if options.rom.bc_recon == 3
+    phi_inhom = options.rom.phi_inhom;
+    
+    Diff_inhom_ = P*blkdiag(Diffu, Diffv)*phi_inhom;
+else
+    Diff_inhom_ = -666;
 end
 
 Diff   = Diff_;

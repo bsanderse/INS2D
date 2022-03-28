@@ -4,7 +4,8 @@ run_multiple = 1;
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [60 80 100];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
-M_list = 10*ones(1,6);
+% M_list = 10*ones(1,6);
+M_list = 10;
 
 Mbc = 1;
 
@@ -128,18 +129,18 @@ changing_snapshotdata = 1;
     % 1:Nskip:Nsnapshots
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
-    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-    precompute_obc        = 1;
+%     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+%     precompute_obc        = 1;
 %     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
 %     precompute_obc        = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_convection = 0;
-%     precompute_diffusion  = 0;
-%     precompute_force      = 0;
-%     precompute_obc       = 0;
+    precompute_convection = 0;
+    precompute_diffusion  = 0;
+    precompute_force      = 0;
+    precompute_obc       = 0;
 
 % snapshot_data = 'results/BFS15_8.000e+02_600x40_FOM_data/matlab_data.mat';
 % snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';

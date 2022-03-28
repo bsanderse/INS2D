@@ -35,11 +35,9 @@ for i=1:M
 end
 
 % if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
-if options.rom.bc_recon == 3
+if options.rom.bc_recon == 3 || options.rom.bc_recon == 5
     phi_bc = options.rom.phi_bc;
     M_bc = size(phi_bc,2);
-    phi_inhom = options.rom.phi_inhom;
-    M_inhom = size(phi_inhom,2);
     
     for i=1:M_bc
         yBC = phi_bc(:,i);
@@ -59,6 +57,35 @@ if options.rom.bc_recon == 3
         y_I(:,i) = [yIu_ux;yIv_uy;yIu_vx;yIv_vy];
     end
 
+    C_hom_bc = zeros(M1,M*M_bc);
+    for i=1:M
+        for j=1:M_bc
+            Conv = K*((I*B(:,i)).*y_A(:,j)) + K*((y_I(:,j)).*(A*B(:,i)));
+            % convert third order tensor to a matrix via the following indexing:
+            k = sub2ind([M_bc,M],j,i); % first loop over j,  then over i
+            C_hom_bc(:,k) = P*Conv;
+        end
+    end
+
+    C_bc = zeros(M1,M_bc*M_bc);
+    for i=1:M_bc
+        for j=1:M_bc
+            Conv = K*((y_I(:,i)).*(y_A(:,j)));
+            % convert third order tensor to a matrix via the following indexing:
+            k = sub2ind([M_bc,M_bc],j,i); % first loop over j,  then over i
+            C_bc(:,k) = P*Conv;
+        end
+    end
+else
+    C_hom_bc = -666;
+    C_bc = -666;
+end
+
+if options.rom.bc_recon == 3
+
+    phi_inhom = options.rom.phi_inhom;
+    M_inhom = size(phi_inhom,2);
+
     % observe that this implementation is different to the theoretical
     % description in the Master thesis
     C_hom_inhom = zeros(M1,M*M_inhom);
@@ -70,17 +97,7 @@ if options.rom.bc_recon == 3
             C_hom_inhom(:,k) = P*Conv;
         end
     end
-    
-    C_hom_bc = zeros(M1,M*M_bc);
-    for i=1:M
-        for j=1:M_bc
-            Conv = K*((I*B(:,i)).*y_A(:,j)) + K*((y_I(:,j)).*(A*B(:,i)));
-            % convert third order tensor to a matrix via the following indexing:
-            k = sub2ind([M_bc,M],j,i); % first loop over j,  then over i
-            C_hom_bc(:,k) = P*Conv;
-        end
-    end
-    
+
     C_inhom = zeros(M1,M_inhom*M_inhom);
     for i=1:M_inhom
         for j=1:M_inhom
@@ -90,7 +107,7 @@ if options.rom.bc_recon == 3
             C_inhom(:,k) = P*Conv;
         end
     end
-    
+
     C_inhom_bc = zeros(M1,M_inhom*M_bc);
     for i=1:M_inhom
         for j=1:M_bc
@@ -100,21 +117,10 @@ if options.rom.bc_recon == 3
             C_inhom_bc(:,k) = P*Conv;
         end
     end
-    
-    C_bc = zeros(M1,M_bc*M_bc);
-    for i=1:M_bc
-        for j=1:M_bc
-            Conv = K*((y_I(:,i)).*(y_A(:,j)));
-            % convert third order tensor to a matrix via the following indexing:
-            k = sub2ind([M_bc,M_bc],j,i); % first loop over j,  then over i
-            C_bc(:,k) = P*Conv;
-        end
-    end
 
 else
     C_hom_inhom = -666;
-    C_hom_bc = -666;
     C_inhom = -666;
     C_inhom_bc = -666;
-    C_bc = -666;    
 end
+

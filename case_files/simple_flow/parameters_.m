@@ -1,6 +1,6 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 1;
-% M_list = [10 10];
+M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [1 2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
@@ -8,7 +8,7 @@ run_multiple = 1;
 % M_list = [40 40];
 % M_list = 1;
 % M_list = 20;
-M_list = [1 1 1 1 1 1];
+% M_list = [1 1 1 1 1 1];
 % M_list = [1 1];
 
 % M_list = [2 5 10 20 2 5 10 20];
@@ -151,13 +151,14 @@ changing_snapshotdata = 1; % also for changing basis construction type
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
 %     dt_sample = t_end/200; % frequency of snapshots to be used for SVD
-    precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
-    precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
-    precompute_obc       = 1;
-%     precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
-%     precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_convection = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_diffusion  = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0;
+%     precompute_force      = 1;%mod(j,2);%1-(j>4);% mod(j,2);%0; 
+%     precompute_obc       = 1;
+    precompute_convection = mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_diffusion  = mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_force      = mod(j,2);%1-(j>4);% mod(j,2);%0;
+    precompute_obc       = mod(j,2);
 %     precompute_convection = 0;
 %     precompute_diffusion  = 0;
 %     precompute_force      = 0;
@@ -194,13 +195,13 @@ snapshot_data = 'results/simple_flow_1.000e+02_20x8_-obc/matlab_data.mat';
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
 
-    time_discB4pres_elim = j>2;
+%     time_discB4pres_elim = j>2;
 
-                bc_recons = [0 2 2 3 4 5];
+%                 bc_recons = [0 2 2 3 4 5];
 %                 bc_recons = [0 3];
 %                 bc_recon = bc_recons(j);
 %                 suffix = " bc recon = " + bc_recon;
-%     bc_recon = 5;
+    bc_recon = 5;
 %     bc_recon = 4;
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;

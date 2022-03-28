@@ -343,7 +343,7 @@ if (options.visualization.show_sigmas == 1)
 end
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
-if (options.rom.bc_recon == 3) 
+if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5) 
 %     if options.rom.rom_bc == 2
 %         dt = snapshots.dt;
 %         t_end = snapshots.t_end;
@@ -377,26 +377,32 @@ if (options.rom.bc_recon == 3)
         end
 
         phi_bc = U_bc(:,1:Mbc);
-        for jj = 1:Mbc
-            yBC = phi_bc(:,jj);
-            Y_M(:,jj) = get_yM(options,yBC);
-        end
-        L = options.discretization.A;
-        Gx   = options.discretization.Gx;
-        Gy   = options.discretization.Gy;
-        G = [Gx;Gy];
-        Om = options.grid.Om;
-        Om_inv = options.grid.Om_inv;
-        %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
-        tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
-        [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
-        M_inhom = rank(tilde_phi_inhom)
-        Q_1_inhom = -Q_inhom(:,1:M_inhom);
-        R_inhom = -R_inhom(1:M_inhom,:);
-        phi_inhom = sqrt(Om_inv).*Q_1_inhom;
         options.rom.phi_bc = phi_bc;
-        options.rom.phi_inhom = phi_inhom;
-        options.rom.R_inhom = R_inhom;
+        if (options.rom.bc_recon == 3)
+            for jj = 1:Mbc
+                yBC = phi_bc(:,jj);
+                Y_M(:,jj) = get_yM(options,yBC);
+            end
+            L = options.discretization.A;
+            Gx   = options.discretization.Gx;
+            Gy   = options.discretization.Gy;
+            G = [Gx;Gy];
+            Om = options.grid.Om;
+            Om_inv = options.grid.Om_inv;
+            %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+            tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
+            [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
+            M_inhom = rank(tilde_phi_inhom)
+            Q_1_inhom = -Q_inhom(:,1:M_inhom);
+            R_inhom = -R_inhom(1:M_inhom,:);
+            phi_inhom = sqrt(Om_inv).*Q_1_inhom;
+
+            options.rom.phi_inhom = phi_inhom;
+            options.rom.R_inhom = R_inhom;
+        else
+            options.rom.phi_inhom = 0;
+            options.rom.R_inhom = R_inhom;
+        end
 end
 
 %% precompute ROM operators by calling operator_rom
@@ -421,6 +427,13 @@ R = getROM_velocity(V,t,options);
 
 % for projected-divergence-free ROM, enforce projected divergence-freeness
 if options.rom.bc_recon == 5
+    %% construct ROM divergence operator
+    if options.rom.bc_recon == 5
+        Bp = options.rom.Bp;
+        hatM = Bp'*options.discretization.M*B;
+        options.rom.hatM = hatM;
+    end
+
     Bp = options.rom.Bp;
     hatM = options.rom.hatM;
     hatG = -hatM';

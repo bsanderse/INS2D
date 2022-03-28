@@ -10,14 +10,20 @@ switch visc
         d2     = Diff*R;
         
 %         if options.rom.rom_bc == 2 && options.rom.bc_recon == 3
-        if options.rom.bc_recon == 3
-            R_inhom = get_a_inhom(t,options);
+        if options.rom.bc_recon == 3 || options.rom.bc_recon == 5
             R_bc    = get_a_bc(t,options);
-            
-            DiffBC  = options.rom.DiffBC2;
+
             yDiff = options.rom.yDiff2;
             
-            d2 = d2 + DiffBC*R_inhom + yDiff*R_bc;           
+            d2 = d2 + yDiff*R_bc;           
+        end
+
+        if options.rom.bc_recon == 3 
+            R_inhom = get_a_inhom(t,options);
+            
+            DiffBC  = options.rom.DiffBC2;
+            
+            d2 = d2 + DiffBC*R_inhom;           
         end
         
         if (getJacobian == 1)
