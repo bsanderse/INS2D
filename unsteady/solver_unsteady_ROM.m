@@ -317,7 +317,7 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
     else
         Bp = Wp(:,1:Mp);
     end 
-
+    Mp
     options.rom.Bp = Bp;
     
     svd_end(j) = svd_end(j) + toc - svd_start2
@@ -421,13 +421,13 @@ R = getROM_velocity(V,t,options);
 
 % for projected-divergence-free ROM, enforce projected divergence-freeness
 if options.rom.bc_recon == 5
-    B = options.rom.Bp;
+    Bp = options.rom.Bp;
     hatM = options.rom.hatM;
     hatG = -hatM';
     hatL = hatM*hatG;
-    yM = options.discretization.yM;
+    yM = -options.discretization.yM;
 
-    bstar = hatL\(hatM*R-Bp'yM);
+    bstar = hatL\(hatM*R-Bp'*yM);
     Rstar = R-hatG*bstar;
     R = Rstar;
 end

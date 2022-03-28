@@ -2,11 +2,11 @@
 run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
-% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
-M_list = 10*ones(6,1);
+% M_list = 10*ones(6,1);
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -18,18 +18,19 @@ M_list = 10*ones(6,1);
 Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
-changing_snapshotdata = 0;
+changing_snapshotdata = 1;
 % if mod(j,2)==0 %j>4 %false %j>4
-if true %mod(j,2)==0 %j>4 %false %j>4
-% if false %j>4
-%     suffix = " mc";
-%     suffix = " CC";
-%     suffix = " without lifting function";
-    suffix = " POD";
-else
-%     suffix = " mc";
-    suffix = " Mbc = "+num2str(Mbc);
-end
+% % if true %mod(j,2)==0 %j>4 %false %j>4
+% % % if false %j>4
+% % %     suffix = " mc";
+% % %     suffix = " CC";
+% % %     suffix = " without lifting function";
+% %     suffix = " POD";
+% % else
+% % %     suffix = " mc";
+% %     suffix = " Mbc = "+num2str(Mbc);
+% % end
+% suffix = " proj div ROM"
 % suffix = " Mbc = "+num2str(Mbc);
 % suffix = "POD";
 % dispName = "ROM M ="+M+suffix;
@@ -127,12 +128,12 @@ end
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
 
-    time_discB4pres_elim = j>2;
+%     time_discB4pres_elim = j>2;
+% 
+%                 bc_recons = [0 2 2 3 4 5];
+%                 bc_recon = bc_recons(j);
 
-                bc_recons = [0 2 2 3 4 5];
-                bc_recon = bc_recons(j);
-                suffix = " bc recon = " + bc_recon;
-
+    bc_recon = 5; Mp = M;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
@@ -144,6 +145,8 @@ end
                   % 3: POD-based Vbc approximation
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
+
+     suffix = " bc recon = " + bc_recon;
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS

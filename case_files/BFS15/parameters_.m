@@ -167,6 +167,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata_ERK/matlab_data.mat'; % 
                   % 0: unsteady is always computed by solving a poisson eq
                   % 1: Vbc is linearly combined of solutions to Mbc predefined righ-hand sides
                   % 2: no lifting function is used
+
+                                  suffix = " bc recon = " + bc_recon;
+
                 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
