@@ -307,12 +307,16 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
         M_h = options.discretization.M;
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
-        rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+%         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+        sing_vals = svd(Bp'*M_h*B);
+        rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
         while rank<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
             Mp = rank;
             Bp = Wp(:,1:Mp);
-            rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+%             rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+            sing_vals = svd(Bp'*M_h*B);
+            rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
         end
     else
         Bp = Wp(:,1:Mp);
@@ -401,7 +405,7 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
             options.rom.R_inhom = R_inhom;
         else
             options.rom.phi_inhom = 0;
-            options.rom.R_inhom = R_inhom;
+            options.rom.R_inhom = 0;
         end
 end
 
@@ -439,6 +443,8 @@ if options.rom.bc_recon == 5
     hatG = -hatM';
     hatL = hatM*hatG;
     yM = -options.discretization.yM;
+    phi_bc = options.rom.phi_bc;
+    
 
     bstar = hatL\(hatM*R-Bp'*yM);
     Rstar = R-hatG*bstar;

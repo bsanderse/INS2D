@@ -307,12 +307,16 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
         M_h = options.discretization.M;
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
-        rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+%         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+        sing_vals = svd(Bp'*M_h*B);
+        rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
         while rank<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
             Mp = rank;
             Bp = Wp(:,1:Mp);
-            rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+%             rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+            sing_vals = svd(Bp'*M_h*B);
+            rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
         end
     else
         Bp = Wp(:,1:Mp);
@@ -428,17 +432,19 @@ R = getROM_velocity(V,t,options);
 % for projected-divergence-free ROM, enforce projected divergence-freeness
 if options.rom.bc_recon == 5
     %% construct ROM divergence operator
-    if options.rom.bc_recon == 5
+%     if options.rom.bc_recon == 5
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
         options.rom.hatM = hatM;
-    end
+%     end
 
     Bp = options.rom.Bp;
     hatM = options.rom.hatM;
     hatG = -hatM';
     hatL = hatM*hatG;
     yM = -options.discretization.yM;
+%     phi_bc = options.rom.phi_bc;
+%     yM = phi_bc*phi_bc'*yM;
 
     bstar = hatL\(hatM*R-Bp'*yM);
     Rstar = R-hatG*bstar;

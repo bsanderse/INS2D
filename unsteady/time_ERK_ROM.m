@@ -89,6 +89,7 @@ for i_RK=1:s_RK
             options = set_bc_vectors(ti,options);
             yM      = options.discretization.yM;
             ydM     = options.discretization.ydM;
+            phi_bc  = options.rom.phi_bc;
         end
         % divergence of intermediate velocity field is directly calculated with M
         % old formulation:
