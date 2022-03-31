@@ -20,14 +20,14 @@ xlabel('t')
 ylabel('mass equation violation')
 legend('show','NumColumns',2,'Orientation','horizontal')
 
-figure(113)
-% plot(t_vec,dot(mass_viola_L2,error_p),color,'displayname',"pressure term
-% error ROM M="+M+suffix); %wrong
-% ROM_press_terms = dot(M_h*V_total,p_total'); % wrong: should take FOM mass eq RHS
-ROM_press_terms = dt*dot(M_h*snapshots_V_total,p_total'); % wrong: should take FOM mass eq RHS
-FOM_press_terms = dt*dot(M_h*snapshots_V_total,snapshots_p_total);
-
-diff_pressure_terms = abs(ROM_press_terms-FOM_press_terms);
-plot(t_vec,diff_pressure_terms,color2,'displayname',"pressure term error ROM M="+M+suffix);
-
-legend('show')
+% figure(113)
+% % plot(t_vec,dot(mass_viola_L2,error_p),color,'displayname',"pressure term
+% % error ROM M="+M+suffix); %wrong
+% % ROM_press_terms = dot(M_h*V_total,p_total'); % wrong: should take FOM mass eq RHS
+% ROM_press_terms = dt*dot(M_h*snapshots_V_total,p_total'); % wrong: should take FOM mass eq RHS
+% FOM_press_terms = dt*dot(M_h*snapshots_V_total,snapshots_p_total);
+% 
+% diff_pressure_terms = abs(ROM_press_terms-FOM_press_terms);
+% plot(t_vec,diff_pressure_terms,color2,'displayname',"pressure term error ROM M="+M+suffix);
+% 
+% legend('show')

@@ -28,12 +28,12 @@ hold on
 plot(t_vec,error_V_best_2,color2,'displayname',"best approx M="+M+suffix);
 
 %% auxiliary plots
-V_h_norm = weightedL2norm(snapshots_V_total,options.grid.Om);
-V_r_norm = weightedL2norm(V_total,options.grid.Om);
-lower_bound = abs(k - snapshots.k(snapshot_indx'))./(V_h_norm+V_r_norm);
-
-plot(t_vec,lower_bound',color3,'displayname',"lower bound M="+M+suffix);
-plot(t_vec,abs(V_h_norm-V_r_norm),color4,'displayname',"sanity check M="+M+suffix);
+% V_h_norm = weightedL2norm(snapshots_V_total,options.grid.Om);
+% V_r_norm = weightedL2norm(V_total,options.grid.Om);
+% lower_bound = abs(k - snapshots.k(snapshot_indx'))./(V_h_norm+V_r_norm);
+% 
+% plot(t_vec,lower_bound',color3,'displayname',"lower bound M="+M+suffix);
+% plot(t_vec,abs(V_h_norm-V_r_norm),color4,'displayname',"sanity check M="+M+suffix);
 
 %%
 
