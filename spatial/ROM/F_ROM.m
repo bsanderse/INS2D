@@ -11,6 +11,7 @@ end
 BC = options.BC;
 obc = max(strcmp({BC.u.left,BC.u.right,BC.u.low,BC.u.up},'mvp-obc')); 
 
+NV = options.grid.NV;
 
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
     options.rom.precompute_force == 0      || (obc && options.rom.precompute_obc == 0)) ...

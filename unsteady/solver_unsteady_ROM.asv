@@ -432,19 +432,19 @@ R = getROM_velocity(V,t,options);
 % for projected-divergence-free ROM, enforce projected divergence-freeness
 if options.rom.bc_recon == 5
     %% construct ROM divergence operator
-    if options.rom.bc_recon == 5
+%     if options.rom.bc_recon == 5
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
         options.rom.hatM = hatM;
-    end
+%     end
 
     Bp = options.rom.Bp;
     hatM = options.rom.hatM;
     hatG = -hatM';
     hatL = hatM*hatG;
     yM = -options.discretization.yM;
-    phi_bc = options.rom.phi_bc;
-    
+%     phi_bc = options.rom.phi_bc;
+%     yM = phi_bc*phi_bc'*yM;
 
     bstar = hatL\(hatM*R-Bp'*yM);
     Rstar = R-hatG*bstar;
@@ -567,18 +567,36 @@ while(n<=nt)
             time_IRK_ROM;
         end
         
-        if options.verbosity.energy_verbosity == 1
-            k_sum2(n-1) = k_delta;
-            k_diff(n) = k_analysis.k_diff;
-            k_conv(n) = k_analysis.k_conv;
-            k_pres(n) = k_analysis.k_pres;
-            k_presBC(n) = k_analysis.k_presBC;
-            k_diffBC(n) = k_analysis.k_diffBC;
-            k_force(n) = k_analysis.k_force;
-            k_obc(n) = k_analysis.k_obc;
-        end
     else
         error('time integration method unknown');
+    end
+
+    if options.rom.bc_recon == 3
+        Np = options.grid.Np;
+        p_h = zeros(Np,1);
+        p_h = pressure_additional_solve(V,p_h,t,options);
+    elseif
+        
+    end
+
+    if options.verbosity.energy_verbosity == 1
+        if options.rom.bc_recon == 3
+            Np = options.grid.Np;
+            p_h = zeros(Np,1);
+            p_h = pressure_additional_solve(V,p_h,t,options);
+        end
+        [k_analysis,k_sum] = ...
+            kinetic_energy_analysis(V,p_h,t,dt,options,k_analysis,n==1);
+
+        %             k_sum2(n-1) = k_delta;
+        k_sum2(n-1) = k_sum;
+        k_diff(n) = k_analysis.k_diff;
+        k_conv(n) = k_analysis.k_conv;
+        k_pres(n) = k_analysis.k_pres;
+        k_presBC(n) = k_analysis.k_presBC;
+        k_diffBC(n) = k_analysis.k_diffBC;
+        k_force(n) = k_analysis.k_force;
+        k_obc(n) = k_analysis.k_obc;
     end
      
     coefficients(:,n) = R;

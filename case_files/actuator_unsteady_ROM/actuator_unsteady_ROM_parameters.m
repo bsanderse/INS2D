@@ -16,7 +16,7 @@ M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = flip(kron(ones(1,5),[2 5 10 20 50 100]));
 % Mbc_list = [2 4 10 20];
 % Mbc = Mbc_list(j);
-Mbc = 10;
+% Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
 changing_snapshotdata = 1;
@@ -79,9 +79,10 @@ changing_snapshotdata = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
+    Mbc = M;
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
     t_sample  = 4*pi*4;  % part of snapshot matrix used for building SVD
@@ -151,7 +152,7 @@ changing_snapshotdata = 1;
     if bc_recon == 3
         suffix = " Mbc = "+num2str(Mbc);
     elseif bc_recon == 5
-        suffix = " proj-div POD";
+        suffix = " proj-div POD ";
     else
         suffix = " bc recon = " + bc_recon;
     end

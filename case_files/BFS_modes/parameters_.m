@@ -1,6 +1,6 @@
 % project = 'BFS';   % project name used in filenames
 
-run_multiple = 1;
+run_multiple = 0;
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [60 80 100];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
@@ -39,8 +39,9 @@ changing_snapshotdata = 1;
     y1      = -0.5;
     y2      = 0.5;
 
-    Nx      = 100; %600;                  % number of volumes in the x-direction
-    Ny      = 20; %40;                   % number of volumes in the y-direction
+%     Nx      = 600;                  % number of volumes in the x-direction
+    Nx      = 100;                  % number of volumes in the x-direction
+    Ny      = 40;                   % number of volumes in the y-direction
 
     sx      = 1;                    % stretch factor
     sy      = 1;
@@ -77,7 +78,8 @@ changing_snapshotdata = 1;
         dt            = 0.02;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 40; %4;         % end time
+%         t_end         = 40; %4;         % end time
+        t_end         = 4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -123,8 +125,8 @@ changing_snapshotdata = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
-    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 0;      % set to 1 to use ROM solver
+    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     % the full snapshotdataset can be reduced by taking as index
     % 1:Nskip:Nsnapshots
@@ -147,7 +149,7 @@ changing_snapshotdata = 1;
 % snapshot_data = 'results/BFS15_8.000e+02_100x20_e_ana/matlab_data.mat';
 
 % snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata/matlab_data.mat'; % system state pushed
-snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata_ERK/matlab_data.mat'; % system state pushed
+% snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata_ERK/matlab_data.mat'; % system state pushed
 
 
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
@@ -218,9 +220,9 @@ snapshot_data = 'results/BFS15_8.000e+02_100x20_FOMdata_ERK/matlab_data.mat'; % 
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 5;
-    rtp.movie        = 0;
+    rtp.movie        = 1;
     rtp.moviename    = 'BFS';       % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

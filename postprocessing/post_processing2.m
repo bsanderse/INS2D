@@ -25,6 +25,8 @@ end
 
 line  = {'r-','b-','k-','m-','g-','c-'};
 line2  = {'r--','b--','k--','m--','g--','c--'};
+line3  = {'r:','b:','k:','m:','g:','c:'};
+line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 % line  = {'r-','r:','b-','b:','k-','k:','m-','m:','g-','g:'};
@@ -33,7 +35,14 @@ line2  = {'r--','b--','k--','m--','g--','c--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 color = char(line(j));
 color2 = char(line2(j));
+color3 = char(line3(j));
+color4 = char(line4(j));
 
+if options.rom.bc_recon == 3
+    suffix = suffix + " M bc =" + num2str(Mbc);
+elseif options.rom.bc_recon == 5
+    suffix = suffix + " Mp =" + num2str(Mp);
+end
 
 %% kinetic energy analysis
 if options.verbosity.energy_verbosity == 1
@@ -80,6 +89,12 @@ end
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
+                    velocity_error_plot;
+                    pressure_error_plot;
+                    kinetic_energy_error_plots;
+                    mass_violation_plots;
+
+                    %%
                     % we have the velocity fields, so we can compute error wrt
                     % FOM
                     % uh_total is of size Nt*Nu, V_total size (Nu+Nv)*Nt
