@@ -228,6 +228,7 @@ disp('commented some information out')
 if (options.visualization.show_sigmas == 1)
     figure(123)
     semilogy(Sigma/Sigma(1),'s','displayname', 'singular values velocity snapshot matrix');
+    hold on
 end
 
 % or alternatively
@@ -308,6 +309,7 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
 %         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+        cond_fac = 10^-
         sing_vals = svd(Bp'*M_h*B);
         rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
         while rank<Mp
@@ -570,34 +572,6 @@ while(n<=nt)
     else
         error('time integration method unknown');
     end
-
-    if options.rom.bc_recon == 3
-        Np = options.grid.Np;
-        p_h = zeros(Np,1);
-        p_h = pressure_additional_solve(V,p_h,t,options);
-    elseif
-        
-    end
-
-    if options.verbosity.energy_verbosity == 1
-        if options.rom.bc_recon == 3
-            Np = options.grid.Np;
-            p_h = zeros(Np,1);
-            p_h = pressure_additional_solve(V,p_h,t,options);
-        end
-        [k_analysis,k_sum] = ...
-            kinetic_energy_analysis(V,p_h,t,dt,options,k_analysis,n==1);
-
-        %             k_sum2(n-1) = k_delta;
-        k_sum2(n-1) = k_sum;
-        k_diff(n) = k_analysis.k_diff;
-        k_conv(n) = k_analysis.k_conv;
-        k_pres(n) = k_analysis.k_pres;
-        k_presBC(n) = k_analysis.k_presBC;
-        k_diffBC(n) = k_analysis.k_diffBC;
-        k_force(n) = k_analysis.k_force;
-        k_obc(n) = k_analysis.k_obc;
-    end
      
     coefficients(:,n) = R;
         
@@ -613,6 +587,15 @@ while(n<=nt)
         % this is used for postprocessing purposes, e.g. evaluating the divergence
         % of the velocity field
         V = getFOM_velocity(R,t,options);
+
+        if options.rom.bc_recon == 3
+            Np = options.grid.Np;
+            p = zeros(Np,1);
+            p = pressure_additional_solve(V,p,t,options);
+        elseif options.rom.bc_recon == 5
+            Bp = options.rom.Bp;
+            p = Bp*q;
+        end
         
         process_iteration;
     end

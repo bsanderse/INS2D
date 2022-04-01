@@ -1,7 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [10 10];
-M_list = [10 10 10 10];
+% M_list = [10 10 10 10];
+M_list = 4*[10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
@@ -136,8 +137,8 @@ changing_snapshotdata = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
 %     Mbc = M;
     Mbc = 2;
@@ -159,8 +160,7 @@ changing_snapshotdata = 1;
 %     precompute_force      = 0;
 %     precompute_obc       = 0;
 
-%     snapshot_data = 'results/actuator_modes_FOMdata/matlab_data.mat';
-    snapshot_data = 'results/actuator_modes_vBC=0/matlab_data.mat';
+    snapshot_data = 'results/actuator_movemode_FOMdata/matlab_data.mat';
     
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);
@@ -173,13 +173,14 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-%     bc_recon = 5; %Mp = M;
-    Mps = [1 2 3 4];
-%     Mp = Mps(j);
-    Mbc = Mps(j) + 1;
+    Mps = 10*[1 2 3 4];
+    Mp = Mps(j);
+    %     Mbc = Mps(j);
+
+    bc_recon = 5; %Mp = M;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -266,9 +267,9 @@ changing_snapshotdata = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % requires rtp.show = 1
+    rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
@@ -285,9 +286,9 @@ changing_snapshotdata = 1;
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
