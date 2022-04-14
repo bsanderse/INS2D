@@ -18,17 +18,16 @@ CG_acc   = options.solversettings.CG_acc;
 CG_maxit = options.solversettings.CG_maxit;
 
 % check if a Poisson solve is necessary
-if options.solversettings.poisson == 6
+if (poisson == 6)
     Npx    = options.grid.Npx;
     Npy    = options.grid.Npy;
-    Npz    = options.grid.Npz;
     Ahat   = options.solversettings.Ahat;
     % fourier transform of right hand side
-    fhat   = fftn(reshape(f,Npx,Npy,Npz));
-    dphat  = reshape(dp,Npx,Npy,Npz); %fourier is also needed but now it's just 0 anyway...
-
+    fhat   = fft2(reshape(f,Npx,Npy));    
+    dphat  = fft2(reshape(dp,Npx,Npy));
+    
     tol = 1e-14;
-    if (max(max(max(abs(Ahat.*dphat +fhat))))<tol)
+    if (max(max(abs(Ahat.*dphat +fhat)))<tol)
         return;
     end
 else

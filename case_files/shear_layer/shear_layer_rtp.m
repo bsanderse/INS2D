@@ -17,7 +17,7 @@ omega = reshape(omega,Npx+1,Npy+1);
 % for Re=1000: labels = -4:0.5:4;
 labels= linspace(-2,2,20);
 [~,c] = contour(x,y,omega',labels);
-c.LineWidth = 1;
+c.LineWidth = 2;
 axis square
 colorbar
 % grid

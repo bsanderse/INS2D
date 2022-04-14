@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1e100;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -70,13 +70,13 @@
     steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
-    order4  = 1;
+    order4  = 0;
 
     % only for unsteady problems:
-    dt            = 0.1;       % time step (for explicit methods it can be
+    dt            = 0.025;       % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;        % start time
-    t_end         = 8;         % end time
+    t_end         = 16;         % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -118,7 +118,7 @@
 %%% solver settings
 
     % pressure
-    poisson          = 1; % 1: direct solver, 
+    poisson          = 6; % 1: direct solver, 
                           % 2: CG with ILU (matlab), 
                           % 3: CG mexfile, 
                           % 4: CG with IC, own Matlab impl.
@@ -163,9 +163,9 @@
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
     rtp.show         = 1;          % real time plotting 
-    rtp.n            = 1;
-    rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'viscous_shear_layer_Re100_N200_ROM_M16'; % movie name
+    rtp.n            = 2;
+    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.moviename    = 'viscous_shear_layer_Re100_N200_FOM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -179,10 +179,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed (e.g. necessary for running ROM afterwards)
+    save_file        = 0;          % save all matlab data after program is completed (e.g. necessary for running ROM afterwards)
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
+    save_results     = 0;          % write information during iterations/timesteps
+    save_unsteady    = 0;          % store unsteady simulation data at each time step (velocity + pressure) in memory;
                                    % can be useful in postprocessing
                                    % studies and ROM construction
                                    % requires save_file=1 to be written to a datafile
