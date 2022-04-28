@@ -429,29 +429,42 @@ end
 % B*R
 % V = B*R + Vbc
 
+if options.rom.bc_recon ~= 5
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
 % for projected-divergence-free ROM, enforce projected divergence-freeness
-if options.rom.bc_recon == 5
-    %% construct ROM divergence operator
-%     if options.rom.bc_recon == 5
+% if options.rom.bc_recon == 5
+else
+    % construct ROM divergence operator
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
         options.rom.hatM = hatM;
-%     end
 
-    Bp = options.rom.Bp;
-    hatM = options.rom.hatM;
+%     Bp = options.rom.Bp;
+%     hatM = options.rom.hatM;
     hatG = -hatM';
     hatL = hatM*hatG;
     yM = -options.discretization.yM;
-%     phi_bc = options.rom.phi_bc;
-%     yM = phi_bc*phi_bc'*yM;
+    hatyM = Bp'*yM;
+    %     phi_bc = options.rom.phi_bc;
+    %     yM = phi_bc*phi_bc'*yM;
 
-    bstar = hatL\(hatM*R-Bp'*yM);
-    Rstar = R-hatG*bstar;
-    R = Rstar;
+    %     bstar = hatL\(hatM*R-Bp'*yM);
+    %     Rstar = R-hatG*bstar;
+    %     R = Rstar;
+
+    % QR based method
+    Om = options.grid.Om;
+    Om_inv12 = Om.^-.5;
+    [Q,R] = qr(Om_inv12.*hatM');
+    tQ_1 = Om_inv12.*Q(:,1:Mp);
+    tQ_2 = Om_inv12.*Q(:,Mp+1:end);
+    R_1 = R(1:Mp,1:Mp);
+    R = tQ_1*hatyM/(R_1') + tQ_2*tQ_2'*(Om.*V);
+
+    %test
+    norm(hatM*R-hatyM)
 end
 
 if (options.rom.process_iteration_FOM == 1)

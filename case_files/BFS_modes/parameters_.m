@@ -24,7 +24,9 @@ changing_snapshotdata = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 800;                  % Reynolds number
+%     Re      = 800;                  % Reynolds number
+%     Re      = 100;                  % Reynolds number
+    Re      = 10;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -75,11 +77,13 @@ changing_snapshotdata = 1;
     
          % only for unsteady problems:
 
-        dt            = 0.02;       % time step (for explicit methods it can be
-                                   % determined during running with dynamic_dt)
         t_start       = 0;        % start time
 %         t_end         = 40; %4;         % end time
         t_end         = 4;         % end time
+
+%         dt            = 0.02;       % time step (for explicit methods it can be
+        dt            = t_end/400;       % time step (for explicit methods it can be
+                                   % determined during running with dynamic_dt)
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 

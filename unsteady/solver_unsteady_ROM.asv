@@ -309,16 +309,17 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
         Bp = Wp(:,1:Mp);
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
 %         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
-        cond_fac = 10^-
+%         cond_fac = 10^-8;
+        cond_fac = 10^-6;
         sing_vals = svd(Bp'*M_h*B);
-        rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
+        rank = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
         while rank<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
             Mp = rank;
             Bp = Wp(:,1:Mp);
 %             rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
             sing_vals = svd(Bp'*M_h*B);
-            rank = sum(abs(sing_vals)>10^-8*max(abs(sing_vals))); % avoid badly scaled hatL
+            rank = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
         end
     else
         Bp = Wp(:,1:Mp);
@@ -428,29 +429,36 @@ end
 % B*R
 % V = B*R + Vbc
 
+if options.rom.bc_recon ~= 5
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
 % for projected-divergence-free ROM, enforce projected divergence-freeness
-if options.rom.bc_recon == 5
-    %% construct ROM divergence operator
-%     if options.rom.bc_recon == 5
+% if options.rom.bc_recon == 5
+else
+    % construct ROM divergence operator
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
         options.rom.hatM = hatM;
-%     end
 
-    Bp = options.rom.Bp;
-    hatM = options.rom.hatM;
+%     Bp = options.rom.Bp;
+%     hatM = options.rom.hatM;
     hatG = -hatM';
     hatL = hatM*hatG;
     yM = -options.discretization.yM;
 %     phi_bc = options.rom.phi_bc;
 %     yM = phi_bc*phi_bc'*yM;
 
-    bstar = hatL\(hatM*R-Bp'*yM);
-    Rstar = R-hatG*bstar;
-    R = Rstar;
+%     bstar = hatL\(hatM*R-Bp'*yM);
+%     Rstar = R-hatG*bstar;
+%     R = Rstar;
+
+% QR based method
+Om_inv12 = options.grid.Om.^-.5;
+[Q,R] = qr(Om_inv12.*hatM');
+tQ_1 = Om_inv12.*Q(:,1:Mp);
+tQ_2 = Om_inv12.*Q(:,Mp+1:end);
+R_1 = R(1:Mp,1:Mp);
 end
 
 if (options.rom.process_iteration_FOM == 1)
