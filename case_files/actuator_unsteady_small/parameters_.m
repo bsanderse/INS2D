@@ -179,14 +179,14 @@ changing_snapshotdata = 1;
 %     bc_recon = 5; M=M+1;
 %     bc_recon = 5;
     bc_recons = kron([1 1 1],[3 5]);
-%     bc_recon = bc_recons(j);
+    bc_recon = bc_recons(j);
     Mp = M;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
 %     Mbc = Mps(j) + 1;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
     Mbc = M;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
@@ -315,5 +315,5 @@ debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 % equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 equivalence_cheats = kron([1 1 1],[0 1]); 
-% equivalence_cheat = equivalence_cheats(j);
-equivalence_cheat = 0;
+equivalence_cheat = equivalence_cheats(j);
+% equivalence_cheat = 0;

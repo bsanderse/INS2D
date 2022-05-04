@@ -12,7 +12,7 @@ run_multiple = 1;
 % M_list = 10;
 % M_list = 60;
 M_list = [2 5 10 20 40];
-M_list = kron(M_list, [1 1]);
+% M_list = kron(M_list, [1 1]);
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -176,8 +176,8 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recons = kron(ones(1,length(M_list)/2),[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recons = kron(ones(1,length(M_list)/2),[3 5]);
+%     bc_recon = bc_recons(j);
 
 %     bc_recon = 5; M=M+1;
     Mp = M;
@@ -186,7 +186,7 @@ changing_snapshotdata = 1;
 %     Mbc = Mps(j) + 1;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
     Mbc = M;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
@@ -312,6 +312,6 @@ changing_snapshotdata = 1;
 % verbosity
 energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
-equivalence_cheats = kron(ones(1,length(M_list)/2),[0 1]); 
+% equivalence_cheats = kron(ones(1,length(M_list)/2),[0 1]); 
 % equivalence_cheat = equivalence_cheats(j);
 equivalence_cheat = 0;

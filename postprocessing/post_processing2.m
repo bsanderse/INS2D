@@ -111,8 +111,8 @@ end
 %                     velocity_error_plot;
                     velocity_comparison_plot;
 %                     pressure_error_plot;
-%                     pressure_gradient_error_plot;
-%                     projected_pressure_gradient_error_plot;
+                    pressure_gradient_error_plot;
+                    projected_pressure_gradient_error_plot;
 %                     kinetic_energy_error_plots;
 %                     mass_violation_plots;
 

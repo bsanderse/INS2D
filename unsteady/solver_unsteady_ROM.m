@@ -405,7 +405,7 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
             %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
             tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
 
-            [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
+            [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom,0); %alternative: take first vec of tilde phi inhom
             M_inhom = rank(tilde_phi_inhom);
             Q_1_inhom = -Q_inhom(:,1:M_inhom);
             R_inhom = -R_inhom(1:M_inhom,:);
@@ -436,6 +436,38 @@ if options.verbosity.equivalence_cheat == 1
     options.rom.B = B;
     M = M + M_inhom;
     options.rom.M = M;
+
+
+    %%
+if options.rom.bc_recon == 5
+        % for bc_recon == 5, existence of a solution to the ROM PPE requires in
+        % general the invertibility of \hat L = \hat M \hat G <=>  \hat M has
+        % full rank
+        if M < Mp 
+            warning('Sorry, pressure ROM basis is too big, is made smaller')
+            Mp = M;
+        end
+        M_h = options.discretization.M;
+        Bp = Wp(:,1:Mp);
+%         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
+%         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+%         cond_fac = 10^-8;
+        cond_fac = 10^-6;
+        sing_vals = svd(Bp'*M_h*B);
+        rank_ = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
+        while rank_<Mp
+            warning('Sorry, pressure ROM basis is too big, is made smaller')
+            Mp = rank_;
+            Bp = Wp(:,1:Mp);
+%             rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
+            sing_vals = svd(Bp'*M_h*B);
+            rank_ = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
+        end
+    else
+        Bp = Wp(:,1:Mp);
+    end 
+    options.rom.Bp = Bp;
+    %%
 end
 
 %% precompute ROM operators by calling operator_rom
