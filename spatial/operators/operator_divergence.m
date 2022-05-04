@@ -301,6 +301,27 @@ if (~strcmp(visc,'keps'))
         end
     end
     
-       
-    
+    %% very expensive
+%     if options.verbosity.equivalence_cheat == 1
+%         keyboard
+% 
+%         Om = options.grid.Om;
+%         G_h = options.discretization.G;
+%         M_h = options.discretization.M;
+% 
+%         [Q,R] = qr(-(Om.^-.5).*G_h);
+%         Q1 = Q(:,1:160);
+%         Q2 = Q(:,161:340);
+%         R1 = R(1:160,:);
+% 
+%         Q1t = (Om.^-.5).*Q(:,1:160);
+%         Q2t = (Om.^-.5).*Q(:,161:340);
+% 
+%         %     norm(Q1t'*(Om.*V0))
+%         %     norm(Q2t'*(Om.*V0))
+% 
+%         options.discretization.Q1t = Q1t;
+%         options.discretization.Q2t = Q2t;
+%         options.discretization.R1 = R1;
+%     end
 end

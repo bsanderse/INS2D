@@ -39,7 +39,7 @@ color3 = char(line3(j));
 color4 = char(line4(j));
 
 if options.rom.bc_recon == 3
-    suffix = suffix + " M bc =" + num2str(Mbc);
+    suffix = suffix + " M inhom =" + num2str(M_inhom);
 elseif options.rom.bc_recon == 5
     suffix = suffix + " Mp =" + num2str(Mp);
 end
@@ -90,7 +90,9 @@ end
                 
                 if (options.output.save_unsteady == 1)
                     velocity_error_plot;
+                    velocity_comparison_plot;
                     pressure_error_plot;
+                    pressure_gradient_error_plot;
                     kinetic_energy_error_plots;
                     mass_violation_plots;
 

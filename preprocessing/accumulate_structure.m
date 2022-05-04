@@ -218,6 +218,7 @@ object = 'verbosity';
 voi={
     'energy_verbosity', 0; ... % 1: compute unrequired stuff
     'debug_mode', 0; ... % 1: consistency checks
+    'equivalence_cheat', 0; ... % 1: botch enforcing equivalence of velocity-pressure and velocity-only ROM
     };
 
 accumulate_object;

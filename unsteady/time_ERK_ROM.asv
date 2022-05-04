@@ -158,7 +158,7 @@ for i_RK=1:s_RK
 %         norm(hatM*Rn + Bp'*yMn)
         options = set_bc_vectors(ti,options);
         yMi = options.discretization.yM;
-%         warning('not rigorously correct implementation of bc_recon=5')
+        warning('not rigorously correct implementa')
 
 % norm(yMn-yMi)
 

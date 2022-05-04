@@ -15,7 +15,11 @@ error_V_2 = weightedL2norm(error_V,options.grid.Om);
 % optimization problem used in the SVD
 B = options.rom.B;
 Om = options.grid.Om;
-V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+if options.verbosity.equivalence_cheat
+    V_best = B*(B'*(Om.*(snapshots_V_total)));
+else
+    V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+end
 
 error_V_best = V_best - snapshots_V_total;
 

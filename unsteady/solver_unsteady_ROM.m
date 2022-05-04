@@ -48,7 +48,7 @@ if (j==1) || changing_snapshotdata
     Om_inv = options.grid.Om_inv;
     
     if (options.rom.bc_recon == 2) || (options.rom.bc_recon == 4) ...
-            || (options.rom.bc_recon == 5)
+            || (options.rom.bc_recon == 5  && options.verbosity.equivalence_cheat == 0)
         Vbc = zeros(Nu+Nv,1);
         snapshots.Vbc = Vbc;
     else %if (options.rom.bc_recon ~= 5)
@@ -312,14 +312,14 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
 %         cond_fac = 10^-8;
         cond_fac = 10^-6;
         sing_vals = svd(Bp'*M_h*B);
-        rank = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
-        while rank<Mp
+        rank_ = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
+        while rank_<Mp
             warning('Sorry, pressure ROM basis is too big, is made smaller')
-            Mp = rank;
+            Mp = rank_;
             Bp = Wp(:,1:Mp);
 %             rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
             sing_vals = svd(Bp'*M_h*B);
-            rank = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
+            rank_ = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
         end
     else
         Bp = Wp(:,1:Mp);
@@ -382,10 +382,16 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
         else
             U_bc = X_bc/norm(X_bc);
         end
+        
+        cond_fac = 10^-6;
+        X_bc_rank = sum(abs(Sigma_bc/Sigma_bc(1))>cond_fac);
+        if Mbc > X_bc_rank
+            Mbc = X_bc_rank;
+        end
 
         phi_bc = U_bc(:,1:Mbc);
         options.rom.phi_bc = phi_bc;
-        if (options.rom.bc_recon == 3)
+        if (options.rom.bc_recon == 3) || options.verbosity.equivalence_cheat == 1
             for jj = 1:Mbc
                 yBC = phi_bc(:,jj);
                 Y_M(:,jj) = get_yM(options,yBC);
@@ -399,17 +405,36 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
             %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
             tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
             [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
-            M_inhom = rank(tilde_phi_inhom)
+            M_inhom = rank(tilde_phi_inhom);
             Q_1_inhom = -Q_inhom(:,1:M_inhom);
             R_inhom = -R_inhom(1:M_inhom,:);
             phi_inhom = sqrt(Om_inv).*Q_1_inhom;
 
             options.rom.phi_inhom = phi_inhom;
             options.rom.R_inhom = R_inhom;
+%%
+%             warning('phi_inhom computation manipulated')
+%             M_h = options.discretization.M;
+%             [Qq,Rr] = qr((M_h*phi_inhom)');
+%             rankk = rank(M_h*phi_inhom);
+%             Qq1 = Qq(:,1:rankk);
+%             phi_inhom_star = phi_inhom*Qq1;
+%             R_inhom_star = Qq1'*R_inhom;
+% 
+%             options.rom.phi_inhom = phi_inhom_star;
+%             options.rom.R_inhom = R_inhom_star;
+%%
         else
             options.rom.phi_inhom = 0;
             options.rom.R_inhom = 0;
         end
+end
+
+if options.verbosity.equivalence_cheat == 1
+    B = [B phi_inhom];
+    options.rom.B = B;
+    M = M + M_inhom;
+    options.rom.M = M;
 end
 
 %% precompute ROM operators by calling operator_rom
@@ -456,15 +481,63 @@ else
 
     % QR based method
     Om = options.grid.Om;
-    Om_inv12 = Om.^-.5;
-    [Q,R] = qr(Om_inv12.*hatM');
-    tQ_1 = Om_inv12.*Q(:,1:Mp);
-    tQ_2 = Om_inv12.*Q(:,Mp+1:end);
-    R_1 = R(1:Mp,1:Mp);
-    R = tQ_1*hatyM/(R_1') + tQ_2*tQ_2'*(Om.*V);
+%     [Q_,R_] = qr(hatM');
+%     Q_1 = Q_(:,1:Mp);
+%     Q_2 = Q_(:,Mp+1:end);
+%     R_1 = R_(1:Mp,1:Mp);
+%     R = Q_1*hatyM/(R_1') + Q_2*Q_2'*B'*(Om.*V);
+% 
+%         %test
+%     norm(hatM*R-hatyM)
 
-    %test
-    norm(hatM*R-hatyM)
+    % second try
+    M_h = options.discretization.M;
+    [Q__,R__] = qr((M_h*B)');
+    H = rank(M_h*B);
+    Q_1_ = Q__(:,1:H);
+    Q_2_ = Q__(:,H+1:end);
+    R_1_ = R__(1:H,:);
+    a_1 = (R_1_*yM)/(R_1_*R_1_');
+    a_2 = Q_2_'*B'*(Om.*V);
+    R = Q_1_*a_1 + Q_2_*a_2;
+
+    % tests
+    norm(M_h*B*Q_1_*a_1-yM)
+    diff_ = B*R-V;
+    norm(diff_)
+    norm(M_h*diff_)
+    norm(a_2)
+    norm(diff_'*(Om.*V))
+    diff_2 = B*Q_1_*a_1 - V;
+
+%     [QQ,RR] = qr(full(M_h)); % expensive!
+%     HH = rank(M_h);
+%     QQ1 = QQ(:,1:HH);
+
+%     Q1t = options.discretization.Q1t;
+%     Q2t = options.discretization.Q2t;
+%     R1 = options.discretization.R1;
+% 
+%     a1 = (R1*R1')\(R1*yM); % only valid if ROM basis includes all relevant inhomogeneous modes
+%     a11 = Q1t'*(Om.*V); % only valid if ROM basis includes all relevant inhomogeneous modes
+% 
+%     norm(a1-a11)
+% 
+%     a0 = B'*(Om.*V);
+%     norm(M_h*B*a0)
+%     
+%     Qt = [Q1t Q2t];
+%     T = Qt'*(Om.*B);
+%     a2 = Q2t'*(Om.*V);
+%     at = [a1; a2];
+%     a = (T'*T)\(T'*at); % does not yield exact solution to T*a = at, but approximation
+%     norm(T*a-at)
+%     norm(R-a)
+%     R = a;
+
+%     Vr = B*a;
+%     norm(M_h*Vr-yM)
+%     norm(Vr-V)
 end
 
 if (options.rom.process_iteration_FOM == 1)
