@@ -179,14 +179,14 @@ changing_snapshotdata = 1;
 %     bc_recon = 5; M=M+1;
 %     bc_recon = 5;
     bc_recons = kron([1 1 1],[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recon = bc_recons(j);
     Mp = M;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
 %     Mbc = Mps(j) + 1;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
     Mbc = M;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq

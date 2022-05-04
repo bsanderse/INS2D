@@ -36,14 +36,14 @@ line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
-% color = char(line(j));
-% color2 = char(line2(j));
-% color3 = char(line3(j));
-% color4 = char(line4(j));
-color = char(line(ceil(j/2)));
-color2 = char(line2(ceil(j/2)));
-color3 = char(line3(ceil(j/2)));
-color4 = char(line4(ceil(j/2)));
+color = char(line(j));
+color2 = char(line2(j));
+color3 = char(line3(j));
+color4 = char(line4(j));
+% color = char(line(ceil(j/2)));
+% color2 = char(line2(ceil(j/2)));
+% color3 = char(line3(ceil(j/2)));
+% color4 = char(line4(ceil(j/2)));
 
     if bc_recon == 3
         suffix = " vo Mbc = "+num2str(Mbc);
@@ -112,6 +112,7 @@ end
                     velocity_comparison_plot;
 %                     pressure_error_plot;
 %                     pressure_gradient_error_plot;
+%                     projected_pressure_gradient_error_plot;
 %                     kinetic_energy_error_plots;
 %                     mass_violation_plots;
 
