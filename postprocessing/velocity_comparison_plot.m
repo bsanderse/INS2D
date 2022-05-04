@@ -18,6 +18,7 @@ if mod(j,2) == 1
     V_best_old = V_best;
     suffix_old = suffix;
     M_old = M;
+    name_old = name;
 else
     error_V = V_total - V_total_old;
     % inf-norm
@@ -35,9 +36,9 @@ else
     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
 
     figure(999)
-    plot(t_vec,error_V_2,color,'displayname',"deviation ROM M="+M+suffix +"/ ROM M=" +M_old+suffix_old);
+    plot(t_vec,error_V_2,color,'displayname',"velo diff: "+ name +" / "+ name_old);
     hold on
-    plot(t_vec,error_V_best_2,color2,'displayname',"deviation best approx M="+M+suffix +"/ best approx M=" +M_old+suffix_old);
+    plot(t_vec,error_V_best_2,color2,'displayname',"best approx diff: "+ name +" / "+ name_old);
 
 end
 
@@ -53,5 +54,5 @@ end
 
 set(gca,'Yscale','log');
 xlabel('t')
-ylabel('velocity error')
+ylabel("||\cdot||_{\Omega_h}")
 legend('show','NumColumns',2,'Orientation','horizontal')

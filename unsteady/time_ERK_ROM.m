@@ -152,13 +152,21 @@ for i_RK=1:s_RK
 
     if options.rom.bc_recon == 5
         hatM = options.rom.hatM;
-        yMn = options.discretization.yM;
+%         yMn = options.discretization.yM; % actually should use tilde yM
+        % correct:
+        yBCn = get_bc_vector_yBC(tn,options);
+        yMn = get_yM(options,yBCn);
+
+%         options = set_bc_vectors(ti,options); % actually should use tilde yM
+%         yMi = options.discretization.yM; % actually should use tilde yM
+        % correct:
+        yBCi = get_bc_vector_yBC(ti,options);
+        yMi = get_yM(options,yBCi);
+
+
         Bp = options.rom.Bp;
 %         norm(M_h*B*Rn+yMn)
 %         norm(hatM*Rn + Bp'*yMn)
-        options = set_bc_vectors(ti,options);
-        yMi = options.discretization.yM;
-%         warning('not rigorously correct implementation of bc_recon=5')
 
 % norm(yMn-yMi)
 

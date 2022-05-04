@@ -3,7 +3,7 @@
 run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -11,6 +11,8 @@ M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 10*ones(6,1);
 % M_list = 10;
 % M_list = 60;
+M_list = [2 5 10 20 40];
+M_list = kron(M_list, [1 1]);
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -174,7 +176,10 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recon = 5; M=M+1;
+    bc_recons = kron(ones(1,length(M_list)/2),[3 5]);
+    bc_recon = bc_recons(j);
+
+%     bc_recon = 5; M=M+1;
     Mp = M;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
@@ -182,7 +187,7 @@ changing_snapshotdata = 1;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     Mbc = M;
+    Mbc = M;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -193,9 +198,11 @@ changing_snapshotdata = 1;
                   % 5: new standard ROM (= with projected mass equation)
 
     if bc_recon == 3
-        suffix = " Mbc = "+num2str(Mbc);
+        suffix = " vo Mbc = "+num2str(Mbc);
+        name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     elseif bc_recon == 5
-        suffix = " proj-div POD ";
+        suffix = " vp ";
+        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);     
     else
         suffix = " bc recon = " + bc_recon;
     end
@@ -305,3 +312,6 @@ changing_snapshotdata = 1;
 % verbosity
 energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
+equivalence_cheats = kron(ones(1,length(M_list)/2),[0 1]); 
+% equivalence_cheat = equivalence_cheats(j);
+equivalence_cheat = 0;

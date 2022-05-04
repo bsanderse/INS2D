@@ -198,9 +198,11 @@ changing_snapshotdata = 1;
                   % 5: new standard ROM (= with projected mass equation)
 
     if bc_recon == 3
-        suffix = " Mbc = "+num2str(Mbc);
+        suffix = " vo Mbc = "+num2str(Mbc);
+        name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     elseif bc_recon == 5
-        suffix = " proj-div POD ";
+        suffix = " vp ";
+        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);     
     else
         suffix = " bc recon = " + bc_recon;
     end
@@ -313,4 +315,5 @@ debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 % equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 equivalence_cheats = kron([1 1 1],[0 1]); 
-equivalence_cheat = equivalence_cheats(j);
+% equivalence_cheat = equivalence_cheats(j);
+equivalence_cheat = 0;
