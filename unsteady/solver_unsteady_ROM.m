@@ -405,21 +405,11 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
             %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
             tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
 
-            warning('botch!')
-            if mod(j,2)==0
-%                 tilde_phi_inhom = tilde_phi_inhom+10^-14;
-            end
-
             [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom); %alternative: take first vec of tilde phi inhom
             M_inhom = rank(tilde_phi_inhom);
             Q_1_inhom = -Q_inhom(:,1:M_inhom);
             R_inhom = -R_inhom(1:M_inhom,:);
             phi_inhom = sqrt(Om_inv).*Q_1_inhom;
-
-            warning('botch!')
-            if mod(j,2)==0
-                    phi_inhom = phi_inhom+10^-14;
-            end
 
             options.rom.phi_inhom = phi_inhom;
             options.rom.R_inhom = R_inhom;
@@ -618,17 +608,6 @@ if (rtp.show==1)
         writeVideo(writerObj,frame);
     end
 end
-
-warning('botch!')
-if mod(j,2)==0
-%     R(1) = R(1)+10^-15;
-%     B(1,1) = B(1,1)+10^-14;
-%     B = B+10^-14;
-%     B(1,:) = B(1,:)+10^-14;
-%     options.rom.B=B;
-%     R = R + 10^-14;
-end
-
 
 %% start time stepping
 
