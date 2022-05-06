@@ -530,7 +530,7 @@ else
     Q_1_ = Q__(:,1:H);
     Q_2_ = Q__(:,H+1:end);
     R_1_ = R__(1:H,:);
-    a_1 = (R_1_*yM)/(R_1_*R_1_');
+    a_1 = (R_1_*R_1_')\(R_1_*yM);
     a_2 = Q_2_'*B'*(Om.*V);
     R = Q_1_*a_1 + Q_2_*a_2;
 
@@ -708,12 +708,30 @@ while(n<=nt)
         V = getFOM_velocity(R,t,options);
 
         if options.rom.bc_recon == 3
-            Np = options.grid.Np;
-            p = zeros(Np,1);
-            p = pressure_additional_solve(V,p,t,options);
+%             Np = options.grid.Np;
+%             p = zeros(Np,1);
+%             p = pressure_additional_solve(V,p,t,options); %wrong because
+%             uses analytical derivative ydM
+            yBCn = get_bc_vector_yBC(t-dt,options);
+            yMn = get_yM(options,yBCn);
+            yBCn1 = get_bc_vector_yBC(t,options);
+            yMn1 = get_yM(options,yBCn1);
+            p = pressure_additional_solve2(V,t,(yMn1-yMn)/dt,options);
+            warning('only correct for forward Euler')
         elseif options.rom.bc_recon == 5
             Bp = options.rom.Bp;
             p = Bp*q;
+
+            %% verbosity
+%             yBCn = get_bc_vector_yBC(t-dt,options);
+%             yMn = get_yM(options,yBCn);
+%             yBCn1 = get_bc_vector_yBC(t,options);
+%             yMn1 = get_yM(options,yBCn1);
+%             p2 = pressure_additional_solve2(V,t,(yMn1-yMn)/dt,options);
+%             norm(p-p2)
+%             p_error = p-p2;
+%             norm(B'*G*p_error)
+            %%
         end
         
         process_iteration;

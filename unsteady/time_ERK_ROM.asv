@@ -157,8 +157,9 @@ for i_RK=1:s_RK
         yBCn = get_bc_vector_yBC(tn,options);
         yMn = get_yM(options,yBCn);
 
-%         options = set_bc_vectors(ti,options);
-%         yMi = options.discretization.yM;
+%         options = set_bc_vectors(ti,options); % actually should use tilde yM
+%         yMi = options.discretization.yM; % actually should use tilde yM
+        % correct:
         yBCi = get_bc_vector_yBC(ti,options);
         yMi = get_yM(options,yBCi);
 
@@ -166,8 +167,6 @@ for i_RK=1:s_RK
         Bp = options.rom.Bp;
 %         norm(M_h*B*Rn+yMn)
 %         norm(hatM*Rn + Bp'*yMn)
-
-%         warning('not rigorously correct implementation of bc_recon=5')
 
 % norm(yMn-yMi)
 
@@ -181,6 +180,20 @@ for i_RK=1:s_RK
         R = R - dt*c_RK(i_RK)*(hatG*q); % = R - hatG*inv(hatL)*(hatM R+hat yM)
 %         norm(hatM*R + Bp'*yMn) % = hatM R - hatM R - hat yM + hat yM = 0
 %         norm(hatM*R + Bp'*yMi)
+
+%% pressure hunt
+f1 = (hatM*Rtemp + Bp'*(yMi - yMn)/dt)/c_RK(i_RK);
+norm(f1-f)
+ M_h = options.discretization.M;
+ Om = options.grid.Om;
+
+ [Q_,R_] = qr(Om.^-.5.*(M_h'),0);
+ Qt = Om.
+
+ f2 = (R_temp+(yMi-yMn)/dt)/c_RK(i_RK);
+  
+
+%%
     end
 
 end

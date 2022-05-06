@@ -45,22 +45,26 @@ color4 = char(line4(j));
 % color3 = char(line3(ceil(j/2)));
 % color4 = char(line4(ceil(j/2)));
 
+if options.rom.rom == 1
+
     if bc_recon == 3
         suffix = " vo Mbc = "+num2str(Mbc);
         name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     elseif bc_recon == 5
         suffix = " vp ";
-        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);     
+        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     else
         suffix = " bc recon = " + bc_recon;
     end
 
-if options.rom.bc_recon == 3
-    suffix = suffix + " M inhom =" + num2str(M_inhom);
-    name = name + " Minhom= "+num2str(M_inhom);
-elseif options.rom.bc_recon == 5
-    suffix = suffix + " Mp =" + num2str(Mp);
-    name = name + " Mp =" + num2str(Mp);
+    if options.rom.bc_recon == 3
+        suffix = suffix + " M inhom =" + num2str(M_inhom);
+        name = name + " Minhom= "+num2str(M_inhom);
+    elseif options.rom.bc_recon == 5
+        suffix = suffix + " Mp =" + num2str(Mp);
+        name = name + " Mp =" + num2str(Mp);
+    end
+
 end
 
 %% kinetic energy analysis
@@ -108,11 +112,12 @@ end
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
-%                     velocity_error_plot;
+                    velocity_error_plot;
                     velocity_comparison_plot;
 %                     pressure_error_plot;
-                    pressure_gradient_error_plot;
-                    projected_pressure_gradient_error_plot;
+%                     pressure_gradient_error_plot;
+%                     projected_pressure_gradient_error_plot;
+%                     projected_pressure_gradient_comparison_plot;
 %                     kinetic_energy_error_plots;
 %                     mass_violation_plots;
 

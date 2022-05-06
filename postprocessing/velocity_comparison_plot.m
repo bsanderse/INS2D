@@ -10,7 +10,10 @@ Om = options.grid.Om;
 if options.verbosity.equivalence_cheat
     V_best = B*(B'*(Om.*(snapshots_V_total)));
 else
-    V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+    phi_inhom = options.rom.phi_inhom;
+%     V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc; %actually I probably should also take the best approximation of Vbc onto phi_inhom here
+    V_best = B*(B'*(Om.*(snapshots_V_total))) ...
+            +phi_inhom*phi_inhom'*(Om.*snapshots.Vbc); 
 end
 
 if mod(j,2) == 1

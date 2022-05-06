@@ -4,7 +4,8 @@ run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-M_list = [2 5 10];
+% M_list = [2 5 10];
+M_list = [2 5 8];
 M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
@@ -164,7 +165,7 @@ changing_snapshotdata = 1;
 %     precompute_force      = 0;
 %     precompute_obc       = 0;
 
-    snapshot_data = 'results/actuator_unsteady_small_1.000e+02_20x8_fomdata/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_small_movemode_1.000e+02_20x8_fomdata/matlab_data.mat';
     
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);
@@ -316,5 +317,5 @@ debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 % equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 equivalence_cheats = kron([1 1 1],[0 1]); 
-equivalence_cheat = equivalence_cheats(j);
-% equivalence_cheat = 0;
+% equivalence_cheat = equivalence_cheats(j);
+equivalence_cheat = 0;
