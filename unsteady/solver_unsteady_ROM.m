@@ -183,9 +183,39 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     % getBasis can use different methods to get basis: SVD/direct/snapshot
     % method
     [W,S] = getBasis(Vmod,options);
+
+    W0 = W;
     
     % transform back
     W = Om_invsqrt*W;
+
+    %% mission: phi consistent phi bc
+    norm(W0(:,1:M)-Vmod*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+    norm(W0(:,1:M)-Om_sqrt*V_svd*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+    norm(Om_invsqrt*W0(:,1:M)-V_svd*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+
+    if options.rom.rom_bc == 2
+            t_js = t_start:dt:t_end;
+    else
+        t_js = 0;
+        Mbc = 1;
+    end
+    X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
+    for jj=1:length(t_js)
+        t_j = t_js(jj);
+        X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
+    end
+    W_bc = X_bc*Vmod'*W0(:,1:Mbc)*diag(S(1:Mbc).^-2);
+
+    phi_bc = W_bc(:,1:Mbc); % superfluous
+    options.rom.phi_bc = phi_bc;
+    for jj = 1:Mbc
+        yBC = phi_bc(:,jj);
+        Y_M(:,jj) = get_yM(options,yBC);
+    end
+    M_h = options.discretization.M;
+    norm(M_h*W(:,1:Mbc)-Y_M) % not necesssarily true
+    %%
     
 else
     error('wrong option for weighted norm or momentum conservation');
@@ -354,16 +384,17 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
 %     if options.rom.rom_bc == 2
 %         dt = snapshots.dt;
 %         t_end = snapshots.t_end;
-        if options.rom.rom_bc == 2
-            t_js = t_start:dt:t_end;
-        else
-            t_js = 0;
-            Mbc = 1;
-        end
-        X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
-        for jj=1:length(t_js)
-            t_j = t_js(jj);
-            X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
+
+%         if options.rom.rom_bc == 2
+%             t_js = t_start:dt:t_end;
+%         else
+%             t_js = 0;
+%             Mbc = 1;
+%         end
+%         X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
+%         for jj=1:length(t_js)
+%             t_j = t_js(jj);
+%             X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
         end
         if options.rom.rom_bc == 2
             [U_bc,S_bc,V_bc] = svd(X_bc,'econ');
@@ -383,19 +414,19 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
             U_bc = X_bc/norm(X_bc);
         end
         
-        cond_fac = 10^-6;
-        X_bc_rank = sum(abs(Sigma_bc/Sigma_bc(1))>cond_fac);
-        if Mbc > X_bc_rank
-            Mbc = X_bc_rank;
-        end
-
-        phi_bc = U_bc(:,1:Mbc);
-        options.rom.phi_bc = phi_bc;
-        if (options.rom.bc_recon == 3) || options.verbosity.equivalence_cheat == 1
-            for jj = 1:Mbc
-                yBC = phi_bc(:,jj);
-                Y_M(:,jj) = get_yM(options,yBC);
-            end
+%         cond_fac = 10^-6;
+%         X_bc_rank = sum(abs(Sigma_bc/Sigma_bc(1))>cond_fac);
+%         if Mbc > X_bc_rank
+%             Mbc = X_bc_rank;
+%         end
+% 
+%         phi_bc = U_bc(:,1:Mbc);
+%         options.rom.phi_bc = phi_bc;
+%         if (options.rom.bc_recon == 3) || options.verbosity.equivalence_cheat == 1
+%             for jj = 1:Mbc
+%                 yBC = phi_bc(:,jj);
+%                 Y_M(:,jj) = get_yM(options,yBC);
+%             end
             L = options.discretization.A;
             Gx   = options.discretization.Gx;
             Gy   = options.discretization.Gy;

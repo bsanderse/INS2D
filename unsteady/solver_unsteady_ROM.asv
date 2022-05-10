@@ -183,9 +183,43 @@ elseif (options.rom.mom_cons == 0 && options.rom.weighted_norm == 1)
     % getBasis can use different methods to get basis: SVD/direct/snapshot
     % method
     [W,S] = getBasis(Vmod,options);
+
+    W0 = W;
     
     % transform back
     W = Om_invsqrt*W;
+
+    %% mission: phi consistent phi bc
+    norm(W0(:,1:M)-Vmod*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+    norm(W0(:,1:M)-Om_sqrt*V_svd*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+    norm(Om_invsqrt*W0(:,1:M)-V_svd*Vmod'*W0(:,1:M)*diag(S(1:M).^-2))
+
+
+    norm(W-Om_inv.*(V_svd*V_svd'*W*(S.^-2)))
+    norm(W-V_svd*V_svd'*(Om.*W)*(S.^-2))
+
+    if options.rom.rom_bc == 2
+            t_js = t_start:dt:t_end;
+    else
+        t_js = 0;
+        Mbc = 1;
+    end
+    X_bc = zeros(length(get_bc_vector_yBC(0,options)),length(t_js));
+    for jj=1:length(t_js)
+        t_j = t_js(jj);
+        X_bc(:,jj) = get_bc_vector_yBC(t_j,options);
+    end
+    W_bc = Om_inv.*(X_bc*V_bc'*W*(S.^-2));
+
+    phi_bc = W_bc(:,1:Mbc);
+    %         options.rom.phi_bc = phi_bc;
+    for jj = 1:Mbc
+        yBC = phi_bc(:,jj);
+        Y_M(:,jj) = get_yM(options,yBC);
+    end
+    M_h = options.discretization.M;
+    norm(M_h*W(:,1:Mbc)-Y_M) % not necesssarily true
+    %%
     
 else
     error('wrong option for weighted norm or momentum conservation');
@@ -530,7 +564,7 @@ else
     Q_1_ = Q__(:,1:H);
     Q_2_ = Q__(:,H+1:end);
     R_1_ = R__(1:H,:);
-    a_1 = /(R_1_*R_1_');
+    a_1 = (R_1_*R_1_')\(R_1_*yM);
     a_2 = Q_2_'*B'*(Om.*V);
     R = Q_1_*a_1 + Q_2_*a_2;
 
