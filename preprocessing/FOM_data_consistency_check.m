@@ -10,5 +10,7 @@ if ~(isequal(options_ROM.case,options_FOM.case) && ...
         isequal(options_ROM.BC,options_FOM.BC) )
     warning('FOM options and ROM options are not consistent')
 end
+
+
         
 
