@@ -58,12 +58,10 @@ switch options.rom.bases_construction
     case 'closest'
         [phi_h,weight_matrix] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case 'optimal'
         [phi_h,weight_matrix] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         phi_hom = Om_POD(X_hom,M,options);
     case 'qr'
@@ -73,11 +71,7 @@ switch options.rom.bases_construction
         M_hphi = M_h*phi_h;
         rank_M_hphi = rank(M_hphi);
         [Q,R] = qr(M_hphi',0);
-        Q1 = Q(:,1:rank_M_hphi);
-        Q2 = Q(:,rank_M_hphi+1:end);
-        R1 = R(1:rank_M_hphi,:);
-        phi_inhom = phi_h*Q1;
-        phi_hom = phi_h*Q2;
+        Q1 =
 end
 B = phi_hom;
 options.rom.B = B;

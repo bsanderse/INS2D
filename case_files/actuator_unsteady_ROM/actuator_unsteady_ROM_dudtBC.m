@@ -15,7 +15,7 @@ if ( (length(x)==1 && abs(x-x1)<1e-10)) %|| (length(y)==1 && abs(y-y1)<1e-10) )
 %     u     = cos(alpha)*ones(length(x)*length(y),1);
 %     a     = (pi/6);
 %     f     = 0.5;
-    dudt  = -sin(alpha)*a*cos(y-f*t)*(-f)*ones(length(x)*length(y),1);    %original
+    dudt  = -sin(alpha).*a.*cos(y-f*t).*(-f).*ones(length(x)*length(y),1);    %original
 %     dudt = a*f*sin(alpha).*cos(alpha).*ones(length(x)*length(y),1);
 else
     dudt = zeros(length(x)*length(y),1);

@@ -1,10 +1,10 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 run_multiple = 0;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
-% M_list = [40 40];
+M_list = [40 40];
 % M_list = [60 60];
 % M_list = 10*ones(6,1);
 % M_list = 10;
@@ -120,9 +120,9 @@ changing_snapshotdata = 1;
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat'; % CWI laptop
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat'; % CWI laptop
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_obc/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat'; % provate laptop
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat'; % provate laptop
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata_obc/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
 
@@ -136,10 +136,10 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recon = 5; Mp = M;
+%     bc_recon = 5; Mp = M;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -283,7 +283,7 @@ changing_snapshotdata = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name

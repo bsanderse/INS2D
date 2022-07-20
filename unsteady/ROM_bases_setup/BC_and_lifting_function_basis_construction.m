@@ -29,10 +29,10 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
         end
 
         if (options.rom.bc_recon == 3) || options.verbosity.equivalence_cheat == 1
-%             for jj = 1:Mbc
-%                 yBC = phi_bc(:,jj);
-%                 Y_M(:,jj) = get_yM(options,yBC);
-%             end
+            for jj = 1:Mbc
+                yBC = phi_bc(:,jj);
+                Y_M(:,jj) = get_yM(options,yBC);
+            end
             L = options.discretization.A;
             Gx   = options.discretization.Gx;
             Gy   = options.discretization.Gy;
