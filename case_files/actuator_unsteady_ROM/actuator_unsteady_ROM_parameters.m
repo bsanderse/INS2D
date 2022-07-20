@@ -1,8 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 1;
-% M_list = [10 10];
+run_multiple = 0;
+M_list = [10 10];
 % M_list = [10 10 10 10];
-M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -79,8 +79,8 @@ changing_snapshotdata = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
     Mbc = M;
     % the full snapshotdataset can be reduced by taking as index
@@ -120,9 +120,9 @@ changing_snapshotdata = 1;
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=0/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_debuggedJac/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_gO=1/matlab_data.mat';
-%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80/matlab_data.mat'; % CWI laptop
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_obc/matlab_data.mat';
-    snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata/matlab_data.mat'; % provate laptop
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_200x80_FOMdata_obc/matlab_data.mat';
 %     snapshot_data = 'results/actuator_unsteady_ROM_1.000e+02_20x8_FOMdata/matlab_data.mat';
 

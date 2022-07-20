@@ -18,7 +18,7 @@ if (nargin<1)
 end
 
 if (nargin==1) ...
-        || folder_cases==0 % botch
+        || sum(folder_cases==0) % botch
    folder_cases = 'case_files'; % default folder name 
 end
 

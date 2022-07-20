@@ -8,6 +8,9 @@ Npx    = options.grid.Npx;
 Npy    = options.grid.Npy;
 yu     = options.grid.yu;
 
+Nu = options.grid.Nu; %wild guess
+Nv = options.grid.Nv; %wild guess
+
 uh   = V(1:Nu);
 vh   = V(Nu+1:Nu+Nv);
 u    = reshape(uh,Nux_in,Nuy_in);

@@ -11,7 +11,10 @@ Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 Npx    = options.grid.Npx;
-Npy    = options.grid.Npy;    
+Npy    = options.grid.Npy;   
+
+Nu = options.grid.Nu; %wild guess
+Nv = options.grid.Nv; %wuld guess
 
 uh   = V(1:Nu);
 vh   = V(Nu+1:Nu+Nv);
