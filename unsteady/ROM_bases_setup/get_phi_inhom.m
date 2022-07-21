@@ -23,26 +23,17 @@ G = [Gx;Gy];
 
 Om = options.grid.Om;
 Om_inv = options.grid.Om_inv;
-    tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
-% tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
+%     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
 
 [phi_inhom,R_inhom,P] = Om_orthonormalize(tilde_phi_inhom,options);
 
 %testing
-M_h = options.discretization.M;
-F_M = options.discretization.F_M;
-norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
-norm(phi_inhom*R_inhom-tilde_phi_inhom(:,P))
+% M_h = options.discretization.M;
+% F_M = options.discretization.F_M;
+% norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+% norm(phi_inhom*R_inhom-tilde_phi_inhom(:,P))
 
-
-% [Q_inhom,R_inhom] = qr(sqrt(Om).*tilde_phi_inhom,0); 
-% M_inhom = rank(tilde_phi_inhom);
-% Q_1_inhom = -Q_inhom(:,1:M_inhom);
-% R_inhom = -R_inhom(1:M_inhom,:);
-% phi_inhom = sqrt(Om_inv).*Q_1_inhom;
-
-% options.rom.phi_inhom = phi_inhom;
-% options.rom.R_inhom = R_inhom;
 
 %% testing
 % F_M = options.discretization.F_M;

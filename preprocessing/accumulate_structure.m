@@ -122,6 +122,7 @@ voi = {
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'time_discB4pres_elim', 1; ... % 0: time derivative ... ; 1: time difference quotient ... in RHS of ROM PPE for F computation
+    'bases_construction', 'qr'; ...
     };
 
 accumulate_object;

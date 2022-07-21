@@ -44,10 +44,10 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
 end
 
-options.rom.bases_construction = "mthesis";
-% options.rom.bases_construction = "closest";
-% options.rom.bases_construction = "optimal";
-% options.rom.bases_construction = "qr";
+% options.rom.bases_construction = "mthesis";
+% % options.rom.bases_construction = "closest";
+% % options.rom.bases_construction = "optimal";
+% % options.rom.bases_construction = "qr";
 
 switch options.rom.bases_construction
     case "mthesis"
@@ -84,21 +84,32 @@ switch options.rom.bases_construction
         P = 1:size(phi_bc,2);
 end
 % testing
-options.rom.bases_construction
-figure; heatmap(phi_hom'*(Om.*phi_hom))
-figure; heatmap(phi_inhom'*(Om.*phi_inhom))
-norm(phi_hom'*(Om.*phi_inhom))
-figure; heatmap(phi_hom'*(Om.*phi_inhom))
-figure; heatmap(phi_bc'*phi_bc)
-M_h = options.discretization.M;
-F_M = options.discretization.F_M;
-norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+% options.rom.bases_construction
+% figure; heatmap(phi_hom'*(Om.*phi_hom))
+% figure; heatmap(phi_inhom'*(Om.*phi_inhom))
+% norm(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_bc'*phi_bc)
+% M_h = options.discretization.M;
+% F_M = options.discretization.F_M;
+% norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
 
 B = phi_hom;
-options.rom.B = B;
-options.rom.phi_bc = phi_bc;
-options.rom.phi_inhom = phi_inhom;
-options.rom.R_inhom = R_inhom;
+% options.rom.B = B;
+% options.rom.phi_bc = phi_bc;
+% options.rom.phi_inhom = phi_inhom;
+% options.rom.R_inhom = R_inhom;
+options.rom.B1 = B;
+options.rom.phi_bc1 = phi_bc;
+options.rom.phi_inhom1 = phi_inhom;
+options.rom.R_inhom1 = R_inhom;
+% 
+% M = size(phi_hom,2);
+% options.rom.M = M;
+% M_inhom = size(phi_inhom,2);
+% options.rom.M_inhom = M_inhom;
+% Mbc = size(phi_bc,2);
+% options.rom.Mbc = Mbc;
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
 options.rom.Vbc = Vbc;
@@ -122,6 +133,21 @@ pressure_basis_construction;
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
 BC_and_lifting_function_basis_construction;
+
+%% testing/comparing
+B = options.rom.B;
+B1 = options.rom.B1;
+norm(B-B1)
+phi_inhom = options.rom.phi_inhom;
+phi_inhom1 = options.rom.phi_inhom1;
+norm(phi_inhom-phi_inhom1)
+phi_bc = options.rom.phi_bc;
+phi_bc1 = options.rom.phi_bc1;
+norm(phi_bc-phi_bc1)
+R_inhom = options.rom.R_inhom;
+R_inhom1 = options.rom.R_inhom1;
+norm(R_inhom-R_inhom1)
+
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
@@ -284,7 +310,7 @@ while(n<=nt)
             yBCn1 = get_bc_vector_yBC(t,options);
             yMn1 = get_yM(options,yBCn1);
             p = pressure_additional_solve2(V,t,(yMn1-yMn)/dt,options);
-            warning('only correct for forward Euler')
+%             warning('only correct for forward Euler')
         elseif options.rom.bc_recon == 5
             Bp = options.rom.Bp;
             p = Bp*q;

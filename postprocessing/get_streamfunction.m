@@ -75,7 +75,8 @@ psiLoLe= psiLo(end);
 psiLo  = psiLo(end-1:-1:1);
 
 if (abs(psiLoLe)>1e-12)
-    disp(['warning: contour integration of psi not consistent: ' num2str(abs(psiLoLe))]);
+%     disp(['warning: contour integration of psi not consistent: ' num2str(abs(psiLoLe))]);
+    warning(['warning: contour integration of psi not consistent: ' num2str(abs(psiLoLe))]);
 end
 
 % solve del^2 psi = -omega
