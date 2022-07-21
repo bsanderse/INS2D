@@ -174,3 +174,6 @@ if obc
 %         error('Sorry, precomputation not implemented for rom_bc =/= 2')
 %     end
 end
+
+% compute matrix F_M which maps ybc to yM
+% for 

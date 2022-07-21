@@ -44,29 +44,29 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
 end
 
-options.rom.bases_construction = 'mthesis';
-options.rom.bases_construction = 'closest';
-options.rom.bases_construction = 'optimal';
-options.rom.bases_construction = 'qr';
+options.rom.bases_construction = "mthesis";
+% options.rom.bases_construction = "closest";
+% options.rom.bases_construction = "optimal";
+% options.rom.bases_construction = "qr";
 
 switch options.rom.bases_construction
-    case 'mthesis'
+    case "mthesis"
         X_hom = X_h - X_inhom;
         phi_hom = Om_POD(X_hom,M,options);
         phi_bc = POD(X_bc,Mbc);
-        [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options);
-    case 'closest'
+        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
+    case "closest"
         [phi_h,weight_matrix] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options);
+        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
-    case 'optimal'
+    case "optimal"
         [phi_h,weight_matrix] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options);
+        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         phi_hom = Om_POD(X_hom,M,options);
-    case 'qr'
+    case "qr"
         [phi_h,weight_matrix] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         M_h = options.discretization.M;
@@ -76,9 +76,24 @@ switch options.rom.bases_construction
         Q1 = Q(:,1:rank_M_hphi);
         Q2 = Q(:,rank_M_hphi+1:end);
         R1 = R(1:rank_M_hphi,:);
-        phi_inhom = phi_h*Q1;
         phi_hom = phi_h*Q2;
+        phi_inhom = phi_h*Q1; % correct, but we also need R_inhom
+%         [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options); % definitely wrong
+        F_M = options.discretization.F_M;
+        R_inhom = (R1*R1')\(R1*F_M*phi_bc);
+        P = 1:size(phi_bc,2);
 end
+% testing
+options.rom.bases_construction
+figure; heatmap(phi_hom'*(Om.*phi_hom))
+figure; heatmap(phi_inhom'*(Om.*phi_inhom))
+norm(phi_hom'*(Om.*phi_inhom))
+figure; heatmap(phi_hom'*(Om.*phi_inhom))
+figure; heatmap(phi_bc'*phi_bc)
+M_h = options.discretization.M;
+F_M = options.discretization.F_M;
+norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+
 B = phi_hom;
 options.rom.B = B;
 options.rom.phi_bc = phi_bc;

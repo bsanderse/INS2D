@@ -1,5 +1,4 @@
-function [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options)
-% P only required for debugging
+function [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options)
 
 Mbc = size(phi_bc,2);
 
@@ -23,8 +22,8 @@ G = [Gx;Gy];
 
 Om = options.grid.Om;
 Om_inv = options.grid.Om_inv;
-    tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
-% tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
+%     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
+tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
 
 [phi_inhom,R_inhom,P] = Om_orthonormalize(tilde_phi_inhom,options);
 
