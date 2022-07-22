@@ -49,25 +49,27 @@ end
 % % options.rom.bases_construction = "optimal";
 % % options.rom.bases_construction = "qr";
 
+options.rom.Mbc = Mbc; % botch
+
 switch options.rom.bases_construction
     case "mthesis"
         X_hom = X_h - X_inhom;
-        phi_hom = Om_POD(X_hom,M,options);
-        phi_bc = POD(X_bc,Mbc);
-        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
+        [phi_hom,~,M] = Om_POD(X_hom,M,options);
+        [phi_bc,Mbc] = POD(X_bc,Mbc);
+        [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
-        [phi_h,weight_matrix] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
-        [phi_h,weight_matrix] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
-        phi_hom = Om_POD(X_hom,M,options);
+        [phi_hom,~,M] = Om_POD(X_hom,M,options);
     case "qr"
-        [phi_h,weight_matrix] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         M_h = options.discretization.M;
         M_hphi = M_h*phi_h;
@@ -83,69 +85,82 @@ switch options.rom.bases_construction
         R_inhom = (R1*R1')\(R1*F_M*phi_bc);
         P = 1:size(phi_bc,2);
 end
-% testing
-% options.rom.bases_construction
-% figure; heatmap(phi_hom'*(Om.*phi_hom))
-% figure; heatmap(phi_inhom'*(Om.*phi_inhom))
-% norm(phi_hom'*(Om.*phi_inhom))
-% figure; heatmap(phi_hom'*(Om.*phi_inhom))
-% figure; heatmap(phi_bc'*phi_bc)
-% M_h = options.discretization.M;
-% F_M = options.discretization.F_M;
+%testing
+options.rom.bases_construction
+figure; heatmap(phi_hom'*(Om.*phi_hom))
+figure; heatmap(phi_inhom'*(Om.*phi_inhom))
+norm(phi_hom'*(Om.*phi_inhom))
+figure; heatmap(phi_hom'*(Om.*phi_inhom))
+figure; heatmap(phi_bc'*phi_bc)
+M_h = options.discretization.M;
+F_M = options.discretization.F_M;
 % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+cond(R_inhom)
 
 B = phi_hom;
-% options.rom.B = B;
-% options.rom.phi_bc = phi_bc;
-% options.rom.phi_inhom = phi_inhom;
-% options.rom.R_inhom = R_inhom;
-options.rom.B1 = B;
-options.rom.phi_bc1 = phi_bc;
-options.rom.phi_inhom1 = phi_inhom;
-options.rom.R_inhom1 = R_inhom;
+options.rom.B = B;
+options.rom.phi_bc = phi_bc;
+options.rom.phi_inhom = phi_inhom;
+options.rom.R_inhom = R_inhom;
+% options.rom.B1 = B;
+% options.rom.phi_bc1 = phi_bc;
+% options.rom.phi_inhom1 = phi_inhom;
+% options.rom.R_inhom1 = R_inhom;
+
 % 
-% M = size(phi_hom,2);
-% options.rom.M = M;
-% M_inhom = size(phi_inhom,2);
-% options.rom.M_inhom = M_inhom;
-% Mbc = size(phi_bc,2);
-% options.rom.Mbc = Mbc;
+M = size(phi_hom,2);
+options.rom.M = M;
+M_inhom = size(phi_inhom,2);
+options.rom.M_inhom = M_inhom;
+Mbc = size(phi_bc,2);
+options.rom.Mbc = Mbc;
 
-%% get Vbc into options (this has to be outside the j==1 if statement)
-options.rom.Vbc = Vbc;
+% M = options.rom.M; %botch
+% Mbc = options.rom.Mbc; %botch
 
-%% construct basis through SVD or eigenvalue problem
-velocity_basis_construction;
-
-%% check whether basis is divergence free
-% this gives max div for each basis vector (columns of B):
-% note that yM should not be included here, it was already used in
-% subtracting Vbc from the snapshots matrix
-div_basis = max(abs(options.discretization.M*B),[],1); %
-% max over all snapshots:
-maxdiv_basis = max(div_basis);
-if (maxdiv_basis > 1e-14)
-    warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
-end
-
-%% pressure recovery
-pressure_basis_construction;
-
-%% compute boundary condition approximation and inhomogeneous ROM basis
-BC_and_lifting_function_basis_construction;
+% %% get Vbc into options (this has to be outside the j==1 if statement)
+% options.rom.Vbc = Vbc;
+% 
+% %% construct basis through SVD or eigenvalue problem
+% velocity_basis_construction;
+% 
+% %% check whether basis is divergence free
+% % this gives max div for each basis vector (columns of B):
+% % note that yM should not be included here, it was already used in
+% % subtracting Vbc from the snapshots matrix
+% div_basis = max(abs(options.discretization.M*B),[],1); %
+% % max over all snapshots:
+% maxdiv_basis = max(div_basis);
+% if (maxdiv_basis > 1e-14)
+%     warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+% end
+% 
+% %% pressure recovery
+% pressure_basis_construction;
+% 
+% %% compute boundary condition approximation and inhomogeneous ROM basis
+% BC_and_lifting_function_basis_construction;
 
 %% testing/comparing
-B = options.rom.B;
-B1 = options.rom.B1;
-norm(B-B1)
-phi_inhom = options.rom.phi_inhom;
-phi_inhom1 = options.rom.phi_inhom1;
-norm(phi_inhom-phi_inhom1)
-phi_bc = options.rom.phi_bc;
-phi_bc1 = options.rom.phi_bc1;
-norm(phi_bc-phi_bc1)
-R_
-
+% B = options.rom.B;
+% B1 = options.rom.B1;
+% norm(B-B1)
+% phi_inhom = options.rom.phi_inhom;
+% phi_inhom1 = options.rom.phi_inhom1;
+% norm(phi_inhom-phi_inhom1)
+% norm(phi_inhom+phi_inhom1)
+% phi_bc = options.rom.phi_bc;
+% phi_bc1 = options.rom.phi_bc1;
+% norm(phi_bc-phi_bc1)
+% R_inhom = options.rom.R_inhom;
+% R_inhom1 = options.rom.R_inhom1;
+% norm(R_inhom-R_inhom1)
+% norm(R_inhom+R_inhom1)
+% 
+% B = B1;
+% options.rom.B = B;
+% phi_bc = phi_bc1;
+% options.rom.phi_bc = phi_bc;
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
