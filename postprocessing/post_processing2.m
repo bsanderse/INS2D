@@ -64,6 +64,8 @@ if options.rom.rom == 1
         suffix = suffix + " Mp =" + num2str(Mp);
         name = name + " Mp =" + num2str(Mp);
     end
+    
+    suffix = suffix + " " + options.rom.bases_construction;
 
 end
 

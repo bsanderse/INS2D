@@ -10,21 +10,36 @@ V_2_ref  = weightedL2norm(V_ref,options.grid.Om);
 % error_V_2 = weightedL2norm(error_V,options.grid.Om)./V_2_ref;
 error_V_2 = weightedL2norm(error_V,options.grid.Om);
 
+%% wrong
 % best possible approximation given the projection:
 % note that the norm should be consistent with the
 % optimization problem used in the SVD
+% B = options.rom.B;
+% Om = options.grid.Om;
+% if options.verbosity.equivalence_cheat
+%     V_best = B*(B'*(Om.*(snapshots_V_total)));
+% else
+%     V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+% end
+%% correct
 B = options.rom.B;
 Om = options.grid.Om;
 if options.verbosity.equivalence_cheat
-    V_best = B*(B'*(Om.*(snapshots_V_total)));
+    basis = B;
 else
-    V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc;
+    phi_inhom = options.rom.phi_inhom;
+    basis = [B phi_inhom];
 end
+V_best = basis*(basis'*(Om.*(snapshots_V_total)));
+
+%%
 
 error_V_best = V_best - snapshots_V_total;
 
 % error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
 error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
+
+L2_V_best_errors(j) = sum(error_V_best_2)
 
 figure(99)
 plot(t_vec,error_V_2,color,'displayname',"ROM M="+M+suffix); 

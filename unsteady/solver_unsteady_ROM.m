@@ -75,9 +75,21 @@ switch options.rom.bases_construction
         M_hphi = M_h*phi_h;
         rank_M_hphi = rank(M_hphi);
         [Q,R] = qr(M_hphi',0);
+        %% experiment -> didn't help
+%         [Q,R,P] = qr(M_hphi',0);
+%         % test
+%         norm((Q*R)'-M_hphi(P,:))
+        %%
         Q1 = Q(:,1:rank_M_hphi);
         Q2 = Q(:,rank_M_hphi+1:end);
         R1 = R(1:rank_M_hphi,:);
+        %% next experiment -> didn't help; presumption: would require to update phi_bc as well, don't know how that could be done
+%         cond_fac = 1e-6;
+%         relevance = (sum(abs(Q1'*M_hphi'),2)>cond_fac);
+%         indices = find(relevance);
+%         Q1 = Q1(:,indices);
+%         R1 = R(indices,:);
+        %%
         phi_hom = phi_h*Q2;
         phi_inhom = phi_h*Q1; % correct, but we also need R_inhom
 %         [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options); % definitely wrong
@@ -86,15 +98,15 @@ switch options.rom.bases_construction
         P = 1:size(phi_bc,2);
 end
 %testing
-options.rom.bases_construction
-figure; heatmap(phi_hom'*(Om.*phi_hom))
-figure; heatmap(phi_inhom'*(Om.*phi_inhom))
-norm(phi_hom'*(Om.*phi_inhom))
-figure; heatmap(phi_hom'*(Om.*phi_inhom))
-figure; heatmap(phi_bc'*phi_bc)
-M_h = options.discretization.M;
-F_M = options.discretization.F_M;
-% norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+% options.rom.bases_construction
+% figure; heatmap(phi_hom'*(Om.*phi_hom))
+% figure; heatmap(phi_inhom'*(Om.*phi_inhom))
+% norm(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_bc'*phi_bc)
+% M_h = options.discretization.M;
+% F_M = options.discretization.F_M;
+% % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
 cond(R_inhom)
 
 B = phi_hom;
@@ -117,6 +129,36 @@ options.rom.Mbc = Mbc;
 
 % M = options.rom.M; %botch
 % Mbc = options.rom.Mbc; %botch
+
+if options.rom.bc_recon == 5
+    switch options.rom.bases_construction
+        case "mthesis"
+            
+        case "closest"
+%             F_M = options.discretization.F_M;
+%             Bp = orthonormalize(F_M*phi_bc); 
+            % in theory, F_M*phi_bc = M_h*phi_h
+            % in practice, however, rank computations are error-prone
+            M_h = options.discretization.M;
+            Bp = orthonormalize(M_h*phi_inhom);
+            % M_h*phi_inhom should span the same space as F_M*phi_bc while
+            % having smaller or equal (computed) rank
+            B = [B phi_inhom];
+        case "optimal"
+            
+        case "qr"
+            B = phi_h;
+            Bp = orthonormalize(R1');
+    end
+    
+    options.rom.Bp = Bp;
+    Mp = size(Bp,2);
+    options.rom.Mp = Mp;
+    options.rom.B = B;
+    M = size(B,2);
+    options.rom.M = M;
+end
+        
 
 % %% get Vbc into options (this has to be outside the j==1 if statement)
 % options.rom.Vbc = Vbc;

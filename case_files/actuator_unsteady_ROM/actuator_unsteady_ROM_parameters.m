@@ -1,12 +1,12 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-% run_multiple = 0;
-run_multiple = 1;
+run_multiple = 0;
+% run_multiple = 1;
 % M_list = [10 10];
 % M_list = [10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = kron([2 5 10 20 40],[1 1]);
-% M_list = [40 40 40 40];
-M_list = [40 40];
+M_list = [40 40 40 40];
+% M_list = [40 40];
 % M_list = [60 60];
 % M_list = 10*ones(6,1);
 % M_list = 10;
@@ -138,10 +138,10 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-%     bc_recon = 5; Mp = M;
+    bc_recon = 5; Mp = M;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+%     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -162,11 +162,11 @@ changing_snapshotdata = 1;
 %     bases_construction = "mthesis";
 % bases_construction = "closest";
 % bases_construction = "optimal";
-% bases_construction = "qr";
+bases_construction = "qr";
 
 % bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-bases_constructions = ["mthesis" "closest"]; % "optimal" "qr"];
-bases_construction = bases_constructions(j);
+% bases_constructions = ["mthesis" "closest"]; % "optimal" "qr"];
+% bases_construction = bases_constructions(j);
 
 suffix = suffix + bases_construction;
  
