@@ -1,5 +1,5 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 1;
+run_multiple = 0;
 % run_multiple = 1;
 % M_list = [10 10];
 M_list = 8*[10 10 10 10];
@@ -281,7 +281,7 @@ changing_snapshotdata = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name

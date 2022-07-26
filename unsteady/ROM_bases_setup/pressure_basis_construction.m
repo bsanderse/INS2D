@@ -80,7 +80,7 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
     Mp
     options.rom.Bp = Bp;
     
-    svd_end(j) = svd_end(j) + toc - svd_start2
+%     svd_end(j) = svd_end(j) + toc - svd_start2
     
     hold on
     if (size(Sp,2)>1)

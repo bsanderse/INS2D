@@ -168,7 +168,7 @@ bases_construction = "qr";
 % bases_constructions = ["mthesis" "closest"]; % "optimal" "qr"];
 % bases_construction = bases_constructions(j);
 
-suffix = suffix + bases_construction;
+% suffix = suffix + bases_construction;
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS

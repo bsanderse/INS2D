@@ -24,11 +24,14 @@ error_V_2 = weightedL2norm(error_V,options.grid.Om);
 %% correct
 B = options.rom.B;
 Om = options.grid.Om;
-if options.verbosity.equivalence_cheat
+% if options.verbosity.equivalence_cheat
+if options.rom.bc_recon == 5
     basis = B;
-else
+elseif options.rom.bc_recon == 3
     phi_inhom = options.rom.phi_inhom;
     basis = [B phi_inhom];
+else
+    warning('not implemented')
 end
 V_best = basis*(basis'*(Om.*(snapshots_V_total)));
 
