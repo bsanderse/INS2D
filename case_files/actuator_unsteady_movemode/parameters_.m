@@ -181,8 +181,8 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recon = 5;
-%     bc_recon = 3;
+%     bc_recon = 5;
+    bc_recon = 3;
 %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
 %     bc_recon = bc_recons(j);

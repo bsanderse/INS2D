@@ -63,7 +63,7 @@ if (options.rom.pressure_recovery == 1) || options.rom.bc_recon == 5
 %         while rank(Bp'*M_h*B)<Mp % prone to machine precision problems
 %         rank = sum(abs(svd(Bp'*M_h*B))>10^-10);
 %         cond_fac = 10^-8;
-        cond_fac = 10^-6;
+%         cond_fac = 10^-6;
         sing_vals = svd(Bp'*M_h*B);
         rank_ = sum(abs(sing_vals)>cond_fac*max(abs(sing_vals))); % avoid badly scaled hatL
         while rank_<Mp

@@ -44,6 +44,9 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
 end
 
+%% get Vbc into options (this has to be outside the j==1 if statement)
+options.rom.Vbc = Vbc;
+
 %%
 
 if true
@@ -59,22 +62,22 @@ options.rom.Mbc = Mbc; % botch
 switch options.rom.bases_construction
     case "mthesis"
         X_hom = X_h - X_inhom;
-        [phi_hom,~,M] = Om_POD(X_hom,M,options);
-        [phi_bc,Mbc] = POD(X_bc,Mbc);
+        [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
+        [phi_bc,Mbc] = POD(X_bc,Mbc,cond_fac);
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options);
     case "qr"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         M_h = options.discretization.M;
         M_hphi = M_h*phi_h;
@@ -101,6 +104,8 @@ switch options.rom.bases_construction
         F_M = options.discretization.F_M;
         R_inhom = (R1*R1')\(R1*F_M*phi_bc);
         P = 1:size(phi_bc,2);
+        
+        condition1 = cond(R1*R1')
 end
 %testing
 % options.rom.bases_construction
@@ -112,7 +117,7 @@ end
 % M_h = options.discretization.M;
 % F_M = options.discretization.F_M;
 % % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
-cond(R_inhom)
+conditions2(j) = cond(R_inhom)
 
 if options.rom.bc_recon == 3
 
@@ -170,30 +175,27 @@ end
 % M = options.rom.M; %botch
 % Mbc = options.rom.Mbc; %botch
 
-% if true
-if false
 
-%% construct basis through SVD or eigenvalue problem
-velocity_basis_construction;
-
-%% check whether basis is divergence free
-% this gives max div for each basis vector (columns of B):
-% note that yM should not be included here, it was already used in
-% subtracting Vbc from the snapshots matrix
-div_basis = max(abs(options.discretization.M*B),[],1); %
-% max over all snapshots:
-maxdiv_basis = max(div_basis);
-if (maxdiv_basis > 1e-14)
-    warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
-end
+% %% construct basis through SVD or eigenvalue problem
+% velocity_basis_construction;
+% 
+% %% check whether basis is divergence free
+% % this gives max div for each basis vector (columns of B):
+% % note that yM should not be included here, it was already used in
+% % subtracting Vbc from the snapshots matrix
+% div_basis = max(abs(options.discretization.M*B),[],1); %
+% % max over all snapshots:
+% maxdiv_basis = max(div_basis);
+% if (maxdiv_basis > 1e-14)
+%     warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+% end
 
 %% pressure recovery
 pressure_basis_construction;
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
-BC_and_lifting_function_basis_construction;
+% BC_and_lifting_function_basis_construction;
 
-end
 
 %% testing/comparing
 % B = options.rom.B;

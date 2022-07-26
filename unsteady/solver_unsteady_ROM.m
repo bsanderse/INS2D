@@ -49,6 +49,9 @@ options.rom.Vbc = Vbc;
 
 %%
 
+cond_fac = 1e-10;
+
+
 if true
 % if false
     
@@ -59,25 +62,26 @@ if true
 
 options.rom.Mbc = Mbc; % botch
 
+
 switch options.rom.bases_construction
     case "mthesis"
         X_hom = X_h - X_inhom;
-        [phi_hom,~,M] = Om_POD(X_hom,M,options);
-        [phi_bc,Mbc] = POD(X_bc,Mbc);
+        [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
+        [phi_bc,Mbc] = POD(X_bc,Mbc,cond_fac);
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
-        [phi_hom,~,M] = Om_POD(X_hom,M,options);
+        [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
     case "qr"
-        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
         M_h = options.discretization.M;
         M_hphi = M_h*phi_h;
