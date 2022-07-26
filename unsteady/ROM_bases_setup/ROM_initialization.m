@@ -14,6 +14,9 @@ else
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
         options.rom.hatM = hatM;
+        hatL = -hatM*hatM';
+        options.rom.hatL = hatL;
+        condition3(j) = cond(hatL)
 
 %     Bp = options.rom.Bp;
 %     hatM = options.rom.hatM;

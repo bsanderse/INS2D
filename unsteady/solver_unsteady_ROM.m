@@ -44,151 +44,158 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
 end
 
+%% get Vbc into options (this has to be outside the j==1 if statement)
+options.rom.Vbc = Vbc;
+
 %%
 
-% % options.rom.bases_construction = "mthesis";
+if true
+% if false
+    
+% options.rom.bases_construction = "mthesis";
 % options.rom.bases_construction = "closest";
-% % % options.rom.bases_construction = "optimal";
-% % options.rom.bases_construction = "qr";
-% 
-% options.rom.Mbc = Mbc; % botch
-% 
-% switch options.rom.bases_construction
-%     case "mthesis"
-%         X_hom = X_h - X_inhom;
-%         [phi_hom,~,M] = Om_POD(X_hom,M,options);
-%         [phi_bc,Mbc] = POD(X_bc,Mbc);
-%         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
-%     case "closest"
-%         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
-%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-%         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
-%         phi_hom = homogeneous_projection(phi_h,options);
-%     case "optimal"
-%         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
-%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-%         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
-%         X_hom = X_h - X_inhom;
-%         [phi_hom,~,M] = Om_POD(X_hom,M,options);
-%     case "qr"
-%         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
-%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-%         M_h = options.discretization.M;
-%         M_hphi = M_h*phi_h;
-%         rank_M_hphi = rank(M_hphi);
-%         [Q,R] = qr(M_hphi',0);
-%         %% experiment -> didn't help
-% %         [Q,R,P] = qr(M_hphi',0);
-% %         % test
-% %         norm((Q*R)'-M_hphi(P,:))
-%         %%
-%         Q1 = Q(:,1:rank_M_hphi);
-%         Q2 = Q(:,rank_M_hphi+1:end);
-%         R1 = R(1:rank_M_hphi,:);
-%         %% next experiment -> didn't help; presumption: would require to update phi_bc as well, don't know how that could be done
-% %         cond_fac = 1e-6;
-% %         relevance = (sum(abs(Q1'*M_hphi'),2)>cond_fac);
-% %         indices = find(relevance);
-% %         Q1 = Q1(:,indices);
-% %         R1 = R(indices,:);
-%         %%
-%         phi_hom = phi_h*Q2;
-%         phi_inhom = phi_h*Q1; % correct, but we also need R_inhom
-% %         [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options); % definitely wrong
-%         F_M = options.discretization.F_M;
-%         R_inhom = (R1*R1')\(R1*F_M*phi_bc);
-%         P = 1:size(phi_bc,2);
-% end
-% %testing
-% % options.rom.bases_construction
-% % figure; heatmap(phi_hom'*(Om.*phi_hom))
-% % figure; heatmap(phi_inhom'*(Om.*phi_inhom))
-% % norm(phi_hom'*(Om.*phi_inhom))
-% % figure; heatmap(phi_hom'*(Om.*phi_inhom))
-% % figure; heatmap(phi_bc'*phi_bc)
-% % M_h = options.discretization.M;
-% % F_M = options.discretization.F_M;
-% % % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
-% cond(R_inhom)
-% 
-% if options.rom.bc_recon == 3
-% 
-% B = phi_hom;
-% 
-% % options.rom.B1 = B;
-% % options.rom.phi_bc1 = phi_bc;
-% % options.rom.phi_inhom1 = phi_inhom;
-% % options.rom.R_inhom1 = R_inhom;
-% 
-% options.rom.phi_inhom = phi_inhom;
-% options.rom.R_inhom = R_inhom;
-% M_inhom = size(phi_inhom,2);
-% options.rom.M_inhom = M_inhom;
-% 
-% elseif options.rom.bc_recon == 5
-%     switch options.rom.bases_construction
-%         case "mthesis"
-%             B = [phi_hom phi_inhom];
-%         case "closest"
-%             B = [phi_hom phi_inhom];
-%             
-% % %             F_M = options.discretization.F_M;
-% % %             Bp = orthonormalize(F_M*phi_bc); 
-% %             % in theory, F_M*phi_bc = M_h*phi_h
-% %             % in practice, however, rank computations are error-prone
-% %             M_h = options.discretization.M;
-% %             Bp = orthonormalize(M_h*phi_inhom);
-% %             % M_h*phi_inhom should span the same space as F_M*phi_bc while
-% %             % having smaller or equal (computed) rank
-%         case "optimal"
-%             B = [phi_hom phi_inhom];
-%         case "qr"
-%             B = phi_h;
-% %             Bp = orthonormalize(R1');
-%     end
-%     
-% %     options.rom.Bp = Bp;
-% %     Mp = size(Bp,2);
-% %     options.rom.Mp = Mp;
-% end
-% 
-% options.rom.B = B;
-% M = size(B,2);
-% options.rom.M = M;
-% 
-% options.rom.phi_bc = phi_bc;
-% Mbc = size(phi_bc,2);
-% options.rom.Mbc = Mbc;
+% % options.rom.bases_construction = "optimal";
+% options.rom.bases_construction = "qr";
+
+options.rom.Mbc = Mbc; % botch
+
+switch options.rom.bases_construction
+    case "mthesis"
+        X_hom = X_h - X_inhom;
+        [phi_hom,~,M] = Om_POD(X_hom,M,options);
+        [phi_bc,Mbc] = POD(X_bc,Mbc);
+        [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
+    case "closest"
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
+        phi_hom = homogeneous_projection(phi_h,options);
+    case "optimal"
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
+        X_hom = X_h - X_inhom;
+        [phi_hom,~,M] = Om_POD(X_hom,M,options);
+    case "qr"
+        [phi_h,weight_matrix,M] = Om_POD(X_h,M,options);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        M_h = options.discretization.M;
+        M_hphi = M_h*phi_h;
+        rank_M_hphi = rank(M_hphi);
+        [Q,R] = qr(M_hphi',0);
+        %% experiment -> didn't help
+%         [Q,R,P] = qr(M_hphi',0);
+%         % test
+%         norm((Q*R)'-M_hphi(P,:))
+        %%
+        Q1 = Q(:,1:rank_M_hphi);
+        Q2 = Q(:,rank_M_hphi+1:end);
+        R1 = R(1:rank_M_hphi,:);
+        %% next experiment -> didn't help; presumption: would require to update phi_bc as well, don't know how that could be done
+%         cond_fac = 1e-6;
+%         relevance = (sum(abs(Q1'*M_hphi'),2)>cond_fac);
+%         indices = find(relevance);
+%         Q1 = Q1(:,indices);
+%         R1 = R(indices,:);
+        %%
+        phi_hom = phi_h*Q2;
+        phi_inhom = phi_h*Q1; % correct, but we also need R_inhom
+%         [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options); % definitely wrong
+        F_M = options.discretization.F_M;
+        R_inhom = (R1*R1')\(R1*F_M*phi_bc);
+        P = 1:size(phi_bc,2);
+        
+        condition1 = cond(R1*R1')
+end
+%testing
+% options.rom.bases_construction
+% figure; heatmap(phi_hom'*(Om.*phi_hom))
+% figure; heatmap(phi_inhom'*(Om.*phi_inhom))
+% norm(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_hom'*(Om.*phi_inhom))
+% figure; heatmap(phi_bc'*phi_bc)
+% M_h = options.discretization.M;
+% F_M = options.discretization.F_M;
+% % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
+conditions2(j) = cond(R_inhom)
+
+if options.rom.bc_recon == 3
+
+B = phi_hom;
+
+% options.rom.B1 = B;
+% options.rom.phi_bc1 = phi_bc;
+% options.rom.phi_inhom1 = phi_inhom;
+% options.rom.R_inhom1 = R_inhom;
+
+options.rom.phi_inhom = phi_inhom;
+options.rom.R_inhom = R_inhom;
+M_inhom = size(phi_inhom,2);
+options.rom.M_inhom = M_inhom;
+
+elseif options.rom.bc_recon == 5
+    switch options.rom.bases_construction
+        case "mthesis"
+            B = [phi_hom phi_inhom];
+        case "closest"
+            B = [phi_hom phi_inhom];
+            
+% %             F_M = options.discretization.F_M;
+% %             Bp = orthonormalize(F_M*phi_bc); 
+%             % in theory, F_M*phi_bc = M_h*phi_h
+%             % in practice, however, rank computations are error-prone
+%             M_h = options.discretization.M;
+%             Bp = orthonormalize(M_h*phi_inhom);
+%             % M_h*phi_inhom should span the same space as F_M*phi_bc while
+%             % having smaller or equal (computed) rank
+        case "optimal"
+            B = [phi_hom phi_inhom];
+        case "qr"
+            B = phi_h;
+%             Bp = orthonormalize(R1');
+    end
+    
+%     options.rom.Bp = Bp;
+%     Mp = size(Bp,2);
+%     options.rom.Mp = Mp;
+end
+
+options.rom.B = B;
+M = size(B,2);
+options.rom.M = M;
+
+options.rom.phi_bc = phi_bc;
+Mbc = size(phi_bc,2);
+options.rom.Mbc = Mbc;
+
+end
 
 %%
 
 % M = options.rom.M; %botch
 % Mbc = options.rom.Mbc; %botch
 
-        
 
-%% get Vbc into options (this has to be outside the j==1 if statement)
-options.rom.Vbc = Vbc;
-
-%% construct basis through SVD or eigenvalue problem
-velocity_basis_construction;
-
-%% check whether basis is divergence free
-% this gives max div for each basis vector (columns of B):
-% note that yM should not be included here, it was already used in
-% subtracting Vbc from the snapshots matrix
-div_basis = max(abs(options.discretization.M*B),[],1); %
-% max over all snapshots:
-maxdiv_basis = max(div_basis);
-if (maxdiv_basis > 1e-14)
-    warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
-end
+% %% construct basis through SVD or eigenvalue problem
+% velocity_basis_construction;
+% 
+% %% check whether basis is divergence free
+% % this gives max div for each basis vector (columns of B):
+% % note that yM should not be included here, it was already used in
+% % subtracting Vbc from the snapshots matrix
+% div_basis = max(abs(options.discretization.M*B),[],1); %
+% % max over all snapshots:
+% maxdiv_basis = max(div_basis);
+% if (maxdiv_basis > 1e-14)
+%     warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+% end
 
 %% pressure recovery
 pressure_basis_construction;
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
-BC_and_lifting_function_basis_construction;
+% BC_and_lifting_function_basis_construction;
+
 
 %% testing/comparing
 % B = options.rom.B;

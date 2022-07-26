@@ -154,13 +154,17 @@ for i_RK=1:s_RK
         hatM = options.rom.hatM;
 %         yMn = options.discretization.yM; % actually should use tilde yM
         % correct:
-        yBCn = get_bc_vector_yBC(tn,options);
+        phi_bc = options.rom.phi_bc;
+
+%         yBCn = get_bc_vector_yBC(tn,options); % again wrong
+        yBCn = phi_bc*get_a_bc(tn,options);
         yMn = get_yM(options,yBCn);
 
 %         options = set_bc_vectors(ti,options); % actually should use tilde yM
 %         yMi = options.discretization.yM; % actually should use tilde yM
         % correct:
-        yBCi = get_bc_vector_yBC(ti,options);
+%         yBCi = get_bc_vector_yBC(ti,options); % again wrong
+        yBCi = phi_bc*get_a_bc(ti,options);
         yMi = get_yM(options,yBCi);
 
 
@@ -175,6 +179,7 @@ for i_RK=1:s_RK
 
         hatG = - hatM';
         hatL = hatM*hatG;
+        options.rom.hatL = hatL;
         q = hatL\f;
 
         R = R - dt*c_RK(i_RK)*(hatG*q); % = R - hatG*inv(hatL)*(hatM R+hat yM)
@@ -182,15 +187,16 @@ for i_RK=1:s_RK
 %         norm(hatM*R + Bp'*yMi)
 
 %% pressure hunt
-f1 = (hatM*Rtemp + Bp'*(yMi - yMn)/dt)/c_RK(i_RK);
-norm(f1-f)
- M_h = options.discretization.M;
- Om = options.grid.Om;
-
- [Q_,R_] = qr(Om.^-.5.*(M_h'),0);
- Qt = Om.
-
- f2 = (R_temp+(yMi-yMn)/dt)/c_RK(i_RK);
+% f1 = (hatM*Rtemp + Bp'*(yMi - yMn)/dt)/c_RK(i_RK);
+% norm(f1-f)
+%  M_h = options.discretization.M;
+%  Om = options.grid.Om;
+% 
+%  [Q_,R_] = qr(Om.^-.5.*(M_h'),0);
+%  Qt = Om.^-.5.*Q;
+% 
+%  f2 = Qt'*(R_temp+(yMi-yMn)/dt)/c_RK(i_RK);
+%  L2 = Qt'*M_h
   
 
 %%

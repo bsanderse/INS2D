@@ -47,11 +47,11 @@ color4 = char(line4(j));
 
 if options.rom.rom == 1
 
-    if bc_recon == 3
+    if options.rom.bc_recon == 3
         suffix = " vo Mbc = "+num2str(Mbc);
         name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     elseif bc_recon == 5
-        suffix = " vp ";
+        suffix = " vp Mbc = "+num2str(Mbc);
         name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     else
         suffix = " bc recon = " + bc_recon;

@@ -26,7 +26,9 @@ elseif (options.rom.rom == 1)
 %     if (options.rom.bc_recon == 2)
 %         [maxres(n),~,~] = F_ROM_notvelocityonly(R,p,t,options,0);
 %     else
+    if options.rom.M > 0
         [maxres(n),~,~] = F_ROM(R,0,t,options,0);
+    end
 %     end
        
 end

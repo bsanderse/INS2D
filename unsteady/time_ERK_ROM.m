@@ -179,6 +179,7 @@ for i_RK=1:s_RK
 
         hatG = - hatM';
         hatL = hatM*hatG;
+        options.rom.hatL = hatL;
         q = hatL\f;
 
         R = R - dt*c_RK(i_RK)*(hatG*q); % = R - hatG*inv(hatL)*(hatM R+hat yM)

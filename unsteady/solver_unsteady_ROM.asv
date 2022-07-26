@@ -44,10 +44,15 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
 end
 
+%%
+
+if true
+% if false
+    
 % options.rom.bases_construction = "mthesis";
-% % options.rom.bases_construction = "closest";
+% options.rom.bases_construction = "closest";
 % % options.rom.bases_construction = "optimal";
-options.rom.bases_construction = "qr";
+% options.rom.bases_construction = "qr";
 
 options.rom.Mbc = Mbc; % botch
 
@@ -112,57 +117,61 @@ cond(R_inhom)
 if options.rom.bc_recon == 3
 
 B = phi_hom;
-options.rom.B = B;
-options.rom.phi_bc = phi_bc;
-options.rom.phi_inhom = phi_inhom;
-options.rom.R_inhom = R_inhom;
+
 % options.rom.B1 = B;
 % options.rom.phi_bc1 = phi_bc;
 % options.rom.phi_inhom1 = phi_inhom;
 % options.rom.R_inhom1 = R_inhom;
 
+options.rom.phi_inhom = phi_inhom;
+options.rom.R_inhom = R_inhom;
 M_inhom = size(phi_inhom,2);
 options.rom.M_inhom = M_inhom;
 
 elseif options.rom.bc_recon == 5
     switch options.rom.bases_construction
         case "mthesis"
-            
+            B = [phi_hom phi_inhom];
         case "closest"
-%             F_M = options.discretization.F_M;
-%             Bp = orthonormalize(F_M*phi_bc); 
-            % in theory, F_M*phi_bc = M_h*phi_h
-            % in practice, however, rank computations are error-prone
-            M_h = options.discretization.M;
-            Bp = orthonormalize(M_h*phi_inhom);
-            % M_h*phi_inhom should span the same space as F_M*phi_bc while
-            % having smaller or equal (computed) rank
-            B = [B phi_inhom];
-        case "optimal"
+            B = [phi_hom phi_inhom];
             
+% %             F_M = options.discretization.F_M;
+% %             Bp = orthonormalize(F_M*phi_bc); 
+%             % in theory, F_M*phi_bc = M_h*phi_h
+%             % in practice, however, rank computations are error-prone
+%             M_h = options.discretization.M;
+%             Bp = orthonormalize(M_h*phi_inhom);
+%             % M_h*phi_inhom should span the same space as F_M*phi_bc while
+%             % having smaller or equal (computed) rank
+        case "optimal"
+            B = [phi_hom phi_inhom];
         case "qr"
             B = phi_h;
-            Bp = orthonormalize(R1');
+%             Bp = orthonormalize(R1');
     end
     
-    options.rom.Bp = Bp;
-    Mp = size(Bp,2);
-    options.rom.Mp = Mp;
+%     options.rom.Bp = Bp;
+%     Mp = size(Bp,2);
+%     options.rom.Mp = Mp;
 end
 
 options.rom.B = B;
 M = size(B,2);
 options.rom.M = M;
+
+options.rom.phi_bc = phi_bc;
 Mbc = size(phi_bc,2);
 options.rom.Mbc = Mbc;
+
+end
+
+%%
 
 % M = options.rom.M; %botch
 % Mbc = options.rom.Mbc; %botch
 
-        
-
-%% get Vbc into options (this has to be outside the j==1 if statement)
-options.rom.Vbc = Vbc;
+% if true
+if false
 
 %% construct basis through SVD or eigenvalue problem
 velocity_basis_construction;
@@ -183,6 +192,8 @@ pressure_basis_construction;
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
 BC_and_lifting_function_basis_construction;
+
+end
 
 %% testing/comparing
 % B = options.rom.B;

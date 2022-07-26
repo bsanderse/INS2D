@@ -1,8 +1,10 @@
 % project = 'actuator_unsteady';   % project name used in filenames
 % run_multiple = 0;
 run_multiple = 1;
-M_list = [10 10];
+% M_list = [10 10];
 % M_list = 8*[10 10 10 10];
+M_list = [10 10 10 10];
+% M_list = [10 10 10 20];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
@@ -13,6 +15,7 @@ M_list = [10 10];
 % M_list = 10*ones(6,1);
 % M_list = 10*ones(6,1);
 % M_list = 10;
+% M_list = 20;
 % M_list = 60;
 
 % M_list = [2 5 10 20 2 5 10 20];
@@ -178,10 +181,11 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-%     bc_recon = 5;
+    bc_recon = 5;
+%     bc_recon = 3;
 %     bc_recon = 5; M=M+1;
-    bc_recons = kron([1 1 1],[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recons = kron([1 1 1],[3 5]);
+%     bc_recon = bc_recons(j);
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
     Mp = M;
@@ -211,6 +215,10 @@ changing_snapshotdata = 1;
     else
         suffix = " bc recon = " + bc_recon;
     end
+    
+    bases_constructions = ["mthesis" "closest" "optimal" "qr"];
+%     bases_constructions = [ "qr"];
+    bases_construction = bases_constructions(j);
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS
