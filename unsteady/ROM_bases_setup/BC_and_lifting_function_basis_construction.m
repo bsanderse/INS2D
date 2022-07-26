@@ -68,7 +68,7 @@ if (options.rom.bc_recon == 3) || (options.rom.bc_recon == 5)
         end
 end
 
-if options.verbosity.equivalence_cheat == 1
+if options.verbosity.equivalence_cheat == 1 && options.rom.bc_recon == 5
     B = [B phi_inhom];
     options.rom.B = B;
     M = M + M_inhom;

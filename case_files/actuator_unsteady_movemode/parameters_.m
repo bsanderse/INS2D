@@ -1,8 +1,8 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-% run_multiple = 1;
-% M_list = [10 10];
-M_list = 8*[10 10 10 10];
+% run_multiple = 0;
+run_multiple = 1;
+M_list = [10 10];
+% M_list = 8*[10 10 10 10];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
@@ -178,21 +178,21 @@ changing_snapshotdata = 1;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recon = 5;
+%     bc_recon = 5;
 %     bc_recon = 5; M=M+1;
-%     bc_recons = kron([1 1 1],[3 5]);
-%     bc_recon = bc_recons(j);
-    Mps = 4*[5 10 15 20];
-    Mp = Mps(j);
-%     Mp = M;
+    bc_recons = kron([1 1 1],[3 5]);
+    bc_recon = bc_recons(j);
+%     Mps = 4*[5 10 15 20];
+%     Mp = Mps(j);
+    Mp = M;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
 %     Mbc = Mps(j) + 1;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-%     Mbc = M;
-     Mbc = 80;
+    Mbc = M;
+%      Mbc = 80;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -281,7 +281,7 @@ changing_snapshotdata = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
@@ -318,10 +318,10 @@ changing_snapshotdata = 1;
 energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
-% equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
-equivalence_cheats = kron([1 1 1],[0 1]); 
+equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
+% equivalence_cheats = kron([1 1 1],[0 1]); 
 % equivalence_cheat = equivalence_cheats(j);
-equivalence_cheat = 0;
+% equivalence_cheat = 0;
 
 % if bc_recon == 5 && equivalence_cheat == 0
 %     M = 2*M;

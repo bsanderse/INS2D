@@ -1,20 +1,36 @@
 V_total = [uh_total vh_total]'; %[uh_total; vh_total];
 snapshots_V_total = [test_snapshots.uh_total(snapshot_indx,:) test_snapshots.vh_total(snapshot_indx,:)]';
 
-
+%% wrong
 % best possible approximation given the projection:
 % note that the norm should be consistent with the
 % optimization problem used in the SVD
+
+% B = options.rom.B;
+% Om = options.grid.Om;
+% if options.verbosity.equivalence_cheat
+%     V_best = B*(B'*(Om.*(snapshots_V_total)));
+% else
+%     phi_inhom = options.rom.phi_inhom;
+% %     V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc; %actually I probably should also take the best approximation of Vbc onto phi_inhom here
+%     V_best = B*(B'*(Om.*(snapshots_V_total))) ...
+%             +phi_inhom*phi_inhom'*(Om.*snapshots.Vbc); 
+% end
+%% correct
 B = options.rom.B;
 Om = options.grid.Om;
-if options.verbosity.equivalence_cheat
-    V_best = B*(B'*(Om.*(snapshots_V_total)));
-else
+% if options.verbosity.equivalence_cheat
+if options.rom.bc_recon == 5
+    basis = B;
+elseif options.rom.bc_recon == 3
     phi_inhom = options.rom.phi_inhom;
-%     V_best = B*(B'*(Om.*(snapshots_V_total)))+snapshots.Vbc; %actually I probably should also take the best approximation of Vbc onto phi_inhom here
-    V_best = B*(B'*(Om.*(snapshots_V_total))) ...
-            +phi_inhom*phi_inhom'*(Om.*snapshots.Vbc); 
+    basis = [B phi_inhom];
+else
+    warning('not implemented')
 end
+V_best = basis*(basis'*(Om.*(snapshots_V_total)));
+
+%%
 
 if mod(j,2) == 1
     V_total_old = V_total;
