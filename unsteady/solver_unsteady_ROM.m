@@ -196,7 +196,12 @@ end
 % end
 
 %% pressure recovery
-pressure_basis_construction;
+if options.rom.bases_construction == "qr"
+    Bp = orthonormalize(R1');
+    options.rom.Bp = Bp;
+else
+    pressure_basis_construction;
+end
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
 % BC_and_lifting_function_basis_construction;
