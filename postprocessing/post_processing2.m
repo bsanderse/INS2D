@@ -122,6 +122,7 @@ end
 %                     projected_pressure_gradient_comparison_plot;
 %                     kinetic_energy_error_plots;
                     mass_violation_plots;
+                    approx_mass_violation_plots;
                 end
             end
         end

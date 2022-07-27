@@ -107,6 +107,7 @@ switch options.rom.bases_construction
 %         [phi_inhom,R_inhom] = get_phi_inhom(phi_bc,options); % definitely wrong
         F_M = options.discretization.F_M;
         R_inhom = (R1*R1')\(R1*F_M*phi_bc);
+        R_inhom = - R_inhom; % botch
         P = 1:size(phi_bc,2);
         
         condition1 = cond(R1*R1')
