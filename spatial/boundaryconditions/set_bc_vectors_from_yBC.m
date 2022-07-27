@@ -89,7 +89,7 @@ vRi_i = yBC(1:yinl); %yBC = yBC(yinl+1:end);
 % vRi_i    = vBC(x(end),yin,t,options);
 
 if (steady == 0 && options.BC.BC_unsteady==1)
-    warning('bc_recon=3 and BC time derivative not implemented');
+%     warning('bc_recon=3 and BC time derivative not implemented');
 %     dudtLe_i   = 0; %dudtBC(x(1),options.grid.yp,t,options);
 %     dudtRi_i   = 0; % dudtBC(x(end),options.grid.yp,t,options);
 %     

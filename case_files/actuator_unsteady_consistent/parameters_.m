@@ -222,8 +222,6 @@ changing_snapshotdata = 1;
     bases_constructions = [bases_constructions; bases_constructions];
     bases_constructions = bases_constructions(:);
     bases_construction = bases_constructions(j);
-
-%     bases_construction = "qr";
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS
@@ -294,9 +292,9 @@ changing_snapshotdata = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % requires rtp.show = 1
+    rtp.movie        = 1;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
