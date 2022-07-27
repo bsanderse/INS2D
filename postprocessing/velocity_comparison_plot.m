@@ -50,7 +50,7 @@ else
     error_V_2 = weightedL2norm(error_V,options.grid.Om);
 
     error_V_best = V_best - V_best_old;
-    norm(error_V_best)
+    errors_V_best(j) = norm(error_V_best)
 
     % error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
