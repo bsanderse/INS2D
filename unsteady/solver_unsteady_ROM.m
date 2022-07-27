@@ -199,8 +199,16 @@ end
 if options.rom.bases_construction == "qr"
     Bp = orthonormalize(R1');
     options.rom.Bp = Bp;
+    
+%     M_h = options.discretization.M;
+%     Bp = orthonormalize(M_h*phi_inhom,false);
+%     options.rom.Bp = Bp;
 else
-    pressure_basis_construction;
+%     pressure_basis_construction;
+
+    M_h = options.discretization.M;
+    Bp = orthonormalize(M_h*phi_inhom,false);
+    options.rom.Bp = Bp;
 end
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
