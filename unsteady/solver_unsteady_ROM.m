@@ -82,7 +82,7 @@ switch options.rom.bases_construction
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
     case "qr"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
         M_h = options.discretization.M;
         M_hphi = M_h*phi_h;
         rank_M_hphi = rank(M_hphi);

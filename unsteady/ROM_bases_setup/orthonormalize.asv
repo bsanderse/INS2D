@@ -1,7 +1,7 @@
-function [orthonorm_basis,R,P] = orthonormalize(raw_basis,rank_sensitive)
+function [orthonorm_basis,R,P] = orthonormalize(raw_basis,rank_insensitive)
 
 if (nargin<2)
-    rank_sensitive = true;
+    rank_sensitive = tr;
 end
 
 % [Q,R_,P] = qr(raw_basis,0);
