@@ -1,10 +1,12 @@
 % project = 'actuator_unsteady';   % project name used in filenames
-run_multiple = 0;
-% run_multiple = 1;
+% run_multiple = 0;
+run_multiple = 1;
 % M_list = [10 10];
 % M_list = 8*[10 10 10 10];
 % M_list = [10 10 10 10];
-M_list = [10 10 10 20];
+% M_list = [10 10 10 20];
+base_M = 1;
+M_list = [base_M base_M base_M 2*base_M];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
@@ -113,8 +115,8 @@ changing_snapshotdata = 1;
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
     method        = 20;
-%     RK = 'RK44';
-    RK = 'FE11';
+    RK = 'RK44';
+%     RK = 'FE11';
 %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
 %     method = 21;
 %     RK = 'GL1';
@@ -145,8 +147,8 @@ changing_snapshotdata = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
-    pro_rom = 1;     % set to 1 if FOM should provide snapshots for ROM
+    rom     = 1;      % set to 1 to use ROM solver
+    pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
 %     Mbc = M;
 %     Mbc = 2;

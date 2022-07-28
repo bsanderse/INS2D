@@ -149,5 +149,9 @@ end
 % y1Dy(yrange-floor(Ny/4))= hy(yrange);
 % 
 % Fx         = Fx -0.5*Ct*kron(y1Dy,y1Dx);
+
+
+% Fx = 0*Fx;Fy = 0*Fy; dFx = 0*dFx; dFy = 0*dFy; %botch
+
     
 end

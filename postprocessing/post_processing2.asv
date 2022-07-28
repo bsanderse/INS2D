@@ -47,15 +47,31 @@ color2 = char(line2(j));
 
 if options.rom.rom == 1
     
-    if options.rom.bc_recon == 3
+    if options.rom_bc_recon == 3
         type = " vo";
         additional = " M inhom ="+ num2str(M_inhom);
     elseif options.rom.bc_recon ==5
         type = " vp";
-        additional = " M p ="+ num2str(Mp);
+        additional = " M p 
+
+    if options.rom.bc_recon == 3
+        suffix = " vo M= "+num2str(M)+" Mbc = "+num2str(Mbc);
+        name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
+    elseif bc_recon == 5
+        suffix = " vp M= "+num2str(M)+" Mbc = "+num2str(Mbc);
+        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);
+    else
+        suffix = " bc recon = " + bc_recon;
+    end
+
+    if options.rom.bc_recon == 3
+        suffix = suffix + " M inhom =" + num2str(M_inhom);
+        name = name + " Minhom= "+num2str(M_inhom);
+    elseif options.rom.bc_recon == 5
+        suffix = suffix + " Mp =" + num2str(Mp);
+        name = name + " Mp =" + num2str(Mp);
     end
     
-    suffix = type + " M= "+num2str(M)+" Mbc = "+num2str(Mbc) + additional;
     suffix = suffix + " " + options.rom.bases_construction;
     name = suffix;
 end
