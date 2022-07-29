@@ -50,18 +50,17 @@ else
     error_V_2 = weightedL2norm(error_V,options.grid.Om);
 
     error_V_best = V_best - V_best_old;
-%     errors_V_best(j) = norm(error_V_best)
+    errors_V_best(j) = (error_V_best)
 
     % error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
 
-    disp('rom equivalence')
     figure(999)
     plot(t_vec,error_V_2,color,'displayname',"velo diff: "+ name +" / "+ name_old);
-    sum2_error_V_2(j) = sum(error_V_2)
+    sum_error_V_2(j) = sum(error_V_2)
     hold on
     plot(t_vec,error_V_best_2,color2,'displayname',"best approx diff: "+ name +" / "+ name_old);
-    sum2_error_V_best_2(j) = sum(error_V_best_2)
+    sum_error_V_best_2
 end
 
 %% auxiliary plots

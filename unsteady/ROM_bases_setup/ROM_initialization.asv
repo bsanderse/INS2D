@@ -13,19 +13,19 @@ else
     % construct ROM divergence operator
         Bp = options.rom.Bp;
         hatM = Bp'*options.discretization.M*B;
-        cond(options.discretization.M*B)
+        cond
         options.rom.hatM = hatM;
         hatL = -hatM*hatM';
         options.rom.hatL = hatL;
         condition3(j) = cond(hatL)
         
-%         hatM2 = options.rom.Bp2'*options.discretization.M*B;
-%         hatL2 = -hatM2*hatM2';
-%         condition4(j) = cond(hatL2)
-%         
-%         hatM3 = options.rom.Bp3'*options.discretization.M*B;
-%         hatL3 = -hatM3*hatM3';
-%         condition5(j) = cond(hatL3)
+        hatM2 = options.rom.Bp2'*options.discretization.M*B;
+        hatL2 = -hatM2*hatM2';
+        condition4(j) = cond(hatL2)
+        
+        hatM3 = options.rom.Bp3*options.discretization.M*B;
+        hatL3 = -hatM3*hatM3';
+        condition5(j) = cond(hatL3)
 
 %     Bp = options.rom.Bp;
 %     hatM = options.rom.hatM;

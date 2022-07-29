@@ -31,14 +31,16 @@ line3  = {'r:','b:','k:','m:','g:','c:'};
 line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
-line  = {'r-','r:','b-','b:','k-','k:','m-','m:','g-','g:'};
-line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.','g--','g-.'};
+
+% line  = {'r-','r:','b-','b:','k-','k:','m-','m:','g-','g:'};
+% line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.','g--','g-.'};
+
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
 color = char(line(j));
 color2 = char(line2(j));
-% color3 = char(line3(j));
+color3 = char(line3(j));
 % color4 = char(line4(j));
 % color = char(line(ceil(j/2)));
 % color2 = char(line2(ceil(j/2)));

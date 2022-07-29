@@ -52,6 +52,14 @@ if (j==1) || changing_snapshotdata
 %     semilogy(Sigma_M/Sigma_M(1),'s','displayname', 'singular values of y_M snapshots');
 %     legend('show')
     %%
+    
+    %% analysis
+%     [U_h,S_h,V_h] = svd(X_h);
+%     Sigma_h = diag(S_h);
+%     figure
+%     semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
+%     legend('show')
+    %%
 end
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
@@ -173,6 +181,10 @@ elseif options.rom.bc_recon == 5
 %     options.rom.Bp = Bp;
 %     Mp = size(Bp,2);
 %     options.rom.Mp = Mp;
+
+condition6(j) = cond(options.discretization.M*B)
+condition7(j) = cond(options.discretization.M*phi_inhom)
+
 end
 
 options.rom.B = B;
@@ -182,8 +194,8 @@ options.rom.M = M;
 options.rom.phi_bc = phi_bc;
 Mbc = size(phi_bc,2);
 options.rom.Mbc = Mbc;
-
 end
+
 
 %%
 
@@ -207,11 +219,16 @@ end
 
 %% pressure recovery
 if options.rom.bases_construction == "qr"
-% %     Bp = orthonormalize(R1');
-% %     options.rom.Bp = Bp;
+%     M_h = options.discretization.M;
+%     Bp = orthonormalize(M_h*phi_inhom,false);
+%     options.rom.Bp = Bp;
+%     
+%     Bp = orthonormalize(R1');
+%     options.rom.Bp2 = Bp;
     
-    M_h = options.discretization.M;
-    Bp = orthonormalize(M_h*phi_inhom,false);
+    Bp = orthonormalize(R1'/(R1*R1'));
+%     options.rom.Bp3 = Bp;
+    
     options.rom.Bp = Bp;
 else
 %     pressure_basis_construction;

@@ -5,8 +5,9 @@ run_multiple = 1;
 % M_list = 8*[10 10 10 10];
 % M_list = [10 10 10 10];
 % M_list = [10 10 10 20];
-base_M = 1;
-M_list = [base_M base_M base_M 2*base_M];
+base_M = 80;
+M_list = base_M;
+% M_list = [base_M base_M base_M 2*base_M];
 % M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
@@ -219,8 +220,8 @@ changing_snapshotdata = 1;
         suffix = " bc recon = " + bc_recon;
     end
     
-    bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-%     bases_constructions = [ "qr"];
+%     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
+    bases_constructions = [ "qr"];
     bases_constructions = [bases_constructions; bases_constructions];
     bases_constructions = bases_constructions(:);
     bases_construction = bases_constructions(j);

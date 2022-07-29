@@ -11,9 +11,11 @@ one_vec = ones(Np,1);
 
 mass_viola_L2 = weightedL2norm(mass_viola, one_vec);
 
+disp('mass viola')
 figure(111)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
+sum_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 
 if j==Nsim

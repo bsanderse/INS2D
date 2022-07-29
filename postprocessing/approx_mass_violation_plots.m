@@ -28,14 +28,16 @@ Np = options.grid.Np;
 one_vec = ones(Np,1);
 
 mass_viola_L2 = weightedL2norm(mass_viola, one_vec);
-sum_mass_viola_L2(j) = sum(mass_viola_L2)
+% sum_mass_viola_L2(j) = sum(mass_viola_L2)
 mass_viola_L2_FOM = weightedL2norm(mass_viola_FOM, one_vec);
 
+disp('approx mass viola')
 figure(112)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
+sum2_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
-semilogy(t_vec,mass_viola_L2_FOM,color2,'displayname',"FOM");
+% semilogy(t_vec,mass_viola_L2_FOM,color2,'displayname',"FOM");
 
 % if j==Nsim
 %     semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
