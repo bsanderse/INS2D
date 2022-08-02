@@ -67,7 +67,9 @@ options.rom.Vbc = Vbc;
 
 %%
 
-cond_fac = 1e-10;
+% cond_fac = 1e-10;
+% cond_fac = 1e-20;
+cond_fac = 1e-20;
 
 
 if true
@@ -89,12 +91,12 @@ switch options.rom.bases_construction
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);

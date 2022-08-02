@@ -53,8 +53,8 @@ hold on
 plot(t_vec,error_V_best_2,color2,'displayname',"best approx "+suffix);
 sum_error_V_best_2(j) = sum(error_V_best_2)
 
-plot(t_vec,error_V_best_22,color3,'displayname',"best approx "+suffix);
-sum_error_V_best_22(j) = sum(error_V_best_22)
+% plot(t_vec,error_V_best_22,color3,'displayname',"best approx "+suffix);
+% sum_error_V_best_22(j) = sum(error_V_best_22)
 
 %% auxiliary plots
 % V_h_norm = weightedL2norm(snapshots_V_total,options.grid.Om);
