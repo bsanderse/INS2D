@@ -21,7 +21,7 @@ Gx   = options.discretization.Gx;
 Gy   = options.discretization.Gy;
 G = [Gx;Gy];
 
-Om = options.grid.Om;
+% Om = options.grid.Om;
 Om_inv = options.grid.Om_inv;
 %     tilde_phi_inhom = Om_inv.*(G*(L\Y_M));
 tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch

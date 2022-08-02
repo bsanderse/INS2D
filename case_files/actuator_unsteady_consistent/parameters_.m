@@ -6,12 +6,13 @@ run_multiple = 1;
 % M_list = [10 10 10 10];
 % M_list = [10 10 10 20];
 % base_M = 60;
-base_M = 40;
+% base_M = 40;
+base_M = 200;
 % base_M = 20;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M base_M base_M];
 M_list = [base_M base_M base_M];
-% M_list = [2 5 10 20 40];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
 % M_list = kron(M_list, [1 1]);
@@ -34,7 +35,8 @@ M_list = [base_M base_M base_M];
 % Mbc = 10;
 
 mesh_list = ones(length(M_list),1);
-changing_snapshotdata = 1;
+% changing_snapshotdata = 1;
+changing_snapshotdata = 0;
 % if mod(j,2)==0 %j>4 %false %j>4
 % % if true %mod(j,2)==0 %j>4 %false %j>4
 % % % if false %j>4
@@ -101,11 +103,13 @@ changing_snapshotdata = 1;
     order4  = 0;
 
     % only for unsteady problems:
-    dt            = 4*pi/200;      % time step (for explicit methods it can be
-                               % determined during running with dynamic_dt)
     t_start       = 0;         % start time
 %     t_end         = 4*pi*4;        % end time
     t_end         = 4*pi;        % end time
+    
+%         dt            = 4*pi/200;      % time step (for explicit methods it can be
+        dt            = 4*pi/800;      % time step (for explicit methods it can be
+                               % determined during running with dynamic_dt)
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 
@@ -174,7 +178,8 @@ changing_snapshotdata = 1;
 %     precompute_force      = 0;
 %     precompute_obc       = 0;
 
-    snapshot_data = 'results/actuator_unsteady_consistent_1.000e+02_200x80_fomdata/matlab_data.mat';
+%     snapshot_data = 'results/actuator_unsteady_consistent_1.000e+02_200x80_fomdata/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_consistent_1.000e+02_200x80_finetime/matlab_data.mat';
     
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);
@@ -225,11 +230,15 @@ changing_snapshotdata = 1;
         suffix = " bc recon = " + bc_recon;
     end
     
-    bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-%     bases_constructions = [ "qr"];
-%     bases_constructions = [bases_constructions; bases_constructions];
-%     bases_constructions = bases_constructions(:);
-    bases_construction = bases_constructions(j);
+%     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
+% %     bases_constructions = [ "qr"];
+% %     bases_constructions = [bases_constructions; bases_constructions];
+% %     bases_constructions = bases_constructions(:);
+%     bases_construction = bases_constructions(j);
+    
+%     bases_construction = "mthesis";
+%     bases_construction = "closest";
+    bases_construction = "optimal";
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS

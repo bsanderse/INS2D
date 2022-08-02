@@ -45,20 +45,20 @@ if (j==1) || changing_snapshotdata
     X_bc = get_X_bc(t_start,t_end,dt,snapshot_sample,options);
     
     %% analysis
-%     F_M = options.discretization.F_M;
-%     [U_M,S_M,V_M] = svd(F_M*X_bc);
-%     Sigma_M = diag(S_M);
-%     figure
-%     semilogy(Sigma_M/Sigma_M(1),'s','displayname', 'singular values of y_M snapshots');
-%     legend('show')
+    F_M = options.discretization.F_M;
+    [U_M,S_M,V_M] = svd(F_M*X_bc);
+    Sigma_M = diag(S_M);
+    figure
+    semilogy(Sigma_M/Sigma_M(1),'s','displayname', 'singular values of y_M snapshots');
+    legend('show')
     %%
     
     %% analysis
-%     [U_h,S_h,V_h] = svd(X_h);
-%     Sigma_h = diag(S_h);
-%     figure
-%     semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
-%     legend('show')
+    [U_h,S_h,V_h] = svd(X_h);
+    Sigma_h = diag(S_h);
+    figure
+    semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
+    legend('show')
     %%
 end
 
@@ -67,9 +67,9 @@ options.rom.Vbc = Vbc;
 
 %%
 
-% cond_fac = 1e-10;
+cond_fac = 1e-10;
 % cond_fac = 1e-20;
-cond_fac = 1e-20;
+% cond_fac = 1e-20;
 
 
 if true
@@ -91,12 +91,14 @@ switch options.rom.bases_construction
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
@@ -143,6 +145,17 @@ end
 % F_M = options.discretization.F_M;
 % % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
 conditions2(j) = cond(R_inhom)
+
+basis = [phi_hom phi_inhom];
+orthonormality(j) = norm(basis-basis*(basis'*(Om.*basis)))
+if j == Nsim
+    figure(123)
+    plot(M_list,orthonormality,'displayname',suffix + " " + options.rom.bases_construction);
+    set(gca,'Yscale','log');
+    xlabel('M')
+    ylabel('orthonormality error')
+    legend('show')
+end
 
 if options.rom.bc_recon == 3
 

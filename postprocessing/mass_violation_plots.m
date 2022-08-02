@@ -20,6 +20,10 @@ hold on
 
 if j==Nsim
     semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
+    set(gca,'Yscale','log');
+    xlabel('M')
+    ylabel('orthonormality error')
+    legend('show')
 end
 
 set(gca,'Yscale','log');
