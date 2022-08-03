@@ -77,4 +77,5 @@ end
 set(gca,'Yscale','log');
 xlabel('t')
 ylabel("||\cdot||_{\Omega_h}")
-legend('show','NumColumns',2,'Orientation','horizontal')
+% legend('show','NumColumns',2,'Orientation','horizontal')
+legend('show','NumColumns',1,'Orientation','horizontal')

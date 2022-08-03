@@ -7,15 +7,15 @@ run_multiple = 1;
 % M_list = [10 10 10 20];
 % base_M = 60;
 % base_M = 40;
-base_M = 200;
-% base_M = 20;
+% base_M = 200;
+base_M = 4;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M base_M base_M];
 M_list = [base_M base_M base_M];
-M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
-% M_list = kron(M_list, [1 1]);
+M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -193,12 +193,12 @@ changing_snapshotdata = 0;
 %                 bc_recon = bc_recons(j); Mp = M;
 
 %     bc_recon = 5;
-    bc_recon = 3;
+%     bc_recon = 3;
 %     bc_recon = 5; M=M+1;
-%     bc_recons = kron([1 1 1],[3 5]);
+    bc_recons = kron([1 1 1],[3 5]);
 
 %     bc_recons = kron([1 1 1 1],[3 5]);
-%     bc_recon = bc_recons(j);
+    bc_recon = bc_recons(j);
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
@@ -231,14 +231,15 @@ changing_snapshotdata = 0;
     end
     
 %     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
+    bases_constructions = ["mthesis" "optimal" "qr"];
 % %     bases_constructions = [ "qr"];
-% %     bases_constructions = [bases_constructions; bases_constructions];
-% %     bases_constructions = bases_constructions(:);
-%     bases_construction = bases_constructions(j);
+    bases_constructions = [bases_constructions; bases_constructions];
+    bases_constructions = bases_constructions(:);
+    bases_construction = bases_constructions(j);
     
 %     bases_construction = "mthesis";
 %     bases_construction = "closest";
-    bases_construction = "optimal";
+%     bases_construction = "optimal";
  
     % affects: pressure computation in notvelocityonly RHS computation
     % 0: time derivative of mass equation RHS

@@ -234,15 +234,15 @@ changing_snapshotdata = 0;
     end
     
 %     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-%     bases_constructions = ["mthesis" "optimal" "qr"];
-% %     bases_constructions = [ "qr"];
-%     bases_constructions = [bases_constructions; bases_constructions];
-%     bases_constructions = bases_constructions(:);
-%     bases_construction = bases_constructions(j);
+    bases_constructions = ["mthesis" "optimal" "qr"];
+%     bases_constructions = [ "qr"];
+    bases_constructions = [bases_constructions; bases_constructions];
+    bases_constructions = bases_constructions(:);
+    bases_construction = bases_constructions(j);
 
 %     bases_construction = "mthesis";
 %     bases_construction = "closest";
-    bases_construction = "optimal";
+%     bases_construction = "optimal";
 %     bases_construction = "qr";
  
     % affects: pressure computation in notvelocityonly RHS computation

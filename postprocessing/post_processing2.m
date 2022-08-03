@@ -108,7 +108,7 @@ end
                 
                 if (options.output.save_unsteady == 1)
                     velocity_error_plot;
-%                     velocity_comparison_plot;
+                    velocity_comparison_plot;
 %                     pressure_error_plot;
 %                     pressure_gradient_error_plot;
 %                     projected_pressure_gradient_error_plot;
