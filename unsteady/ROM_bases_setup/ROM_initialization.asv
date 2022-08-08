@@ -32,10 +32,8 @@ else
     hatG = -hatM';
     hatL = hatM*hatG;
     
-%     yM = -options.discretization.yM; % wrong! we need BC approximation
-    F_M = options.discretization.F_M;
-    phi_bc = options.rom.phi_bc;
-    yM = - F_M*phi_bc*get_a_bc(t,options);
+    
+    yM = -options.discretization.yM;
     hatyM = Bp'*yM;
     %     phi_bc = options.rom.phi_bc;
     %     yM = phi_bc*phi_bc'*yM;

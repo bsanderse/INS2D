@@ -8,11 +8,13 @@ run_multiple = 1;
 % base_M = 60;
 % base_M = 40;
 % base_M = 200;
-% base_M = 4;
 base_M = 1;
+% base_M = 4;
+% base_M = 2;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M base_M base_M];
 M_list = [base_M base_M base_M];
+% M_list = [base_M base_M 2*base_M];
 % M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
@@ -180,7 +182,7 @@ changing_snapshotdata = 0;
 %     precompute_obc       = 0;
 
 %     snapshot_data = 'results/actuator_unsteady_consistent_1.000e+02_200x80_fomdata/matlab_data.mat';
-    snapshot_data = 'results/actuator_unsteady_consistent_1.000e+02_200x80_finetime/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteady_consistent_normal_1.000e+02_200x80_finetime/matlab_data.mat';
     
 
     rom_bc = 2; % 0: homogeneous (no-slip, periodic);

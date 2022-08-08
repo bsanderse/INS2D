@@ -53,9 +53,9 @@ if (j==1) || changing_snapshotdata
 %     legend('show')
 %     xlabel("mode index")
 %     ylabel("\sigma_j/\sigma_1")
-    %%
-    
-    %% analysis
+%     %%
+%     
+%     %% analysis
 %     [U_h,S_h,V_h] = svd(X_h);
 %     Sigma_h = diag(S_h);
 %     figure
@@ -71,10 +71,14 @@ options.rom.Vbc = Vbc;
 
 %%
 
-% cond_fac = 1e-10;
-% cond_fac = 1e-20;
-cond_fac = 1e-20;
+rank_sensitive = true;
+% rank_sensitive = false;
 
+if rank_sensitive
+    cond_fac = 1e-10;
+else
+    cond_fac = 1e-20;
+end
 
 if true
 % if false
@@ -95,14 +99,20 @@ switch options.rom.bases_construction
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        if rank_sensitive
+            phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        else
+            phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        end
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         phi_hom = homogeneous_projection(phi_h,options);
     case "optimal"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
-%         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
-        phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        if rank_sensitive
+            phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix);
+        else
+            phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        end
         [phi_inhom,R_inhom,P] = get_phi_inhom(phi_bc,options);
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
