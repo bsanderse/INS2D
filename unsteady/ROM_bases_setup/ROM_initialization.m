@@ -1,3 +1,4 @@
+function [R,options] = ROM_initialization(V,t,options)
 %% initialize reduced order solution
 % we expand the part of the solution vector that is div-free in terms of
 % B*R
@@ -12,12 +13,14 @@ R = getROM_velocity(V,t,options);
 else
     % construct ROM divergence operator
         Bp = options.rom.Bp;
+        B = options.rom.B;
         hatM = Bp'*options.discretization.M*B;
         cond(options.discretization.M*B)
         options.rom.hatM = hatM;
         hatL = -hatM*hatM';
         options.rom.hatL = hatL;
-        condition3(j) = cond(hatL)
+%         condition3(j) = cond(hatL)
+        condition3 = cond(hatL)
         
 %         hatM2 = options.rom.Bp2'*options.discretization.M*B;
 %         hatL2 = -hatM2*hatM2';
@@ -36,6 +39,7 @@ else
     F_M = options.discretization.F_M;
     phi_bc = options.rom.phi_bc;
     yM = - F_M*phi_bc*get_a_bc(t,options);
+%     yM = F_M*phi_bc*get_a_bc(t,options);
     hatyM = Bp'*yM;
     %     phi_bc = options.rom.phi_bc;
     %     yM = phi_bc*phi_bc'*yM;
@@ -55,27 +59,57 @@ else
 %         %test
 %     norm(hatM*R-hatyM)
 
-    % second try
+    %% second try
+%     M_h = options.discretization.M;
+%     [Q__,R__] = qr((M_h*B)');
+%     H = rank(M_h*B);
+%     Q_1_ = Q__(:,1:H);
+%     Q_2_ = Q__(:,H+1:end);
+%     R_1_ = R__(1:H,:);
+%     a_1 = (R_1_*R_1_')\(R_1_*yM);
+%     a_2 = Q_2_'*B'*(Om.*V);
+%     R = Q_1_*a_1 + Q_2_*a_2;
+% 
+%     % tests
+%     norm(M_h*B*Q_1_*a_1-yM)
+%     norm(M_h*B*R - yM)
+%     diff_ = B*R-V;
+%     norm(diff_)
+%     norm(M_h*diff_)
+%     norm(a_2)
+%     norm(diff_'*(Om.*V))
+%     diff_2 = B*Q_1_*a_1 - V;
+    
+    %% new try
     M_h = options.discretization.M;
-    [Q__,R__] = qr((M_h*B)');
-    H = rank(M_h*B);
-    Q_1_ = Q__(:,1:H);
-    Q_2_ = Q__(:,H+1:end);
-    R_1_ = R__(1:H,:);
-    a_1 = (R_1_*R_1_')\(R_1_*yM);
-    a_2 = Q_2_'*B'*(Om.*V);
-    R = Q_1_*a_1 + Q_2_*a_2;
-
-    % tests
-    norm(M_h*B*Q_1_*a_1-yM)
+    themat = (M_h*B)';
+    [Q,R,P] = qr(themat,0);
+    norm(themat(:,P)-Q*R)
+    RR = R(:,P);
+    norm(themat-Q*RR)
+    H = rank(themat);
+    Q1 = Q(:,1:H);
+    Q2 = Q(:,H+1:end);
+    R1 = RR(1:H,:);
+    norm(themat-Q1*R1)
+    norm(M_h*B*Q2)
+    
+    a1 = (R1*R1')\(R1*yM);
+    norm(M_h*B*Q1*a1 - yM)
+    
+    a2 = Q2'*(B'*(Om.*V));
+    
+    R = Q1*a1 + Q2*a2;
     norm(M_h*B*R - yM)
-    diff_ = B*R-V;
-    norm(diff_)
-    norm(M_h*diff_)
-    norm(a_2)
-    norm(diff_'*(Om.*V))
-    diff_2 = B*Q_1_*a_1 - V;
+    
+%     R_ = Q'*(B'*(Om.*V));
+%     norm(R_-R) %not 0, but why?
+    
+    
+    
 
+    
+    %%
 %     [QQ,RR] = qr(full(M_h)); % expensive!
 %     HH = rank(M_h);
 %     QQ1 = QQ(:,1:HH);

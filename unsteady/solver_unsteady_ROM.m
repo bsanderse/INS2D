@@ -305,7 +305,7 @@ if options.rom.bc_recon ~= 4 || options.rom.bc_recon ~= 2
 end
 
 %% initialize reduced order solution
-ROM_initialization;
+[R,options] = ROM_initialization(V,t,options);
 
 %%
 
