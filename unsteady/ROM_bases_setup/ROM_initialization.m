@@ -79,6 +79,9 @@ else
 %     norm(a_2)
 %     norm(diff_'*(Om.*V))
 %     diff_2 = B*Q_1_*a_1 - V;
+
+%botch
+qr_test
     
     %% new try
     M_h = options.discretization.M;
