@@ -186,6 +186,10 @@ M_inhom = size(phi_inhom,2);
 options.rom.M_inhom = M_inhom;
 
 elseif options.rom.bc_recon == 5
+    options.rom.phi_hom = phi_hom; %botch
+    options.rom.R_inhom = R_inhom; %botch
+
+
     switch options.rom.bases_construction
         case "mthesis"
             B = [phi_hom phi_inhom];
