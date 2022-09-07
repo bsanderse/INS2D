@@ -207,7 +207,9 @@ elseif options.rom.bc_recon == 5
         case "optimal"
             B = [phi_hom phi_inhom];
         case "qr"
-            B = phi_h;
+%             B = phi_h;
+                        B = [phi_hom phi_inhom]; %botch!
+
 %             Bp = orthonormalize(R1');
     end
     

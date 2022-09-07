@@ -6,7 +6,8 @@ run_multiple = 1;
 % M_list = [10 10 10 10];
 % M_list = [10 10 10 20];
 % base_M = 20;
-base_M = 10;
+% base_M = 10;
+base_M = 16;
 M_list = base_M;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M 2*base_M];
@@ -234,7 +235,8 @@ changing_snapshotdata = 0;
     end
     
 %     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-    bases_constructions = ["mthesis" "optimal" "qr"];
+%     bases_constructions = ["mthesis" "optimal" "qr"];
+    bases_constructions = ["qr"];
     bases_constructions = [bases_constructions; bases_constructions];
     bases_constructions = bases_constructions(:);
     bases_construction = bases_constructions(j);
