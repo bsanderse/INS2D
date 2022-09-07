@@ -71,8 +71,8 @@ options.rom.Vbc = Vbc;
 
 %%
 
-rank_sensitive = true;
-% rank_sensitive = false;
+% rank_sensitive = true;
+rank_sensitive = false;
 
 if rank_sensitive
     cond_fac = 1e-10;
@@ -269,6 +269,8 @@ else
     M_h = options.discretization.M;
     Bp = orthonormalize(M_h*phi_inhom,false);
     options.rom.Bp = Bp;
+    Mp = size(Bp,2);
+    options.rom.Mp = Mp;
 end
 
 %% compute boundary condition approximation and inhomogeneous ROM basis

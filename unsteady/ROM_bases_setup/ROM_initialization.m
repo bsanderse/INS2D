@@ -83,43 +83,54 @@ else
 %botch
 % qr_test
     
-    %% new try
-%     M_h = options.discretization.M;
-%     themat = (M_h*B)';
-%     [Q,R,P] = qr(themat,0);
-%     norm(themat(:,P)-Q*R)
-%     RR = R(:,P);
-%     norm(themat-Q*RR)
-%     H = rank(themat);
-%     Q1 = Q(:,1:H);
-%     Q2 = Q(:,H+1:end);
-%     R1 = RR(1:H,:);
-%     norm(themat-Q1*R1)
-%     norm(M_h*B*Q2)
-%     
-%     a1 = (R1*R1')\(R1*yM);
-%     norm(M_h*B*Q1*a1 - yM)
-%     
-%     a2 = Q2'*(B'*(Om.*V));
-%     
-%     R = Q1*a1 + Q2*a2;
-%     norm(M_h*B*R - yM)
-%     
-% %     R_ = Q'*(B'*(Om.*V));
-% %     norm(R_-R) %not 0, but why?
+
 
 %% botch
     
-%     if options.rom.bases_construction == "mthesis" || ...
-%             options.rom.bases_construction == "optimal"
+    if options.rom.bases_construction == "mthesis" || ...
+            options.rom.bases_construction == "optimal"
         phi_hom = options.rom.phi_hom;
         ahom = phi_hom'*(Om.*V);
+        
+        % compare two methods to compute ahom -> indeed equivalent
+%         ahom1 = phi_hom'*(Om.*V);
+
+%         V = V - get_unsteadyVbc(t,options); %not sure if necessary as Vbc should be orthogonal to B
+%         ahom = phi_hom'*(Om.*V);
+% 
+%         norm(ahom1-ahom)
+
         ainhom = get_a_inhom(t,options);
         
         R = [ahom(:); ainhom(:)];
-%     elseif options.rom.bases_construction == "qr"
-%         
-%     end
+    elseif options.rom.bases_construction == "qr"
+            %% new try
+    M_h = options.discretization.M;
+    themat = (M_h*B)';
+    [Q,R,P] = qr(themat,0);
+    norm(themat(:,P)-Q*R)
+    RR = R(:,P);
+    norm(themat-Q*RR)
+    H = rank(themat);
+    Q1 = Q(:,1:H);
+    Q2 = Q(:,H+1:end);
+    R1 = RR(1:H,:);
+    norm(themat-Q1*R1)
+    norm(M_h*B*Q2)
+    
+    a1 = (R1*R1')\(R1*yM);
+    norm(M_h*B*Q1*a1 - yM)
+    
+    a2 = Q2'*(B'*(Om.*V));
+    
+    R = Q1*a1 + Q2*a2;
+    norm(M_h*B*R - yM)
+    
+%     R_ = Q'*(B'*(Om.*V));
+%     norm(R_-R) %not 0, but why?
+
+
+    end
     
     
 
