@@ -27,7 +27,8 @@ Om_inv = options.grid.Om_inv;
 tilde_phi_inhom = -Om_inv.*(G*(L\Y_M)); %pfusch
 
 % [phi_inhom,R_inhom,P] = Om_orthonormalize(tilde_phi_inhom,options);
-[phi_inhom,R_inhom] = Om_orthonormalize(tilde_phi_inhom,options);
+% [phi_inhom,R_inhom] = Om_orthonormalize(tilde_phi_inhom,options);
+[phi_inhom,R_inhom] = Om_orthonormalize(tilde_phi_inhom,options,false); %botch
 P = -666;
 
 %testing
