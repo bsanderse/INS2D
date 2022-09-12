@@ -38,9 +38,9 @@ line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
-% color = char(line(j));
-% color2 = char(line2(j));
-% color3 = char(line3(j));
+color = char(line(j));
+color2 = char(line2(j));
+color3 = char(line3(j));
 
 % color4 = char(line4(j));
 % color = char(line(ceil(j/2)));
@@ -118,7 +118,7 @@ end
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
-%                     velocity_error_plot;
+                    velocity_error_plot;
 %                     velocity_comparison_plot;
 %                     pressure_error_plot;
 %                     pressure_gradient_error_plot;

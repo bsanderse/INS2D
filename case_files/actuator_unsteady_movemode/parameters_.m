@@ -17,7 +17,7 @@ M_list = kron(M_list, [1 1]);
 
 M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-M_list = 2;
+% M_list = 2;
 % M_list = [2 5 10];
 % M_list_raw = M_list;
 % repetitions = 5;
@@ -264,7 +264,7 @@ changing_snapshotdata = 0;
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's
                 
-    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     

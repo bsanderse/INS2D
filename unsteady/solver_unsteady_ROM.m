@@ -252,8 +252,10 @@ end
 options.rom.a_bc_matrix = a_bc_matrix;
 options.rom.time_control = time_control;
 
-options.rom.a_bc_vec = a_bc_matrix(1,1,:);
-options.rom.time_vec = time_control(1,1);
+a_bc_vec = a_bc_matrix(1,1,:);
+options.rom.a_bc_vec = a_bc_vec(:);
+time_vec = time_control(1,1);
+options.rom.time_vec = time_vec(:);
 %%
 
 
@@ -425,7 +427,7 @@ disp('starting time-stepping...');
 % addpath 'C:\Users\20201213\Documents\Uni\Master thesis\clean_code\INS2D\debug_stuff'
 % addpath 'debug_stuff'
 % jacobian_test_ROM
-profile on
+% profile on
 time_start = toc
 
 coefficients = zeros(M,nt);
@@ -516,8 +518,8 @@ while(n<=nt)
 end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start
-profile off
-profile viewer
+% profile off
+% profile viewer
 
 
 V  = getFOM_velocity(R,t,options);
