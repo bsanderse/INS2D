@@ -17,11 +17,11 @@ M_list = kron(M_list, [1 1]);
 
 M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-M_list = 200;
+M_list = 2;
 % M_list = [2 5 10];
-M_list_raw = M_list;
-repetitions = 5;
-M_list = flip(kron(ones(1,repetitions),M_list_raw));
+% M_list_raw = M_list;
+% repetitions = 5;
+% M_list = flip(kron(ones(1,repetitions),M_list_raw));
 
 % M_list = [2 5 8];
 % M_list = kron(M_list, [1 1]);
@@ -165,7 +165,7 @@ changing_snapshotdata = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 0;      % set to 1 to use ROM solver
+    rom     = 1;      % set to 1 to use ROM solver
     pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
 %     Mbc = M;

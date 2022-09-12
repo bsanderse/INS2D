@@ -95,7 +95,7 @@ switch options.rom.bases_construction
     case "mthesis"
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
-        [phi_bc,Mbc] = POD(X_bc,Mbc,cond_fac);
+        [phi_bc,~,Mbc] = POD(X_bc,Mbc,cond_fac);
         [phi_inhom,R_inhom,P,tilde_phi_inhom1] = get_phi_inhom(phi_bc,options);
     case "closest"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
@@ -149,6 +149,7 @@ switch options.rom.bases_construction
         
         condition1 = cond(R1*R1')
 end
+
 %testing
 % options.rom.bases_construction
 % figure; heatmap(phi_hom'*(Om.*phi_hom))
@@ -233,6 +234,28 @@ Mbc = size(phi_bc,2);
 options.rom.Mbc = Mbc;
 end
 
+%% precompute a bc for all time steps
+[~,~,c_RK] = getRKmethod(options.time.RK);
+% c_RK = [c_RK(2:end);1];
+
+a_bc_matrix = zeros(nt,numel(c_RK),Mbc);
+time_control = zeros(nt,numel(c_RK));
+for jj = 1:nt
+     tn = t + (jj-1)*dt;
+     for jjj = 1:numel(c_RK)
+         ti         = tn + c_RK(jjj)*dt;
+         a_bc       = get_a_bc_precomp(ti,options);
+         a_bc_matrix(jj,jjj,:) = a_bc;
+         time_control(jj,jjj) = ti;
+     end
+end
+options.rom.a_bc_matrix = a_bc_matrix;
+options.rom.time_control = time_control;
+
+options.rom.a_bc_vec = a_bc_matrix(1,1,:);
+options.rom.time_vec = time_control(1,1);
+%%
+
 
 %%
 
@@ -310,9 +333,9 @@ if options.rom.bc_recon ~= 4 || options.rom.bc_recon ~= 2
     if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion == 1 || ...
             options.rom.precompute_force == 1 || options.rom.pressure_recovery == 1)
         disp('precomputing ROM operators...');
-        precompute_start = toc;
+        precompute_start1 = toc;
         options = operator_rom(options);
-        precompute_end(j) = toc-precompute_start
+        precompute_end1(j) = toc-precompute_start1
     end
 end
 
@@ -402,7 +425,7 @@ disp('starting time-stepping...');
 % addpath 'C:\Users\20201213\Documents\Uni\Master thesis\clean_code\INS2D\debug_stuff'
 % addpath 'debug_stuff'
 % jacobian_test_ROM
-
+profile on
 time_start = toc
 
 coefficients = zeros(M,nt);
@@ -417,6 +440,8 @@ while(n<=nt)
     % set_timestep;
     
     %%
+    a_bc_slice = options.rom.a_bc_matrix(n,:,:);
+    time_slice = options.rom.time_control(n,:);
     
     n = n+1;
     
@@ -491,6 +516,8 @@ while(n<=nt)
 end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start
+profile off
+profile viewer
 
 
 V  = getFOM_velocity(R,t,options);

@@ -44,12 +44,18 @@ end
 
 ti = tn;
 
-options = set_bc_vectors(t,options);
+% options = set_bc_vectors(t,options);
 
 for i_RK=1:s_RK
     % at i=1 we calculate F_1, p_2 and u_2
     % ...
     % at i=s we calculate F_s, p_(n+1) and u_(n+1)
+    
+    a_bc_vec = a_bc_slice(i_RK,:);
+    options.rom.a_bc_vec = a_bc_vec;
+    
+    time_vec = time_slice(i_RK);
+    options.rom.time_vec = time_vec;
     
     if options.rom.bc_recon == 2
         V = getFOM_velocity(R,t,options);

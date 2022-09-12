@@ -38,8 +38,8 @@ line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
-color = char(line(j));
-color2 = char(line2(j));
+% color = char(line(j));
+% color2 = char(line2(j));
 % color3 = char(line3(j));
 
 % color4 = char(line4(j));

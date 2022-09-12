@@ -27,12 +27,15 @@ time_loop2 = taylor(time_loop);
 figure
 % loglog(Ms,svd_end2,'-s','displayname','offline - SVD')
 hold on
-loglog(Ms,precompute_end2,'-s','displayname','offline - precomputing operators')
+loglog(Ms,precompute_end2,'-s','displayname','offline - precomputions')
 loglog(Ms,time_loop2,'-s','displayname','online')
 ylabel('CPU time [s]')
 xlabel('number of modes')
 
 % FOM_time = 78.519914999999997; % actuator ROM
 % FOM_time = 23.423704640000000; % actuator unsteady ROM 200x80
-% loglog([1 100],ones(1,2)*FOM_time,'displayname','FOM')
+% FOM_time =   38.400712900000002; % actuator ROM movemode 200x80
+FOM_time =     43.465397119999999; % actuator ROM movemode 200x80
+loglog([1 100],ones(1,2)*FOM_time,'displayname','FOM')
 legend('show')
+grid
