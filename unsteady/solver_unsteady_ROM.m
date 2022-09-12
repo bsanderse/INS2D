@@ -70,7 +70,7 @@ end
 options.rom.Vbc = Vbc;
 
 %%
-
+precompute_start = toc
 % rank_sensitive = true;
 rank_sensitive = false;
 
@@ -119,6 +119,7 @@ switch options.rom.bases_construction
     case "qr"
         [phi_h,weight_matrix,M] = Om_POD(X_h,M,options,cond_fac);
         phi_bc = get_velo_consis_phi_bc(X_bc,weight_matrix,false);
+        phi_bc = phi_bc(:,1:min(M,Mbc)); % botch!
         M_h = options.discretization.M;
         M_hphi = M_h*phi_h;
         rank_M_hphi = rank(M_hphi);
@@ -158,18 +159,19 @@ end
 % M_h = options.discretization.M;
 % F_M = options.discretization.F_M;
 % % norm(M_h*phi_inhom*R_inhom-F_M*phi_bc(:,P))
-conditions2(j) = cond(R_inhom)
+
+% conditions2(j) = cond(R_inhom)
 
 basis = [phi_hom phi_inhom];
-orthonormality(j) = norm(basis-basis*(basis'*(Om.*basis)))
-if j == Nsim
-    figure(123)
-    plot(M_list,orthonormality,'displayname',suffix + " " + options.rom.bases_construction);
-    set(gca,'Yscale','log');
-    xlabel('M')
-    ylabel('orthonormality error')
-    legend('show')
-end
+% orthonormality(j) = norm(basis-basis*(basis'*(Om.*basis)))
+% if j == Nsim
+%     figure(123)
+%     plot(M_list,orthonormality,'displayname',suffix + " " + options.rom.bases_construction);
+%     set(gca,'Yscale','log');
+%     xlabel('M')
+%     ylabel('orthonormality error')
+%     legend('show')
+% end
 
 if options.rom.bc_recon == 3
 
@@ -207,8 +209,8 @@ elseif options.rom.bc_recon == 5
         case "optimal"
             B = [phi_hom phi_inhom];
         case "qr"
-%             B = phi_h;
-                        B = [phi_hom phi_inhom]; %botch!
+            B = phi_h;
+%                         B = [phi_hom phi_inhom]; %botch!
 
 %             Bp = orthonormalize(R1');
     end
@@ -217,8 +219,8 @@ elseif options.rom.bc_recon == 5
 %     Mp = size(Bp,2);
 %     options.rom.Mp = Mp;
 
-condition6(j) = cond(options.discretization.M*B)
-condition7(j) = cond(options.discretization.M*phi_inhom)
+% condition6(j) = cond(options.discretization.M*B)
+% condition7(j) = cond(options.discretization.M*phi_inhom)
 
 end
 
@@ -253,26 +255,28 @@ end
 % end
 
 %% pressure recovery
-if options.rom.bases_construction == "qr"
-%     M_h = options.discretization.M;
-%     Bp = orthonormalize(M_h*phi_inhom,false);
-%     options.rom.Bp = Bp;
-%     
-%     Bp = orthonormalize(R1');
-%     options.rom.Bp2 = Bp;
-    
-    Bp = orthonormalize(R1'/(R1*R1'));
-%     options.rom.Bp3 = Bp;
-    
-    options.rom.Bp = Bp;
-else
-%     pressure_basis_construction;
-
-    M_h = options.discretization.M;
-    Bp = orthonormalize(M_h*phi_inhom,false);
-    options.rom.Bp = Bp;
-    Mp = size(Bp,2);
-    options.rom.Mp = Mp;
+if options.rom.bc_recon == 5
+    if options.rom.bases_construction == "qr"
+        %     M_h = options.discretization.M;
+        %     Bp = orthonormalize(M_h*phi_inhom,false);
+        %     options.rom.Bp = Bp;
+        %
+        %     Bp = orthonormalize(R1');
+        %     options.rom.Bp2 = Bp;
+        
+        Bp = orthonormalize(R1'/(R1*R1'));
+        %     options.rom.Bp3 = Bp;
+        
+        options.rom.Bp = Bp;
+    else
+        %     pressure_basis_construction;
+        
+        M_h = options.discretization.M;
+        Bp = orthonormalize(M_h*phi_inhom,false);
+        options.rom.Bp = Bp;
+        Mp = size(Bp,2);
+        options.rom.Mp = Mp;
+    end
 end
 
 %% compute boundary condition approximation and inhomogeneous ROM basis
@@ -343,6 +347,8 @@ if (options.rom.pressure_recovery == 1)
         p_total(n,:)  = p;
     end
 end
+
+precompute_end(j) = toc - precompute_start;
 
 
 %% reduced order solution tests

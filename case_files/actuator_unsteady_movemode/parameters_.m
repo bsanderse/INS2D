@@ -15,12 +15,16 @@ M_list = [base_M base_M base_M];
 % M_list = [base_M base_M base_M 2*base_M];
 M_list = kron(M_list, [1 1]);
 
+M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-% M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-% M_list = 200;
+M_list = 200;
 % M_list = [2 5 10];
+M_list_raw = M_list;
+repetitions = 5;
+M_list = flip(kron(ones(1,repetitions),M_list_raw));
+
 % M_list = [2 5 8];
-% % % % % % % % M_list = kron(M_list, [1 1]);
+% M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -161,7 +165,7 @@ changing_snapshotdata = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom     = 1;      % set to 1 to use ROM solver
+    rom     = 0;      % set to 1 to use ROM solver
     pro_rom = 0;     % set to 1 if FOM should provide snapshots for ROM
     M      = M_list(j); %20; %50;    % number of modes used
 %     Mbc = M;
@@ -199,11 +203,11 @@ changing_snapshotdata = 0;
 %                 bc_recon = bc_recons(j); Mp = M;
 
 %     bc_recon = 5;
-%     bc_recon = 3;
+    bc_recon = 3;
 % %     bc_recon = 5; M=M+1;
-    bc_recons = kron([1 1 1],[3 5]);
-% %     bc_recons = kron([1 1 1 1],[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recons = kron([1 1 1],[3 5]);
+%     bc_recons = kron([1 1 1 1 1 1],[3 5]);
+%     bc_recon = bc_recons(j);
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
     Mp = M;
@@ -213,8 +217,12 @@ changing_snapshotdata = 0;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
+
     Mbc = M;
 %      Mbc = 80;
+%      Mbc = 2;
+%          Mp = Mbc;
+
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
                   % -> supposed to be Sanderse time-independent V inhom approach
@@ -236,12 +244,18 @@ changing_snapshotdata = 0;
     
 %     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
 %     bases_constructions = ["mthesis" "optimal" "qr"];
-    bases_constructions = ["qr"];
-    bases_constructions = [bases_constructions; bases_constructions];
-    bases_constructions = bases_constructions(:);
-    bases_construction = bases_constructions(j);
+%     bases_constructions = ["mthesis" "optimal"];
+%     bases_constructions = [ "optimal"  "mthesis"];
+%     bases_constructions = ["mthesis"];
+% %     bases_constructions = ["qr"];
+%     bases_constructions = [bases_constructions bases_constructions ...
+%                            bases_constructions bases_constructions ...
+%                            bases_constructions bases_constructions];
+% %     bases_constructions = [bases_constructions; bases_constructions];
+% %     bases_constructions = bases_constructions(:);
+%     bases_construction = bases_constructions(j);
 
-%     bases_construction = "mthesis";
+    bases_construction = "mthesis";
 %     bases_construction = "closest";
 %     bases_construction = "optimal";
 %     bases_construction = "qr";
@@ -250,7 +264,7 @@ changing_snapshotdata = 0;
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's
                 
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
@@ -321,7 +335,9 @@ changing_snapshotdata = 0;
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
-    show_sigmas = j<=1;
+%     show_sigmas = j<=1;
+    show_sigmas = 0;
+
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -352,7 +368,7 @@ changing_snapshotdata = 0;
 energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
-equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
+equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 % equivalence_cheats = kron([1 1 1],[0 1]); 
 % equivalence_cheat = equivalence_cheats(j);
 % equivalence_cheat = 0;

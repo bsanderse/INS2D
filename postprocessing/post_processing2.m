@@ -25,27 +25,34 @@ end
 
 
 
-% line  = {'r-','b-','k-','m-','g-','c-'};
-% line2  = {'r--','b--','k--','m--','g--','c--'};
+line  = {'r-','b-','k-','m-','g-','c-'};
+line2  = {'r--','b--','k--','m--','g--','c--'};
 line3  = {'r:','b:','k:','m:','g:','c:'};
 line4  = {'r-.','b-.','k-.','m-.','g-.','c-.'};
 % line  = {'r-','b-','k-','m-','r:','b:','k:','m:'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
-line  = {'r-','r:','b-','b:','k-','k:','m-','m:','g-','g:'};
-line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.','g--','g-.'};
+% line  = {'r-','r:','b-','b:','k-','k:','m-','m:','g-','g:', 'c-', 'c:'};
+% line2  = {'r--','r-.','b--','b-.','k--','k-.','m--','m-.','g--','g-.','c--','c-.'};
 
 % line  = {'r-','b-','k-','m-','r--','b--','k--','m--'};
 % line2  = {'r--','b--','k--','m--','r-.','b-.','k-.','m-.'};
 
 color = char(line(j));
 color2 = char(line2(j));
-color3 = char(line3(j));
+% color3 = char(line3(j));
+
 % color4 = char(line4(j));
 % color = char(line(ceil(j/2)));
 % color2 = char(line2(ceil(j/2)));
 % color3 = char(line3(ceil(j/2)));
 % color4 = char(line4(ceil(j/2)));
+
+% if mod(j,2)==1
+%     color = char(line(ceil(j/2)));
+% else
+%     color = char(line2(j/2));
+% end
 
 if options.rom.rom == 1
     
@@ -54,7 +61,7 @@ if options.rom.rom == 1
         additional = " M inhom ="+ num2str(M_inhom);
     elseif options.rom.bc_recon ==5
         type = " vp";
-        additional = " M p ="+ num2str(Mp);
+        additional = " Mp ="+ num2str(Mp);
     end
     
     suffix = type + " M= "+num2str(M)+" Mbc = "+num2str(Mbc) + additional;
@@ -103,19 +110,23 @@ end
             snapshot_indx = 1:skip:(snapshot_end+1);
             t_vec = t_start:dt:t_end;
             
+            if j == Nsim
+                runtime_computations;
+            end
+            
             % if velocity fields have been stored, we can compute errors
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
-                    velocity_error_plot;
-                    velocity_comparison_plot;
+%                     velocity_error_plot;
+%                     velocity_comparison_plot;
 %                     pressure_error_plot;
 %                     pressure_gradient_error_plot;
 %                     projected_pressure_gradient_error_plot;
 %                     projected_pressure_gradient_comparison_plot;
 %                     kinetic_energy_error_plots;
-                    mass_violation_plots;
-                    approx_mass_violation_plots;
+%                     mass_violation_plots;
+%                     approx_mass_violation_plots;
                 end
             end
         end

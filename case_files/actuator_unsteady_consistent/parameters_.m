@@ -19,7 +19,7 @@ M_list = [base_M base_M base_M base_M base_M base_M];
 % M_list = [base_M base_M base_M];
 % M_list = [base_M base_M];
 % M_list = base_M;
-% M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
 % M_list = kron(M_list, [1 1]);
@@ -199,13 +199,16 @@ changing_snapshotdata = 0;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-%     bc_recon = 5;
-%     bc_recon = 3;
-%     bc_recon = 5; M=M+1;
-    bc_recons = kron([1 1 1],[3 5]);
 
-%     bc_recons = kron([1 1 1 1],[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recon = 5; M=M+1;
+%     bc_recons = kron([1 1 1],[3 5]);
+% 
+% %     bc_recons = kron([1 1 1 1],[3 5]);
+%     bc_recons = kron([1 1 1 1 1 1],[3 5]);
+%     bc_recon = bc_recons(j);
+
+%     bc_recon = 5;
+    bc_recon = 3;
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
@@ -237,15 +240,19 @@ changing_snapshotdata = 0;
         suffix = " bc recon = " + bc_recon;
     end
     
-%     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
-    bases_constructions = ["mthesis" "optimal" "qr"];
+% %     bases_constructions = ["mthesis" "closest" "optimal" "qr"];
+%     bases_constructions = ["mthesis" "optimal" "qr"];
 %     bases_constructions = ["mthesis" "optimal"];
-%     bases_constructions = [ "qr"];
-    bases_constructions = [bases_constructions; bases_constructions];
-    bases_constructions = bases_constructions(:);
-    bases_construction = bases_constructions(j);
+% % %     bases_constructions = [ "qr"];
+% %     bases_constructions = [ "mthesis"];
+% %     bases_constructions = [bases_constructions; bases_constructions];
+%     bases_constructions = [bases_constructions, bases_constructions, ...
+%                            bases_constructions, bases_constructions, ...
+%                            bases_constructions, bases_constructions];
+% %     bases_constructions = bases_constructions(:);
+%     bases_construction = bases_constructions(j);
     
-%     bases_construction = "mthesis";
+    bases_construction = "mthesis";
 %     bases_construction = "closest";
 %     bases_construction = "optimal";
  
@@ -253,7 +260,7 @@ changing_snapshotdata = 0;
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's
                 
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
+    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     
@@ -316,7 +323,7 @@ changing_snapshotdata = 0;
     plotgrid         = 0;          % plot gridlines and pressure points
     
     tecplot.write    = 0;          % write to tecplot file
-    tecplot.n        = 1;         % write tecplot files every n
+    tecplot.n        = 0;         % write tecplot files every n
     
     rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
@@ -324,7 +331,8 @@ changing_snapshotdata = 0;
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
-    show_sigmas = j<=1;
+%     show_sigmas = j<=1;
+    show_sigmas = 0;
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -355,7 +363,7 @@ changing_snapshotdata = 0;
 energy_verbosity = 0; % compute unrequired stuff
 debug_mode = 0; % perform all kinds of consistency checks -> far more expensive!
 % equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
-equivalence_cheat = 1; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
+equivalence_cheat = 0; % botch enforcing equivalence of velocity-pressure and velocity-only ROM
 % equivalence_cheats = kron([1 1 1],[0 1]); 
 % equivalence_cheat = equivalence_cheats(j);
 % equivalence_cheat = 0;

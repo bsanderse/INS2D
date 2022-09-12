@@ -45,7 +45,6 @@ end
 ti = tn;
 
 options = set_bc_vectors(t,options);
-yMn      = options.discretization.yM;
 
 for i_RK=1:s_RK
     % at i=1 we calculate F_1, p_2 and u_2
@@ -105,6 +104,8 @@ for i_RK=1:s_RK
         %         f       = (M_h*B*(Rn/dt+Rtemp) + yM/dt)/c_RK(i_RK);
         %         f       = (M_h*B*Rtemp + (yM-yMn)/dt)/c_RK(i_RK);
         if options.rom.time_discB4pres_elim == 1
+            yMn      = options.discretization.yM;
+            
             yM_diff = (yM-yMn)/dt;
         else
             yM_diff = ydM;
