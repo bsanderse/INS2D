@@ -159,7 +159,51 @@ u_back33 = IRDFT(u_hat33);
 max(abs(u_back3-u_back))
 
 
-%% test differentiation
+%% test first order differentiation
+
+% see how fourier transforming affects the derivative
+% assume we have a signal in Fourier space, which is transformed to
+% physical space, then we take derivative, then we transform back to
+% Fourier space
+
+% note that the real transform leads to a different matrix, which does not
+% have diagonal structure; this is correct
+
+
+% d/dx
+d = 0.5*ones(N,1);
+D1 = spdiags([-d d],[-1 1],N,N);
+D1(1,end)=-0.5;
+D1(end,1)=0.5;
+
+% effective diagonal matrix (diagonalisation)
+D1k_complex  = phi*D1*phi_inv;
+% same result with real transform, but note that the order of the entries can be different
+D1k_real     = phi_real*D1*phi_real_inv;
+D1k_analytic = sqrt(-1)*sin(2*pi*(0:N-1)/N);
+
+% since D is circulant, the diagonalized form can be obtained directly as follows
+D1_circ      = D1(:,1);
+lambda1_complex = sqrt(N)*(phi')*D1_circ; % this should correspond to Dk_complex and to eig(D)
+% get back the original matrix using eigenvectors and eigenvalue matrix
+D1test_complex = sqrt(N)*(phi')*diag((phi')*D1_circ)*phi;
+% similarly, for the real case
+% however, we don't have a good expression for the eigenvalues in terms of
+% phi_real yet, so we use phi for now; however the ordering is not yet correct
+% Dtest_real    = sqrt(N)*(phi_real.')*diag((phi')*D_circ)*phi_real;
+
+
+figure
+plot(diag(D1k_real),'x-')
+hold on
+% Dk_complex is complex and has zero real part
+plot(imag(diag(D1k_complex)),'s-');
+plot(imag(D1k_analytic),'o-')
+legend('real transform','complex transform','analytic');
+title('entries of Fourier transform of first order differentiation matrix')
+
+
+%% test second order differentiation
 
 % see how fourier transforming affects the derivative
 % assume we have a signal in Fourier space, which is transformed to
@@ -168,21 +212,21 @@ max(abs(u_back3-u_back))
 
 % d^2/dx^2
 d = ones(N,1);
-D = spdiags([d -2*d d],[-1 0 1],N,N);
-D(1,end)=1;
-D(end,1)=1;
+D2 = spdiags([d -2*d d],[-1 0 1],N,N);
+D2(1,end)=1;
+D2(end,1)=1;
 
 % effective diagonal matrix (diagonalisation)
-Dk_complex  = phi*D*phi_inv;
-% same result with real transform, but the order can be different
-Dk_real     = phi_real*D*phi_real_inv;
-Dk_analytic = 2*cos(2*pi*(0:N-1)/N)-2;
+D2k_complex  = phi*D2*phi_inv;
+% same result with real transform, but note that the order of the entries can be different
+D2k_real     = phi_real*D2*phi_real_inv;
+D2k_analytic = 2*cos(2*pi*(0:N-1)/N)-2;
 
 % since D is circulant, the diagonalized form can be obtained directly as follows
-D_circ      = D(:,1);
-eig_complex = sqrt(N)*(phi')*D_circ; % this should correspond to Dk_complex and to eig(D)
+D2_circ      = D2(:,1);
+lambda2_complex = sqrt(N)*(phi')*D2_circ; % this should correspond to Dk_complex and to eig(D)
 % get back the original matrix using eigenvectors and eigenvalue matrix
-Dtest_complex = sqrt(N)*(phi')*diag((phi')*D_circ)*phi;
+D2test_complex = sqrt(N)*(phi')*diag((phi')*D2_circ)*phi;
 % similarly, for the real case
 % however, we don't have a good expression for the eigenvalues in terms of
 % phi_real yet, so we use phi for now; however the ordering is not yet correct
@@ -190,12 +234,13 @@ Dtest_complex = sqrt(N)*(phi')*diag((phi')*D_circ)*phi;
 
 
 figure
-plot(diag(Dk_real),'x-')
+plot(diag(D2k_real),'x-')
 hold on
-plot(real(diag(Dk_complex)),'s-');
-plot(Dk_analytic,'o-')
+% Dk_complex is complex but has zero imaginary part
+plot(real(diag(D2k_complex)),'s-');
+plot(D2k_analytic,'o-')
 legend('real transform','complex transform','analytic');
-
+title('entries of Fourier transform of 2nd order differentiation matrix')
 
 %% test truncation of phi and phi_real
 Ntrunc = 8; % should be even; note that the truncated signal has typically  length Ntrunc+1

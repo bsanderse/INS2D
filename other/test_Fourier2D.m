@@ -17,9 +17,9 @@ clearvars
 close all
 
 %%
-Nx = 12; % number of points, assume EVEN
+Nx = 20; % number of points, assume EVEN
 Lx = 2*pi;
-Ny = 8; % number of points, assume EVEN
+Ny = 14; % number of points, assume EVEN
 Ly = 2*pi;
 x  = linspace(0,Lx-Lx/Nx,Nx)';
 y  = linspace(0,Ly-Ly/Ny,Ny)';
@@ -37,7 +37,7 @@ Ny    = length(y);
 
 
 %% truncation
-M = 2;
+M = 6;
 
 
 %% method 1: use Matlab FFT
@@ -149,7 +149,7 @@ u_back3 = phi_real_inv_2D*u_hat3;
 
 max(abs(u_back3-u_back(:)))
 
-% alternatively:
+%% alternatively:
 u_hat6  = RDFT( RDFT(u).').';
 u_back6  = IRDFT( IRDFT(u_hat6.').');
 

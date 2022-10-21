@@ -1,5 +1,5 @@
 function [Phi] = getFourierBasis(options,M)
-% GETFOURIERBASIS: get ROM spatial basis based on inverse Fourier transform
+% GETFOURIERBASIS: get ROM spatial basis based on INVERSE Fourier transform
 % input: mesh; number of modes (optional)
 % output: spatial basis Phi, such that u \approx Phi*uhat,
 % with uhat the Fourier coefficients

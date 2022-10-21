@@ -52,6 +52,9 @@ if (nargin>1)
         % truncate according to vec_trunc
         % TODO: if ind_trunc does not include index 1, we should check the
         % sqrt(2) scaling
+        if (isempty(find(vec_trunc==1,1)))
+            warning('vec_trunc does not include index 1, check scaling');
+        end
         ind_trunc = vec_trunc;
         
         
@@ -71,7 +74,7 @@ if (nargin>1)
     u_hat_sin  = imag(u_hat(ind_sin,:))*sqrt(2);
     u_hat_real = [u_hat_cos; u_hat_sin];
     
-else       
+else  % only 1 argument to function call     
 
     ind_cos  = 1:N/2+1;
     ind_sin  = 2:N/2;

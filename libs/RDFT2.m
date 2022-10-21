@@ -3,7 +3,7 @@ function u_hat_real = RDFT2(u,Nx_hat,Ny_hat,vec_trunc)
 % the definition here is such that the transform is orthonormal
 % the input u should be of size Nx*Ny
 
-% the truncation parameter N_hat is used to select a subset of rows from B (cols
+% the truncation parameters Nx_hat and Ny_hat are used to select a subset of rows from B (cols
 % of Binv), obtained by ordering in terms of frequencies.
 % this is done in such a way that the resulting matrix B has roughly size N_hat*N
 % note that each frequency has a positive and a negative component, which

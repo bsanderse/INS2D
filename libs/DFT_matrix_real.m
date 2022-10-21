@@ -159,6 +159,9 @@ if (nargin>1 && (~isempty(Ntrunc) || ~isempty(vec_trunc)) )
         warning('truncation number should be smaller or equal to matrix dimension, not truncating');
         return;
     end
+    if (Ntrunc == 0)
+        return;
+    end
     
     if (~exist('vec_trunc') ||  isempty(vec_trunc))
         % if vector is specified, we use Ntrunc for truncation
