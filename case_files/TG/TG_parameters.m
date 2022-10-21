@@ -158,7 +158,7 @@ mesh_list    = 100; %[10 20 40 80];
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'TG'; % movie name
     rtp.movierate    = 15;         % frame rate (/s)    
     

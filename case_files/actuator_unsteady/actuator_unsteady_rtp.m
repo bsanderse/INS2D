@@ -53,6 +53,7 @@ c.LineWidth = 1;
 axis equal
 axis([x1 x2 y1 y2]);
 colorbar('Location','east')
+caxis([min(list) max(list)]);
 
 % caxis([0 1])
 % grid
@@ -67,7 +68,9 @@ set(Axes(2), 'visible', 'off');
 
 linkaxes(Axes)
 hold off
-
+xlabel('x/D')
+ylabel('y/D')
+title('velocity field')
 
 %% vorticity
 % figure(1)

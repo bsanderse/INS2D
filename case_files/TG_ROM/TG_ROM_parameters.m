@@ -19,9 +19,9 @@ mesh_list    = [40]; % 20 40 80];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 2;
+    x2      = 4;
     y1      = 0;
-    y2      = 2;
+    y2      = 4;
 
     Nx      = mesh_list(j);         % number of volumes in the x-direction
     Ny      = mesh_list(j);         % number of volumes in the y-direction
@@ -51,7 +51,7 @@ mesh_list    = [40]; % 20 40 80];
 
     rom    = 1;      % set to 1 to use ROM solver
     rom_type = 'FDG-Fourier'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
-    M      = 4; %Nx*Ny;     % number of modes used (not relevant for FDG)
+    M      = 10; %Nx*Ny;     % number of modes used (not relevant for FDG)
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = 4;  % part of snapshot matrix used for building SVD

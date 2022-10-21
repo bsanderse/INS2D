@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 100;                  % Reynolds number
+    Re      = 1000;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -73,10 +73,10 @@
     order4  = 0;
 
     % only for unsteady problems:
-    dt            = 0.025;       % time step (for explicit methods it can be
+    dt            = 0.01;       % time step (for explicit methods it can be
                                % determined during running with dynamic_dt)
     t_start       = 0;        % start time
-    t_end         = 16;         % end time
+    t_end         = 1;         % end time
 
     CFL           = 1;              
     timestep.set  = 0;         % time step determined in timestep.m, 

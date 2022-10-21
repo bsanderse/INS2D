@@ -167,7 +167,7 @@
     rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;
-    rtp.moviename    = 'actuator_unsteady'; % movie name
+    rtp.moviename    = 'actuator_unsteady_Re100'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
     

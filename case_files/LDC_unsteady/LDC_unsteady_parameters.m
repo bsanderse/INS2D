@@ -24,8 +24,8 @@ mesh_list = 1;
     y1      = 0;
     y2      = 1;
 
-    Nx      = 100;                   % number of volumes in the x-direction
-    Ny      = 100;                   % number of volumes in the y-direction
+    Nx      = 50;                   % number of volumes in the x-direction
+    Ny      = 50;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -51,7 +51,7 @@ mesh_list = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     
@@ -72,7 +72,7 @@ mesh_list = 1;
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent    
     
-    snapshot_data = 'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
+    snapshot_data = 'results/LDC_unsteady_1.000e+03_50x50/matlab_data.mat'; %'results/LDC_unsteady_rerun_April2020/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -183,7 +183,7 @@ mesh_list = 1;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 50;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'LDC_unsteady_ERK_N40'; % movie name
@@ -203,7 +203,7 @@ mesh_list = 1;
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
+    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) in workspace
                                    % -> requires save_file=1 to get saved into output file
         
     cw_output        = 1;          % command window output; 

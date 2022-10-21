@@ -58,7 +58,7 @@ Re_list      = [200 1000];
         dt            = 0.02;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 4;         % end time
+        t_end         = 20;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -144,9 +144,11 @@ Re_list      = [200 1000];
     tecplot.n        = 1;         % write tecplot files every n
     
     rtp.show         = 1;          % 1: real time plotting 
-    rtp.n            = 20;
+    rtp.n            = 5;
     rtp.movie        = 0;
-    
+    rtp.moviename    = 'BFS_unsteady_Re1000';
+    rtp.movierate    = 15;         % frame rate (/s)    
+        
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
 %     statistics.n     = 1;
@@ -158,10 +160,10 @@ Re_list      = [200 1000];
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
-    save_unsteady    = 1;
+    save_file        = 0;          % save all matlab data after program is completed
+    save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
