@@ -158,14 +158,21 @@ else
 %     end
     
     if (steady==0 && save_unsteady == 1)
-        % allocate space for variables
-        uh_total = zeros(nt,options.grid.Nu);
-        vh_total = zeros(nt,options.grid.Nv);
-        p_total  = zeros(nt,options.grid.Np);
-        % store initial solution
-        uh_total(1,:) = u_start(:);
-        vh_total(1,:) = v_start(:);
-        p_total(1,:)  = p_start(:);
+        if (save_eco == 0)
+            % allocate space for variables
+            uh_total = zeros(nt,options.grid.Nu);
+            vh_total = zeros(nt,options.grid.Nv);
+            p_total  = zeros(nt,options.grid.Np);
+            % store initial solution
+            V_start = V; % can have changed due to div-correction
+            uh_total(1,:) = V_start(options.grid.indu);
+            vh_total(1,:) = V_start(options.grid.indv);
+            p_total(1,:)  = p_start(:);
+        elseif (save_eco == 1)
+            mkdir([options.output.path_results '/snapshots']);
+            save([options.output.path_results '/snapshots/Vp_n=1.mat'],'V','p');
+        end
+
     end
     
     

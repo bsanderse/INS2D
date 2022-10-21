@@ -19,6 +19,8 @@ if (restart.load==0 && options.output.save_results==1)
     end
     mkdir(path_results);
     
+    options.output.path_results = path_results;
+    
     % copy inputfiles in result folder so that restart is possible and settings
     % can be reproduced
     %     mkdir([path_results '/inputfiles']);
