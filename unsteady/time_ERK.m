@@ -1,4 +1,4 @@
-function [Vnew,pnew] = time_ERK(Vn,pn,tn,dt,options)
+function [Vnew,pnew,Tnew] = time_ERK(Vn,pn,Tn,tn,dt,options)
 
 %% general explicit Runge-Kutta method
 
@@ -10,6 +10,8 @@ Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
 Om_inv = options.grid.Om_inv;
+Omp_inv = options.grid.Omp_inv;
+
 
 %% get coefficients of RK method
 % make character string if necessary
@@ -36,11 +38,24 @@ c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 % pn     = p;
 V = Vn;
 p = pn;
+T = Tn;
 
 % right hand side evaluations, initialized at zero
 kV     = zeros(Nu+Nv,s_RK);
 % array for the pressure
 kp     = zeros(Np,s_RK);
+
+switch options.case.boussinesq
+    
+    case 'temp'
+        % array for temperature
+        kT     = zeros(Np,s_RK);
+        
+    otherwise
+        % dummy variable as solution
+        Tnew = 0;
+end
+    
 
 if (options.BC.BC_unsteady == 1)
     options = set_bc_vectors(tn,options);
@@ -70,12 +85,14 @@ for i_RK=1:s_RK
     % boundary conditions will be set through set_bc_vectors inside F
     % the pressure p is not important here, it will be removed again in the
     % next step
-    [~,F_rhs]  = F(V,V,p,ti,options);
+    [~,F_rhs,~,FT]  = F(V,V,p,T,ti,options);
     
     % store right-hand side of stage i
     % by adding G*p we effectively REMOVE the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
     kV(:,i_RK)  = Om_inv.*(F_rhs + G*p);
+    kT(:,i_RK)  = Omp_inv.*FT;
+
     
     % update velocity current stage by sum of F_i's until this stage,
     % weighted with Butcher tableau coefficients
@@ -113,13 +130,20 @@ for i_RK=1:s_RK
     % update velocity current stage, which is now divergence free
     V  = Vn + dt*(Vtemp - c_RK(i_RK)*Om_inv.*(G*dp));
     
+    switch options.case.boussinesq
+        
+        case 'temp'
+            % update temperature
+            T  = Tn + dt*kT*A_RK(i_RK,:)';
+    end
+    
 end
 
 
 if (options.BC.BC_unsteady == 1)
     
     if (options.solversettings.p_add_solve == 1)
-        p = pressure_additional_solve(V,p,tn+dt,options);
+        p = pressure_additional_solve(V,p,T,tn+dt,options);
     else
         
         % make a suitable combination of pressures from stages that satisfy the
@@ -139,8 +163,9 @@ if (options.BC.BC_unsteady == 1)
 else
     % for steady BC we do an additional pressure solve
     % that saves a pressure solve for i=1 in the next time step
-    p = pressure_additional_solve(V,p,tn+dt,options);
+    p = pressure_additional_solve(V,p,T,tn+dt,options);
 end
 
 Vnew = V;
 pnew = p;
+Tnew = T;

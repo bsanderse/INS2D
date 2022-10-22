@@ -66,7 +66,7 @@ end
 if (options.rom.rom == 1 )
     % for roms we do this 'quick and dirty' by solving at the FOM level
     % this also works if pressure_recovery is not switched on
-    p = pressure_additional_solve(V,p,t,options);
+    p = pressure_additional_solve(V,p,0,t,options);
 end
 
 figure

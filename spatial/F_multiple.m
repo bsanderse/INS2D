@@ -29,7 +29,7 @@ for i=1:s_RK
     ti    = t(i);
     
     % compute residual and Jacobian for this stage
-    [maxresi,Fresi,dFi] = F(Vi,Ci,pi,ti,options,getJacobian);
+    [maxresi,Fresi,dFi] = F(Vi,Ci,pi,0,ti,options,getJacobian);
 
     maxres(i)   = maxresi;
     Fres(indxV) = Fresi;

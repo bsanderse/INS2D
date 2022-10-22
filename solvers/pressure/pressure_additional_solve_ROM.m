@@ -13,7 +13,7 @@ function q = pressure_additional_solve_ROM(R,t,options)
         % call F with additional argument nopressure=1 
         % to only get convection and diffusion
         % note that p is then irrelevant        
-        [~,F_FOM] = F(V,V,0,t,options,0,1);
+        [~,F_FOM] = F(V,V,0,0,t,options,0,1);
         Om_inv    = options.grid.Om_inv;
         f         = Bp' * options.discretization.M * (Om_inv.*F_FOM);
     

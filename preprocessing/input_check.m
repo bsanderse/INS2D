@@ -104,6 +104,17 @@ else
     [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);
     
     
+    %% temperature
+    switch options.case.boussinesq
+        case 'temp'
+            T = T_start(:);
+        case 'none'
+            T = 0;
+        otherwise
+            error('wrong setting for temperature');
+    end            
+    
+    
     %% initialize pressure
     if (options.rom.rom == 0)
         if (options.case.steady==1)
@@ -112,7 +123,7 @@ else
         else
             if (options.solversettings.p_initial == 1)
                 % calculate initial pressure from a Poisson equation
-                p = pressure_additional_solve(V,p_start(:),t,options);
+                p = pressure_additional_solve(V,p_start(:),T,t,options);
             else
                 % use provided initial condition (not recommended)
                 p = p_start(:);
@@ -150,9 +161,10 @@ else
         error('wrong setting for steady parameter');
     end
     
+    
     %% residual of momentum equations at start
 %     if (strcmp(options.case.visc,'laminar'))
-        [maxres(1), ~, ~] = F(V,V,p,t,options,0);
+        [maxres(1), ~, ~] = F(V,V,p,T,t,options,0);
 %     else
 %         maxres(1) = 0;
 %     end

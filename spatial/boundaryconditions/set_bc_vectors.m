@@ -13,7 +13,7 @@ Re = options.fluid.Re;
 % boundary conditions
 BC = options.BC;
 
-global uBC vBC dudtBC dvdtBC;
+global uBC vBC dudtBC dvdtBC TBC;
 
 % type of stress tensor
 visc = options.case.visc;
@@ -633,5 +633,51 @@ switch visc
         options.discretization.yCvy_k = yCvy_k;
         options.discretization.yAuy_k = yAuy_k;
         options.discretization.yAvx_k = yAvx_k;
+
+        
+end
+
+switch options.case.boussinesq
+    
+    case 'temp'
+
+        TLo  = TBC(xp,y(1),t,options);
+        TUp  = TBC(xp,y(end),t,options);
+        TLe  = TBC(x(1),yp,t,options);
+        TRi  = TBC(x(end),yp,t,options);
+        
+%         ybc     = kron(uLe_i,Au_ux_BC.ybc1) + kron(uRi_i,Au_ux_BC.ybc2);
+%         yAu_ux  = Au_ux_BC.Bbc*ybc;
+        AT_Tx_BC = options.discretization.AT_Tx_BC;
+        AT_Ty_BC = options.discretization.AT_Ty_BC;
+        Iu_Tx_BC = options.discretization.Iu_Tx_BC;
+        Iv_Ty_BC = options.discretization.Iv_Ty_BC;
+        DiffTx_BC = options.discretization.DiffTx_BC;
+        DiffTy_BC = options.discretization.DiffTy_BC;
+        
+        ybc      = kron(TLe,AT_Tx_BC.ybc1) + kron(TRi,AT_Tx_BC.ybc2);
+        yAT_Tx   = AT_Tx_BC.Bbc*ybc;
+        yDTx     = DiffTx_BC*ybc;
+        ybc      = kron(uLe_i,Iu_Tx_BC.ybc1) + kron(uRi_i,Iu_Tx_BC.ybc2);
+        yIu_Tx   = Iu_Tx_BC.Bbc*ybc;
+
+        ybc      = kron(AT_Ty_BC.ybc1,TLo) + kron(AT_Ty_BC.ybc2,TUp);
+        yAT_Ty   = AT_Ty_BC.Bbc*ybc;
+        yDTy     = DiffTy_BC*ybc;
+        ybc      = kron(Iv_Ty_BC.ybc1,vLo_i) + kron(Iv_Ty_BC.ybc2,vUp_i);
+        yIv_Ty   = Iv_Ty_BC.Bbc*ybc;        
+        
+        
+        yDiffT   = yDTx + yDTy;
+        
+        options.discretization.yDiffT = yDiffT;
+        options.discretization.yAT_Tx = yAT_Tx;
+        options.discretization.yIu_Tx = yIu_Tx;
+        options.discretization.yAT_Ty = yAT_Ty;
+        options.discretization.yIv_Ty = yIv_Ty;
+        
+end
+
+
 
 end

@@ -26,7 +26,7 @@ voi={
     'visc',         [];...    % 'laminar', 'keps','ML','LES,'qr'
     'regularize',   0;...   % convective term regularization; 0: no; 1: Leray; 2: C2
     'ibm', 0; ... % 0: no immersed boundary method; 1: immersed boundary method
-%     'force_unsteady', 0;...     % 0: steady forcing or no forcing; 1: unsteady forcing    
+    'boussinesq', 'none'; % 'none': mass+ momentum; 'temp' mass+momentum+temperature
     };
 
 accumulate_object;
@@ -52,6 +52,12 @@ voi={
 };
 
 accumulate_object;
+
+%% temperature equation settings
+object = 'temp';
+voi={
+    'Pr', 1; % Prandtl number
+};
 
 %% grid parameters
 object='grid';

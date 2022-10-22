@@ -42,7 +42,7 @@ p_int  = (1+beta)*pn - beta*p_old; % see paper: 'DNS at lower cost'
 %p_temp = p;
 
 % right-hand side of the momentum equation
-[~,F_rhs]  = F(V_int,V_int,p_int,t_int,options);
+[~,F_rhs]  = F(V_int,V_int,p_int,0,t_int,options);
 
 % take a time step with this right-hand side, this gives an 
 % intermediate velocity field (not divergence free)
@@ -73,7 +73,7 @@ pnew  = 2*pn - p_old + (4/3)*dp;
 
 % alternatively, do an additional Poisson solve:
 if (options.solversettings.p_add_solve == 1)
-    pnew = pressure_additional_solve(Vnew,pn,tn+dt,options);
+    pnew = pressure_additional_solve(Vnew,pn,0,tn+dt,options);
 end
 
 

@@ -27,6 +27,15 @@ Npx         = Nx;
 Npy         = Ny;
 Np          = Npx*Npy;
 
+switch options.case.boussinesq
+    case 'temp'
+    % number of temperature points
+    NTx         = Nx;
+    NTy         = Ny;
+    NT          = NTx*NTy;
+
+end
+
 
 %% u-volumes
 
@@ -510,6 +519,13 @@ if (order4 == 1)
     options.grid.Omvy3  = Omvy3;
     options.grid.Omvort3 = Omvort3;
     
+end
+
+switch options.case.boussinesq
+    case 'temp'
+        options.grid.NTx = NTx;
+        options.grid.NTy = NTy;
+        options.grid.NT  = NT;
 end
 
 % plot the grid: velocity points and pressure points

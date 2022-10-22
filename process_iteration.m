@@ -19,7 +19,7 @@
 % in solver_unsteady_ke
 if (options.rom.rom == 0)
     if (~strcmp(visc,'keps'))
-        [maxres(n), ~, ~] = F(V,V,p,t,options,0);
+        [maxres(n), ~, ~] = F(V,V,p,T,t,options,0);
     end
 elseif (options.rom.rom == 1)
     % get ROM residual

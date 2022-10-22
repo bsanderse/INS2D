@@ -167,7 +167,7 @@ pnew = pn + dp;
 % p      = p_new;
 
 if (options.solversettings.p_add_solve == 1)
-    pnew = pressure_additional_solve(Vnew,pn,tn+dt,options);
+    pnew = pressure_additional_solve(Vnew,pn,0,tn+dt,options);
 end
 
 % output convection at t^(n), to be used in next time step

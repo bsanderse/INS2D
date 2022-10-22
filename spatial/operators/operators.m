@@ -18,7 +18,7 @@ options = operator_divergence(options);
 options = operator_convection_diffusion(options);
 
 
-%% trbulence
+%% turbulence
 
 % regularization modelling - this changes the convective term
 if (regularize>0)
@@ -50,6 +50,18 @@ switch visc
     otherwise
         error('wrong value for visc parameter');
         
+end
+
+%% temperatre
+switch options.case.boussinesq
+    
+    case 'temp'
+
+       options = operator_temperature(options);
+       
+    otherwise
+        
+        % do nothing
 end
 
 

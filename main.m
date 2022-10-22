@@ -32,7 +32,7 @@ warning('off','MATLAB:rmpath:DirNotFound');
  
 
 % declare boundary conditions via globals
-global uBC vBC dudtBC dvdtBC;
+global uBC vBC dudtBC dvdtBC TBC;
 
 % start timer
 tic;

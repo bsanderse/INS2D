@@ -190,7 +190,7 @@ end
 if (options.BC.BC_unsteady == 1)
     
     if (options.solversettings.p_add_solve == 1)
-        p = pressure_additional_solve(V,p,tn+dt,options);
+        p = pressure_additional_solve(V,p,0,tn+dt,options);
     else
         
         % make a suitable combination of pressures from stages that satisfy the

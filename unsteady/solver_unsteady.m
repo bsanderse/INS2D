@@ -32,12 +32,15 @@ end
 if (method == 5)
     V_old  = V;
     p_old  = p;
+    T_old  = T;
 end
 
 % set current velocity and pressure
 Vn = V;
 pn = p;
+Tn = T; % temperature
 tn = t;
+
 
 % for methods that need extrapolation of convective terms
 if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
@@ -85,7 +88,7 @@ while(n<=nt)
         [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
 
     elseif (method==20)
-        [V,p] = time_ERK(Vn,pn,tn,dt,options);
+        [V,p,T] = time_ERK(Vn,pn,Tn,tn,dt,options);
     elseif (method==21)
         [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
     else
@@ -100,9 +103,11 @@ while(n<=nt)
     
     % update solution
     V_old = Vn;
-    p_old = pn;                
+    p_old = pn;    
+    T_old = Tn;
     Vn = V;
     pn = p;
+    Tn = T;
     tn = t;        
     
     % check residuals, conservation, set timestep, write output files

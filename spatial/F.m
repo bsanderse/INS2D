@@ -1,4 +1,4 @@
-function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian,nopressure)
+function [maxres,Fres,dF,FTemp] = F(V,C,p,T,t,options,getJacobian,nopressure)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 % V: velocity field
@@ -9,10 +9,10 @@ function [maxres,Fres,dF] = F(V,C,p,t,options,getJacobian,nopressure)
 % getJacobian = 1: return dFdV
 % nopressure = 1: exclude pressure gradient; in this case input argument p is not used
 
-if (nargin<7)
+if (nargin<8)
     nopressure = 0;    
 end
-if (nargin<6)
+if (nargin<7)
     getJacobian = 0;
 end
 
@@ -58,6 +58,8 @@ else
     dFy = spalloc(Nv,NV,0);      
 end
 
+
+
 % residual in Finite Volume form
 Fu   = - convu + d2u + Fx;
 Fv   = - convv + d2v + Fy;
@@ -70,8 +72,25 @@ if (nopressure == 0)
     Fv = Fv - Gpy;
 end
 
-Fres = [Fu;Fv];
 
+
+% temperature
+switch options.case.boussinesq
+    
+    case 'temp'
+        % get T at v-locations
+        T_v = options.discretization.AT_Ty*T;
+        Fv   = Fv - 0.001*T_v(options.grid.Nvx_in+1:end-options.grid.Nvx_in);
+        FTemp  = conv_diff_temperature(T,V,t,options,getJacobian);
+%         dFtemp = spalloc(Np,Np
+%         Fres = [Fu;Fv;FT];
+        
+    otherwise
+        FTemp = 0;        
+end
+
+
+Fres = [Fu;Fv];
 % norm of residual
 maxres  = max(abs(Fres));
 

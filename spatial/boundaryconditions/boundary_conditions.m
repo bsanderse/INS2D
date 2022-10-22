@@ -160,3 +160,20 @@ end
 %     nuBa        = 0;
 %     nuFr        = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% temperature
+
+switch options.case.boussinesq 
+    
+    case 'temp'    
+    
+        file_name = [options.case.project '_TBC'];
+        if (exist(file_name,'file'))
+            % create function handle with name TBC
+            TBC = str2func(file_name);
+        else
+            error(['BCtype file ' file_name ' not available']);
+        end
+
+end
