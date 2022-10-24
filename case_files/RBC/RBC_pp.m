@@ -32,6 +32,8 @@ omega = reshape(omega,Nx-1,Ny-1);
 % streamfunction
 psi = get_streamfunction(V,t,options);
 
+%% figure
+plot(Nu);
 
 %% create 2D plots
 

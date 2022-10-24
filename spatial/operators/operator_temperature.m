@@ -141,7 +141,8 @@ DiffTy_BC   = DTy*kron(S1D*AT_Ty_BC.Btemp,speye(Npx));
 
 
 %% assemble total operator
-DiffT    = DiffTx + DiffTy;
+scale    = sqrt(options.temp.Ra*options.temp.Pr)
+DiffT    = (1/scale)*(DiffTx + DiffTy);
 % yDiffT   = DTx*ySTx + DTy*ySTy;
 
 %% store in options structure

@@ -8,9 +8,9 @@ Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 % xpp = options.grid.xpp;
-ypp = options.grid.ypp;
+% ypp = options.grid.ypp;
 % Lx = options.grid.x2 - options.grid.x1;
-Ly = options.grid.y2 - options.grid.y1;
+% Ly = options.grid.y2 - options.grid.y1;
 
 % constant velocity field
 u  = zeros(Nux_in,Nuy_in);
@@ -21,6 +21,8 @@ v  = zeros(Nvx_in,Nvy_in);
 p  = zeros(Npx,Npy);
  
 % temperature: linear profile from 1 (bottom) to 0 (top)
-T  = (Ly - ypp)/Ly;
+% T  = (Ly - ypp)/Ly;
+% homogeneous 0.5
+T  = 0.5*ones(Npx,Npy);
 
 end

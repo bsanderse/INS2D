@@ -3,13 +3,16 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1000;                  % Reynolds number
+    Re      = 0;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
     regularize = 0;                 % 0: no regularization; 1: Leray; 2: C2
     
     boussinesq = 'temp';                 % 'none': mass+ momentum; 'temp' mass+momentum+temperature
+    % if boussinesq is used, then the value for Re is not used
+    Pr = 0.71;
+    Ra = 1e3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -20,8 +23,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 20;                  % number of volumes in the x-direction
-    Ny      = 20;                   % number of volumes in the y-direction
+    Nx      = 60;                  % number of volumes in the x-direction
+    Ny      = 60;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -46,10 +49,10 @@
     
     % only for unsteady problems:
 
-        dt            = 0.01;       % time step (for explicit methods it can be
+        dt            = 1e-3;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 5;         % end time
+        t_end         = 2;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -90,6 +93,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% solver settings
 
+    % pressure
+    poisson          = 2; % 1: direct solver, 
+                          % 2: CG with ILU (matlab), 
+                          % 3: CG mexfile, 
+                          % 4: CG with IC, own Matlab impl.
+                          % 5: Petsc
+                          % 6: FFT                                                    
+    p_initial        = 1; % calculate pressure field compatible
+                          % with the velocity field at t=0
+    p_add_solve      = 0; % do additional pressure solve to make it same 
+                          % order as velocity
+
+    CG_acc           = 1e-8;  % accuracy for CG (if poisson=2,3,4)
+    CG_maxit         = 1000;    % maximum number of iterations for CG
+    
     % for steady problems or unsteady problems with implicit methods:
 
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
@@ -125,7 +143,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 10;
+    rtp.n            = 2;
     rtp.movie        = 1;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

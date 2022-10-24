@@ -80,7 +80,7 @@ switch options.case.boussinesq
     case 'temp'
         % get T at v-locations
         T_v = options.discretization.AT_Ty*T;
-        Fv   = Fv - 0.001*T_v(options.grid.Nvx_in+1:end-options.grid.Nvx_in);
+        Fv   = Fv + T_v(options.grid.Nvx_in+1:end-options.grid.Nvx_in);
         FTemp  = conv_diff_temperature(T,V,t,options,getJacobian);
 %         dFtemp = spalloc(Np,Np
 %         Fres = [Fu;Fv;FT];

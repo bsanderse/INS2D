@@ -9,7 +9,13 @@ steady = options.case.steady;
 % 4th order
 order4 = options.discretization.order4;
 % Reynolds number
-Re = options.fluid.Re;
+switch options.case.boussinesq
+    case 'temp'
+        % effectively the Reynolds number is
+        Re = sqrt(options.temp.Ra/options.temp.Pr);
+    otherwise
+        Re = options.fluid.Re;
+end
 % boundary conditions
 BC = options.BC;
 
@@ -667,8 +673,8 @@ switch options.case.boussinesq
         ybc      = kron(Iv_Ty_BC.ybc1,vLo_i) + kron(Iv_Ty_BC.ybc2,vUp_i);
         yIv_Ty   = Iv_Ty_BC.Bbc*ybc;        
         
-        
-        yDiffT   = yDTx + yDTy;
+        scale    = sqrt(options.temp.Ra*options.temp.Pr);
+        yDiffT   = (1/scale)*(yDTx + yDTy);
         
         options.discretization.yDiffT = yDiffT;
         options.discretization.yAT_Tx = yAT_Tx;

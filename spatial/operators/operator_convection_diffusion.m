@@ -68,8 +68,15 @@ if (order4 == 1)
 end
 
 visc = options.case.visc;
-Re   = options.fluid.Re;
-
+% Reynolds number
+switch options.case.boussinesq
+    case 'temp'
+        % effectively the Reynolds number is
+        % note this appears as 1/Re in the equations
+        Re = sqrt(options.temp.Ra/options.temp.Pr);
+    otherwise
+        Re = options.fluid.Re;
+end
 
 %% Convection (differencing) operator Cu
 

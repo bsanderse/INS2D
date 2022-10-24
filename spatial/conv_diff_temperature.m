@@ -33,7 +33,7 @@ yDiffT = options.discretization.yDiffT;
         
 conv_diff = -CTx*((Iu_Tx*uh + yIu_Tx).*(AT_Tx*T + yAT_Tx)) + ...
             -CTy*((Iv_Ty*vh + yIv_Ty).*(AT_Ty*T + yAT_Ty)) + ...
-            0.001*(DiffT*T + yDiffT);
+            (DiffT*T + yDiffT);
 
         
 if (getJacobian == 1)

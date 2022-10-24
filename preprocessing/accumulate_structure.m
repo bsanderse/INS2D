@@ -55,9 +55,13 @@ accumulate_object;
 
 %% temperature equation settings
 object = 'temp';
+
 voi={
-    'Pr', 1; % Prandtl number
+    'Pr', 1; ... % Prandtl number
+    'Ra', 1; % Rayleigh number
 };
+
+accumulate_object;
 
 %% grid parameters
 object='grid';
