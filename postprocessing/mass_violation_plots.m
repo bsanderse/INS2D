@@ -15,7 +15,7 @@ disp('mass viola')
 figure(111)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 % semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
-semilogy(t_vec,mass_viola_L2,'color',color,'displayname',"R = "+num2str(M));
+semilogy(t_vec,mass_viola_L2,'color',color,'displayname',name);
 sum_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 
@@ -43,3 +43,5 @@ legend('show','NumColumns',2,'Orientation','horizontal')
 % plot(t_vec,diff_pressure_terms,color2,'displayname',"pressure term error ROM M="+M+suffix);
 % 
 % legend('show')
+
+

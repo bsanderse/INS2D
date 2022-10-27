@@ -36,7 +36,7 @@ disp('approx mass viola')
 figure(112)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 % semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
-semilogy(t_vec,mass_viola_L2,'color', color,'displayname',"ROM M="+M+suffix);
+semilogy(t_vec,mass_viola_L2,'color', color,'displayname',name);
 sum2_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 % semilogy(t_vec,mass_viola_L2_FOM,color2,'displayname',"FOM");

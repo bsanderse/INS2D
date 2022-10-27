@@ -260,7 +260,7 @@ changing_snapshotdata = 0;
     % 0: time derivative of mass equation RHS
     % 1: time difference quations of mass equations RHS's
                 
-    process_iteration_FOM = 0; % execute the process_iteration script each time step (requires FOM evaluation) 
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation) 
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots    
     weighted_norm         = 1;
     

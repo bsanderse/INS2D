@@ -1,6 +1,6 @@
                 figure(113)
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
-                semilogy(t_vec,abs(k - snapshots.k(snapshot_indx')),'color',color,'displayname',"ROM M="+M+suffix);
+                semilogy(t_vec,abs(k - snapshots.k(snapshot_indx')),'color',color,'displayname',name);
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k-k(1))/k(1));
 
