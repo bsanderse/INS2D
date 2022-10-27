@@ -27,7 +27,7 @@ time_loop2 = taylor(time_loop);
 figure
 % loglog(Ms,svd_end2,'-s','displayname','offline - SVD')
 hold on
-loglog(Ms,precompute_end2,'-s','displayname','offline - precomputing operators')
+loglog(Ms,precompute_end2,'-s','displayname','offline - precomputions')
 loglog(Ms,time_loop2,'-s','displayname','online')
 ylabel('CPU time [s]')
 xlabel('number of modes')
@@ -38,4 +38,6 @@ xlabel('number of modes')
 FOM_time =     43.465397119999999; % actuator ROM movemode 200x80
 loglog([1 100],ones(1,2)*FOM_time,'displayname','FOM')
 legend('show')
+set(gca, 'YScale', 'log')
+set(gca, 'XScale', 'log')
 grid

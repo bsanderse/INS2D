@@ -48,7 +48,7 @@ error_V_best_22 = weightedL2norm(error_V_best,options.grid.Om);
 disp('velocity error')
 figure(99)
 % plot(t_vec,error_V_2,color,'displayname',"ROM "+suffix);
-plot(t_vec,error_V_2,color,'displayname',"R = "+num2str(M));
+plot(t_vec,error_V_2,'color',color,'displayname',"R = "+num2str(M));
 sum_error_V_2(j) = sum(error_V_2)
 hold on
 % plot(t_vec,error_V_best_2,color2,'displayname',"best approx "+suffix);

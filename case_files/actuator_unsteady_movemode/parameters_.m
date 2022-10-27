@@ -11,15 +11,16 @@ base_M = 16;
 M_list = base_M;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M 2*base_M];
-M_list = [base_M base_M base_M];
+% M_list = [base_M base_M base_M];
 % M_list = [base_M base_M base_M 2*base_M];
-M_list = kron(M_list, [1 1]);
-
-M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = kron(M_list, [1 1]);
+% 
+% M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 2;
 % M_list = [2 5 10];
-% M_list_raw = M_list;
+
+M_list_raw = M_list;
 % repetitions = 5;
 % M_list = flip(kron(ones(1,repetitions),M_list_raw));
 

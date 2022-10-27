@@ -39,7 +39,7 @@ if mod(j,2) == 1
     M_old = M;
     name_old = name;
     color_old = color;
-    color2_old = color2;
+%     color2_old = color2;
 else
     error_V = V_total - V_total_old;
     % inf-norm
@@ -59,7 +59,7 @@ else
 
     disp('rom equivalence')
     figure(999)
-    plot(t_vec,error_V_2,color_old,'displayname',"R = "+num2str(M_old));
+    plot(t_vec,error_V_2,'color',color_old,'displayname',"R = "+num2str(M_old));
 %     plot(t_vec,error_V_2,color_old,'displayname',"velo diff: "+ name +" / "+ name_old);
     sum2_error_V_2(j) = sum(error_V_2)
     hold on
