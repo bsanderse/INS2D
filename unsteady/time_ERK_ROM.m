@@ -165,14 +165,14 @@ for i_RK=1:s_RK
         phi_bc = options.rom.phi_bc;
 
 %         yBCn = get_bc_vector_yBC(tn,options); % again wrong
-        yBCn = phi_bc*get_a_bc(tn,options);
+        yBCn = phi_bc*get_a_bc_precomp(tn,options);
         yMn = get_yM(options,yBCn);
 
 %         options = set_bc_vectors(ti,options); % actually should use tilde yM
 %         yMi = options.discretization.yM; % actually should use tilde yM
         % correct:
 %         yBCi = get_bc_vector_yBC(ti,options); % again wrong
-        yBCi = phi_bc*get_a_bc(ti,options);
+        yBCi = phi_bc*get_a_bc_precomp(ti,options);
         yMi = get_yM(options,yBCi);
 
 

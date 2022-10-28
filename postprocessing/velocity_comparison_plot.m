@@ -59,7 +59,9 @@ else
 
     disp('rom equivalence')
     figure(999)
-    plot(t_vec,error_V_2,'color',color_old,'displayname',"R = "+num2str(M_old));
+%     plot(t_vec,error_V_2,'color',color_old,'displayname',"R = "+num2str(M_old));
+%     plot(t_vec,error_V_2,'color',color_old,'displayname',name);
+    plot(t_vec,error_V_2,'displayname',name + "/" + name_old);
 %     plot(t_vec,error_V_2,color_old,'displayname',"velo diff: "+ name +" / "+ name_old);
     sum2_error_V_2(j) = sum(error_V_2)
     hold on

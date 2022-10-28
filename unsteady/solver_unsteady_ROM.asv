@@ -371,7 +371,7 @@ if (options.rom.process_iteration_FOM == 1)
         uh_total(n,:) = V(1:options.grid.Nu);
         vh_total(n,:) = V(options.grid.Nu+1:end);
     end
-%     process_iteration_ROM;
+    process_iteration_ROM;
 end
 
 if (options.rom.pressure_recovery == 1)
@@ -522,7 +522,7 @@ while(n<=nt)
 %             norm(B'*G*p_error)
             %%
         end
-%         process_iteration_ROM;
+        process_iteration_ROM;
         process_iteration;
     end
     

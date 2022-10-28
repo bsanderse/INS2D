@@ -34,6 +34,7 @@ f = plot(6*[2 3]);
 g = plot(7*[2 3]);
 
 colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
+colors = kron(colors,[1; 1]);
 
 color = colors(j,:);
 
@@ -148,7 +149,7 @@ end
                 
                 if (options.output.save_unsteady == 1)
                     velocity_error_plot;
-%                     velocity_comparison_plot;
+                    velocity_comparison_plot;
 %                     pressure_error_plot;
 %                     pressure_gradient_error_plot;
 %                     projected_pressure_gradient_error_plot;
@@ -157,6 +158,7 @@ end
                     approx_mass_violation_plots;
                     kinetic_energy;
                     kinetic_energy_error_plots;
+%                     ROM_coefficient_plot;
                 end
             end
         end
