@@ -4,11 +4,16 @@ error_V = V_total - snapshots_V_total;
 % inf-norm
 error_V_inf = max(abs(error_V),[],1);
 
-V_ref    = ones(size(snapshots_V_total));
+% V_ref    = ones(size(snapshots_V_total));
+V_ref    = snapshots_V_total;
+figure(99)
 
 V_2_ref  = weightedL2norm(V_ref,options.grid.Om);
-% error_V_2 = weightedL2norm(error_V,options.grid.Om)./V_2_ref;
-error_V_2 = weightedL2norm(error_V,options.grid.Om);
+V_2_ref_avg = sum(V_2_ref)/numel(V_2_ref)
+error_V_2 = weightedL2norm(error_V,options.grid.Om)/V_2_ref_avg; ylabel('relative velocity error')
+
+% error_V_2 = weightedL2norm(error_V,options.grid.Om); ylabel('velocity error')
+
 
 %% wrong
 % best possible approximation given the projection:
@@ -46,7 +51,7 @@ error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om);
 error_V_best_22 = weightedL2norm(error_V_best,options.grid.Om);
 
 disp('velocity error')
-figure(99)
+% figure(99)
 % plot(t_vec,error_V_2,color,'displayname',"ROM "+suffix);
 plot(t_vec,error_V_2,'color',color,'displayname',name);
 sum_error_V_2(j) = sum(error_V_2)
@@ -72,5 +77,6 @@ hold on
 
 set(gca,'Yscale','log');
 xlabel('t')
-ylabel('velocity error')
-legend('show','NumColumns',2,'Orientation','horizontal')
+    set(gcf, 'Position', [100, 100, 400, 300])
+% legend('show','NumColumns',2,'Orientation','horizontal')
+legend('show','NumColumns',1,'Orientation','horizontal')

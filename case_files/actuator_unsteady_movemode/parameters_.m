@@ -25,7 +25,7 @@ M_list_raw = M_list;
 % M_list = flip(kron(ones(1,repetitions),M_list_raw));
 
 % M_list = [2 5 8];
-M_list = kron(M_list, [1 1]);
+% M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -204,11 +204,11 @@ changing_snapshotdata = 0;
 %                 bc_recon = bc_recons(j); Mp = M;
 
 %     bc_recon = 5;
-%     bc_recon = 3;
+    bc_recon = 3;
 % %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
-    bc_recons = kron([1 1 1 1 1 1],[3 5]);
-    bc_recon = bc_recons(j);
+%     bc_recons = kron([1 1 1 1 1 1],[3 5]);
+%     bc_recon = bc_recons(j);
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
     Mp = M;

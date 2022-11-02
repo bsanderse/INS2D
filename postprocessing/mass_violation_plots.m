@@ -30,7 +30,9 @@ end
 set(gca,'Yscale','log');
 xlabel('t')
 ylabel('mass equation violation')
-legend('show','NumColumns',2,'Orientation','horizontal')
+% legend('show','NumColumns',2,'Orientation','horizontal')
+legend('show','NumColumns',1,'Orientation','horizontal')
+    set(gcf, 'Position', [100, 100, 400, 300])
 
 % figure(113)
 % % plot(t_vec,dot(mass_viola_L2,error_p),color,'displayname',"pressure term

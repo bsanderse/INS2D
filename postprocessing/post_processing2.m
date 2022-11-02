@@ -34,7 +34,7 @@ f = plot(6*[2 3]);
 g = plot(7*[2 3]);
 
 colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
-colors = kron(colors,[1; 1]);
+% colors = kron(colors,[1; 1]);
 
 color = colors(j,:);
 
@@ -97,6 +97,8 @@ if options.rom.rom == 1
 %     suffix = suffix + " " + options.rom.bases_construction;
     name = suffix;
 end
+
+name = "R = "+num2str(M);
 
 
 %% kinetic energy analysis

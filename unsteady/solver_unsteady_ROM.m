@@ -53,6 +53,7 @@ if (j==1) || changing_snapshotdata
 %     legend('show')
 %     xlabel("mode index")
 %     ylabel("\sigma_j/\sigma_1")
+%     set(gcf, 'Position', [100, 100, 400, 300])
 %     %%
 %     
 %         %% analysis
@@ -64,6 +65,7 @@ if (j==1) || changing_snapshotdata
 %     legend('show')
 %     xlabel("mode index")
 %     ylabel("\sigma_j/\sigma_1")
+%     set(gcf, 'Position', [100, 100, 400, 300])
 %     %%
 %     
 %     %% analysis
@@ -74,6 +76,7 @@ if (j==1) || changing_snapshotdata
 %     legend('show')
 %     xlabel("mode index")
 %     ylabel("\sigma_j/\sigma_1")
+%     set(gcf, 'Position', [100, 100, 400, 300])
     %
 end
 

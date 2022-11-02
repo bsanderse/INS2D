@@ -2,7 +2,9 @@
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
                 plot(t_vec,k,'color',color,'displayname',name);
                 hold on
-                plot(t_vec,snapshots.k(snapshot_indx'),'color',color,'linestyle','--','displayname',"FOM");
+                if j==Nsim
+                    plot(t_vec,snapshots.k(snapshot_indx'),'color',color,'linestyle','--','displayname',"FOM");
+                end
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k-k(1))/k(1));
 
@@ -19,3 +21,5 @@
 %                 legend('(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)')
 %                 title('error in kinetic energy ROM');
                   legend('show')
+
+                      set(gcf, 'Position', [100, 100, 400, 300])

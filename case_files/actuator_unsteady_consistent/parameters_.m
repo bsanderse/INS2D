@@ -22,7 +22,7 @@ M_list = base_M;
 M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
-M_list = kron(M_list, [1 1]);
+% M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -208,7 +208,7 @@ changing_snapshotdata = 0;
     bc_recon = bc_recons(j);
 
 %     bc_recon = 5;
-%     bc_recon = 3;
+    bc_recon = 3;
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
