@@ -10,9 +10,10 @@
     regularize = 0;                 % 0: no regularization; 1: Leray; 2: C2
     
     boussinesq = 'temp';                 % 'none': mass+ momentum; 'temp' mass+momentum+temperature
-    % if boussinesq is used, then the value for Re is not used
-    Pr = 0.71;
-    Ra = 1e3;
+    % if boussinesq is used, then the value for Re is not used but
+    % calculated from Pr and Ra
+    Pr = 0.71;                  % Prandtl number
+    Ra = 1e5;                   % Rayleigh number
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -23,8 +24,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 60;                  % number of volumes in the x-direction
-    Ny      = 60;                   % number of volumes in the y-direction
+    Nx      = 32;                  % number of volumes in the x-direction
+    Ny      = 32;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -49,10 +50,10 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-3;       % time step (for explicit methods it can be
+        dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 2;         % end time
+        t_end         = 200;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -143,8 +144,8 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 2;
-    rtp.movie        = 1;
+    rtp.n            = 50;
+    rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

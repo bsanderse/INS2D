@@ -23,6 +23,7 @@ p  = zeros(Npx,Npy);
 % temperature: linear profile from 1 (bottom) to 0 (top)
 % T  = (Ly - ypp)/Ly;
 % homogeneous 0.5
-T  = 0.5*ones(Npx,Npy);
-
+T  = 0.5*ones(Npx,Npy); % + 0.01*rand(Npx,Npy);
+% homogeneous 0
+T  = zeros(Npx,Npy); % + 0.01*rand(Npx,Npy);
 end

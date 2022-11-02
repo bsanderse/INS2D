@@ -1,5 +1,6 @@
 function [conv_diff, Jac_conv_diff] = conv_diff_temperature(T,V,t,options,getJacobian)
 % evaluate convection and diffusion terms for temperature equation and optionally Jacobian
+% note that all terms are in integrated (finite volume) form
 
 % visc = options.case.visc;
 

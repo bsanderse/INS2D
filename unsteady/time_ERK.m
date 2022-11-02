@@ -91,7 +91,6 @@ for i_RK=1:s_RK
     % by adding G*p we effectively REMOVE the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
     kV(:,i_RK)  = Om_inv.*(F_rhs + G*p);
-    kT(:,i_RK)  = Omp_inv.*FT;
 
     
     % update velocity current stage by sum of F_i's until this stage,
@@ -134,6 +133,7 @@ for i_RK=1:s_RK
         
         case 'temp'
             % update temperature
+            kT(:,i_RK)  = Omp_inv.*FT;
             T  = Tn + dt*kT*A_RK(i_RK,:)';
     end
     

@@ -31,19 +31,20 @@ end
 % psi = get_streamfunction(V,t,options);
 
 %% compute Nusselt number
-% % get temperature derivative at lower plate
-% TLo  = TBC(xp,y(1),t,options);
-% % T at first grid points 
-% T1   = T(1:Npx);
-% % approximate derivative at lower plate
-% dTdy = (T1 - TLo)/hy(1);
-% 
-% Nu = sum(-dTdy.*hx); % integrate over lower plate
-% 
-% figure(2)
-% plot(t,Nu,'ks');
-% grid
-% hold on
+% get temperature derivative at lower plate
+TLo  = TBC(xp,y(1),t,options);
+% T at first grid points 
+T1   = T(1:Npx);
+% approximate derivative at lower plate
+dTdy = (T1 - TLo)/(0.5*hy(1));
+
+Nu = sum(-dTdy.*hx); % integrate over lower plate
+
+figure(2)
+plot(t,Nu,'ks');
+grid on
+hold on
+ylim([0 5])
 
 %% create 2D plots
 
@@ -103,7 +104,7 @@ end
 figure(1)
 set(gcf,'color','w');
 % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-l=linspace(0,1,20);
+l=linspace(-0.5,0.5,20);
 contour(xp,yp,Temp',l,'LineWidth',2);
 hold on
 quiver(xp,yp,up',vp');
