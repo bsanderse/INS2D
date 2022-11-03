@@ -26,6 +26,12 @@ if (method==2)
     end
     [convu_old,convv_old] = convection(V,V,t,options,0);
     conv_old = [convu_old;convv_old];
+    
+    switch options.case.boussinesq
+        case 'temp'
+            convT_old = convection_temperature(T,V,t,options,0);
+    end
+        
 end
 
 % for methods that need u^(n-1)
@@ -82,8 +88,9 @@ while(n<=nt)
     
     % perform a single time step with the time integration method
     if (method==2)
-        [V,p,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options);
+        [V,p,T,conv,convT] = time_AB_CN(Vn,pn,Tn,conv_old,convT_old,tn,dt,options);
         conv_old = conv;
+        convT_old = convT;
     elseif (method==5)
         [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
 

@@ -1,4 +1,4 @@
-function [Vnew,pnew,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options)
+function [Vnew,pnew,Tnew,conv,convT] = time_AB_CN(Vn,pn,Tn,conv_old,convT_old,tn,dt,options)
 % conv_old are the convection terms of t^(n-1)
 % output includes convection terms at t^(n), which will be used in next time step in
 % the Adams-Bashforth part of the method
@@ -9,12 +9,12 @@ function [Vnew,pnew,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options)
 % (u^{n+1} - u^{n})/dt  = -(alfa1*(conv^n) + alfa2*(conv^{n-1})) +
 %                           theta*diff^{n+1} + (1-theta)*diff^{n} +
 %                           theta*F^{n+1}    + (1-theta)*F^{n}
-%                           theta*bc^{n+1}   + (1-theta)*bc^{n} 
+%                           theta*bc^{n+1}   + (1-theta)*bc^{n}
 %                           - G*p + y_p
 % where bc are boundary conditions of diffusion
 
 % rewrite as:
-% (I/dt - theta*D)*u^{n+1} = (I/dt - (1-theta)*D)*u^{n} + 
+% (I/dt - theta*D)*u^{n+1} = (I/dt - (1-theta)*D)*u^{n} +
 %                           -(alfa1*(conv^n) + alfa2*(conv^{n-1})) +
 %                            theta*F^{n+1}    + (1-theta)*F^{n}
 %                            theta*bc^{n+1} + (1-theta)*bc^{n}
@@ -22,6 +22,7 @@ function [Vnew,pnew,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options)
 
 % the LU decomposition of the first matrix is precomputed in
 % operator_convection_diffusion
+% we assume that the force is not depending on V or p
 
 % note that, in constrast to explicit methods, the pressure from previous
 % time steps has an influence on the accuracy of the velocity
@@ -30,6 +31,8 @@ function [Vnew,pnew,conv] = time_AB_CN(Vn,pn,conv_old,tn,dt,options)
 
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
+indu = options.grid.indu;
+indv = options.grid.indv;
 
 Omu_inv = options.grid.Omu_inv;
 Omv_inv = options.grid.Omv_inv;
@@ -55,13 +58,13 @@ G      = options.discretization.G;
 % divergence operator
 M      = options.discretization.M;
 
-uh     = Vn(1:Nu);
-vh     = Vn(Nu+1:end);
+uh     = Vn(indu);
+vh     = Vn(indv);
 
 
 %% convection from previous time step
-convu_old = conv_old(1:Nu);
-convv_old = conv_old(Nu+1:end);
+convu_old = conv_old(indu);
+convv_old = conv_old(indv);
 
 %% evaluate BC and force at starting point
 [Fx1,Fy1]      = force(Vn,tn,options,0);
@@ -107,14 +110,45 @@ yDiffv = (1-theta)*yDiffv1 + theta*yDiffv2;
 % p_temp = alfa1*p + alfa2*p_old; % see paper: 'DNS at lower cost'
 % p_temp = p;
 
+%% add temperature equation effects
+% first solve temperature equation with previous velocity fields
+switch options.case.boussinesq
+    
+    
+    case 'temp'
+        
+        %
+        NT = options.grid.NT;
+        DiffT = options.discretization.DiffT;
+        yDiffT = options.discretization.yDiffT;
+        Omp_inv  = options.grid.Omp_inv;
+
+        % right-hand side of temperature equation
+        convT = convection_temperature(Tn,Vn,tn,options,0);
+        
+        FT    = Tn + dt*Omp_inv.*( -(alfa1*convT + alfa2*convT_old) + ...
+                                   (1-theta)*DiffT*Tn + yDiffT);
+        
+        % matrix arising from implicit diffusion
+        Tnew = (speye(NT) - theta*dt*spdiags(Omp_inv,0,NT,NT)*DiffT) \ FT;
+        
+        % add effect of temperature into momentum equation
+        AT_v = options.discretization.AT_v;
+        Fy = Fy + AT_v*(theta*Tnew + (1-theta)*Tn);
+        
+    otherwise
+        Tnew = 0;
+        
+end
+
 %% right hand side of the momentum equation update
 Rur = uh + Omu_inv*dt.*(- (alfa1*convu + alfa2*convu_old) + ...
-                         + (1-theta)*Diffu*uh + yDiffu + ...
-                         + Fx - Gx*pn - y_px);
+    + (1-theta)*Diffu*uh + yDiffu + ...
+    + Fx - Gx*pn - y_px);
 
 Rvr = vh + Omv_inv*dt.*(- (alfa1*convv + alfa2*convv_old) + ...
-                         + (1-theta)*Diffv*vh + yDiffv + ...
-                         + Fy - Gy*pn - y_py);        
+    + (1-theta)*Diffv*vh + yDiffv + ...
+    + Fy - Gy*pn - y_py);
 
 % LU decomposition of diffusion part has been calculated already in
 % operator_convection_diffusion
@@ -128,11 +162,11 @@ if (options.solversettings.poisson_diffusion==1)
     
 elseif (options.solversettings.poisson_diffusion==3)
     [Ru,iter,norm1,norm2]=cg(L_diffu,int64(dia_diffu),int64(ndia_diffu),Rur,...
-                            CG_acc,int64(Nu),Ru,int64(CG_maxit));
-%                         iter
+        CG_acc,int64(Nu),Ru,int64(CG_maxit));
+    %                         iter
     [Rv,iter,norm1,norm2]=cg(L_diffv,int64(dia_diffv),int64(ndia_diffv),Rvr,...
-                            CG_acc,int64(Nv),Rv,int64(CG_maxit));
-%                         iter
+        CG_acc,int64(Nv),Rv,int64(CG_maxit));
+    %                         iter
 end
 
 Vtemp = [Ru; Rv];
@@ -155,7 +189,7 @@ f    = (M*Vtemp + yM)/dt - M*y_dp;
 dp   = pressure_poisson(f,tn + dt,options);
 
 % update velocity field
-Vnew = Vtemp - dt*Om_inv.*(G*dp + y_dp);   
+Vnew = Vtemp - dt*Om_inv.*(G*dp + y_dp);
 
 % first order pressure:
 % p_old  = p;

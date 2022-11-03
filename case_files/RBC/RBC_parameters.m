@@ -13,7 +13,7 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 1e5;                   % Rayleigh number
+    Ra = 1e4;                   % Rayleigh number
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,8 +25,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 32;                  % number of volumes in the x-direction
-    Ny      = 32;                   % number of volumes in the y-direction
+    Nx      = 128;                  % number of volumes in the x-direction
+    Ny      = 128;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -36,7 +36,7 @@
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 1;         % steady(1) or unsteady(0)
+    steady  = 0;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
@@ -51,7 +51,7 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-2;       % time step (for explicit methods it can be
+        dt            = 1e-1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 200;         % end time
@@ -69,14 +69,14 @@
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
-        method            = 20;
+        method            = 2;
         RK                = 'RK44';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
         % a good choice is for example explicit RK        
-        method_startup    = 21;
-        method_startup_no = 2; % number of velocity fields necessary for start-up
+        method_startup    = 20;
+        method_startup_no = 1; % number of velocity fields necessary for start-up
                                % = equal to order of method
         % parameters for time integration methods:
         % Adams Bashforth - Crank Nicolson (method 2):
@@ -96,7 +96,7 @@
 %%% solver settings
 
     % pressure
-    poisson          = 2; % 1: direct solver, 
+    poisson          = 1; % 1: direct solver, 
                           % 2: CG with ILU (matlab), 
                           % 3: CG mexfile, 
                           % 4: CG with IC, own Matlab impl.
