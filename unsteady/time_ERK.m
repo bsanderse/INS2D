@@ -11,7 +11,7 @@ Nv = options.grid.Nv;
 Np = options.grid.Np;
 Om_inv = options.grid.Om_inv;
 Omp_inv = options.grid.Omp_inv;
-
+indV = options.grid.indV;
 
 %% get coefficients of RK method
 % make character string if necessary
@@ -50,10 +50,12 @@ switch options.case.boussinesq
     case 'temp'
         % array for temperature
         kT     = zeros(Np,s_RK);
-        
+        indT = options.grid.indT;
+
     otherwise
         % dummy variable as solution
         Tnew = 0;
+
 end
     
 
@@ -85,12 +87,12 @@ for i_RK=1:s_RK
     % boundary conditions will be set through set_bc_vectors inside F
     % the pressure p is not important here, it will be removed again in the
     % next step
-    [~,F_rhs,~,FT]  = F(V,V,p,T,ti,options);
+    [~,F_rhs]  = F(V,V,p,T,ti,options);
     
     % store right-hand side of stage i
     % by adding G*p we effectively REMOVE the pressure contribution Gx*p and Gy*p (but not the
     % vectors y_px and y_py)
-    kV(:,i_RK)  = Om_inv.*(F_rhs + G*p);
+    kV(:,i_RK)  = Om_inv.*(F_rhs(indV) + G*p);
 
     
     % update velocity current stage by sum of F_i's until this stage,
@@ -133,7 +135,7 @@ for i_RK=1:s_RK
         
         case 'temp'
             % update temperature
-            kT(:,i_RK)  = Omp_inv.*FT;
+            kT(:,i_RK)  = Omp_inv.*F_rhs(indT);
             T  = Tn + dt*kT*A_RK(i_RK,:)';
     end
     

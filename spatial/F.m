@@ -1,6 +1,9 @@
-function [maxres,Fres,dF,FTemp] = F(V,C,p,T,t,options,getJacobian,nopressure)
+function [maxres,F,dF] = F(V,C,p,T,t,options,getJacobian,nopressure)
+%,FTemp,dFTemp]
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
+% in addition, rhs of temperature equation is computed (FTemp), and its
+% Jacobian with respect to temperature and velocity
 % V: velocity field
 % C: 'convection' field: e.g. d(c_x u)/dx + d(c_y u)/dy; usually c_x = u,
 % c_y=v, so C=V
@@ -44,25 +47,25 @@ end
 % body force
 if (options.force.isforce == 1)
     if (options.force.force_unsteady == 1)
-        [Fx, Fy, dFx, dFy] = force(V,t,options,getJacobian);
+        [Force_x, Force_y, dForce_x, dForce_y] = force(V,t,options,getJacobian);
     else
-        Fx = options.force.Fx;
-        Fy = options.force.Fy;
-        dFx = spalloc(Nu,NV,0);
-        dFy = spalloc(Nv,NV,0);            
+        Force_x = options.force.Fx;
+        Force_y = options.force.Fy;
+        dForce_x = spalloc(Nu,NV,0);
+        dForce_y = spalloc(Nv,NV,0);            
     end
 else
-    Fx  = zeros(Nu,1);
-    Fy  = zeros(Nv,1);
-    dFx = spalloc(Nu,NV,0);
-    dFy = spalloc(Nv,NV,0);      
+    Force_x  = zeros(Nu,1);
+    Force_y  = zeros(Nv,1);
+    dForce_x = spalloc(Nu,NV,0);
+    dForce_y = spalloc(Nv,NV,0);      
 end
 
 
 
 % residual in Finite Volume form
-Fu   = - convu + d2u + Fx;
-Fv   = - convv + d2v + Fy;
+Fu   = - convu + d2u + Force_x;
+Fv   = - convv + d2v + Force_y;
 
 % nopressure=0 is the most common situation, in which we return the entire 
 % right-hand side vector
@@ -73,37 +76,55 @@ if (nopressure == 0)
 end
 
 
-
 % addition of temperature term in momentum equation 
-% + additional temperature equation
 switch options.case.boussinesq
     
     case 'temp'
-        % get T at "dT/dy"-locations
-        T_v = options.discretization.AT_Ty*T;
-        % restrict to v-locations
-        Fv   = Fv + options.grid.Omv.*(T_v(options.grid.Nvx_in+1:end-options.grid.Nvx_in));
-        FTemp  = conv_diff_temperature(T,V,t,options,getJacobian);
-%         dFtemp = spalloc(Np,Np
-%         Fres = [Fu;Fv;FT];
-        
-    otherwise
-        FTemp = 0;        
+        % get T at v-locations
+        Fv     = Fv + options.discretization.AT_v*T; 
 end
 
+FV = [Fu;Fv];
 
-Fres = [Fu;Fv];
+
+% additional temperature equation
+switch options.case.boussinesq
+    
+    case 'temp'
+        [FTemp,dFTemp, dFTemp_V]  = conv_diff_temperature(T,V,t,options,getJacobian);
+%         dFtemp = spalloc(Np,Np
+   
+        F = [FV; FTemp];
+
+    otherwise
+        F = FV;
+end
+
 % norm of residual
-maxres  = max(abs(Fres));
+maxres  = max(abs(F));
 
 if (getJacobian==1)
     % Jacobian requested
     % we return only the Jacobian with respect to V (not p)
            
-    dFu  = - dconvu + dDiffu + dFx;
-    dFv  = - dconvv + dDiffv + dFy;
+    dFu  = - dconvu + dDiffu + dForce_x;
+    dFv  = - dconvv + dDiffv + dForce_y;
     
-    dF   = [dFu; dFv];
+
+    % additional temperature equation
+    switch options.case.boussinesq
+
+        case 'temp'
+            % add effect of temperature in v-momentum equations
+            % add temperature equation
+            NT = options.grid.NT;
+            dF   = [dFu spalloc(Nu,NT,0); ...
+                    dFv options.discretization.AT_v; ...
+                    dFTemp_V dFTemp];
+    
+        otherwise
+            dF   = [dFu; dFv];
+    end
     
 else
     dF = spalloc(Nu+Nv,Nu+Nv,0);

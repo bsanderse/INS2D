@@ -34,7 +34,7 @@ hy  = options.grid.hy;
 gxd = options.grid.gxd;
 gyd = options.grid.gyd;
 % 
-% Buvy = options.grid.Buvy;
+Buvy = options.grid.Buvy;
 % Bvux = options.grid.Bvux;
 mat_hx = spdiags(hx,0,Npx,Npx);
 mat_hy = spdiags(hy,0,Npy,Npy);
@@ -141,9 +141,16 @@ DiffTy_BC   = DTy*kron(S1D*AT_Ty_BC.Btemp,speye(Npx));
 
 
 %% assemble total operator
-scale    = sqrt(options.temp.Ra*options.temp.Pr)
+scale    = sqrt(options.temp.Ra*options.temp.Pr);
 DiffT    = (1/scale)*(DiffTx + DiffTy);
 % yDiffT   = DTx*ySTx + DTy*ySTy;
+
+
+%% temperature term in vertical momentum equation
+% average from T (pressure location) to Ty-location, use Buvy to restrict to
+% only v location
+AT_v = spdiags(options.grid.Omv,0,options.grid.Nv,options.grid.Nv)*kron(Buvy,speye(Npx))*AT_Ty;
+
 
 %% store in options structure
 options.discretization.CTx   = CTx;
@@ -158,11 +165,11 @@ options.discretization.Iv_Ty_BC   = Iv_Ty_BC;
 options.discretization.AT_Tx_BC   = AT_Tx_BC;
 options.discretization.AT_Ty_BC   = AT_Ty_BC;
 
-% options.discretization.STx_BC   = STx_BC;
-% options.discretization.STy_BC   = STy_BC;
 options.discretization.DiffT    = DiffT;
 options.discretization.DiffTx_BC = DiffTx_BC;
 options.discretization.DiffTy_BC = DiffTy_BC;
+
+options.discretization.AT_v = AT_v;
 
 
 

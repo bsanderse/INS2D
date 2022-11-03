@@ -14,6 +14,7 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e5;                   % Rayleigh number
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -35,7 +36,7 @@
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 0;         % steady(1) or unsteady(0)
+    steady  = 1;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
@@ -50,7 +51,7 @@
     
     % only for unsteady problems:
 
-        dt            = 5e-2;       % time step (for explicit methods it can be
+        dt            = 1e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 200;         % end time

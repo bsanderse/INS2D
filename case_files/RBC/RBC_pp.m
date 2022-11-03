@@ -18,6 +18,9 @@ vh   = V(options.grid.indv);
 u    = reshape(uh,Nux_in,Nuy_in);
 v    = reshape(vh,Nvx_in,Nvy_in);
 pres = reshape(p,Npx,Npy);
+Temp = reshape(T,Npx,Npy);
+
+[up,vp,qp] = get_velocity(V,t,options);
 
 % shift pressure to get zero pressure in the centre
 if (floor(Nx/2)==Nx/2 && floor(Ny/2)==Ny/2)
@@ -33,7 +36,7 @@ omega = reshape(omega,Nx-1,Ny-1);
 psi = get_streamfunction(V,t,options);
 
 %% figure
-plot(Nu);
+% plot(Nu);
 
 %% create 2D plots
 
@@ -81,6 +84,23 @@ xlabel('x');
 ylabel('y');
 
 
+%% temperature
+figure(1)
+set(gcf,'color','w');
+% l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
+l=linspace(-0.5,0.5,20);
+contour(xp,yp,Temp',l,'LineWidth',2);
+hold on
+quiver(xp,yp,up',vp');
+axis equal
+axis([x1 x2 y1 y2]);
+xlabeltex('x',14);
+ylabeltex('y',14);
+grid
+title('temperature');
+colorbar
+set(gca,'LineWidth',1)
+hold off
 
 
 %% convergence graphs

@@ -12,18 +12,40 @@ Np = options.grid.Np;
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 
-Z2 = spalloc(Np,Np,0);
+indV = options.grid.indV;
+
+
+
+G  = options.discretization.G;
+M  = options.discretization.M;
+yM = options.discretization.yM;
+
+
+% additional temperature equation
+switch options.case.boussinesq
+
+    case 'temp'
+        NT = options.grid.NT;
+        indT = options.grid.indT;
+        indp = indT(end) + 1: indT(end) + Np; %options.grid.indp;
+        Z2   = spalloc(Np,NT+Np,0);
+        Z3   = spalloc(NT,Np,0);
+        G    = [G; Z3];
+
+    otherwise
+        indp = indV(end) + 1: indV(end) + Np; %options.grid.indp;
+        Z2 = spalloc(Np,Np,0);
+
+end
+
 
 % right hand side
-f = zeros(Nu+Nv+Np,1);
+% f = zeros(Nu+Nv+Np,1);
 
 Newton = 0;
 
 maxres(2) = maxres(1);
 
-G  = options.discretization.G;
-M  = options.discretization.M;
-yM = options.discretization.yM;
 
 while ( maxres(n) > options.solversettings.nonlinear_acc)
     
@@ -43,23 +65,33 @@ while ( maxres(n) > options.solversettings.nonlinear_acc)
     % equation and in the mass equations
     % fmom contains the right hand side of the momentum equation when
     % written in du/dt = fmom form, so fmom = -conv + diff - grad p
-    [~, fmom, dfmom] = F(V,V,p,0,t,options,1);
+    [~, fmom, dfmom] = F(V,V,p,T,t,options,1);
     fmass     = M*V+yM;
     f         = [-fmom; fmass];
+
     % it is unclear why, but when using an asymmetric version of the G and
     % M blocks (using -M for mass equation), the Matlab solver converges much faster
     % 
-    Z         = [dfmom -G; -M Z2];
-    
+    Z   = [dfmom -G; ...
+           -M Z2];   
+
     
     %% solve with direct solver
     dq        = Z\f;
     
-    dV        = dq(1:Nu+Nv);
-    dp        = dq(Nu+Nv+1:end);
+    dV        = dq(indV);
+    dp        = dq(indp);
 
     V         = V + dV;
     p         = p + dp;
+
+    % additional temperature equation
+    switch options.case.boussinesq
+
+        case 'temp'
+            dT = dq(indT);
+            T  = T + dT;
+    end
     
     
     %% check residuals, conservation, write output files

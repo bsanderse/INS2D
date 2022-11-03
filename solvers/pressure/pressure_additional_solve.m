@@ -18,7 +18,7 @@ function p = pressure_additional_solve(V,p,T,t,options)
     % we therefore effectively solve for the pressure difference
     [~,R,~] = F(V,V,p,T,t,options);
         
-    f  = M*(Om_inv.*R) + ydM;
+    f  = M*(Om_inv.*R(options.grid.indV)) + ydM;
     
     dp = pressure_poisson(f,t,options);
 

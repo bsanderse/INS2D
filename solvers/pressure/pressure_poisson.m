@@ -56,7 +56,7 @@ elseif (poisson==2)
     t_pressure = toc;
     [dp, flag, norm1, iter]  = pcg(-A,-f,CG_acc,CG_maxit,L,L',dp);
     if (flag>0)
-        warning('PCG not converged');
+        warning('PCG not converged; this can happen for example if the simulation is unstable due to too large time steps');
         if (flag~=3)
             keyboard
         end

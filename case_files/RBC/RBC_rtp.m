@@ -35,13 +35,21 @@ end
 TLo  = TBC(xp,y(1),t,options);
 % T at first grid points 
 T1   = T(1:Npx);
-% approximate derivative at lower plate
-dTdy = (T1 - TLo)/(0.5*hy(1));
+% T at second row of grid points 
+T2   = T(Npx+1:2*Npx);
 
-Nu = sum(-dTdy.*hx); % integrate over lower plate
+
+% approximate derivative at lower plate with first order stencil
+dTdy_1 = (T1 - TLo)/(0.5*hy(1));
+% approximate derivative at lower plate with second order stencil
+% assuming a uniform grid in y-dir
+dTdy_2 = (-(1/3)*T2 + 3*T1 - (8/3)*TLo)/(hy(1));
+
+Nu_1 = sum(-dTdy_1.*hx); % integrate over lower plate
+Nu_2 = sum(-dTdy_2.*hx); % integrate over lower plate
 
 figure(2)
-plot(t,Nu,'ks');
+plot(t,[Nu_1;Nu_2],'ks');
 grid on
 hold on
 ylim([0 5])

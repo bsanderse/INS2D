@@ -417,7 +417,17 @@ ypp = reshape(ypp,Nx,Ny);
 indu = (1:Nu)';
 indv = (Nu+1:Nu+Nv)';
 indV = [indu;indv];
-indp = (NV+1:NV+Np)';
+% pressure indices in total solution vector - currently not used
+% indp = (NV+1:NV+Np)';
+
+% additional temperature equation
+switch options.case.boussinesq
+
+    case 'temp'
+        indT = (NV+1:NV+Np)';
+        options.grid.indT = indT;
+
+end
 
 %% store quantities in the structure
 options.grid.Npx = Npx;
@@ -492,7 +502,7 @@ options.grid.ypp = ypp;
 options.grid.indu = indu;
 options.grid.indv = indv;
 options.grid.indV = indV;
-options.grid.indp = indp;
+% options.grid.indp = indp;
 
 if (order4 == 1)
     options.grid.hx3   = hx3;
