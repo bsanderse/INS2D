@@ -82,6 +82,11 @@ Diffv  = options.discretization.Diffv;
 yDiffu1 = options.discretization.yDiffu;
 yDiffv1 = options.discretization.yDiffv;
 
+switch options.case.boussinesq
+    case 'temp'
+        yDiffT1 = options.discretization.yDiffT;
+end
+
 %% evaluate BC and force at end of time step
 
 % unsteady BC at next time
@@ -98,6 +103,10 @@ Gy   = options.discretization.Gy;
 y_px = options.discretization.y_px;
 y_py = options.discretization.y_py;
 
+switch options.case.boussinesq
+    case 'temp'
+        yDiffT2 = options.discretization.yDiffT;
+end
 
 %% Crank-Nicolson weighting for force and diffusion boundary conditions
 Fx = (1-theta)*Fx1 + theta*Fx2;
@@ -105,6 +114,10 @@ Fy = (1-theta)*Fy1 + theta*Fy2;
 yDiffu = (1-theta)*yDiffu1 + theta*yDiffu2;
 yDiffv = (1-theta)*yDiffv1 + theta*yDiffv2;
 
+switch options.case.boussinesq
+    case 'temp'
+        yDiffT = (1-theta)*yDiffT1 + theta*yDiffT2;
+end
 
 % pressure
 % p_temp = alfa1*p + alfa2*p_old; % see paper: 'DNS at lower cost'
@@ -120,14 +133,22 @@ switch options.case.boussinesq
         %
         NT = options.grid.NT;
         DiffT = options.discretization.DiffT;
-        yDiffT = options.discretization.yDiffT;
         Omp_inv  = options.grid.Omp_inv;
 
         % right-hand side of temperature equation
         convT = convection_temperature(Tn,Vn,tn,options,0);
         
         FT    = Tn + dt*Omp_inv.*( -(alfa1*convT + alfa2*convT_old) + ...
-                                   (1-theta)*DiffT*Tn + yDiffT);
+                                    (1-theta)*DiffT*Tn + yDiffT );
+                                
+        switch options.temp.dissipation
+            case 1
+                %  add dissipation to internal energy equation
+                % first order in time
+                Phi = dissipation(Vn,tn,options,0);
+
+                FT  = FT - dt*Omp_inv.*Phi;
+        end        
         
         % matrix arising from implicit diffusion
         Tnew = (speye(NT) - theta*dt*spdiags(Omp_inv,0,NT,NT)*DiffT) \ FT;

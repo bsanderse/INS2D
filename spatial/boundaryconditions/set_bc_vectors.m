@@ -343,6 +343,12 @@ if (order4==0)
             options.discretization.yDiffu = yDiffu;
             options.discretization.yDiffv = yDiffv;
             
+            % in order to evaluate the local dissipation function Phi in dissipation.m,
+            % we also store the following:
+            options.discretization.ySu_ux = ySu_ux;
+            options.discretization.ySu_uy = ySu_uy;
+            options.discretization.ySv_vx = ySv_vx;
+            options.discretization.ySv_vy = ySv_vy;
             
         case {'keps','LES','qr','ML'}
             

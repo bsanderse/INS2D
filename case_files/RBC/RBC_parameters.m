@@ -14,6 +14,7 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
+    dissipation = 1;            % use dissipation term in temperature equation
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,8 +26,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 128;                  % number of volumes in the x-direction
-    Ny      = 128;                   % number of volumes in the y-direction
+    Nx      = 32;                  % number of volumes in the x-direction
+    Ny      = 32;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -54,7 +55,7 @@
         dt            = 1e-1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 250;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -145,7 +146,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
+    rtp.n            = 100;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

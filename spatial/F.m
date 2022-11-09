@@ -91,9 +91,16 @@ FV = [Fu;Fv];
 switch options.case.boussinesq
     
     case 'temp'
-        [FTemp,dFTemp, dFTemp_V]  = conv_diff_temperature(T,V,t,options,getJacobian);
-%         dFtemp = spalloc(Np,Np
-   
+        [FTemp,dFTemp,dFTemp_V]  = conv_diff_temperature(T,V,t,options,getJacobian);
+
+        switch options.temp.dissipation
+            case 1
+                %  add dissipation to internal energy equation
+                Phi = dissipation(V,t,options,getJacobian);
+
+                FTemp = FTemp - Phi;
+        end
+        
         F = [FV; FTemp];
 
     otherwise

@@ -75,6 +75,12 @@ if (strcmp(BC.v.up,'dir'))
     k = k + 0.5*sum((vUp_i.^2).*hx)*gy(end);
 end
 
+
+%% local kinetic energy and dissipation
+% phi = dissipation(V,t,options,0);
+
+
+
 % if (strcmp(BC.u.left,'per') && strcmp(BC.v.low,'per'))
 % 
 %     convection;

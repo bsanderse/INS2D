@@ -45,11 +45,13 @@ dTdy_1 = (T1 - TLo)/(0.5*hy(1));
 % assuming a uniform grid in y-dir
 dTdy_2 = (-(1/3)*T2 + 3*T1 - (8/3)*TLo)/(hy(1));
 
-Nu_1 = sum(-dTdy_1.*hx); % integrate over lower plate
-Nu_2 = sum(-dTdy_2.*hx); % integrate over lower plate
+Nusselt_1 = sum(-dTdy_1.*hx); % integrate over lower plate
+Nusselt_2 = sum(-dTdy_2.*hx); % integrate over lower plate
+
+Nusselt(n,1) = Nusselt_2;
 
 figure(2)
-plot(t,[Nu_1;Nu_2],'ks');
+plot(t,Nusselt_2,'ks');
 grid on
 hold on
 ylim([0 5])

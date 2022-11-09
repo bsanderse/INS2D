@@ -35,8 +35,40 @@ omega = reshape(omega,Nx-1,Ny-1);
 % streamfunction
 psi = get_streamfunction(V,t,options);
 
-%% figure
-% plot(Nu);
+%% check whether steady state is achieved
+
+Fres = F(V,V,p,T,t,options,0,0);
+disp(['residual of momentum and energy equations ' num2str(max(abs(Fres)))])
+
+%% compute Nusselt number with final solution
+% get temperature derivative at lower plate
+TLo  = TBC(xp,y(1),t,options);
+% T at first grid points 
+T1   = T(1:Npx);
+% T at second row of grid points 
+T2   = T(Npx+1:2*Npx);
+
+% approximate derivative at lower plate with first order stencil
+dTdy_1 = (T1 - TLo)/(0.5*hy(1));
+% approximate derivative at lower plate with second order stencil
+% assuming a uniform grid in y-dir
+dTdy_2 = (-(1/3)*T2 + 3*T1 - (8/3)*TLo)/(hy(1));
+
+Nu_1 = sum(-dTdy_1.*hx) % integrate over lower plate
+Nu_2 = sum(-dTdy_2.*hx) % integrate over lower plate
+
+% plot Nusselt over time
+time = 0:dt:t_end;
+figure
+plot(time(1:rtp.n:end),Nusselt(1:rtp.n:end),'s')
+grid on
+hold on
+ylim([0 5])
+xlabel('t')
+ylabel('Nu');
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',14);
+
 
 %% create 2D plots
 
@@ -85,7 +117,7 @@ ylabel('y');
 
 
 %% temperature
-figure(1)
+figure
 set(gcf,'color','w');
 % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
 l=linspace(-0.5,0.5,20);
