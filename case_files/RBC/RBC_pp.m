@@ -38,7 +38,7 @@ psi = get_streamfunction(V,t,options);
 %% check whether steady state is achieved
 
 Fres = F(V,V,p,T,t,options,0,0);
-disp(['residual of momentum and energy equations ' num2str(max(abs(Fres)))])
+disp(['residual of momentum and energy equations: ' num2str(max(abs(Fres)))])
 
 %% compute Nusselt number with final solution
 % get temperature derivative at lower plate

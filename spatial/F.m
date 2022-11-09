@@ -96,9 +96,10 @@ switch options.case.boussinesq
         switch options.temp.dissipation
             case 1
                 %  add dissipation to internal energy equation
+                % note: Jacobian still missing
                 Phi = dissipation(V,t,options,getJacobian);
 
-                FTemp = FTemp - Phi;
+                FTemp = FTemp + Phi;
         end
         
         F = [FV; FTemp];
