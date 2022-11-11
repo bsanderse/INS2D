@@ -662,7 +662,7 @@ if (options.rom.process_iteration_FOM == 1)
     % B*B' does not equal identity in general
     V  = getFOM_velocity(R,t,options);
     
-    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     
     
     % overwrite the arrays with total solutions

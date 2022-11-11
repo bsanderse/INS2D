@@ -1,7 +1,7 @@
 % process data from this iteration
 
 % calculate mass, momentum and energy
-[maxdiv(n), umom(n), vmom(n), k(n)] = check_conservation(V,t,options);
+[maxdiv(n), umom(n), vmom(n), k(n)] = check_conservation(V,T,t,options);
 % note, for the ROM, we could also precompute:
 % kinetic energy: 
 % 0.5*V'*Om*V = 0.5*(B*R + Vbc)'*Om*(B*R + Vbc)

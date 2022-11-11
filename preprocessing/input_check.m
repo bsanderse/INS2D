@@ -77,10 +77,19 @@ else
         
     end
     
+    %% temperature
+    switch options.case.boussinesq
+        case 'temp'
+            T = T_start(:);
+        case 'none'
+            T = 0;
+        otherwise
+            error('wrong setting for temperature');
+    end   
     
     %% kinetic energy and momentum of initial velocity field
     % iteration 1 corresponds to t=0 (for unsteady simulations)
-    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+    [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     
     
     if (maxdiv(1)>1e-12 && steady==0)
@@ -98,21 +107,10 @@ else
         V  = V - Om_inv.*(G*dp);
         %         uh = V(1:Nu); vh = V(Nu+1:end);
         % repeat conservation with updated velocity field
-        [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,t,options);
+        [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     end
     
-    [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);
-    
-    
-    %% temperature
-    switch options.case.boussinesq
-        case 'temp'
-            T = T_start(:);
-        case 'none'
-            T = 0;
-        otherwise
-            error('wrong setting for temperature');
-    end            
+    [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);       
     
     
     %% initialize pressure

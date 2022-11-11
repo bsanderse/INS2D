@@ -12,17 +12,17 @@ function BC = RBC_BCtype
 
     BC.u.left  = 'dir';   % valid options: dir, per, pres 
     BC.u.right = 'dir';  % valid options: dir, per, pres
-    BC.u.low   = 'dir';   % valid options: dir, per, sym
-    BC.u.up    = 'dir';   % valid options: dir, per, sym
+    BC.u.low   = 'per';   % valid options: dir, per, sym
+    BC.u.up    = 'per';   % valid options: dir, per, sym
 
     BC.v.left  = 'dir';   % valid options: dir, per, sym
     BC.v.right = 'dir';   % valid options: dir, per, sym
-    BC.v.low   = 'dir';   % valid options: dir, per, pres
-    BC.v.up    = 'dir';   % valid options: dir, per, pres
+    BC.v.low   = 'per';   % valid options: dir, per, pres
+    BC.v.up    = 'per';   % valid options: dir, per, pres
 
     BC.T.left  = 'sym';   % valid options: dir, sym, per
     BC.T.right = 'sym';   % valid options: dir, sym, per
-    BC.T.low   = 'dir';   % valid options: dir, sym, per
-    BC.T.up    = 'dir';   % valid options: dir, sym, per
+    BC.T.low   = 'per';   % valid options: dir, sym, per
+    BC.T.up    = 'per';   % valid options: dir, sym, per
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

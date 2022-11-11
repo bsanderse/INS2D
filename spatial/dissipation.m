@@ -11,6 +11,10 @@ Nx = options.grid.Nx;
 Ny = options.grid.Ny;
 
 Np = options.grid.Np;
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;
+
+
 Nu = options.grid.Nu;
 Nux_in = options.grid.Nux_in;
 Nux_b  = options.grid.Nux_b;
@@ -29,7 +33,9 @@ Nvy_t  = options.grid.Nvy_t;
 
 Omu = options.grid.Omu;
 Omv = options.grid.Omv;
-       
+
+BC = options.BC;
+
 hx = options.grid.hx;
 hy = options.grid.hy;
 gx = options.grid.gx;
@@ -103,50 +109,64 @@ switch visc
         Avy_v       = spdiags(Omv,0,Nv,Nv)*kron(A1D,speye(Nvx_in));
         dvdy2_v     = Avy_v*dvdy2;
         
-        % need to correct because on "aligned" boundaries (d2udx2 and
+        
+        % need to correct these dissipation terms because on "aligned" boundaries (d2udx2 and
         % d2vdy2) we do not get a proper summation by parts identity
         % "left boundary"
-        dudx2_u(1:Nux_in:end) = dudx2_u(1:Nux_in:Nu) +  ...
-                                0.5*hy.*(uh(1:Nux_in:Nu).^2)/hx(1);
-        % "right boundary"
-        dudx2_u(Nux_in:Nux_in:end) = dudx2_u(Nux_in:Nux_in:Nu) + ...
-                                0.5*hy.*(uh(Nux_in:Nux_in:Nu).^2)/hx(end);
-                            
-        % "bottom boundary"            
-        dvdy2_v(1:Nvx_in) = dvdy2_v(1:Nvx_in) + ...
-                            0.5*hx.*(vh(1:Nvx_in).^2)/hy(1);
-        dvdy2_v(Nv-Nvx_in+1:end) = dvdy2_v(Nv-Nvx_in+1:end) + ...
-                            0.5*hx.*(vh(Nv-Nvx_in+1:end).^2)/hy(end);
-                            
+        switch BC.u.left
+            case 'dir'
+                dudx2_u(1:Nux_in:end) = dudx2_u(1:Nux_in:Nu) +  ...
+                    0.5*hy.*(uh(1:Nux_in:Nu).^2)/hx(1);
+        end
+        
+        switch BC.u.right
+            case 'dir'
+                % "right boundary"
+                dudx2_u(Nux_in:Nux_in:end) = dudx2_u(Nux_in:Nux_in:Nu) + ...
+                    0.5*hy.*(uh(Nux_in:Nux_in:Nu).^2)/hx(end);
+        end
+        
+        switch BC.v.low
+            case 'dir'
+                % "bottom boundary"
+                dvdy2_v(1:Nvx_in) = dvdy2_v(1:Nvx_in) + ...
+                    0.5*hx.*(vh(1:Nvx_in).^2)/hy(1);
+        end
+        
+        switch BC.v.up
+            case 'dir'
+                % "top boundary"
+                dvdy2_v(Nv-Nvx_in+1:end) = dvdy2_v(Nv-Nvx_in+1:end) + ...
+                    0.5*hx.*(vh(Nv-Nvx_in+1:end).^2)/hy(end);
+        end
         
         %% then use definition of local kinetic energy to get Phi
         % since the local KE  is defined on a pressure volume, as sum of
         % its neighbouring velocity values (square), we get an additional
         % interpolation step
-
-        BC = options.BC;
         
         % we need boundary contributions corresponding to ub^2, but we ignore these for now
         % average from velocity point to pressure point
         diag1     = weight*ones(Nux_t,1);
-        A1D       = spdiags([diag1 diag1],[0 1],Nux_t-1,Nux_t);
+        A1D       = spdiags([diag1 diag1],[0 1],Npx,Npx+1);
         Au_k_BC  = ...
-            BC_general(Nux_t,Nux_in,Nux_b,BC.u.left,BC.u.right,hx(1),hx(end));
+            BC_general(Npx+1,Nux_in,Npx+1-Nux_in,BC.u.left,BC.u.right,hx(1),hx(end));
         % extend to 2D
         Au_k      = kron(speye(Ny),A1D*Au_k_BC.B1D);
         
-        % we need boundary contributions for v^2, ignore these for now
+        % we need boundary contributions for vb^2, ignore these for now
         % average from velocity point to pressure point
         diag1     = weight*ones(Nvy_t,1);
-        A1D       = spdiags([diag1 diag1],[0 1],Nvy_t-1,Nvy_t);
+        A1D       = spdiags([diag1 diag1],[0 1],Npy,Npy+1);
         Av_k_BC  = ...
-            BC_general(Nvy_t,Nvy_in,Nvy_b,BC.v.low,BC.v.up,hy(1),hy(end));
+            BC_general(Npy+1,Nvy_in,Npy+1-Nvy_in,BC.v.low,BC.v.up,hy(1),hy(end));
         % extend to 2D
         Av_k      = kron(A1D*Av_k_BC.B1D,speye(Nx));
         
         Phi = Au_k*(dudx2_u + dudy2_u) + Av_k*(dvdx2_v + dvdy2_v);
-               
-        % get correct Reynolds number
+        
+        
+        % scale with the Reynolds number
         switch options.case.boussinesq
             
             case 'temp'
@@ -168,33 +188,33 @@ switch visc
         test = uh'*(options.discretization.Diffu*uh) + vh'*(options.discretization.Diffv*vh);
         
         if (abs(test + sum(sum(Phi)))>1e-14) % plus sign because Phi and V*D*V should have reverse signs
-            warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid');
+            warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid, please check dissipation.m');
         end
-
+        
         
         
         %% old tests used to construct the boundary contributions
-%         % note that Diffu is in integrated (finite volume) form, so the stencil is of the form
-%         % (dy/dx)*(1 -2 1)
-%         Diffu  = options.discretization.Dux*( options.discretization.Su_ux) + ...
-%             options.discretization.Duy*( options.discretization.Su_uy);
-%         Diffv  = options.discretization.Dvx*( options.discretization.Sv_vx) + ...
-%             options.discretization.Dvy*( options.discretization.Sv_vy);
-%         
-%         testu = uh.*(Diffu*uh);
-%         testv = vh.*(Diffv*vh);
-%         
-%         sum(testu)
-%         sum(testv)
-%         
-%         sum(dudx2_u) + sum(dudy2_u)
-% %           0.5*sum(hy.*(uh(1:Nux_in:end).^2)/hx(1)) + ...
-% %           0.5*sum(hy.*(uh(Nux_in:Nux_in:end).^2)/hx(end))
-%         sum(dvdx2_v) + sum(dvdy2_v)
-% %           0.5*sum(hx.*(vh(1:Nvx_in).^2)/hy(1)) + ...
-% %           0.5*sum(hx.*(vh(end-Nvx_in+1:end).^2)/hy(end))
-            
-       
+        %         % note that Diffu is in integrated (finite volume) form, so the stencil is of the form
+        %         % (dy/dx)*(1 -2 1)
+        %         Diffu  = options.discretization.Dux*( options.discretization.Su_ux) + ...
+        %             options.discretization.Duy*( options.discretization.Su_uy);
+        %         Diffv  = options.discretization.Dvx*( options.discretization.Sv_vx) + ...
+        %             options.discretization.Dvy*( options.discretization.Sv_vy);
+        %
+        %         testu = uh.*(Diffu*uh);
+        %         testv = vh.*(Diffv*vh);
+        %
+        %         sum(testu)
+        %         sum(testv)
+        %
+        %         sum(dudx2_u) + sum(dudy2_u)
+        % %           0.5*sum(hy.*(uh(1:Nux_in:end).^2)/hx(1)) + ...
+        % %           0.5*sum(hy.*(uh(Nux_in:Nux_in:end).^2)/hx(end))
+        %         sum(dvdx2_v) + sum(dvdy2_v)
+        % %           0.5*sum(hx.*(vh(1:Nvx_in).^2)/hy(1)) + ...
+        % %           0.5*sum(hx.*(vh(end-Nvx_in+1:end).^2)/hy(end))
+        
+        
         
     otherwise
         

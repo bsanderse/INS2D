@@ -13,7 +13,8 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 1e4;                   % Rayleigh number
+    Ra = 1e5;                   % Rayleigh number
+    Ge = 1;                     % Gebhart number
     dissipation = 1;            % use dissipation term in temperature equation
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,8 +27,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 32;                  % number of volumes in the x-direction
-    Ny      = 32;                   % number of volumes in the y-direction
+    Nx      = 64;                  % number of volumes in the x-direction
+    Ny      = 64;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -52,7 +53,7 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-1;       % time step (for explicit methods it can be
+        dt            = 1e-3;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 250;         % end time
@@ -70,7 +71,7 @@
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM          
-        method            = 2;
+        method            = 20;
         RK                = 'RK44';
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -146,7 +147,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 100;
+    rtp.n            = 10;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

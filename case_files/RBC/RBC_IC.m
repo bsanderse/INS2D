@@ -14,7 +14,7 @@ Ly = options.grid.y2 - options.grid.y1;
 
 % constant velocity field
 u  = zeros(Nux_in,Nuy_in);
-v  = zeros(Nvx_in,Nvy_in);
+v  = 0.1*ones(Nvx_in,Nvy_in);
 
 % pressure: should in principle NOT be prescribed. will be calculated if
 % p_initial=1
@@ -27,5 +27,10 @@ p  = zeros(Npx,Npy);
 % homogeneous 0.5
 % T  = 0.5*ones(Npx,Npy); % + 0.01*rand(Npx,Npy);
 % homogeneous 0
-T  = zeros(Npx,Npy); % + 0.01*rand(Npx,Npy);
+% T  = zeros(Npx,Npy); % + 0.01*rand(Npx,Npy);
+% high order polynomial that has zero derivatives
+%T = 10*(ypp.^2) .* ((Ly - ypp)/Ly).^2;
+% T = 2*ypp.^3-3*ypp.^2 + 1;
+% polynomial that is periodic
+T = ypp.^2 .* (1 - ypp).^2;
 end

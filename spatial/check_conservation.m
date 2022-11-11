@@ -1,4 +1,4 @@
-function [maxdiv,umom,vmom,k] = check_conservation(V,t,options)
+function [maxdiv,umom,vmom,k] = check_conservation(V,T,t,options)
 % check mass, momentum and energy conservation properties of velocity field
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
@@ -73,6 +73,18 @@ if (strcmp(BC.v.low,'dir'))
 end
 if (strcmp(BC.v.up,'dir'))
     k = k + 0.5*sum((vUp_i.^2).*hx)*gy(end);
+end
+
+
+%% in case of Boussinesq, calculate total internal energy
+switch options.case.boussinesq
+    case 'temp'
+        Omp = options.grid.Omp;
+        e_int = sum(Omp.*T);
+        k = k + e_int;
+
+    otherwise
+%         e_int = 0;
 end
 
 
