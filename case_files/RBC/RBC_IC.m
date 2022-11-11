@@ -31,6 +31,8 @@ p  = zeros(Npx,Npy);
 % high order polynomial that has zero derivatives
 %T = 10*(ypp.^2) .* ((Ly - ypp)/Ly).^2;
 % T = 2*ypp.^3-3*ypp.^2 + 1;
-% polynomial that is periodic
+% polynomial that is "periodic"
 T = ypp.^2 .* (1 - ypp).^2;
+% 
+% T = sin(2*pi*ypp); %
 end

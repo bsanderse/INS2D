@@ -62,13 +62,20 @@ de_pot = vh'*(options.discretization.AT_v*T);
 max(abs(vh));
 % pause
 figure(3)
+cmap = get(gca,'ColorOrder');
 if (n>1)
     % note that k includes e_int and (1/2)*u^2
-    plot(t,(k(n)-k(n-1))/dt,'ks');
+    plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
     hold on
-    plot(t,de_pot,'bs');
+    plot(t,de_pot,'o','Color',cmap(2,:));
     grid on
     title('dk/dt and e_{pot}');
+    
+    xlabel('t')
+    ylabel('energy change');
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1,'FontSize',14);
+    legend('de/dt','h_{pot}');
 end
 
 %% create 2D plots

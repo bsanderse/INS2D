@@ -80,7 +80,8 @@ end
 switch options.case.boussinesq
     case 'temp'
         Omp = options.grid.Omp;
-        e_int = sum(Omp.*T);
+        Ge  = options.temp.Ge;
+        e_int = sum(Omp.*T)/Ge;
         k = k + e_int;
 
     otherwise

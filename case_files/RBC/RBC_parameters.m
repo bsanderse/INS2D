@@ -14,8 +14,8 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e5;                   % Rayleigh number
-    Ge = 1;                     % Gebhart number
-    dissipation = 1;            % use dissipation term in temperature equation
+    Ge = 10;                     % Gebhart number
+    dissipation = 1;            % use dissipation term in temperature equation (1=yes,0=no)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -53,10 +53,10 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-3;       % time step (for explicit methods it can be
+        dt            = 1e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 250;         % end time
+        t_end         = 2;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 

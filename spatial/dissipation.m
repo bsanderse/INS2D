@@ -1,5 +1,6 @@
 function [Phi, Jac] = dissipation(V,t,options,getJacobian)
 % evaluate dissipation terms and optionally Jacobian
+% the dissipation is defined here as (1/Re)* (grad u)^2
 % the dissipation terms are defined on the pressure grid (where the kinetic
 % energy is defined) and are a function of the velocity field V
 

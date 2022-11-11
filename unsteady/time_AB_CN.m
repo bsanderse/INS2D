@@ -146,8 +146,8 @@ switch options.case.boussinesq
                 %  add dissipation to internal energy equation
                 % first order in time
                 Phi = dissipation(Vn,tn,options,0);
-
-                FT  = FT - dt*Omp_inv.*Phi;
+                Ge  = options.temp.Ge;
+                FT  = FT + dt*Omp_inv.*(Ge*Phi);
         end        
         
         % matrix arising from implicit diffusion
