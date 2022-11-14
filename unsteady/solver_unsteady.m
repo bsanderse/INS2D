@@ -24,12 +24,17 @@ if (method==2)
     if (options.BC.BC_unsteady == 1)
         options = set_bc_vectors(t,options);
     end
-    [convu_old,convv_old] = convection(V,V,t,options,0);
-    conv_old = [convu_old;convv_old];
+    [convu,convv] = convection(V,V,t,options,0);
+    rhs_terms.conv = [convu;convv];
     
     switch options.case.boussinesq
         case 'temp'
-            convT_old = convection_temperature(T,V,t,options,0);
+            rhs_terms.convT = convection_temperature(T,V,t,options,0);
+            switch options.temp.incl_dissipation
+                case 1            
+                  rhs_terms.Phi = dissipation(V,t,options,0);
+            end
+            
     end
         
 end
@@ -88,9 +93,9 @@ while(n<=nt)
     
     % perform a single time step with the time integration method
     if (method==2)
-        [V,p,T,conv,convT] = time_AB_CN(Vn,pn,Tn,conv_old,convT_old,tn,dt,options);
-        conv_old = conv;
-        convT_old = convT;
+        [V,p,T,rhs_terms] = time_AB_CN(Vn,pn,Tn,rhs_terms,tn,dt,options);
+%         conv_old = conv;
+%         convT_old = convT;
     elseif (method==5)
         [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
 

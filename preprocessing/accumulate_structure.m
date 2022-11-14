@@ -58,8 +58,9 @@ object = 'temp';
 
 voi={
     'Pr', 1; ... % Prandtl number
-    'Ra', 1; % Rayleigh number
-    'dissipation', 0; % add dissipation term in temperature equation
+    'Ra', 1; ... % Rayleigh number
+    'Ge', 1; ... % Gebhart number
+    'incl_dissipation', 0; % add dissipation term in temperature equation
 };
 
 accumulate_object;

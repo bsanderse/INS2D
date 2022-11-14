@@ -93,7 +93,7 @@ switch options.case.boussinesq
     case 'temp'
         [FTemp,dFTemp,dFTemp_V]  = conv_diff_temperature(T,V,t,options,getJacobian);
 
-        switch options.temp.dissipation
+        switch options.temp.incl_dissipation
             case 1
                 %  add dissipation to internal energy equation
                 % note: Jacobian still missing

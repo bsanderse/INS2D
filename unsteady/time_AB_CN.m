@@ -1,4 +1,4 @@
-function [Vnew,pnew,Tnew,conv,convT] = time_AB_CN(Vn,pn,Tn,conv_old,convT_old,tn,dt,options)
+function [Vnew,pnew,Tnew,rhs_terms] = time_AB_CN(Vn,pn,Tn,rhs_terms_old,tn,dt,options)
 % conv_old are the convection terms of t^(n-1)
 % output includes convection terms at t^(n), which will be used in next time step in
 % the Adams-Bashforth part of the method
@@ -63,8 +63,8 @@ vh     = Vn(indv);
 
 
 %% convection from previous time step
-convu_old = conv_old(indu);
-convv_old = conv_old(indv);
+convu_old = rhs_terms_old.conv(indu);
+convv_old = rhs_terms_old.conv(indv);
 
 %% evaluate BC and force at starting point
 [Fx1,Fy1]      = force(Vn,tn,options,0);
@@ -131,31 +131,34 @@ switch options.case.boussinesq
     case 'temp'
         
         %
-        NT = options.grid.NT;
-        DiffT = options.discretization.DiffT;
-        Omp_inv  = options.grid.Omp_inv;
+        NT      = options.grid.NT;
+        DiffT   = options.discretization.DiffT;
+        Omp_inv = options.grid.Omp_inv;
 
         % right-hand side of temperature equation
-        convT = convection_temperature(Tn,Vn,tn,options,0);
+        convT     = convection_temperature(Tn,Vn,tn,options,0);
+        convT_old = rhs_terms_old.convT;
         
         FT    = Tn + dt*Omp_inv.*( -(alfa1*convT + alfa2*convT_old) + ...
                                     (1-theta)*DiffT*Tn + yDiffT );
                                 
-        switch options.temp.dissipation
+        switch options.temp.incl_dissipation
             case 1
                 %  add dissipation to internal energy equation
                 % first order in time
                 Phi = dissipation(Vn,tn,options,0);
+                Phi_old = rhs_terms_old.Phi;
                 Ge  = options.temp.Ge;
-                FT  = FT + dt*Omp_inv.*(Ge*Phi);
+                FT  = FT + dt*Omp_inv.*(Ge*(alfa1*Phi + alfa2*Phi_old));
         end        
         
-        % matrix arising from implicit diffusion
+        % matrix arising from implicit diffusion: I-dt*Om_inv*D
+        % solve system for new temperature
         Tnew = (speye(NT) - theta*dt*spdiags(Omp_inv,0,NT,NT)*DiffT) \ FT;
         
         % add effect of temperature into momentum equation
         AT_v = options.discretization.AT_v;
-        Fy = Fy + AT_v*(theta*Tnew + (1-theta)*Tn);
+        Fy   = Fy + AT_v*(theta*Tnew + (1-theta)*Tn);
         
     otherwise
         Tnew = 0;
@@ -226,4 +229,6 @@ if (options.solversettings.p_add_solve == 1)
 end
 
 % output convection at t^(n), to be used in next time step
-conv = [convu;convv];
+rhs_terms.conv = [convu;convv];
+rhs_terms.convT = convT;
+rhs_terms.Phi = Phi;
