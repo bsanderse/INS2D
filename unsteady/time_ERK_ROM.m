@@ -67,7 +67,15 @@ for i_RK=1:s_RK
         % ROM not divergence free, e.g. in case of rom_bc = 2
         % NOTE: would be nicer to do a call to a subroutine that returns
         % options.rom.yMt at the required time instance
-        f  = (options.rom.Mdiv*(Rn/dt + Rtemp) + options.rom.yMt(:,n)/dt)/c_RK(i_RK);
+        if (options.rom.rom_bc == 2)
+            f  = (options.rom.Mdiv*(Rn/dt + Rtemp) + options.rom.yMt(:,n)/dt)/c_RK(i_RK);
+        elseif (options.rom.rom_bc == 1)
+            % this is unlikely but it could happen if the basis is not
+            % divergence-free "enough"
+            f  = (options.rom.Mdiv*(Rn/dt + Rtemp) + options.rom.yMt/dt)/c_RK(i_RK);
+        else
+            f  = (options.rom.Mdiv*(Rn/dt + Rtemp))/c_RK(i_RK);
+        end
         dq = pressure_poisson_ROM(f,ti,options);
 
 %         if (options.rom.precompute_pressure == 1)

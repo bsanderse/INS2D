@@ -40,11 +40,16 @@ end
 
 %% body force
 % always precomputed if forcing is steady
-if (options.rom.precompute_force == 1)
-    % construct at t=t_start with dummy velocity field
-    [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
-    F        = P*[Fx;Fy];
-    options.rom.F = F;
+if (options.force.isforce == 1)
+    if (options.rom.precompute_force == 1)
+        % construct at t=t_start with dummy velocity field
+        [Fx, Fy] = force(zeros(NV,1),options.time.t_start,options,0);
+        F        = P*[Fx;Fy];
+        options.rom.F = F;
+    end
+else
+    M  = options.rom.M;
+    options.rom.F = zeros(M,1);
 end
 
 %% pressure

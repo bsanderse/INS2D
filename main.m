@@ -14,7 +14,7 @@ function [V,p,options] = main(case_name,folder_cases)
 %   Benjamin Sanderse, September 2018 - April 2019
 
 if (nargin<1)
-    error('please provide an input file');
+    error('please provide a casefile name');
 end
 
 if (nargin==1) 
@@ -28,8 +28,9 @@ end
 close all;
 format compact;
 format long;
-warning('off','MATLAB:rmpath:DirNotFound');
  
+warning('on'); 
+warning('off','MATLAB:rmpath:DirNotFound');
 
 % declare boundary conditions via globals
 global uBC vBC dudtBC dvdtBC TBC;
@@ -82,6 +83,7 @@ for j=1:Nsim
     end
     
     % save into a structure called 'options'
+    % note that in parametric runs the options field is overwritten
     accumulate_structure;
     
     % create files and directory for statistics, tecplot, restart, convergence

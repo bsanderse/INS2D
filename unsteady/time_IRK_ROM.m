@@ -28,6 +28,13 @@ if (t==options.time.t_start)
     
 end
 
+%% check whether divergence-free basis
+% non-divergence free case requires ROM pressure, this is not implemented
+% yet (it is available in ERK_ROM)
+if (options.rom.div_free == 0)
+    error('non-divergence free basis not yet implemented in IRK_ROM');
+end
+
 %% preprocessing
 
 % store variables at start of time step

@@ -168,7 +168,7 @@ else
 %     end
     
     if (steady==0 && save_unsteady == 1)
-        if (save_eco == 0)
+        if (options.output.save_eco == 0)
             % allocate space for variables
             uh_total = zeros(nt,options.grid.Nu);
             vh_total = zeros(nt,options.grid.Nv);
@@ -178,7 +178,7 @@ else
             uh_total(1,:) = V_start(options.grid.indu);
             vh_total(1,:) = V_start(options.grid.indv);
             p_total(1,:)  = p_start(:);
-        elseif (save_eco == 1)
+        elseif (options.output.save_eco == 1)
             mkdir([options.output.path_results '/snapshots']);
             save([options.output.path_results '/snapshots/Vp_n=1.mat'],'V','p');
         end

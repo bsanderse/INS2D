@@ -23,6 +23,7 @@ switch options.rom.rom_type
             Nspace  = size(V_total_snapshots,1); % total number of unknowns (Nu+Nv) of the original model
             Nu      = options.grid.Nu;
             Nv      = options.grid.Nv;
+            Np      = options.grid.Np;
             if (Nspace ~= Nu+Nv)
                 error('The dimension of the snapshot matrix does not match the input dimensions in the parameter file');
             end
@@ -41,14 +42,14 @@ switch options.rom.rom_type
                 warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
             end
             
-            
+
             %% subtract non-homogeneous BC contribution:
-            
+
             % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
             % which we use for the SVD
             Om     = options.grid.Om;
             Om_inv = options.grid.Om_inv;
-            
+
             if (options.rom.rom_bc == 1)
                 % check if the Vbc field has been stored as part of the FOM
                 if (isfield(snapshots,'Vbc'))
@@ -60,23 +61,26 @@ switch options.rom.rom_type
                     Vbc     = - Om_inv.*(options.discretization.G*dp);
                 end
                 V_total_snapshots = V_total_snapshots - Vbc; % this velocity field satisfies M*V_total = 0
-                options.rom.yM = zeros(Np,1);
+    %                 options.rom.yM = zeros(Np,1);
+                rom_yM = zeros(Np,1);
             elseif (options.rom.rom_bc == 0)
                 % for rom_bc=0, we have homogeneous BC
                 Vbc = zeros(Nu+Nv,1);
-                options.rom.yM = zeros(Np,1);
+    %                 options.rom.yM = zeros(Np,1);
+                rom_yM = zeros(Np,1);
             elseif (options.rom.rom_bc == 2)
                 % for rom_bc=2, we have time-dep BC and an alternative
                 % method is used
                 Vbc = zeros(Nu+Nv,1);
                 % store yM = -M*V
-                options.rom.yM = -options.discretization.M*V_total_snapshots;
+    %                 options.rom.yM = -options.discretization.M*V_total_snapshots;
+                rom_yM = zeros(Np,1);
                 if (options.rom.Mp > rank(options.rom.yM))
                     warning('Number of pressure modes larger than rank of divergence of snapshot matrix');
                 end
             end
-            
-            
+
+
             % sample dt can be used to get only a subset of the snapshots
             if (rem(dt_sample,dt_snapshots) == 0)
                 % sample dt should be a multiple of snapshot dt:
@@ -91,16 +95,20 @@ switch options.rom.rom_type
             else
                 error('sample dt is not an integer multiple of snapshot dt');
             end
-            
+
             % select snapshots
             V_svd = V_total_snapshots(:,snapshot_sample);
-            
+
             clear V_total_snapshots;
             
         end
         
         %% get Vbc into options (this has to be outside the j==1 if statement)
+        % note that the options structure gets overwritten for parametric
+        % studies, but Vbc and rom_yM are not overwritten
         options.rom.Vbc = Vbc;
+        
+        options.rom.yM  = rom_yM;
         
         
         %% construct basis through SVD or eigenvalue problem
@@ -179,7 +187,10 @@ switch options.rom.rom_type
             error('wrong option for weighted norm or momentum conservation');
             
         end
-        clear V_svd;
+        
+        % keep V_svd in memory for case of parametric studies
+        % could also decide to do basis computation only for j==1
+        % clear V_svd;
         
         svd_end(j) = toc-svd_start
         
@@ -224,10 +235,16 @@ switch options.rom.rom_type
         % max over all columns:
         maxdiv_basis = max(div_basis);
         if (options.rom.rom_bc < 2)
-            if (maxdiv_basis > 1e-14)
+            if (maxdiv_basis > 1e-12)
                 warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
-                warning('Adding basis for pressure\n');
-                options.rom.div_free = 0;
+                answer = questdlg('Do you want to add a basis for the pressure?','Basis not divergence free','Yes','No','No');
+                switch answer
+                    case 'Yes'
+                        options.rom.div_free = 0;
+                    case 'No'
+                        % continue as if basis is divergence-free
+                        options.rom.div_free = 1;
+                end
             else     
                 options.rom.div_free = 1;
             end       
