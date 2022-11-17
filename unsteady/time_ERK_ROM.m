@@ -1,37 +1,34 @@
+function [Rnew,qnew] = time_ERK_ROM(Rn,qn,tn,dt,options)
 %% general explicit Runge-Kutta method for ROM
 
 % number of unknowns (modes) in ROM
 M  = options.rom.M;
 
 %% get coefficients of RK method 
-% need to do this only once, as long as the RK method does not change in
-% time
-if (t==options.time.t_start)
     
-    if (isnumeric(options.time.RK))
-        options.time.RK = num2str(options.time.RK);
-    end
-    [A_RK,b_RK,c_RK] = getRKmethod(options.time.RK);
-    % RK_order = check_orderconditions(A_RK,b_RK,c_RK);
-    
-    % number of stages
-    s_RK = length(b_RK);
-    
-    % we work with the following 'shifted' Butcher tableau, because A_RK(1,1)
-    % is always zero for explicit methods
-    A_RK = [A_RK(2:end,:); b_RK'];
-    
-    % vector with time instances
-    c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
-    
+if (isnumeric(options.time.RK))
+    options.time.RK = num2str(options.time.RK);
 end
+[A_RK,b_RK,c_RK] = getRKmethod(options.time.RK);
+% RK_order = check_orderconditions(A_RK,b_RK,c_RK);
+
+% number of stages
+s_RK = length(b_RK);
+
+% we work with the following 'shifted' Butcher tableau, because A_RK(1,1)
+% is always zero for explicit methods
+A_RK = [A_RK(2:end,:); b_RK'];
+
+% vector with time instances
+c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
+
+
 
 %% preprocessing
 
 % store variables at start of time step
-tn     = t;
-Rn     = R;
-qn     = q;
+R = Rn;
+% q = qn;
 
 % right hand side evaluations, initialized at zero
 kR     = zeros(M,s_RK);
@@ -49,8 +46,8 @@ for i_RK=1:s_RK
     
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
-    % note that input q is not used in F_ROM if the basis is div-free
-    [~,F_rhs]  = F_ROM(R,q,ti,options);
+    % note that input q is not used
+    [~,F_rhs]  = F_ROM(R,qn,ti,options);
     
     % store right-hand side of stage i
     kR(:,i_RK) = F_rhs;
@@ -68,6 +65,7 @@ for i_RK=1:s_RK
         % NOTE: would be nicer to do a call to a subroutine that returns
         % options.rom.yMt at the required time instance
         if (options.rom.rom_bc == 2)
+            n  = round(tn/dt)+2; % need n corresponding to next time levell; note n=1 corresponds to t=0
             f  = (options.rom.Mdiv*(Rn/dt + Rtemp) + options.rom.yMt(:,n)/dt)/c_RK(i_RK);
         elseif (options.rom.rom_bc == 1)
             % this is unlikely but it could happen if the basis is not
@@ -102,9 +100,11 @@ end
 if (options.rom.div_free == 1)
     if (options.rom.pressure_recovery == 1)
         q = pressure_additional_solve_ROM(R,tn+dt,options);
-        p = getFOM_pressure(q,t,options);
     end
 else
     % this might be improved like in FOM methods
     q = dq;
 end
+
+Rnew = R;
+qnew = q;

@@ -1,8 +1,8 @@
 % project = 'actuator';   % project name used in filenames
 run_multiple = 1;
 % M_list = [2 2 2 5 5 10 10 20 20 40 40 80 80];
-M_list = [2 5 10 20 40 80];
-% M_list = 10;
+% M_list = [2 5 10 20 40 80];
+M_list = 80;
 mesh_list = ones(length(M_list),1);
 % mesh_list = [1 1 1];
 
@@ -71,7 +71,7 @@ mesh_list = ones(length(M_list),1);
     rom_bc = 1; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
                 % 2: non-homogeneous, time-dependent
-    snapshot_data = 'results/actuator_ROM_unsteady_force/matlab_data.mat';
+    snapshot_data = 'results/actuator_ROM_unsteady_force_Nov2022/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -162,7 +162,7 @@ mesh_list = ones(length(M_list),1);
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;
     rtp.moviename    = 'actuator_ROM'; % movie name

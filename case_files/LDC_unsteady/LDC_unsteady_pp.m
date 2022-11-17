@@ -6,7 +6,7 @@ color = char(line(mod(j-1,length(line))+1));
 % write output along centerlines to datafiles:
 write_files = 0;
 % show plots:
-show_plots = 1;
+show_plots = 0;
 
 %load Botella-Peyret data
 % run('results/LDC/BP.m');

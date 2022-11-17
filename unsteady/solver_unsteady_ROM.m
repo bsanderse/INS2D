@@ -70,12 +70,11 @@ switch options.rom.rom_type
                 rom_yM = zeros(Np,1);
             elseif (options.rom.rom_bc == 2)
                 % for rom_bc=2, we have time-dep BC and an alternative
-                % method is used
+                % method is used that uses a pressure basis
                 Vbc = zeros(Nu+Nv,1);
                 % store yM = -M*V
-    %                 options.rom.yM = -options.discretization.M*V_total_snapshots;
-                rom_yM = zeros(Np,1);
-                if (options.rom.Mp > rank(options.rom.yM))
+                rom_yM = -options.discretization.M*V_total_snapshots;
+                if (options.rom.Mp > rank(rom_yM))
                     warning('Number of pressure modes larger than rank of divergence of snapshot matrix');
                 end
             end
@@ -222,7 +221,7 @@ switch options.rom.rom_type
         end
         RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
         disp(['relative energy captured by SVD = ' num2str(RIC)]);
-        figure
+        figure(21)
         semilogy(Sigma/Sigma(1),'s');
         % or alternatively
         % semilogy(Sigma.^2/sum(Sigma.^2),'s');
@@ -736,7 +735,10 @@ end
 
 %% start time stepping
 
-dtn    = dt;
+% set current velocity and pressure
+Rn = R;
+qn = q;
+tn = t;
 
 eps    = 1e-12;
 
@@ -760,7 +762,8 @@ while(n<=nt)
     
     % perform one time step with the time integration method
     if (method == 20)
-        time_ERK_ROM;
+         [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options);
+%         time_ERK_ROM_old;
     elseif (method == 21)
         time_IRK_ROM;
     else
@@ -770,8 +773,13 @@ while(n<=nt)
     
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:
-    t = t + dt;
+    t = tn + dt;
     time(n) = t;
+    
+    Rn = R;
+    qn = q;
+    tn = t;   
+    
     
     % check residuals, conservation, write output files
     % this requires to go back to FOM level
@@ -781,10 +789,13 @@ while(n<=nt)
         % of the velocity field
         V = getFOM_velocity(R,t,options);
         
+        if (options.rom.pressure_recovery == 1)
+            p = getFOM_pressure(q,t,options);
+        end
         process_iteration;
     end
     
-    
+
 end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start

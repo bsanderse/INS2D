@@ -56,7 +56,7 @@
     precompute_convection = 0;
     precompute_diffusion  = 0;
     precompute_force      = 0;
-    pressure_recovery     = 0;
+    pressure_recovery     = 1;
     pressure_precompute   = 0;
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
@@ -68,7 +68,7 @@
                 % 2: non-homogeneous, time-dependent   
     
     
-    snapshot_data = 'results/actuator_unsteadyBC_ROM_1.000e+02_200x80/matlab_data.mat';
+    snapshot_data = 'results/actuator_unsteadyBC_ROM_rerunNov2022/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -177,7 +177,7 @@
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
     
-    rtp.show         = 1;          % 1: real time plotting 
+    rtp.show         = 0;          % 1: real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;
     rtp.moviename    = 'actuator_unsteady_Re100'; % movie name
@@ -198,7 +198,7 @@
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
     save_results     = 0;          % create folder with results files and input files
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

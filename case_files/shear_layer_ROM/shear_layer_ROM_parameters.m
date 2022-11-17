@@ -1,10 +1,10 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 run_multiple = 1;
-% M_list = [2 4 8 16 2 4 8 16];
-M_list = 16;
+M_list = [2 4 8 16 2 4 8 16];
+% M_list = 16;
 % M_list = [16 16 16];
-% M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
+% M_list = [2 2  4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,7 +65,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
-    mom_cons              = 1; %j>4;
+    mom_cons              = 0; %j>4;
     
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;

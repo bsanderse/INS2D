@@ -67,6 +67,7 @@ end
 
 % pressure gradient
 % only needed if basis is not div-free
+% note: this term is currently added in time_ERK_ROM directly
 % if (options.rom.div_free == 0)
 %     if (options.rom.precompute_pressure == 1)
 %         % approach 1: (with precomputed matrices)
@@ -84,10 +85,19 @@ if (options.force.isforce == 1)
         % this is a bit of a hack for the actuator ROM case with time dependent
         % body force, which prevents computing the projection of the force at
         % each time step
-        if (options.force.force_unsteady == 1)
-            warning('scaling unsteady force - actuator disk test case only!');
-            F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
+        
+        if (options.force.force_unsteady == 1)               
+            if (strcmp(options.case.project,'actuator_ROM'))
+                if( options.time.t_start == t)
+                    % give warning only once
+                    warning('scaling unsteady force - actuator disk test case only!');
+                end
+                F = F*(1+sin(pi*t)); % see also pressure_additional_solve_ROM.m!
+            else
+                error('you have unsteady forcing with precomputation: check if settings are correct');
+            end
         end
+       
         if (getJacobian == 1)
             % Jacobian is not straightforward for general non-linear forcing    
             warning('precomputing Jacobian of force not available, using zero Jacobian');
@@ -122,6 +132,7 @@ Fres    = - conv + Diff + F;
 
 % for the case of a non div-free basis, we have to add the pressure
 % gradient
+% note: this term is currently added in time_ERK_ROM directly
 % if (options.rom.div_free == 0)
 %     Fres = Fres - Gp;
 % end
