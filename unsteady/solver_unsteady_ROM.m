@@ -763,9 +763,8 @@ while(n<=nt)
     % perform one time step with the time integration method
     if (method == 20)
          [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options);
-%         time_ERK_ROM_old;
     elseif (method == 21)
-        time_IRK_ROM;
+        [R,q,nonlinear_its(n)] = time_IRK_ROM(Rn,qn,tn,dt,options);
     else
         error('time integration method unknown');
     end

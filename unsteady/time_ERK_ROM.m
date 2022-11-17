@@ -100,6 +100,8 @@ end
 if (options.rom.div_free == 1)
     if (options.rom.pressure_recovery == 1)
         q = pressure_additional_solve_ROM(R,tn+dt,options);
+    else
+        q = qn;
     end
 else
     % this might be improved like in FOM methods
