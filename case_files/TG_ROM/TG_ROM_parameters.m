@@ -50,7 +50,7 @@ mesh_list    = [40]; % 20 40 80];
 %%% reduced order model
 
     rom    = 1;      % set to 1 to use ROM solver
-    rom_type = 'FDG'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
+    rom_type = 'FDG-Fourier'; % POD, FDG, Fourier; note that FDG is not really a ROM but we use the ROM framework
     M      = 10; %Nx*Ny;     % number of modes used (not relevant for FDG)
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 

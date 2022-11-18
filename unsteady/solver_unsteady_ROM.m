@@ -51,8 +51,13 @@ switch options.rom.rom_type
         
     case 'FDG-Fourier'
         
-        getVelocityBasisFDGFourier;        
         
+        Vbc    = zeros(options.grid.NV,1);
+        options.rom.Vbc  = Vbc;
+        options.rom.yM   = 0;
+        options.rom.div_free = 1;
+        [options.rom.B, options.rom.B_inv, options.rom.M] = getVelocityBasisFDGFourier(options);
+                
     otherwise
         error ('wrong ROM type')
         
