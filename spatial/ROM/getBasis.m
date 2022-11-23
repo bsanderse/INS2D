@@ -85,7 +85,7 @@ switch basis_type
         % warn potential issues if rank of C is lower than M
         r = rank(C);
         if (r<M)
-            warning('rank of C is lower than requested number of modes'); %, reverting to SVD');
+            warning('rank of correlation matrix C=X^T X is lower than requested number of modes'); %, reverting to SVD');
             %             options.rom.basis_type = 1;
             %             [Phi,S] = getBasis(X,options);
         end

@@ -134,6 +134,7 @@ voi = {
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'dt_sample',[]; ... % sampling dt
     't_sample',[]; ... % time period used for sampling
+    'helmholtz', 1; ... % Helmholtz decomposition to make basis div-free
     };
 
 accumulate_object;

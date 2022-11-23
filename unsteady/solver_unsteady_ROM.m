@@ -72,53 +72,28 @@ precompute_end(j) = toc-precompute_start
 
 
 %% initialize reduced order solution
-% we expand the part of the solution vector that is div-free in terms of
-% B*R
-% V = B*R + Vbc
-V_orig = V;
-% get the coefficients of the ROM
-R = getROM_velocity(V,t,options);
+[R,q] = initializeROM(V,p,t,options);
 
 
-if (options.rom.div_free == 0)
-    % get initial ROM pressure by projecting initial presssure
-    q = getROM_pressure(p,t,options);
-    
-    % make initial condition 'divergence free'
-    f  = options.rom.Mdiv*R + options.rom.yMt(:,1);
-    dq = pressure_poisson_ROM(f,t,options);
-    R  = R - options.rom.G*dq;
-    
-elseif (options.rom.div_free == 1)
-    if (options.rom.pressure_recovery == 1)
-        % get initial pressure that corresponds to the ROM velocity field
-        q = pressure_additional_solve_ROM(R,t,options);
-        p = getFOM_pressure(q,t,options);
-
-        % overwrite the arrays with total solutions
-        if (save_unsteady == 1)
-            p_total(n,:)  = p;
-        end
-    else
-        % q is not used, set to arbitrary value
-        q = 0;
-    end
-end
-
-
+% map back to FOM space to get initial properties
 if (options.rom.process_iteration_FOM == 1)
     % map back to velocity space to get statistics of initial velocity field
     % note that V will not be equal to the specified initial field, because
     % B*B' does not equal identity in general
     V  = getFOM_velocity(R,t,options);
-    
+    if (options.rom.pressure_recovery == 1)
+        p = getFOM_pressure(q,t,options);
+    end
     [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     
     
     % overwrite the arrays with total solutions
     if (save_unsteady == 1)
-        uh_total(n,:) = V(1:options.grid.Nu);
-        vh_total(n,:) = V(options.grid.Nu+1:end);
+        uh_total(n,:) = V(options.grid.indu);
+        vh_total(n,:) = V(options.grid.indv);
+        if (options.rom.pressure_recovery == 1)
+            p_total(n,:)  = p;
+        end
     end
 end
 
@@ -185,30 +160,25 @@ while(n<=nt)
     %% dynamic timestepping:
     % set_timestep;
     
-    %%
+    %% perform one time step with the time integration method
     
     n = n+1;
-    
-    % time reversal (used in inviscid shear-layer testcase)
-    %     if (abs(t-t_end/2)<1e-12)
-    %         dt = -dt;
-    %     end
-    
-    % perform one time step with the time integration method
+       
     if (method == 20)
          [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options);
     elseif (method == 21)
         [R,q,nonlinear_its(n)] = time_IRK_ROM(Rn,qn,tn,dt,options);
     else
         error('time integration method unknown');
-    end
-    
+    end    
     
     % the velocities and pressure that are just computed are at
     % the new time level t+dt:
-    t = tn + dt;
+    t       = tn + dt;
+    % store current time in vector
     time(n) = t;
     
+    % update old solution
     Rn = R;
     qn = q;
     tn = t;   
@@ -233,5 +203,8 @@ end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start
 
-
+% get FOM velocity and pressure for postprocessing purposes
 V  = getFOM_velocity(R,t,options);
+if (options.rom.pressure_recovery == 1)
+    p = getFOM_pressure(q,t,options);
+end

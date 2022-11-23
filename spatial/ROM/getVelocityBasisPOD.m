@@ -33,7 +33,6 @@ end
 
 
 %% subtract non-homogeneous BC contribution:
-
 % note uh_total is stored as a Nt*Nu matrix, instead of the Nu*Nt matrix
 % which we use for the SVD
 Om     = options.grid.Om;
@@ -210,14 +209,51 @@ div_basis = max(abs(options.discretization.M*B),[],1); %
 maxdiv_basis = max(div_basis);
 if (options.rom.rom_bc < 2)
     if (maxdiv_basis > 1e-12)
-        warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
-        answer = questdlg('Do you want to add a basis for the pressure?','Basis not divergence free','Yes','No','No');
-        switch answer
-            case 'Yes'
+        warning(['ROM basis not divergence free: ' num2str(maxdiv_basis)]);
+        
+        if (options.rom.helmholtz == 1)
+            % make basis divergence free
+            disp('Try to make basis divergence free with Helmholtz procedure...')
+            Om_inv = options.grid.Om_inv;
+            G  = options.discretization.G;
+            
+            % loop over all columns of B
+            for i=1:size(B,2)
+                % note that yM is not included here, because this has been
+                % already incorporated by the use of the lifting function
+                % Vbc
+                f  = options.discretization.M*B(:,i);
+                dp = pressure_poisson(f,options.time.t_start,options); 
+                B(:,i)  = B(:,i) - Om_inv.*(G*dp);
+            end
+            
+            % test again divergence-freeness
+            div_basis = max(abs(options.discretization.M*B),[],1); 
+            maxdiv_basis = max(div_basis);
+            if (maxdiv_basis > 1e-12)
+                warning(['ROM basis still not divergence free: ' num2str(maxdiv_basis)]);
+%                 warning('Adding basis for pressure');
                 div_free = 0;
-            case 'No'
-                % continue as if basis is divergence-free
+            else
+                disp(['ROM basis now divergence free: ' num2str(maxdiv_basis)]);
                 div_free = 1;
+            end          
+
+            
+        else
+%             warning('Adding basis for pressure');
+            div_free = 0;
+        end
+        
+        if (div_free == 0)
+            answer = questdlg('Do you want to add a basis for the pressure?','Basis not divergence free','Yes','No','No');
+            switch answer
+                case 'Yes'
+                    div_free = 0;
+                case 'No'
+                    % continue as if basis is divergence-free
+                    div_free = 1;
+            end
         end
     else
         div_free = 1;
