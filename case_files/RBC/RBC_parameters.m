@@ -14,8 +14,8 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
-    Ge = 0.1;                     % Gebhart number
-    incl_dissipation = 1;            % use dissipation term in temperature equation (1=yes,0=no)
+    Ge = 0.0;                   % Gebhart number
+    incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -23,12 +23,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 1;
+    x2      = 2;
     y1      = 0;
     y2      = 1;
 
-    Nx      = 256;                  % number of volumes in the x-direction
-    Ny      = 256;                   % number of volumes in the y-direction
+    Nx      = 128;                  % number of volumes in the x-direction
+    Ny      = 64;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;

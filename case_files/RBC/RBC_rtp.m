@@ -3,18 +3,18 @@
 line  = {'r-','b-','k-','m-','g-'};
 color = char(line(j));
 
-%load Botella-Peyret data
-% run('results/LDC/BP.m');
+Nu  = options.grid.Nu;
+Nv  = options.grid.Nv;
+Npx = options.grid.Npx;
+Npy = options.grid.Npy;
 
-Nu = options.grid.Nu;
-Nv = options.grid.Nv;
-Npx    = options.grid.Npx;
-Npy    = options.grid.Npy;
-
-uh   = V(1:Nu);
-vh   = V(Nu+1:Nu+Nv);
+uh   = V(options.grid.indu);
+vh   = V(options.grid.indv);
 pres = reshape(p,Npx,Npy);
 Temp = reshape(T,Npx,Npy);
+
+[up,vp,qp] = get_velocity(V,t,options);
+
 
 % shift pressure to get zero pressure in the centre
 if (floor(Nx/2)==Nx/2 && floor(Ny/2)==Ny/2)
@@ -45,22 +45,32 @@ dTdy_1 = (T1 - TLo)/(0.5*hy(1));
 % assuming a uniform grid in y-dir
 dTdy_2 = (-(1/3)*T2 + 3*T1 - (8/3)*TLo)/(hy(1));
 
-Nusselt_1 = sum(-dTdy_1.*hx); % integrate over lower plate
-Nusselt_2 = sum(-dTdy_2.*hx); % integrate over lower plate
+% width of lower plate
+Lx   = options.grid.x2 - options.grid.x1;
 
+
+Nusselt_1 = sum(-dTdy_1.*hx)/Lx; % integrate over lower plate
+Nusselt_2 = sum(-dTdy_2.*hx)/Lx; % integrate over lower plate
+
+% currently,store the second order approximation
 Nusselt(n,1) = Nusselt_2;
 
 figure(2)
 plot(t,Nusselt_2,'ks');
 grid on
 hold on
-% ylim([0 5])
+ylim([0 5])
+xlabel('t')
+ylabel('Nu')
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',14);
 
 %% check energy conservation properties
-% change in total energy should be due to int T*v dOmega
+% change in total energy should be due to int T*v dOmega, in case viscous
+% dissipation is included and no boundary contributions are present
+
 de_pot = vh'*(options.discretization.AT_v*T);
-max(abs(vh));
-% pause
+
 figure(3)
 cmap = get(gca,'ColorOrder');
 if (n>1)
@@ -69,7 +79,7 @@ if (n>1)
     hold on
     plot(t,de_pot,'o','Color',cmap(2,:));
     grid on
-    title('dk/dt and e_{pot}');
+    title('de/dt and h_{pot}');
     
     xlabel('t')
     ylabel('energy change');
@@ -81,7 +91,6 @@ end
 %% create 2D plots
 
 %% velocity
-[up,vp,qp] = get_velocity(V,t,options);
 % % list = linspace(0,1,20);
 % list = 20;
 % figure(1)
@@ -143,25 +152,19 @@ hold on
 quiver(xp,yp,up',vp');
 axis equal
 axis([x1 x2 y1 y2]);
-xlabeltex('x',14);
-ylabeltex('y',14);
+xlabel('x');
+ylabel('y');
 grid
 title('temperature');
 colorbar
-set(gca,'LineWidth',1)
+set(gca,'LineWidth',1,'FontSize',14);
 hold off
 
 
 %% streamfunction
 
 % figure
-% % Re=1000:
-% labels = [1.5e-3 1e-3 5e-4 2.5e-4 1e-4 5e-5 1e-5 1e-6 0 -1e-10 -1e-5 -1e-4 -1e-2 -3e-2 -5e-2 -7e-2 -9e-2 -0.1 -0.11 -0.115 -0.1175];
-% % Re=5000:
-% % labels = [-0.1175 -0.115 -0.11 -0.1 -0.09 -0.07 -0.05 -0.03 -0.01 -1e-4 -1e-5 -1e-7 0 1e-6 1e-5 5e-5 1e-4 2.5e-4 5e-4 1e-3 1.5e-3 3e-3];
-% % Re=10000:
-% % labels = [-0.1175 -0.115 -0.11 -0.1 -0.09 -0.07 -0.05 -0.03 -0.01 -1e-4 -1e-5 -1e-7 0 1e-6 1e-5 5e-5 1e-4 2.5e-4 5e-4 1e-3 1.5e-3 3e-3];
-%
+% labels = 10;
 % contour(x(2:end-1),y(2:end-1),reshape(psi,Nx-1,Ny-1)',labels,'LineWidth',2);
 %
 % axis equal

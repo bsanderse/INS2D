@@ -31,6 +31,7 @@ format long;
  
 warning('on'); 
 warning('off','MATLAB:rmpath:DirNotFound');
+warning('off','MATLAB:nearlySingularMatrix');
 
 % declare boundary conditions via globals
 global uBC vBC dudtBC dvdtBC TBC;

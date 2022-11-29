@@ -230,5 +230,19 @@ end
 
 % output convection at t^(n), to be used in next time step
 rhs_terms.conv = [convu;convv];
-rhs_terms.convT = convT;
-rhs_terms.Phi = Phi;
+
+% get the temperature terms that are treated explicit in time
+switch options.case.boussinesq
+        
+    case 'temp'
+        
+        rhs_terms.convT = convT;
+                                
+        switch options.temp.incl_dissipation
+            
+            case 1
+                
+                rhs_terms.Phi = Phi;
+        end
+end
+
