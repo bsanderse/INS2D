@@ -4,7 +4,7 @@ function [R,options] = ROM_initialization(V,t,options)
 % B*R
 % V = B*R + Vbc
 
-if options.rom.bc_recon ~= 5
+if true %options.rom.bc_recon ~= 5
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
