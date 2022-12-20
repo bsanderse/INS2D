@@ -145,7 +145,6 @@ switch options.case.boussinesq
         switch options.temp.incl_dissipation
             case 1
                 %  add dissipation to internal energy equation
-                % first order in time
                 Phi = dissipation(Vn,tn,options,0);
                 Phi_old = rhs_terms_old.Phi;
                 Ge  = options.temp.Ge;

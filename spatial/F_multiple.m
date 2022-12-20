@@ -2,7 +2,7 @@ function [maxres,Fres,dF] = F_multiple(V,C,p,t,options,getJacobian)
 % call F.m for multiple (V,p) pairs, as required for example in implicit RK
 % methods
 
-if (nargin<5)
+if (nargin<6)
     getJacobian = 0;
 end
 

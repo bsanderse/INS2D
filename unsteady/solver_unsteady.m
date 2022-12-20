@@ -98,11 +98,12 @@ while(n<=nt)
 %         convT_old = convT;
     elseif (method==5)
         [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
-
     elseif (method==20)
         [V,p,T] = time_ERK(Vn,pn,Tn,tn,dt,options);
     elseif (method==21)
         [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
+    elseif (method==22)
+        [V,p,T,nonlinear_its(n)] = time_IM_Boussinesq(Vn,pn,Tn,tn,dt,options);
     else
         error('time integration method unknown');
     end

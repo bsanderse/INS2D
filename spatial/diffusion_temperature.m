@@ -5,8 +5,8 @@ function [diff, Jac_diff_T, Jac_diff_V] = diffusion_temperature(T,t,options,getJ
 
 % visc = options.case.visc;
 
-indu = options.grid.indu;
-indv = options.grid.indv;
+% indu = options.grid.indu;
+% indv = options.grid.indv;
 
 % Nu = options.grid.Nu;
 % Nv = options.grid.Nv;

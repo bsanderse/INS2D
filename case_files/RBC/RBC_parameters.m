@@ -14,8 +14,8 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
-    Ge = 0.0;                   % Gebhart number
-    incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
+    Ge = 1;                   % Gebhart number
+    incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -23,12 +23,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 2;
+    x2      = 1;
     y1      = 0;
     y2      = 1;
 
-    Nx      = 128;                  % number of volumes in the x-direction
-    Ny      = 64;                   % number of volumes in the y-direction
+    Nx      = 32;                  % number of volumes in the x-direction
+    Ny      = 32;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -53,10 +53,10 @@
     
     % only for unsteady problems:
 
-        dt            = 5e-2;       % time step (for explicit methods it can be
+        dt            = 1e-1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 250;         % end time
+        t_end         = 200;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -70,9 +70,11 @@
         %            second order for theta=1/2
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
-        % method 21 : generic implicit RK, can also be used for ROM          
-        method            = 2;
-        RK                = 'RK44';
+        % method 21 : generic implicit RK, can also be used for ROM   
+        % method 22 : implicit midpoint (energy conserving) for Boussinesq
+        %             system
+        method            = 22;
+        RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -116,11 +118,11 @@
 
     relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
     
-    nonlinear_acc          = 1e-14;
+    nonlinear_acc          = 1e-12;
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
         
-    nonlinear_Newton       = 1;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+    nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
                                    % iteration

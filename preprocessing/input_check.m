@@ -152,7 +152,8 @@ else
     if (options.case.steady==1)
         options.solversettings.Newton_factor = 0;
     elseif (options.case.steady==0)
-        if (method==21 || (exist('method_startup','var') && method_startup==21)) % implicit RK time integration
+        % implicit RK time integration: set Newton_factor to 1
+        if ( (method==21 || method==22) || (exist('method_startup','var') && method_startup==21)) 
             options.solversettings.Newton_factor = 1;
         end
     else

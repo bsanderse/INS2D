@@ -72,10 +72,15 @@ switch visc
         ySv_vx = options.discretization.ySv_vx;
         ySv_vy = options.discretization.ySv_vy;
         
-        dudx2 = (Su_ux*uh + ySu_ux).^2; % at the pressure points
-        dudy2 = (Su_uy*uh + ySu_uy).^2;
-        dvdx2 = (Sv_vx*vh + ySv_vx).^2;
-        dvdy2 = (Sv_vy*vh + ySv_vy).^2;
+        dudx = (Su_ux*uh + ySu_ux); 
+        dudy = (Su_uy*uh + ySu_uy);
+        dvdx = (Sv_vx*vh + ySv_vx);
+        dvdy = (Sv_vy*vh + ySv_vy);
+        
+%         dudx2 = (Su_ux*uh + ySu_ux).^2; % at the pressure points
+%         dudy2 = (Su_uy*uh + ySu_uy).^2;
+%         dvdx2 = (Sv_vx*vh + ySv_vx).^2;
+%         dvdy2 = (Sv_vy*vh + ySv_vy).^2;
         
         
         %% take weighted average to get contribution to a certain velocity
@@ -87,28 +92,28 @@ switch visc
         diag1       = weight*ones(Nux_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nux_t-2,Nux_t-1);
         Aux_u       = spdiags(Omu,0,Nu,Nu)*kron(speye(Nuy_in),A1D);
-        dudx2_u     = Aux_u*dudx2;
+        dudx2_u     = Aux_u*(dudx.^2);
         
         % average dudy^2, effectively at u point
         % multiply by finite volume size
         diag1       = weight*ones(Nuy_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nuy_t-2,Nuy_t-1);
         Auy_u       = spdiags(Omu,0,Nu,Nu)*kron(A1D,speye(Nux_in));
-        dudy2_u     = Auy_u*dudy2;
+        dudy2_u     = Auy_u*(dudy.^2);
         
         % average dvdx^2, effectively at v point
         % multiply by finite volume size
         diag1       = weight*ones(Nvx_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nvx_t-2,Nvx_t-1);
         Avx_v       = spdiags(Omv,0,Nv,Nv)*kron(speye(Nvy_in),A1D);
-        dvdx2_v     = Avx_v*dvdx2;
+        dvdx2_v     = Avx_v*(dvdx.^2);
         
         % average dvdy^2, effectively at v point
         % multiply by finite volume size
         diag1       = weight*ones(Nvy_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nvy_t-2,Nvy_t-1);
         Avy_v       = spdiags(Omv,0,Nv,Nv)*kron(A1D,speye(Nvx_in));
-        dvdy2_v     = Avy_v*dvdy2;
+        dvdy2_v     = Avy_v*(dvdy.^2);
         
         
         % need to correct these dissipation terms because on "aligned" boundaries (d2udx2 and
@@ -171,7 +176,6 @@ switch visc
         switch options.case.boussinesq
             
             case 'temp'
-                % get T at v-locations
                 Re = sqrt(options.temp.Ra/options.temp.Pr);
                 
             otherwise
@@ -192,6 +196,22 @@ switch visc
             warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid, please check dissipation.m');
         end
         
+        
+        %% Jacobian
+        if (getJacobian==1)
+            
+            N1 = length(dudx); %options.grid.N1;
+            N2 = length(dudy); %options.grid.N2;
+            N3 = length(dvdx); %options.grid.N3;
+            N4 = length(dvdy); %options.grid.N4;
+            
+            % note: adapt Jacobian for boundary correction terms (TODO)
+            Phi_u      = 2*Au_k*(Aux_u*spdiags(dudx,0,N1,N1)*Su_ux + Auy_u*spdiags(dudy,0,N2,N2)*Su_uy);
+            Phi_v      = 2*Av_k*(Avx_v*spdiags(dvdx,0,N3,N3)*Sv_vx + Avy_v*spdiags(dvdy,0,N4,N4)*Sv_vy);
+            
+            Jac        = [Phi_u Phi_v];
+            
+        end
         
         
         %% old tests used to construct the boundary contributions

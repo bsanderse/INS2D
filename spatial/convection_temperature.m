@@ -19,16 +19,16 @@ NT = options.grid.NT;
 Jac_conv_T = spalloc(NT,NT,0);
 Jac_conv_V = spalloc(NT,NV,0);
 
-CTx = options.discretization.CTx;
-CTy = options.discretization.CTy;
+CTx    = options.discretization.CTx;
+CTy    = options.discretization.CTy;
 
-AT_Tx = options.discretization.AT_Tx;
-AT_Ty = options.discretization.AT_Ty;
+AT_Tx  = options.discretization.AT_Tx;
+AT_Ty  = options.discretization.AT_Ty;
 yAT_Tx = options.discretization.yAT_Tx;
 yAT_Ty = options.discretization.yAT_Ty;
 
-Iu_Tx = options.discretization.Iu_Tx;
-Iv_Ty = options.discretization.Iv_Ty;
+Iu_Tx  = options.discretization.Iu_Tx;
+Iv_Ty  = options.discretization.Iv_Ty;
 yIu_Tx = options.discretization.yIu_Tx;
 yIv_Ty = options.discretization.yIv_Ty;
  
