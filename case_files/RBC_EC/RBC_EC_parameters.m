@@ -165,9 +165,9 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
+    save_file        = 0;          % save all matlab data after program is completed
     save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 

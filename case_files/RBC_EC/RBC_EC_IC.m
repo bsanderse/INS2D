@@ -1,5 +1,5 @@
-function [u,v,p,T,options] = RBC_IC(t,options)
-% initial velocity field RBC
+function [u,v,p,T,options] = RBC_EC_IC(t,options)
+% initial velocity field RBC: load state state results
 
 Npx = options.grid.Npx;
 Npy = options.grid.Npy;
@@ -12,10 +12,11 @@ ypp = options.grid.ypp;
 % Lx = options.grid.x2 - options.grid.x1;
 Ly = options.grid.y2 - options.grid.y1;
 
-% constant velocity field
-u  = zeros(Nux_in,Nuy_in);
-v  = zeros(Nvx_in,Nvy_in);
-
+% load velocity field and temperature
+results = load('results/RBC_Ra1e4_Ge_1e-1_32x32/steady_state.mat');
+u  = results.V(options.grid.indu); %zeros(Nux_in,Nuy_in);
+v  = results.V(options.grid.indv); %zeros(Nvx_in,Nvy_in);
+T  = results.T;
 % pressure: should in principle NOT be prescribed. will be calculated if
 % p_initial=1
 p  = zeros(Npx,Npy);
@@ -27,7 +28,7 @@ p  = zeros(Npx,Npy);
 % homogeneous 0.5
 % T  = 0.5*ones(Npx,Npy);
 % homogeneous 0
-T  = zeros(Npx,Npy); 
+% T  = zeros(Npx,Npy); 
 % high order polynomial that has zero derivatives
 %T = 10*(ypp.^2) .* ((Ly - ypp)/Ly).^2;
 % T = 2*ypp.^3-3*ypp.^2 + 1;

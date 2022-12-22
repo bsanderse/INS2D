@@ -114,6 +114,9 @@ while(n<=nt)
     t = tn + dt;
     time(n) = t;
     
+    % check residuals, conservation, set timestep, write output files
+    process_iteration;
+    
     % update solution
     V_old = Vn;
     p_old = pn;    
@@ -123,9 +126,7 @@ while(n<=nt)
     Tn = T;
     tn = t;        
     
-    % check residuals, conservation, set timestep, write output files
-    process_iteration;
-    
+  
     
 end
 disp('finished time-stepping...');

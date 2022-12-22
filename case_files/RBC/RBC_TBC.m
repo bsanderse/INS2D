@@ -1,5 +1,5 @@
 function T = RBC_TBC(x,y,t,options)
-% boundary conditions for u for LDC
+% boundary conditions for T for RBC 
 
     y1 = options.grid.y1;
     y2 = options.grid.y2;
