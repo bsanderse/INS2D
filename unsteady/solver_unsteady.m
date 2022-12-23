@@ -31,12 +31,12 @@ if (method==2)
         case 'temp'
             rhs_terms.convT = convection_temperature(T,V,t,options,0);
             switch options.temp.incl_dissipation
-                case 1            
-                  rhs_terms.Phi = dissipation(V,t,options,0);
+                case 1
+                    rhs_terms.Phi = dissipation(V,t,options,0);
             end
             
     end
-        
+    
 end
 
 % for methods that need u^(n-1)
@@ -76,36 +76,37 @@ while(n<=nt)
     n = n+1;
     
     % for methods that need a velocity field at n-1 the first time step
-    % (e.g. AB-CN, oneleg beta) use ERK or IRK 
-
+    % (e.g. AB-CN, oneleg beta) use ERK or IRK
+    
     if ((method_temp==2 || method_temp==5) && n<=method_startup_no)
         fprintf(fcw,['starting up with method ' num2str(method_startup) '\n']);
-        method      = method_startup;        
+        method      = method_startup;
     else
         method      = method_temp;
     end
     
     % time reversal (used in inviscid shear-layer testcase)
-%     if (abs(t-t_end/2)<1e-12)
-%         dt = -dt;
-%     end
-%         
+    %     if (abs(t-t_end/2)<1e-12)
+    %         dt = -dt;
+    %     end
+    %
     
     % perform a single time step with the time integration method
-    if (method==2)
-        [V,p,T,rhs_terms] = time_AB_CN(Vn,pn,Tn,rhs_terms,tn,dt,options);
-%         conv_old = conv;
-%         convT_old = convT;
-    elseif (method==5)
-        [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
-    elseif (method==20)
-        [V,p,T] = time_ERK(Vn,pn,Tn,tn,dt,options);
-    elseif (method==21)
-        [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
-    elseif (method==22)
-        [V,p,T,nonlinear_its(n)] = time_IM_Boussinesq(Vn,pn,Tn,tn,dt,options);
-    else
-        error('time integration method unknown');
+    switch method
+        case 2
+            [V,p,T,rhs_terms] = time_AB_CN(Vn,pn,Tn,rhs_terms,tn,dt,options);
+            %         conv_old = conv;
+            %         convT_old = convT;
+        case 5
+            [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
+        case 20
+            [V,p,T] = time_ERK(Vn,pn,Tn,tn,dt,options);
+        case 21
+            [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
+        case 22
+            [V,p,T,nonlinear_its(n)] = time_IM_Boussinesq(Vn,pn,Tn,tn,dt,options);
+        otherwise
+            error('time integration method unknown');
     end
     
     
@@ -119,14 +120,14 @@ while(n<=nt)
     
     % update solution
     V_old = Vn;
-    p_old = pn;    
+    p_old = pn;
     T_old = Tn;
     Vn = V;
     pn = p;
     Tn = T;
-    tn = t;        
+    tn = t;
     
-  
+    
     
 end
 disp('finished time-stepping...');

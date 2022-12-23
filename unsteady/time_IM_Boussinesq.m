@@ -162,6 +162,7 @@ end
 
 % store number of iterations
 iterations = i;
+error_nonlinear(1:i);
 
 % solution at new time step with b-coefficients of RK method
 Q = Qn(indxVT) + dt*OmVT_inv.*(b_RK*F_rhs);

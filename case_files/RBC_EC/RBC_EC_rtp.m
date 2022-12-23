@@ -70,19 +70,18 @@ set(gca,'LineWidth',1,'FontSize',14);
 % dissipation is included and no boundary contributions are present
 
 
-
-figure(3)
-cmap = get(gca,'ColorOrder');
 if (n>1)
+    figure(3)
+    cmap = get(gca,'ColorOrder');
     % de_pot = vh'*(options.discretization.AT_v*T);
     % in implicit midpoint, the contribution equals
     % V^{n+1/2} * A * T^{n+1/2}
     V_mid = 0.5*(V + Vn);
     T_mid = 0.5*(T + Tn);
     de_pot = V_mid(options.grid.indv)'*(options.discretization.AT_v*T_mid);
-
+    dkdt   = (k(n)-k(n-1))/dt;
     % note that k includes e_int and (1/2)*u^2
-    plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
+    plot(t,dkdt,'s','Color',cmap(1,:));
     hold on
     plot(t,de_pot,'o','Color',cmap(2,:));
     grid on
@@ -93,6 +92,22 @@ if (n>1)
     set(gcf,'color','w');
     set(gca,'LineWidth',1,'FontSize',14);
     legend('de/dt','h_{pot}');
+    
+    figure(4)
+    cmap = get(gca,'ColorOrder');
+    DeltaE = abs(de_pot - dkdt);
+    
+    % note that k includes e_int and (1/2)*u^2
+    semilogy(t,DeltaE,'s','Color',cmap(1,:));
+    grid on
+    hold on
+    title('de/dt - h_{pot}');
+    xlabel('t')
+    ylabel('energy change');
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1,'FontSize',14);
+%     legend('de/dt','h_{pot}');
+    
 end
 
 %% create 2D plots
@@ -152,9 +167,9 @@ end
 figure(1)
 set(gcf,'color','w');
 % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-% l=linspace(-0.5,0.5,20);
-l = 20;
-contour(xp,yp,Temp',l,'LineWidth',2);
+l=linspace(-0.2,0.2,20);
+% l = 20;
+contourf(xp,yp,Temp',l,'LineWidth',2);
 hold on
 quiver(xp,yp,up',vp');
 axis equal

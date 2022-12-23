@@ -56,7 +56,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 100;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -149,8 +149,8 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
-    rtp.movie        = 0;
+    rtp.n            = 10;
+    rtp.movie        = 1;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

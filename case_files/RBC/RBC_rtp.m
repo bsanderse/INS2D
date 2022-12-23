@@ -145,8 +145,8 @@ end
 figure(1)
 set(gcf,'color','w');
 % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-% l=linspace(-0.5,0.5,20);
-l = 20;
+l=linspace(-0.5,0.5,20);
+% l = 20;
 contour(xp,yp,Temp',l,'LineWidth',2);
 hold on
 quiver(xp,yp,up',vp');

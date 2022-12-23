@@ -91,6 +91,23 @@ switch visc
         % multiply by finite volume size
         diag1       = weight*ones(Nux_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nux_t-2,Nux_t-1);
+        
+        % need to correct these dissipation terms because on "aligned" boundaries (d2udx2 and
+        % d2vdy2) we do not get a proper summation by parts identity
+        switch BC.u.left
+            case 'dir'
+                % "left boundary"
+                A1D(1,1) = 1;               
+%                 dudx2_u(1:Nux_in:end) = dudx2_u(1:Nux_in:Nu) +  ...
+%                     0.5*hy.*(uh(1:Nux_in:Nu).^2)/hx(1);
+        end
+        switch BC.u.right
+            case 'dir'
+                % "right boundary"
+                A1D(end,end) = 1;
+%                 dudx2_u(Nux_in:Nux_in:end) = dudx2_u(Nux_in:Nux_in:Nu) + ...
+%                     0.5*hy.*(uh(Nux_in:Nux_in:Nu).^2)/hx(end);
+        end
         Aux_u       = spdiags(Omu,0,Nu,Nu)*kron(speye(Nuy_in),A1D);
         dudx2_u     = Aux_u*(dudx.^2);
         
@@ -112,39 +129,24 @@ switch visc
         % multiply by finite volume size
         diag1       = weight*ones(Nvy_t,1);
         A1D         = spdiags([diag1 diag1],[0 1],Nvy_t-2,Nvy_t-1);
-        Avy_v       = spdiags(Omv,0,Nv,Nv)*kron(A1D,speye(Nvx_in));
-        dvdy2_v     = Avy_v*(dvdy.^2);
-        
-        
-        % need to correct these dissipation terms because on "aligned" boundaries (d2udx2 and
-        % d2vdy2) we do not get a proper summation by parts identity
-        % "left boundary"
-        switch BC.u.left
-            case 'dir'
-                dudx2_u(1:Nux_in:end) = dudx2_u(1:Nux_in:Nu) +  ...
-                    0.5*hy.*(uh(1:Nux_in:Nu).^2)/hx(1);
-        end
-        
-        switch BC.u.right
-            case 'dir'
-                % "right boundary"
-                dudx2_u(Nux_in:Nux_in:end) = dudx2_u(Nux_in:Nux_in:Nu) + ...
-                    0.5*hy.*(uh(Nux_in:Nux_in:Nu).^2)/hx(end);
-        end
-        
+                
         switch BC.v.low
             case 'dir'
                 % "bottom boundary"
-                dvdy2_v(1:Nvx_in) = dvdy2_v(1:Nvx_in) + ...
-                    0.5*hx.*(vh(1:Nvx_in).^2)/hy(1);
-        end
-        
+                A1D(1,1) = 1;
+%                 dvdy2_v(1:Nvx_in) = dvdy2_v(1:Nvx_in) + ...
+%                     0.5*hx.*(vh(1:Nvx_in).^2)/hy(1);
+        end        
         switch BC.v.up
             case 'dir'
                 % "top boundary"
-                dvdy2_v(Nv-Nvx_in+1:end) = dvdy2_v(Nv-Nvx_in+1:end) + ...
-                    0.5*hx.*(vh(Nv-Nvx_in+1:end).^2)/hy(end);
-        end
+                A1D(end,end) = 1;
+%                 dvdy2_v(Nv-Nvx_in+1:end) = dvdy2_v(Nv-Nvx_in+1:end) + ...
+%                     0.5*hx.*(vh(Nv-Nvx_in+1:end).^2)/hy(end);
+        end        
+        Avy_v       = spdiags(Omv,0,Nv,Nv)*kron(A1D,speye(Nvx_in));
+        dvdy2_v     = Avy_v*(dvdy.^2);
+
         
         %% then use definition of local kinetic energy to get Phi
         % since the local KE  is defined on a pressure volume, as sum of
