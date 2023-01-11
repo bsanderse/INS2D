@@ -12,7 +12,7 @@ order4 = options.discretization.order4;
 switch options.case.boussinesq
     case 'temp'
         % effectively the Reynolds number is
-        Re = sqrt(options.temp.Ra/options.temp.Pr);
+        Re = 1./options.temp.alfa1; %sqrt(options.temp.Ra/options.temp.Pr);
     otherwise
         Re = options.fluid.Re;
 end
@@ -666,28 +666,39 @@ switch options.case.boussinesq
         Iv_Ty_BC = options.discretization.Iv_Ty_BC;
         DiffTx_BC = options.discretization.DiffTx_BC;
         DiffTy_BC = options.discretization.DiffTy_BC;
-        
+        STx_BC    = options.discretization.STx_BC;
+        STy_BC    = options.discretization.STy_BC;
+
+                
         ybc      = kron(TLe,AT_Tx_BC.ybc1) + kron(TRi,AT_Tx_BC.ybc2);
         yAT_Tx   = AT_Tx_BC.Bbc*ybc;
         yDTx     = DiffTx_BC*ybc;
+        ySTx     = STx_BC*ybc;
+        
         ybc      = kron(uLe_i,Iu_Tx_BC.ybc1) + kron(uRi_i,Iu_Tx_BC.ybc2);
         yIu_Tx   = Iu_Tx_BC.Bbc*ybc;
 
         ybc      = kron(AT_Ty_BC.ybc1,TLo) + kron(AT_Ty_BC.ybc2,TUp);
         yAT_Ty   = AT_Ty_BC.Bbc*ybc;
         yDTy     = DiffTy_BC*ybc;
+        ySTy     = STy_BC*ybc;
+        
         ybc      = kron(Iv_Ty_BC.ybc1,vLo_i) + kron(Iv_Ty_BC.ybc2,vUp_i);
         yIv_Ty   = Iv_Ty_BC.Bbc*ybc;        
         
-        scale    = sqrt(options.temp.Ra*options.temp.Pr);
-        yDiffT   = (1/scale)*(yDTx + yDTy);
+        alfa4    = options.temp.alfa4; %sqrt(options.temp.Ra*options.temp.Pr);
+        yDiffT   = alfa4*(yDTx + yDTy);
+        % note: we are not including alfa4 in the first derivative operators ySTx
+        % and ySTy
         
         options.discretization.yDiffT = yDiffT;
         options.discretization.yAT_Tx = yAT_Tx;
         options.discretization.yIu_Tx = yIu_Tx;
         options.discretization.yAT_Ty = yAT_Ty;
         options.discretization.yIv_Ty = yIv_Ty;
-        
+        options.discretization.ySTx = ySTx;
+        options.discretization.ySTy = ySTy;
+
 end
 
 

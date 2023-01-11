@@ -14,8 +14,9 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
-    Ge = 0.1;                   % Gebhart number
+    Ge = 1;                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
+    nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -56,7 +57,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 250;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -73,7 +74,7 @@
         % method 21 : generic implicit RK, can also be used for ROM   
         % method 22 : implicit midpoint (energy conserving) for Boussinesq
         %             system
-        method            = 22;
+        method            = 2;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -165,9 +166,9 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
+    save_file        = 0;          % save all matlab data after program is completed
     save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 

@@ -84,9 +84,11 @@ diag3    = 1./gxd;
 S1D      = spdiags([-diag3 diag3],[0 1],Npx+1,Npx+2);
 
 % re-use BC generated for averaging T
+STx        = kron(speye(Npy),S1D*AT_Tx_BC.B1D); % computes differences on cell faces
+STx_BC     = kron(speye(Npy),S1D*AT_Tx_BC.Btemp);
+
 DiffTx     = DTx * kron(speye(Npy),S1D*AT_Tx_BC.B1D);
 DiffTx_BC  = DTx * kron(speye(Npy),S1D*AT_Tx_BC.Btemp);
-% ySTx     = kron(speye(Npy),S1D*BtempT)*ybc;
 
 
 %%%%%%%%%%%%%%
@@ -134,22 +136,25 @@ AT_Ty_BC.Bbc = kron(A1D*AT_Ty_BC.Btemp,speye(Npx));
 diag3    = 1./gyd;
 S1D      = spdiags([-diag3 diag3],[0 1],Npy+1,Npy+2);
 
-% re-use BC generated for averaging t
+% re-use BC generated for averaging 
+STy         = kron(S1D*AT_Ty_BC.B1D,speye(Npx));
+STy_BC      = kron(S1D*AT_Ty_BC.Btemp,speye(Npx));
 DiffTy      = DTy*kron(S1D*AT_Ty_BC.B1D,speye(Npx));
 DiffTy_BC   = DTy*kron(S1D*AT_Ty_BC.Btemp,speye(Npx));
 % ySTy     = kron(S1D*BtempT,speye(Npx))*ybcT;
 
 
 %% assemble total operator
-scale    = sqrt(options.temp.Ra*options.temp.Pr);
-DiffT    = (1/scale)*(DiffTx + DiffTy);
+alfa4    = options.temp.alfa4; %sqrt(options.temp.Ra*options.temp.Pr);
+DiffT    = alfa4*(DiffTx + DiffTy);
 % yDiffT   = DTx*ySTx + DTy*ySTy;
-
+% note: we are not including alfa4 in the first derivative operators STx
+% and STy
 
 %% temperature term in vertical momentum equation
 % average from T (pressure location) to Ty-location, use Buvy to restrict to
 % only v location
-AT_v = spdiags(options.grid.Omv,0,options.grid.Nv,options.grid.Nv)*kron(Buvy,speye(Npx))*AT_Ty;
+AT_v = options.temp.alfa2*spdiags(options.grid.Omv,0,options.grid.Nv,options.grid.Nv)*kron(Buvy,speye(Npx))*AT_Ty;
 
 
 %% store in options structure
@@ -168,6 +173,11 @@ options.discretization.AT_Ty_BC   = AT_Ty_BC;
 options.discretization.DiffT    = DiffT;
 options.discretization.DiffTx_BC = DiffTx_BC;
 options.discretization.DiffTy_BC = DiffTy_BC;
+
+options.discretization.STx    = STx;
+options.discretization.STx_BC = STx_BC;
+options.discretization.STy    = STy;
+options.discretization.STy_BC = STy_BC;
 
 options.discretization.AT_v = AT_v;
 

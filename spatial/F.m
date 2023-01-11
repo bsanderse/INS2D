@@ -98,10 +98,13 @@ switch options.case.boussinesq
             case 1
                 % add dissipation to internal energy equation
                 [Phi,dPhi] = dissipation(V,t,options,getJacobian);
-                % scale with Gebhart number
-                Ge    = options.temp.Ge;
-                FTemp = FTemp + Ge*Phi;
-                dFTemp_V = dFTemp_V + Ge*dPhi;
+                % the computed dissipation is basically V'*D*V, which has
+                % alfa1 as scaling
+                % in the internal energy equation we need alfa3, so we
+                % divide by gamma
+                gamma    = options.temp.gamma;
+                FTemp    = FTemp + (1/gamma)*Phi;
+                dFTemp_V = dFTemp_V + (1/gamma)*dPhi;
         end
         
         F = [FV; FTemp];

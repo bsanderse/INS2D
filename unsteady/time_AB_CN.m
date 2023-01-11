@@ -146,9 +146,13 @@ switch options.case.boussinesq
             case 1
                 %  add dissipation to internal energy equation
                 Phi = dissipation(Vn,tn,options,0);
+                % the computed dissipation is basically V'*D*V, which has
+                % alfa1 as scaling
+                % in the internal energy equation we need alfa3, so we
+                % divide by gamma
                 Phi_old = rhs_terms_old.Phi;
-                Ge  = options.temp.Ge;
-                FT  = FT + dt*Omp_inv.*(Ge*(alfa1*Phi + alfa2*Phi_old));
+                gamma  = options.temp.gamma;
+                FT  = FT + dt*Omp_inv.*((1/gamma)*(alfa1*Phi + alfa2*Phi_old));
         end        
         
         % matrix arising from implicit diffusion: I-dt*Om_inv*D

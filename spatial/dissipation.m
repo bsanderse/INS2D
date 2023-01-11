@@ -174,28 +174,29 @@ switch visc
         Phi = Au_k*(dudx2_u + dudy2_u) + Av_k*(dvdx2_v + dvdy2_v);
         
         
-        % scale with the Reynolds number
+        % scale with the Reynolds number or the 'effective' Reynolds number
         switch options.case.boussinesq
             
             case 'temp'
-                Re = sqrt(options.temp.Ra/options.temp.Pr);
-                
+%                 Re = sqrt(options.temp.Ra/options.temp.Pr);
+                scale = options.temp.alfa1;
             otherwise
-                Re = options.fluid.Re;
-                
+                scale = 1/options.fluid.Re;
         end
         
+        Phi = scale*Phi;
+        
         %
-        Phi = (1/Re)*Phi;
         
         
         %% test correctness of dissipation
-        % we compare integral of Phi to integral of V*(D*V)
+        % we compare integral of Phi to integral of V*(D*V), where D
+        % already includes the factor (1/Re)
         
         test = uh'*(options.discretization.Diffu*uh) + vh'*(options.discretization.Diffv*vh);
         
-        if (abs(test + sum(sum(Phi)))>1e-14) % plus sign because Phi and V*D*V should have reverse signs
-            warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid, please check dissipation.m');
+        if (abs(test + sum(Phi))/abs(test)>1e-14) % plus sign because Phi and V*D*V should have reverse signs
+            warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid or non-homogeneous BC; please check dissipation.m');
         end
         
         
@@ -206,13 +207,13 @@ switch visc
             N2 = length(dudy); %options.grid.N2;
             N3 = length(dvdx); %options.grid.N3;
             N4 = length(dvdy); %options.grid.N4;
-            
-            % note: adapt Jacobian for boundary correction terms (TODO)
+                     
             Phi_u      = 2*Au_k*(Aux_u*spdiags(dudx,0,N1,N1)*Su_ux + Auy_u*spdiags(dudy,0,N2,N2)*Su_uy);
             Phi_v      = 2*Av_k*(Avx_v*spdiags(dvdx,0,N3,N3)*Sv_vx + Avy_v*spdiags(dvdy,0,N4,N4)*Sv_vy);
             
-            Jac        = [Phi_u Phi_v];
-            
+            Jac        = scale*[Phi_u Phi_v];            
+                    
+           
         end
         
         

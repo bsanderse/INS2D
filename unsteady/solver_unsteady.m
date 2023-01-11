@@ -66,7 +66,6 @@ dtn    = dt;
 
 method_temp = method;
 
-
 %% start time stepping
 time_start = toc
 

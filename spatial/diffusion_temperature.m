@@ -20,6 +20,7 @@ Jac_diff_V = spalloc(NT,NV,0);
 DiffT  = options.discretization.DiffT;
 yDiffT = options.discretization.yDiffT;
 
+% note that DiffT and yDiffT include already the scaling with alfa4
 diff   = (DiffT*T + yDiffT);
 
         
