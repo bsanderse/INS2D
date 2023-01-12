@@ -56,11 +56,13 @@ accumulate_object;
 %% temperature equation settings
 object = 'temp';
 
+% also check constants_boussinesq.m 
 voi={
     'Pr', 1; ... % Prandtl number
     'Ra', 1; ... % Rayleigh number
-    'Ge', 1; ... % Gebhart number
-    'incl_dissipation', 0; % add dissipation term in temperature equation
+    'Ge', 0; ... % Gebhart number
+    'incl_dissipation', 0; ... % add dissipation term in temperature equation (scaled by Gebhart number);
+    'nondim_type', 1; % 1: uref= sqrt(beta*g*Delta T*H), 2: uref = kappa/H, 3: uref = sqrt(c*Delta T)
 };
 
 accumulate_object;

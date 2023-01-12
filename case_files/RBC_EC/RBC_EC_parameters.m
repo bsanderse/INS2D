@@ -14,9 +14,8 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
-    Ge = 1;                   % Gebhart number
+    Ge = 0.1;                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
-    nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -57,7 +56,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 250;         % end time
+        t_end         = 100;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -74,7 +73,7 @@
         % method 21 : generic implicit RK, can also be used for ROM   
         % method 22 : implicit midpoint (energy conserving) for Boussinesq
         %             system
-        method            = 2;
+        method            = 22;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -150,8 +149,8 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
-    rtp.movie        = 0;
+    rtp.n            = 10;
+    rtp.movie        = 1;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

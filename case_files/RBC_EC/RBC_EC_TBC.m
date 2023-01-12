@@ -1,4 +1,4 @@
-function T = RBC_TBC(x,y,t,options)
+function T = RBC_EC_TBC(x,y,t,options)
 % boundary conditions for T for RBC 
 
     y1 = options.grid.y1;
@@ -6,10 +6,10 @@ function T = RBC_TBC(x,y,t,options)
 
     T  = zeros(length(x)*length(y),1);
 
-    % set temperature of bottom to 1
-    if (length(y)==1 && abs(y-y1)<1e-10)
-        T = ones(length(x)*length(y),1);
-    end
+%     % set temperature of bottom to 1
+%     if (length(y)==1 && abs(y-y1)<1e-10)
+%         T = ones(length(x)*length(y),1);
+%     end
     
 % %     set temperature of bottom to 0.5
 %     if (length(y)==1 && abs(y-y1)<1e-10)

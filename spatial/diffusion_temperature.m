@@ -5,8 +5,8 @@ function [diff, Jac_diff_T, Jac_diff_V] = diffusion_temperature(T,t,options,getJ
 
 % visc = options.case.visc;
 
-indu = options.grid.indu;
-indv = options.grid.indv;
+% indu = options.grid.indu;
+% indv = options.grid.indv;
 
 % Nu = options.grid.Nu;
 % Nv = options.grid.Nv;
@@ -20,6 +20,7 @@ Jac_diff_V = spalloc(NT,NV,0);
 DiffT  = options.discretization.DiffT;
 yDiffT = options.discretization.yDiffT;
 
+% note that DiffT and yDiffT include already the scaling with alfa4
 diff   = (DiffT*T + yDiffT);
 
         

@@ -71,9 +71,9 @@ visc = options.case.visc;
 % Reynolds number
 switch options.case.boussinesq
     case 'temp'
-        % effectively the Reynolds number is
+        % effectively the Reynolds number is 1/alfa1
         % note this appears as 1/Re in the equations
-        Re = sqrt(options.temp.Ra/options.temp.Pr);
+        Re = 1/options.temp.alfa1; %sqrt(options.temp.Ra/options.temp.Pr);
     otherwise
         Re = options.fluid.Re;
 end

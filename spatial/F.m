@@ -81,6 +81,7 @@ switch options.case.boussinesq
     
     case 'temp'
         % get T at v-locations
+        % note that AT_v includes the volumes Omega_v
         Fv     = Fv + options.discretization.AT_v*T; 
 end
 
@@ -95,11 +96,15 @@ switch options.case.boussinesq
 
         switch options.temp.incl_dissipation
             case 1
-                %  add dissipation to internal energy equation
-                % note: Jacobian still missing
-                Phi = dissipation(V,t,options,getJacobian);
-                Ge  = options.temp.Ge;
-                FTemp = FTemp + Ge*Phi;
+                % add dissipation to internal energy equation
+                [Phi,dPhi] = dissipation(V,t,options,getJacobian);
+                % the computed dissipation is basically V'*D*V, which has
+                % alfa1 as scaling
+                % in the internal energy equation we need alfa3, so we
+                % divide by gamma
+                gamma    = options.temp.gamma;
+                FTemp    = FTemp + (1/gamma)*Phi;
+                dFTemp_V = dFTemp_V + (1/gamma)*dPhi;
         end
         
         F = [FV; FTemp];

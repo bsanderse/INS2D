@@ -128,6 +128,12 @@ for j=1:Nsim
             constants_ke;
     end
     
+    % Boussinesq flow constants
+    switch options.case.boussinesq   
+        case 'temp'
+            options = constants_boussinesq(options);
+    end
+    
     %% construct mesh
     % disp('construct mesh...')
     fprintf(fcw,'construct mesh...\n');
