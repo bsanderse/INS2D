@@ -57,7 +57,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 250;         % end time
+        t_end         = 2;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -178,4 +178,41 @@
     filelen          = 8;          % number of characters for output files
     
     library_path     = '~/Dropbox/work/Programming/libs/'; % own written matlab libraries
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reduced order model
+
+    rom    = 0;      % set to 1 to use ROM solver
+
+    run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
+    M_list = [2 4 8 16 2 4 8 16];
+    M      = M_list(j);     % number of modes used
+    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
+
+    t_sample  = 4;  % part of snapshot matrix used for building SVD
+    dt_sample = 0.01; % frequency of snapshots to be used for SVD
+
+    precompute_convection = 1;
+    precompute_diffusion  = 1;
+    precompute_force      = 1;
+    pressure_recovery     = 0;
+    pressure_precompute   = 0;
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
+    weighted_norm         = 1;    
+    basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
+    mom_cons              = 0; %j>4;
+    
+    rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
+                % 1: non-homogeneous, time-independent;
+                % 2: non-homogeneous, time-dependent   
+
+    % 40x40:
+%     snapshot_data = 'results/shear_layer01/matlab_data.mat';
+    % 200x200:
+    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
+    % 200x200, with RK4 until t=7
+%     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
+    
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
