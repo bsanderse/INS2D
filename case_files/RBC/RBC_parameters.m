@@ -15,7 +15,7 @@
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
     Ge = 1;                   % Gebhart number
-    incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
+    incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
