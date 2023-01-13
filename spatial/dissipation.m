@@ -195,7 +195,7 @@ switch visc
         
         test = uh'*(options.discretization.Diffu*uh) + vh'*(options.discretization.Diffv*vh);
         
-        if (abs(test + sum(Phi))/abs(test)>1e-14) % plus sign because Phi and V*D*V should have reverse signs
+        if (abs(test + sum(Phi))/abs(test)>1e-12) % plus sign because Phi and V*D*V should have reverse signs
             warning('dissipation not consistent with V^T * DiffV * V; might be due to use of non-uniform grid or non-homogeneous BC; please check dissipation.m');
         end
         

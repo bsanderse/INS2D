@@ -1,5 +1,7 @@
 % project = 'RBC';   % project name used in filenames
-
+run_multiple = 1;
+mesh_list = [32 64 128 256];
+Nsim = length(mesh_list);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -28,8 +30,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 32;                  % number of volumes in the x-direction
-    Ny      = 32;                   % number of volumes in the y-direction
+    Nx      = mesh_list(j);                  % number of volumes in the x-direction
+    Ny      = Nx;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -57,7 +59,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 250;         % end time
+        t_end         = 200;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 

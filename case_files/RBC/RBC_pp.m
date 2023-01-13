@@ -100,12 +100,12 @@ switch options.temp.incl_dissipation
         gamma   = options.temp.gamma;
         alfa3_Phi     = (1/gamma) * Phi;
         alfa3_Phi_tot = sum(alfa3_Phi);
-        alfa4*(NusseltU - NusseltL) - alfa3_Phi_tot
+        alfa4*(NusseltU - NusseltL) - alfa3_Phi_tot/Lx
         
         % alternatively, we can compare Phi_tot directly to
         % sum(FTemp):
         FTemp = conv_diff_temperature(T,V,t,options,0);
-        sum(FTemp) + alfa3_Phi_tot % 1^T * (-conv +diff)
+        sum(FTemp)/Lx + alfa3_Phi_tot/Lx % 1^T * (-conv +diff)
         
         %% check thermal dissipation balance
         % note: diffusion_temperature already includes alfa4
@@ -120,15 +120,17 @@ switch options.temp.incl_dissipation
 
 end
 
+NusseltL_array(j,1) = NusseltL
+NusseltU_array(j,1) = NusseltU
 
 % plot Nusselt over time
 time = 0:dt:t_end;
-figure
-plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'s')
+figure(101)
+plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'-')
 grid on
 hold on
-plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'x')
-ylim([0 5])
+% plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'x')
+ylim([0 4])
 xlabel('t')
 ylabel('Nu');
 set(gcf,'color','w');
