@@ -52,12 +52,13 @@ switch visc
         
 end
 
-%% temperatre
+%% temperature
 switch options.case.boussinesq
     
     case 'temp'
 
        options = operator_temperature(options);
+       options = operator_dissipation(options);
        
     otherwise
         
