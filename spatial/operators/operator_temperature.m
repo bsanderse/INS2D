@@ -6,6 +6,7 @@ BC = options.BC;
 
 Npx = options.grid.Nx;
 Npy = options.grid.Ny;
+Np  = options.grid.Np;
 
 % number of interior points and boundary points
 % Nu     = options.grid.Nu;
@@ -156,6 +157,25 @@ DiffT    = alfa4*(DiffTx + DiffTy);
 % only v location
 AT_v = options.temp.alfa2*spdiags(options.grid.Omv,0,options.grid.Nv,options.grid.Nv)*kron(Buvy,speye(Npx))*AT_Ty;
 
+
+%% in case of implicit time integration, precalculate decomposition
+if (options.time.method==2)   
+    fcw        = options.output.fcw;
+
+    Omp_inv    = options.grid.Omp_inv;
+    dt         = options.time.dt;
+    theta      = options.time.theta;
+    DiffT_impl = (speye(Np) - theta*dt*spdiags(Omp_inv,0,Np,Np)*DiffT);
+    fprintf(fcw,'Decomposition of temperature diffusion matrix...\n');
+    if (verLessThan('matlab','9.3'))
+        warning('You use a relatively old Matlab version (older than 2017b), LU decomposition will be used');
+        [L_diffT, U_diffT] = lu(DiffT_impl);
+        options.discretization.L_diffT = L_diffT;
+        options.discretization.U_diffT = U_diffT;
+    else            
+        options.discretization.DiffT_impl = decomposition(DiffT_impl);
+    end
+end
 
 %% store in options structure
 options.discretization.CTx   = CTx;

@@ -156,8 +156,15 @@ switch options.case.boussinesq
         end        
         
         % matrix arising from implicit diffusion: I-dt*Om_inv*D
+        % Tnew = (speye(NT) - theta*dt*spdiags(Omp_inv,0,NT,NT)*DiffT) \ FT;
         % solve system for new temperature
-        Tnew = (speye(NT) - theta*dt*spdiags(Omp_inv,0,NT,NT)*DiffT) \ FT;
+        %  using pre-determined decomposition
+        if (verLessThan('matlab','9.3'))    
+            b    = options.discretization.L_diffT\FT;
+            Tnew = options.discretization.U_diffT\b;
+        else
+            Tnew = options.discretization.DiffT_impl\FT;
+        end        
         
         % add effect of temperature into momentum equation
         AT_v = options.discretization.AT_v;
