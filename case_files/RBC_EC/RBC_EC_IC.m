@@ -17,7 +17,7 @@ load_IC = 1;
 
 if (load_IC)
     % load velocity field and temperature
-    results = load('results/RBC_Ra1e4_Ge_1e-1_32x32/steady_state.mat');
+    results = load('results/RBC_Ra1e4_Ge_1_32x32/steady_state.mat');
     u  = results.V(options.grid.indu);
     v  = results.V(options.grid.indv);
     T  = results.T;

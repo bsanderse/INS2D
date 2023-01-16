@@ -58,9 +58,11 @@ Nu_2 = sum(-dTdy_2.*hx)/Lx % integrate over lower plate
 % plot Nusselt over time
 time = 0:dt:t_end;
 figure
-plot(time(1:rtp.n:end),Nusselt(1:rtp.n:end),'s')
+plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'rs')
 grid on
 hold on
+plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'bs')
+
 ylim([0 5])
 xlabel('t')
 ylabel('Nu');

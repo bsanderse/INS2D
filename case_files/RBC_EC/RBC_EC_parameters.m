@@ -14,7 +14,7 @@
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e4;                   % Rayleigh number
-    Ge = 0.1;                   % Gebhart number
+    Ge = 1;                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@
         dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 100;         % end time
+        t_end         = 30;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -151,7 +151,7 @@
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 10;
     rtp.movie        = 1;
-    rtp.moviename    = 'RBC';
+    rtp.moviename    = 'RBC_EC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -165,7 +165,7 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files
     path_results     = 'results';  % folder where results are stored
     save_file        = 0;          % save all matlab data after program is completed
     save_unsteady    = 0;
