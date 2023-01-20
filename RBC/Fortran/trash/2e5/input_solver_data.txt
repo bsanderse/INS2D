@@ -1,0 +1,219 @@
+#category of simulation, diffuse interface IBM:DIIBM, otherwise:NDIIBM
+#number of objects, for only body motion and no fluid flow:1 else 0
+#procedures required for diffuse interface IBM, quadtrilateral elements, specify 'quad_prism' or 'tri_prism'
+#if none specified number of levels=3
+#discrete or analytical function for the object:'analytical' or 'none'
+
+NDIIBM
+0,0,0,none
+quad_prism
+3
+none
+
+#type of flow, type 'forced_convection' or 'free_convection' or 'mixed_convection' followed by buoyancy direction (x or y or z or none), no heat transfer 'none'
+
+free_convection
+y
+
+#type of mesh:'cartesian', 'cylindrical' or 'curvilinear'
+#'serial' or 'parallel'
+#number of processors in x,y and z dirs (only if 'parallel' is active)
+#if only set up the porblem (reading grid,object data and set all initial data,coefficients,bc):'setup' or 'none'
+#if calcultaions need to be resumed by reading data:'restart' or 'none'
+#time to resume calculations (its meaningful only in case of 'restart')
+
+cartesian
+serial
+none
+none
+
+#time integration method:'implicit' or 'explicit'
+#order of time integration:available '2', '3', '4'
+#convection scheme:'intpo2','intpo4','fou',sou','quick'
+#time increment (delta t), sampling rate
+
+explicit
+2
+intpo2
+0.01,0.01
+
+#print details during calculations:'print' or 'none'
+#data writng frequency for time rms, data saving frequency
+#time to finish time marching
+
+none
+0.1,5
+200
+
+#Reynolds number, Rayleigh number, Prandtl number, Richardson number
+
+100,2e5,0.7,1
+
+#velocity boundary conditions: 'periodic' or 'noslip' or 'freeslip' or 'convective' or 'orlanski', 
+#the order is in 3D cartesian(cylindrical) xmin(rmin),zmax,xmax(rmax),zmin,ymax(thetamax),ymin(thetamin).........in 2D xmin(rmin),ymin(thetamin),xmax(rmax),ymax(thetamax)
+
+noslip
+noslip
+noslip
+noslip
+
+#pressure boundary conditions: 'periodic' or 'zerograd' or 'specified', order is same as in velocity 
+
+zerograd
+zerograd
+zerograd
+zerograd
+
+#temperature boundary conditions: 'periodic' or 'walltemp' or 'wallflux' or orlanski, order is same as in velocity (only when forced/free/mixed_convection is active)
+
+wallflux
+walltemp
+wallflux
+walltemp
+
+#for force coefficients enable by 'force_coefficients' or disable by 'none'
+#start of signal, signal to be resumed:1 or start from begining:0, moment calculation 'momentccw'/'momentcw' or 'none'
+
+none
+
+#average Nusselt number on an object:'nusselt' or 'none'
+#start of Nu signal, signal to be resumed:1 or start from begining:0
+
+none
+
+#for inserting probes 'signal' or 'none'
+#time to start sampling, number of points, regular:1 or specified:0, signal to be resumed:1 or start from begining:0
+#first x of all signal points, then y and z (only for 3D) in new lines. regular:start,end points; specified: all points
+
+none
+
+#choice of linear solver:'SOR','ILU','BiCGSTAB','LIS','CSR'
+#preconditioner:1 MSI block diagonal(for serial), 2 MSI wavefront, 3 SIP block diagonal, 4 SIP wavefront, 5 OMP thread spawn, 6 OMP thread serial, 7 SSOR, 8 Jacobi, tolerance,overrelaxation factor,SIP/MSI parameter
+#maximum iterations,#convergence condition 1/2/3/4 for ||b-Ax||, ||b-Ax||/||b-Ax0||, ||b-Ax||/||b||, ||b-Ax||/Nmax,frequnecy of print residual
+
+BiCGSTAB
+1,1.e-8,1.5,0.9
+1000,4,10
+
+#if time varying then 'unsteady' else none
+#non-zero initial condition 'variableic' else 'none'
+#if 'freeslip' and 'convective' conditions are non-homogeneous then 'nonhomg' else 'none'
+#boundary condition for velocity:'constant' or 'variable'
+#if 'constant', x,y,z components of velocity (the order is in 3D x=xmin,z=zmax,x=xmax,z=zmin,y=ymax,y=ymin.........in 2D x=xmin,y=ymin,x=xmax,y=ymax)
+
+none
+none
+none
+constant
+0,0,0
+constant
+0,0,0
+constant
+0,0,0
+constant
+0,0,0
+
+#boundary condition for pressure:'constant' or 'variable'
+#if 'constant', the numerical value (the order is in 3D x=xmin,z=zmax,x=xmax,z=zmin,y=ymax,y=ymin.........in 2D x=xmin,y=ymin,x=xmax,y=ymax)
+
+constant
+0
+constant
+0
+constant
+0
+constant
+0
+
+#boundary condition for temperature:'constant_temperature' or 'variable_temperature' or 'constant_flux' or 'variable_flux', in case of 'isothermal' 'none'
+#if 'constant_temperature' or 'constant_flux', the numerical value (the order is in 3D x=xmin,z=zmax,x=xmax,z=zmin,y=ymax,y=ymin.........in 2D x=xmin,y=ymin,x=xmax,y=ymax)
+
+constant_flux
+0
+constant_temperature
+1
+constant_flux
+0
+constant_temperature
+0
+
+#if solid blocks are present specify drag and lift coefficients to be calculated by 'force" or 'none'
+#if 'force': time to start recording coefficients, calculations to be resumed:1 or start from begining:0
+
+none
+
+#specify nusselt number to be calculted on solid blocks:'nusselt' or 'none'
+#if 'nusselt': time to start recording, calculations to be resumed:1 or start from begining:0
+
+none
+
+#if heat transfer occuring nature of boundary condition on solid blocks:"isothermal" or "isoflux" or 'none'
+#if 'isothermal' or 'isoflux': values of temperature or flux, every block entry separated by a blank space from the previous one
+
+none
+
+#passive source (not a function of u,v,w,p): 'passive' or 'none'
+
+none
+
+#active source (function of u,v,w,p): 'active' or 'none'
+
+none
+
+#for only streaklines "streak", for both streaklines and pathlines "streak-path", otherwise "none" and no further inputs
+#animation file generate:"animation" or "none"
+#Distribution of injection points: for regular distribution "regular", in case there is no order of the points "specified" and if injection poits lie on the body "object_boundary"
+#for "object_boundary" number of injection station for each object separated by commas while only the number for "regular" and "specified"; Only for "streak-path" next line number of pathlines; Only for "streak-path" next line particle numbers (for pathlines) separated by commas in the same line.
+#start,end,interval time for injection, particle_tracking end time, frequency of instantaneous data write, frequency of data write and end time for animation (only required if 'animation')
+#for "specified" distribution: x,y (in case of 3D z) coordinates of injection points one after another in a new line, for "regular":no of points, x/y/z start,end in new lines, no inputs for "object_boundary".
+
+none
+
+#if extra data is to be read from "input_extra_data.txt" write 'extradata', otherwise 'none'
+
+none
+
+#if spacetime data needed 'spacetime'
+#number of stations in x,y and z(only for 3D)
+#all x station coordinates, then all y station coordinates and then z in new lines
+#time to start,end and interval
+
+none
+
+#if linetime data needed 'linetime', only valid for 3D
+#number of lines in x,y and z
+#for x lines: y1,z1,y2,z2,.......next line for y lines:x1,z1,x2,z2,........next line for z lines: x1,y1,x2,y2,..............no input for no lines
+#time to start,end and interval
+
+none
+
+#time average of the entire field:'timeaverage'
+#time span of averaging: start, end, time average to be resumed `1' or start fresh `0', number of extra variables to be averaged (`0' or >0)
+
+timeaverage
+500,1500,0,2
+
+#animation data required:'animation' or 'none'
+#number of planes: in 2D it is always 1 while for 3D specify the number of planes (it can be a partial volume also), time start,end,delta t
+#x start,end,y start,end,z start,end (for 3D only): new line for every plane
+#number of animation variable(s), index skip of data to restrict size of resulting data files (one index which is same in each direction)
+
+none
+
+#if additional user defined function;'udfstatic', 'udfdynamic', 'none' in two consecutive lines, if 'udfdynamic' is true how often: give a time value next line
+
+udfstatic
+udfdynamic
+0.01
+
+#if additional computations to be performed: 'additional' or 'none'
+
+additional
+
+#if statistical data to be fed for onboard calculations: 'statistics' or 'none'
+
+statistics
+
+#specify, 'dns,'les' or 'turbmodel', in case of 'les' 'smagorinsky' or 'dynamic' in the next line, in case of 'smagorinsky' smagorinsky coeff and turbulent Prandtl number in the next line (note default is 'dns')
+
+dns

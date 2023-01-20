@@ -1,0 +1,26 @@
+ Cartesian data
+ Free convection with Rayleigh and Prandtl number     1000000.00000000     
+  0.700000000000000     
+ number of prrocessors           1           1
+ number of variables to be read           4
+ Buoyancy in the direction of independent variable           2
+ 
+ volume data type  Instantaneous                                     
+ 
+ volume data type  Time average                                      
+ 
+ volume data type  Variance                                          
+ 
+ volume data type  Skewness                                          
+ 
+ volume data type  Flatness                                          
+ 
+ volume data type  Reynolds stress                                   
+ 
+ volume data type  turbulent KE budget                               
+ 
+ volume data type  extra volume data                                 
+ 
+ 
+ ensemble average  timeaverage
+ 

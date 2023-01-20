@@ -1,0 +1,65 @@
+#dimesnion:'twod' 'threed'
+#type of mesh:'cartesian' 'cylindrical'
+#number of blocks:x,y,z dir (for 2D z block not meaningful)
+#'serial' or 'parallel'
+#if parallel, number of processors:x,y,z(only if threed) dir
+
+twod
+cartesian
+1,1
+serial
+
+#mention number of periodic directions
+#periodic directions: 'x'('r'), 'y'('theta'), 'z', one after another in rows (if any at all)
+
+0
+
+#start point of the mesh, required to locate the origin, give angle (degree) in case of 'cylindrical'
+
+0,0
+
+#lengths of the blocks (first x, then y and finally z, row-wise)
+
+1
+1
+
+#number of grid in the blocks (first x, then y and finally z, row-wise; sum of (grid-1) all blocks divisible by np1/np2/np3)
+
+32
+32
+
+#stretching type ('negative':towards left boundary, 'positive':towards right boundary, 'symmetrc':symmetric )
+
+symmetrc
+symmetrc
+
+#stretching parameter (finer mesh close to 1, first x, then y and finally z, row-wise)
+
+100
+100
+
+#solid block:if yes: 'solidblock' if no 'none'
+#if 'solidblock' then number of such blocks
+#block number in x,y,z directions
+
+none
+
+#if the data to be transferred to a new set of processors:'transfer' or 'none'
+#if 'transfer' number of processors:x,y,z dir that was used previously, number of variables
+#time integration:'implicit' or 'explicit'
+#order of time integration
+#number of object
+#if involves moving object:'movingobject' or 'none'
+
+none
+    
+#planar grid:'planar', first line number of x=c planes,y=c planes, z=c planes, if no 'none'
+#next line: all x=c values separated by commas
+#next line: all y=c values separated by commas
+#next line: all z=c values separated by commas
+
+none
+
+#If additional calculations to be included: 'additional' or 'none
+
+additional

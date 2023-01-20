@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1000;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
     visc    = 'laminar';            % laminar or turbulent; 
                                     % influences stress tensor
     nu      = 1/Re;
@@ -18,8 +18,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 80;                  % number of volumes in the x-direction
-    Ny      = 80;                   % number of volumes in the y-direction
+    Nx      = 50;                  % number of volumes in the x-direction
+    Ny      = 50;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -68,7 +68,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% output parameters and visualization
-    plotgrid         = 0;          % plot gridlines and pressure points
+    plotgrid         = 1;          % plot gridlines and pressure points
     
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;         % write tecplot files every n
@@ -82,15 +82,15 @@
 %     statistics.n     = 1;
     
     restart.load     = 0;          % start from previous simulation
-    restart.folder   = 'results/TCF_100_2x1x1_24x12x12_0';   % folder to be loaded
+    restart.folder   = 'results/LDC_1.000e+02_50x50_0';   % folder to be loaded
     restart.file     = 25;         % file number to load
     
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
+    save_file        = 1;          % save all matlab data after program is completed
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

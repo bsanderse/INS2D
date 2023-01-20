@@ -9,7 +9,7 @@ Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
 Npx    = options.grid.Npx;
 Npy    = options.grid.Npy;    
-
+%comment added
 uh   = V(options.grid.indu);
 vh   = V(options.grid.indv);
 pres = reshape(p,Npx,Npy);
@@ -124,11 +124,13 @@ end
 % plot Nusselt over time
 time = 0:dt:t_end;
 figure
-plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'s')
+%plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'s')
+plot(time(1:2:end),NusseltL_time(1:2:end),'s')
 grid on
 hold on
-plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'x')
-ylim([0 5])
+%plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'x')
+plot(time(1:2:end),NusseltU_time(1:2:end),'x')
+ylim([0 10])
 xlabel('t')
 ylabel('Nu');
 set(gcf,'color','w');
