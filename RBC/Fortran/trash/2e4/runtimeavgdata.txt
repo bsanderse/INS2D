@@ -1,3 +1,0 @@
-timeaverage start and end
-       50000
-      150000

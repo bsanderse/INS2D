@@ -1,3 +1,0 @@
-#specify Rayleigh, Prandtl, Nusselt numbers, buoyancy dir
-
-3e5,0.7,3,2

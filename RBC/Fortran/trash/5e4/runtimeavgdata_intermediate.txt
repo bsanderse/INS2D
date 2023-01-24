@@ -1,2 +1,0 @@
-intermediate timeaverage data span
-  1.000000000000000E-002

@@ -1,8 +1,0 @@
-#sampling rate for disspiation PDF, end time for T averaging required for plume and background fraction calculation (start time is starting of taveraging), next line domain extent, next line buyoancy angle in degrees and Rossby number
-
-200,200
-0,1,0,1
-0,0
-
-
-
