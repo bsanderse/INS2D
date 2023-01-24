@@ -1,3 +1,6 @@
+show_figures = 0;
+% show_figures = 1;
+
 %% real-time plotting RBC and computing the Nusselt number
 
 line  = {'r-','b-','k-','m-','g-'};
@@ -88,16 +91,18 @@ NusseltU = sum(-dTdyU.*hx)/Lx; % integrate over upper plate
 NusseltL_time(n,1) = NusseltL;
 NusseltU_time(n,1) = NusseltU;
 
-figure(2)
-plot(t,NusseltL,'ks');
-grid on
-hold on
-plot(t,NusseltU,'kx');
-ylim([0 5])
-xlabel('t')
-ylabel('Nu')
-set(gcf,'color','w');
-set(gca,'LineWidth',1,'FontSize',14);
+if show_figures
+    figure(2)
+    plot(t,NusseltL,'ks');
+    grid on
+    hold on
+    plot(t,NusseltU,'kx');
+    ylim([0 5])
+    xlabel('t')
+    ylabel('Nu')
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1,'FontSize',14);
+end
 
 %% check energy conservation properties
 % change in total energy should be due to int T*v dOmega, in case viscous
@@ -107,21 +112,23 @@ de_pot = vh'*(options.discretization.AT_v*T);
 diffT   = diffusion_temperature(T,t,options,0);
 de_cond = sum(diffT);
 
-figure(3)
-cmap = get(gca,'ColorOrder');
-if (n>1)
-    % note that k includes e_int and (1/2)*u^2
-    plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
-    hold on
-    plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
-    grid on
-    title('d/dt (e_k + e_{int}) vs. potential energy and conduction');
-    
-    xlabel('t')
-    ylabel('energy change');
-    set(gcf,'color','w');
-    set(gca,'LineWidth',1,'FontSize',14);
-    legend('d/dt (e_k + e_{int})','potential energy source + conduction');
+if show_figures
+    figure(3)
+    cmap = get(gca,'ColorOrder');
+    if (n>1)
+        % note that k includes e_int and (1/2)*u^2
+        plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
+        hold on
+        plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+        grid on
+        title('d/dt (e_k + e_{int}) vs. potential energy and conduction');
+
+        xlabel('t')
+        ylabel('energy change');
+        set(gcf,'color','w');
+        set(gca,'LineWidth',1,'FontSize',14);
+        legend('d/dt (e_k + e_{int})','potential energy source + conduction');
+    end
 end
 
 %% create 2D plots
@@ -178,24 +185,25 @@ end
 % set(gca,'LineWidth',1)
 
 %% temperature
-figure(1)
-set(gcf,'color','w');
-% l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-l=linspace(0,1,20);
-% l = 20;
-contour(xp,yp,Temp',l,'LineWidth',2);
-hold on
-quiver(xp,yp,up',vp');
-axis equal
-axis([x1 x2 y1 y2]);
-xlabel('x');
-ylabel('y');
-grid
-title('temperature');
-colorbar
-set(gca,'LineWidth',1,'FontSize',14);
-hold off
-
+if show_figures
+    figure(1)
+    set(gcf,'color','w');
+    % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
+    l=linspace(0,1,20);
+    % l = 20;
+    contour(xp,yp,Temp',l,'LineWidth',2);
+    hold on
+    quiver(xp,yp,up',vp');
+    axis equal
+    axis([x1 x2 y1 y2]);
+    xlabel('x');
+    ylabel('y');
+    grid
+    title('temperature');
+    colorbar
+    set(gca,'LineWidth',1,'FontSize',14);
+    hold off
+end
 
 %% streamfunction
 

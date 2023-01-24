@@ -8,7 +8,7 @@
                                     % influences stress tensor
     nu      = 1/Re;
     regularize = 0;                 % 0: no regularization; 1: Leray; 2: C2
-    %asd
+    
     boussinesq = 'temp';                 % 'none': mass+ momentum; 'temp' mass+momentum+temperature
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
@@ -19,7 +19,7 @@
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%just to test
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
@@ -54,10 +54,10 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-2;       % time step (for explicit methods it can be
+        dt            = 5e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 10;         % end time
+        t_end         = 20;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -150,7 +150,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 1000;
+    rtp.n            = 50;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -160,16 +160,16 @@
 %     statistics.n     = 1;
     
     restart.load     = 0;          % start from previous simulation
-    restart.folder   = 'results/RBC_0.000e+00_64x64_0';   % folder to be loaded
+    restart.folder   = 'results/TCF_100_2x1x1_24x12x12_0';   % folder to be loaded
     restart.file     = 25;         % file number to load
     
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
-    save_unsteady    = 1;
+    save_file        = 0;          % save all matlab data after program is completed
+    save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
@@ -183,7 +183,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
@@ -210,7 +210,7 @@
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
     % 200x200:
-    snapshot_data = 'RBC/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
