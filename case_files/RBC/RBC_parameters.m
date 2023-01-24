@@ -13,13 +13,13 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 3e4;                   % Rayleigh number
+    Ra = 1e4;                   % Rayleigh number
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%just to test
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
@@ -28,8 +28,8 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 64;                  % number of volumes in the x-direction
-    Ny      = 64;                   % number of volumes in the y-direction
+    Nx      = 32;                  % number of volumes in the x-direction
+    Ny      = 32;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -57,7 +57,7 @@
         dt            = 1e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 10;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -183,7 +183,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
@@ -210,7 +210,7 @@
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
     % 200x200:
-    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
+    snapshot_data = 'RBC/matlab_data.mat';
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
