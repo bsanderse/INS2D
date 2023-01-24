@@ -190,7 +190,8 @@
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 4;     % number of modes used
+%     M      = Nx*Ny;     % number of modes used
+    M      = 10;     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     MT     = M;     % number of temperature modes used (only needed if boussinesq='temp')
 
@@ -198,8 +199,7 @@
     dt_sample = dt; % frequency of snapshots to be used for SVD
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
 
-    weighted_norm         = 1;
-    weighted_norm_T       = 0; % weighted norm for temeprature basis (only needed if boussinesq='temp')
+    weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
     mom_cons              = 0; %j>4;
 

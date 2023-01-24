@@ -81,6 +81,10 @@ if (steady==0 && save_unsteady == 1)
         uh_total(n,:) = V(1:options.grid.Nu);
         vh_total(n,:) = V(options.grid.Nu+1:end);
         p_total(n,:)  = p;
+        switch options.case.boussinesq   
+            case 'temp'
+                T_total(n,:) = T;
+        end
     elseif (options.output.save_eco == 1)
         save([options.output.path_results '/snapshots/Vp_n=' num2str(n) '.mat'],'V','p');
     end

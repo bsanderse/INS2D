@@ -31,11 +31,11 @@ switch options.rom.rom_type
         if (options.rom.pressure_recovery == 1 || options.rom.div_free == 0)
             [options.rom.Bp,options.rom.Mp] = getPressureBasisPOD(snapshots,snapshot_sample_index,options);
         end
-        
-        switch options.case.boussinesq   
+switch options.case.boussinesq   
             case 'temp'
-                options.rom.BT = getTemperatureBasisPOD(snapshots,snapshot_sample_index,options); % temperature rom basis
+                T_total(n,:) = T;
         end
+        options.rom.BT = getTemperatureBasisPOD(snapshots,snapshot_sample_index,options); % temperature rom basis
         
     case 'Fourier'
 
