@@ -76,7 +76,7 @@ if (strcmp(BC.v.up,'dir'))
 end
 
 
-%% in case of Boussinesq, calculate total internal energy
+%% in case of Boussinesq, calculate total internal energy and add to kinetic energy
 switch options.case.boussinesq
     case 'temp'
         Omp = options.grid.Omp;
