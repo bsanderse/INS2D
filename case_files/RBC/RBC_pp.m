@@ -124,13 +124,13 @@ end
 % plot Nusselt over time
 time = 0:dt:t_end;
 figure
-%plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'s')
-plot(time(1:2:end),NusseltL_time(1:2:end),'s')
+plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'r')
+%plot(time(1:2:end),NusseltL_time(1:2:end),'s')
 grid on
 hold on
-%plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'x')
-plot(time(1:2:end),NusseltU_time(1:2:end),'x')
-ylim([0 10])
+plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'b')
+%plot(time(1:2:end),NusseltU_time(1:2:end),'x')
+ylim([0 50*NusseltL])
 xlabel('t')
 ylabel('Nu');
 set(gcf,'color','w');

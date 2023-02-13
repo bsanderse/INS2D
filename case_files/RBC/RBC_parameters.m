@@ -1,6 +1,10 @@
 % project = 'RBC';   % project name used in filenames
-
-
+run_multiple = 1;
+%mesh_list = [32 64 128 256];
+mesh_list = [3e6 1e7];
+%disp(length(mesh_list));
+%mesh_list = [5e-2 1e-2 5e-3 1e-3];
+%Nsim = length(mesh_list);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 0;                  % Reynolds number
@@ -13,11 +17,13 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 1e4;                   % Rayleigh number
+%    Ra = 1e5;                   % Rayleigh number
+    Ra = mesh_list(j);	
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
-    
+fprintf('Ra =');
+    disp(Ra);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -28,9 +34,14 @@
     y1      = 0;
     y2      = 1;
 
-    Nx      = 32;                  % number of volumes in the x-direction
-    Ny      = 32;                   % number of volumes in the y-direction
-
+%    Nx=mesh_list(j);
+%    Ny=Nx;
+    Nx      = 160;                  % number of volumes in the x-direction
+    Ny      = 160;                   % number of volumes in the y-direction
+	if(j==2)
+	Nx=256;
+	Ny=Nx;
+	end
     sx      = 1;                  % stretch factor
     sy      = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,10 +66,11 @@
     % only for unsteady problems:
 
 %         dt            = 5e-2;       % time step (for explicit methods it can be
-        dt            = 5e-1;       % time step (for explicit methods it can be
+        dt            = 1e-3;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
+%        dt=mesh_list(j); 
         t_start       = 0;        % start time
-        t_end         = 4;         % end time
+        t_end         = 200;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -151,10 +163,10 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
+    rtp.n            = 500;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
-    rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
+    rtp.movierate    = 10;           % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps
@@ -167,10 +179,10 @@
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 1;          % save all matlab data after program is completed
-    save_unsteady    = 1;
+    save_file        = 0;          % save all matlab data after program is completed
+    save_unsteady    = 0;
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
@@ -185,7 +197,7 @@
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];

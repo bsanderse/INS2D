@@ -1,5 +1,5 @@
-show_figures = 0;
-% show_figures = 1;
+%show_figures = 0;
+show_figures = 1;
 
 %% real-time plotting RBC and computing the Nusselt number
 
@@ -17,7 +17,6 @@ pres = reshape(p,Npx,Npy);
 Temp = reshape(T,Npx,Npy);
 
 [up,vp,qp] = get_velocity(V,t,options);
-
 
 % shift pressure to get zero pressure in the centre
 if (floor(Nx/2)==Nx/2 && floor(Ny/2)==Ny/2)
@@ -97,7 +96,7 @@ if show_figures
     grid on
     hold on
     plot(t,NusseltU,'kx');
-    ylim([0 5])
+    ylim([0 3*NusseltL])
     xlabel('t')
     ylabel('Nu')
     set(gcf,'color','w');

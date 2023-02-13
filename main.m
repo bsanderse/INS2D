@@ -73,14 +73,16 @@ if (~exist('run_multiple','var') || run_multiple == 0)
 else
     Nsim = length(mesh_list);
 end
-    
+Nsim = length(mesh_list);
+
 % loop over multiple simulations (e.g. different meshes or time steps)
 for j=1:Nsim
     
     
     if (j>1)
         % run parameter file again in case we are doing a mesh or parametric study
-        run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+        fprintf('***************** Another case starts *************\n');
+	run([folder_cases '/' case_name '/' case_name '_parameters.m']);
     end
     
     % save into a structure called 'options'
@@ -244,7 +246,8 @@ for j=1:Nsim
                         otherwise
                             error('wrong value for ROM type');
                     end
-                    solver_unsteady_ROM;
+                    %solver_unsteady_ROM;
+                    solver_unsteady_ROMtemp;
                 else
                     error('wrong value for rom parameter');
                 end
@@ -279,4 +282,4 @@ for j=1:Nsim
         save(file_mat);
     end
     
-end
+    end  
