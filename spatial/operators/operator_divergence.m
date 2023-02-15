@@ -194,8 +194,7 @@ end
 %% Pressure matrix for pressure correction method;
 % also used to make initial data divergence free or compute additional poisson solve
 
-if (steady == 0 && ~strcmp(visc,'keps'))
-    
+if (steady == 0 && ~strcmp(visc,'keps'))    
         
     fcw     = options.output.fcw;
     poisson = options.solversettings.poisson;
@@ -211,9 +210,9 @@ if (steady == 0 && ~strcmp(visc,'keps'))
     
     % ROM does not require Poisson solve for simple BC
     % for rom_bc>0, we need Poisson solve to determine the V_bc field
-    if (options.rom.rom == 1 && options.rom.rom_bc == 0 && strcmp(options.rom.rom_type,'POD')==1) 
-        return;
-    end
+%     if (options.rom.rom == 1 && options.rom.rom_bc == 0 && strcmp(options.rom.rom_type,'POD')==1) 
+%         return;
+%     end
     
     %   LU decomposition
     if (poisson==3)

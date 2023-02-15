@@ -21,11 +21,11 @@ v  = zeros(Nvx_in,Nvy_in);
 p  = zeros(Npx,Npy);
  
 % temperature: linear profile from 1 (bottom) to 0 (top)
-% T  = (Ly - ypp)/Ly;
+ T  = (Ly - ypp)/Ly;
 % inverted temperature: linear profile from 1 (bottom) to 0 (top)
 % T  = 0.5 - (Ly - ypp)/Ly ;
 % homogeneous 0.5
-T  = 0.5*ones(Npx,Npy);
+%T  = 0.5*ones(Npx,Npy);
 % homogeneous 0
 % T  = zeros(Npx,Npy); 
 % high order polynomial that has zero derivatives

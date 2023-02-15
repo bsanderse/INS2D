@@ -59,5 +59,7 @@ if (size(ST,2)>1)
 else
     SigmaT = ST;
 end
-semilogy(SigmaT/SigmaT(1),'o');
-
+semilogy(SigmaT/SigmaT(1),'+');
+xlabel('modes');
+ylabel('\sigma/\sigma_{m}');
+legend('Velocity','Pressure','Temperature');

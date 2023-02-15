@@ -1,7 +1,7 @@
 % project = 'RBC';   % project name used in filenames
 run_multiple = 1;
 %mesh_list = [32 64 128 256];
-mesh_list = [3e6 1e7];
+mesh_list = [1e6];
 %disp(length(mesh_list));
 %mesh_list = [5e-2 1e-2 5e-3 1e-3];
 %Nsim = length(mesh_list);
@@ -17,7 +17,7 @@ mesh_list = [3e6 1e7];
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-%    Ra = 1e5;                   % Rayleigh number
+  %  Ra = 1e4;                   % Rayleigh number
     Ra = mesh_list(j);	
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
@@ -30,18 +30,18 @@ fprintf('Ra =');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 1;
+    x2      = 3;
     y1      = 0;
     y2      = 1;
 
 %    Nx=mesh_list(j);
 %    Ny=Nx;
-    Nx      = 160;                  % number of volumes in the x-direction
-    Ny      = 160;                   % number of volumes in the y-direction
-	if(j==2)
-	Nx=256;
-	Ny=Nx;
-	end
+    Nx      = 192;                  % number of volumes in the x-direction
+    Ny      = 64;                   % number of volumes in the y-direction
+%	if(j==2)
+%	Nx=256;
+%	Ny=Nx;
+%	end
     sx      = 1;                  % stretch factor
     sy      = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,11 +66,11 @@ fprintf('Ra =');
     % only for unsteady problems:
 
 %         dt            = 5e-2;       % time step (for explicit methods it can be
-        dt            = 1e-3;       % time step (for explicit methods it can be
+        dt            = 1e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
 %        dt=mesh_list(j); 
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 70;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -163,7 +163,7 @@ fprintf('Ra =');
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 500;
+    rtp.n            = 200;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 10;           % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -179,10 +179,10 @@ fprintf('Ra =');
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
-    save_unsteady    = 0;
+    save_file        = 1;          % save all matlab data after program is completed
+    save_unsteady    = 1;
     
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
@@ -197,17 +197,17 @@ fprintf('Ra =');
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 4;     % number of modes used
+    M      = 8;     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     MT     = M;     % number of temperature modes used (only needed if boussinesq='temp')
 
-    t_sample  = t_end;  % part of snapshot matrix used for building SVD
-    dt_sample = dt; % frequency of snapshots to be used for SVD
+    t_sample  = 60;  % part of snapshot matrix used for building SVD
+    dt_sample = 25*dt; % frequency of snapshots to be used for SVD
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
 
     weighted_norm         = 1;
@@ -228,6 +228,6 @@ fprintf('Ra =');
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       
 
-    snapshot_data = 'results/RBC_FOM_data/matlab_data.mat';
+    snapshot_data = 'results/70_triple_periodic/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

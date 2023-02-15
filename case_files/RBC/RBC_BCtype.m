@@ -10,7 +10,7 @@ function BC = RBC_BCtype
     % left/right: x-direction
     % low/up: y-direction
 
-    temp=0; %temp =1 fpr periodic case and 0 for adiabatic and noslip case
+    temp=1; %temp =1 fpr periodic case and 0 for adiabatic and noslip case
 if temp==0 
     BC.u.left  = 'dir';   % valid options: dir, per, pres 
     BC.u.right = 'dir';  % valid options: dir, per, pres
