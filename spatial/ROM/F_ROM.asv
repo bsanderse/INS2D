@@ -137,19 +137,29 @@ Fres    = - conv + Diff + F;
 %     Fres = Fres - Gp;
 % end
 
-% for Rayleigh_Benard convection
-% @Krishan: implement convection and diffusion separately without
-% precomputation
-% switch options.case.boussinesq
-%     
-%     case 'temp'
-%         [FTemp,~,~]  = conv_diff_temperature(T,V,t,options,getJacobian);
-%         
-%         F = [FV; FTemp];
-% 
-%     otherwise
-%         F = FV;
-% end
+switch options.case.boussinesq
+    
+    case 'temp'
+        [FTemp,dFTemp,dFTemp_V]  = conv_diff_temperature(T,V,t,options,getJacobian);
+
+        switch options.temp.incl_dissipation
+            case 1
+                % add dissipation to internal energy equation
+                [Phi,dPhi] = dissipation(V,t,options,getJacobian);
+                % the computed dissipation is basically V'*D*V, which has
+                % alfa1 as scaling
+                % in the internal energy equation we need alfa3, so we
+                % divide by gamma
+                gamma    = options.temp.gamma;
+                FTemp    = FTemp + (1/gamma)*Phi;
+                dFTemp_V = dFTemp_V + (1/gamma)*dPhi;
+        end
+        
+        F = [FV; FTemp];
+
+    otherwise
+        F = FV;
+end
 
 
 % for the case of non-orthogonal basis, we have to multiply with the

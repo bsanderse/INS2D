@@ -224,7 +224,10 @@ fprintf('Ra =');
     precompute_diffusion  = 1;
     precompute_force      = 1;
 
-    pressure_recovery     = 1;
+    precompute_convectionT = 0;
+    precompute_diffusionT  = 0;
+
+    pressure_recovery     = 0;
     pressure_precompute   = 0;
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       

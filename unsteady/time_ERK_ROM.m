@@ -92,9 +92,18 @@ for i_RK=1:s_RK
         R  = Rn + dt*Rtemp;
     end
     
-
+    % @Krishan: change to update for RT
+%     switch options.case.boussinesq
+%         
+%         case 'temp'
+%             % update temperature
+%             kT(:,i_RK)  = Omp_inv.*F_rhs(indT);
+%             T  = Tn + dt*kT*A_RK(i_RK,:)';
+%     end
     
 end
+
+
 
 
 if (options.rom.div_free == 1)
