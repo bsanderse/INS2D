@@ -139,6 +139,7 @@ voi = {
     'dt_sample',[]; ... % sampling dt
     't_sample',[]; ... % time period used for sampling
     'helmholtz', 1; ... % Helmholtz decomposition to make basis div-free
+    'div_free', 1; ... % assuming our ROM basis is divergence-free
     };
 
 accumulate_object;

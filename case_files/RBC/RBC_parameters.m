@@ -87,7 +87,8 @@ fprintf('Ra =');
         % method 21 : generic implicit RK, can also be used for ROM   
         % method 22 : implicit midpoint (energy conserving) for Boussinesq
         %             system
-        method            = 2;
+%         method            = 2;
+        method            = 20;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -196,8 +197,8 @@ fprintf('Ra =');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-%     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
+%     rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
