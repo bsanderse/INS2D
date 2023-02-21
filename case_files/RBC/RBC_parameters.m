@@ -30,13 +30,13 @@ fprintf('Ra =');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% domain and mesh
     x1      = 0;
-    x2      = 3;
+    x2      = 1;
     y1      = 0;
     y2      = 1;
 
 %    Nx=mesh_list(j);
 %    Ny=Nx;
-    Nx      = 192;                  % number of volumes in the x-direction
+    Nx      = 64;                  % number of volumes in the x-direction
     Ny      = 64;                   % number of volumes in the y-direction
 %	if(j==2)
 %	Nx=256;
@@ -197,13 +197,13 @@ fprintf('Ra =');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 0;      % set to 1 to use ROM solver
-%     rom    = 1;      % set to 1 to use ROM solver
+%     rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 8;     % number of modes used
+    M      = 4;     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
     MT     = M;     % number of temperature modes used (only needed if boussinesq='temp')
 
@@ -227,11 +227,11 @@ fprintf('Ra =');
     precompute_convectionT = 0;
     precompute_diffusionT  = 0;
 
-    pressure_recovery     = 0;
+    pressure_recovery     = 1;
     pressure_precompute   = 0;
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       
 
-    snapshot_data = 'results/70_triple_periodic/matlab_data.mat';
+    snapshot_data = '../decay_test/1e6_70tuonly/70_unit_periodic/matlab_data.mat';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

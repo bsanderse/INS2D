@@ -9,9 +9,9 @@ function [Vnew,pnew,Tnew] = time_ERK(Vn,pn,Tn,tn,dt,options)
 Nu = options.grid.Nu;
 Nv = options.grid.Nv;
 Np = options.grid.Np;
-Om_inv = options.grid.Om_inv;
-Omp_inv = options.grid.Omp_inv;
-indV = options.grid.indV;
+Om_inv = options.grid.Om_inv;       % omega inverse (attribute of cell geometry) for velocity    
+Omp_inv = options.grid.Omp_inv;     % omega inverse (attribute of cell geometry) for pressure
+indV = options.grid.indV;           %velocity index
 
 %% get coefficients of RK method
 % make character string if necessary

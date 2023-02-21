@@ -246,8 +246,7 @@ for j=1:Nsim
                         otherwise
                             error('wrong value for ROM type');
                     end
-                    %solver_unsteady_ROM;
-                    solver_unsteady_ROMtemp;
+                    solver_unsteady_ROM;
                 else
                     error('wrong value for rom parameter');
                 end
