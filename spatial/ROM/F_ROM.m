@@ -130,6 +130,27 @@ end
 % residual of ROM
 Fres    = - conv + Diff + F;
 
+% addition of temperature term in momentum equation 
+switch options.case.boussinesq
+    
+    case 'temp'
+        if (options.rom.precompute_buoyancy_force == 1)
+            error("not implemented yet");
+        else  % no precomputing, use FOM expression and project to ROM (expensive)
+            Nu = options.grid.Nu;
+            Nv = options.grid.Nv;
+            % get T at v-locations
+            % note that AT_v includes the volumes Omega_v
+            F_buoyancy_v     = options.discretization.AT_v*T;
+            F_buoyancy = [zeros(Nu,1); F_buoyancy_v];
+            F_buoyancy_ROM = B' * F_buoyancy;
+        end
+        Fres = Fres + F_buoyancy_ROM;
+end
+
+
+
+
 % for the case of a non div-free basis, we have to add the pressure
 % gradient
 % note: this term is currently added in time_ERK_ROM directly

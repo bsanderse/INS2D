@@ -212,7 +212,7 @@ fprintf('Ra =');
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
 
     weighted_norm         = 1;
-    weighted_norm_T       = 0; % weighted norm for temeprature basis (only needed if boussinesq='temp')
+    weighted_norm_T       = 1; % weighted norm for temeprature basis (only needed if boussinesq='temp')
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
     mom_cons              = 0; %j>4;
 
@@ -223,6 +223,7 @@ fprintf('Ra =');
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 1;
+    precompute_buoyancy_force      = 0;
 
     precompute_convectionT = 0;
     precompute_diffusionT  = 0;
