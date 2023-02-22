@@ -70,6 +70,10 @@ end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NOT YET DONE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%
+
 disp('precomputing ROM operators...');
 precompute_start = toc;
 options = operator_rom(options);
@@ -77,10 +81,17 @@ precompute_end(j) = toc-precompute_start
 
 
 %% initialize reduced order solution
+
 [R,q] = initializeROM(V,p,t,options);
+switch options.case.boussinesq   
+    case 'temp'     
+        [RT] = initializeROM_Temp(T,t,options);      
+end   
+        
+%% map back to FOM space to get initial properties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NOT YET DONE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-% map back to FOM space to get initial properties
 if (options.rom.process_iteration_FOM == 1)
     % map back to velocity space to get statistics of initial velocity field
     % note that V will not be equal to the specified initial field, because
@@ -88,6 +99,10 @@ if (options.rom.process_iteration_FOM == 1)
     V  = getFOM_velocity(R,t,options);
     if (options.rom.pressure_recovery == 1)
         p = getFOM_pressure(q,t,options);
+    end
+    switch options.case.boussinesq   
+        case 'temp'
+            T = getFOM_Temperature(RT,t,options);
     end
     [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     
@@ -99,6 +114,10 @@ if (options.rom.process_iteration_FOM == 1)
         if (options.rom.pressure_recovery == 1)
             p_total(n,:)  = p;
         end
+        switch options.case.boussinesq   
+            case 'temp'
+                T_total(n,:) = T;
+        end        
     end
 end
 
@@ -152,7 +171,10 @@ end
 % set current velocity and pressure
 Rn = R;
 qn = q;
-tn = t;
+switch options.case.boussinesq   
+    case 'temp'
+        RTn=RT;
+end               
 
 eps    = 1e-12;
 
@@ -170,7 +192,12 @@ while(n<=nt)
     n = n+1;
        
     if (method == 20)
-         [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options);
+        % [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options); this is commented
+        % because of inefficiency, for the time being
+                 switch options.case.boussinesq   
+                 	case 'temp'
+                    	[R,q,RT] = time_ERK_ROM_Temp(Rn,qn,RTn,tn,dt,options); 
+                 end
     elseif (method == 21)
         [R,q,nonlinear_its(n)] = time_IRK_ROM(Rn,qn,tn,dt,options);
     else
@@ -185,9 +212,12 @@ while(n<=nt)
     
     % update old solution
     Rn = R;
-    qn = q;
-    tn = t;   
-    
+    qn = q; 
+    switch options.case.boussinesq   
+        case 'temp'
+        	RTn=RT;
+    end    
+    tn = t;  
     
     % check residuals, conservation, write output files
     % this requires to go back to FOM level
@@ -196,7 +226,12 @@ while(n<=nt)
         % this is used for postprocessing purposes, e.g. evaluating the divergence
         % of the velocity field
         V = getFOM_velocity(R,t,options);
-        
+        %% For temperature only 
+        switch options.case.boussinesq   
+            case 'temp'
+                T = getFOM_Temperature(RT,t,options);
+        end
+    
         if (options.rom.pressure_recovery == 1)
             p = getFOM_pressure(q,t,options);
         end
@@ -208,8 +243,12 @@ end
 disp('finished time-stepping...');
 time_loop(j) = toc-time_start
 
-% get FOM velocity and pressure for postprocessing purposes
+%% get FOM velocity and pressure for postprocessing purposes
 V  = getFOM_velocity(R,t,options);
 if (options.rom.pressure_recovery == 1)
     p = getFOM_pressure(q,t,options);
+end
+switch options.case.boussinesq   
+    case 'temp'
+        T = getFOM_Temperature(RT,t,options);
 end

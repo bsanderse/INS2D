@@ -1,9 +1,9 @@
-function [maxres,Fres,dFres] = F_ROM(R,q,t,options,getJacobian)
+function [maxres,Fres,dFres] = F_ROM(R,q,RT,t,options,getJacobian)
 % calculate rhs of momentum equations and, optionally, Jacobian with respect to velocity
 % field
 % inputs: R = ROM coefficients of velocity field; V = B*R
 %         q = ROM coefficients of pressure field; p = Bp*q
-
+%         RT= ROM coefficients of temperature field; T = BT*RT
 if (nargin<5)
     getJacobian = 0;
 end
@@ -30,6 +30,11 @@ if (options.rom.div_free == 0 && options.rom.precompute_pressure == 0)
     p = getFOM_pressure(q,t,options);
 end
 
+% FOM temperature field (only needed when not precomputing)
+if (options.rom.precompute_convectionT == 0 || options.rom.precompute_diffusionT == 0)
+    T = getFOM_Temperature(RT,t,options);
+end
+
 % unsteady BC
 if (options.BC.BC_unsteady == 1)
     if (options.rom.precompute_convection == 0 && options.rom.precompute_diffusion == 0)
@@ -38,6 +43,8 @@ if (options.BC.BC_unsteady == 1)
         error('unsteady BC with precomputing not fully tested');
     end
 end
+
+%@Krishan: unsteady BC maybe required for RBC in future
 
 % convection:
 if (options.rom.precompute_convection == 1)

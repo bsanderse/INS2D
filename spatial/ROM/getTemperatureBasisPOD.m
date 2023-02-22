@@ -1,9 +1,9 @@
 function [BT,MT] = getTemperatureBasisPOD(snapshots,sample_index,options)
 % build basis for velocity field based on snapshot data
 
-disp('computing SVD of pressure snapshots...');
+disp('computing SVD of temperature snapshots...');
 svd_start2 = toc;
-% note p_total is stored as a Nt*Np matrix instead of Np*Nt which we use for
+% note T_total is stored as a Nt*Np (Np and Ntemp are same) matrix instead of Np*Nt which we use for
 % the SVD
 % use same snapshot_indx that was determined for velocity
 

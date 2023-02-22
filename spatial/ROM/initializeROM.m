@@ -8,7 +8,6 @@ function [R,q] = initializeROM(V,p,t,options)
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
-
 if (options.rom.div_free == 0)
     % get initial ROM pressure by projecting initial presssure
     q = getROM_pressure(p,t,options);
