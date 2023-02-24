@@ -23,7 +23,7 @@ if (options.rom.rom == 0)
     end
 elseif (options.rom.rom == 1)
     % get ROM residual
-    [maxres(n),~,~] = F_ROM(R,0,t,options,0);   
+    [maxres(n),~,~] = F_ROM(R,0,RT,t,options,0);   
 end
 
 % statistics

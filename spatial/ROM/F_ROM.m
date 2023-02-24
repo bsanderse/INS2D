@@ -4,12 +4,12 @@ function [maxres,Fres,dFres] = F_ROM(R,q,RT,t,options,getJacobian)
 % inputs: R = ROM coefficients of velocity field; V = B*R
 %         q = ROM coefficients of pressure field; p = Bp*q
 %         RT= ROM coefficients of temperature field; T = BT*RT
-if (nargin<5)
+if (nargin<6)
     getJacobian = 0;
 end
 
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
-    options.rom.precompute_force == 0)
+    options.rom.precompute_force == 0 || options.rom.precompute_buoyancy_force == 0)
     B  = options.rom.B;
     if (options.rom.weighted_norm == 0)
         Diag = options.grid.Om_inv;
@@ -18,10 +18,22 @@ if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion =
         Diag = ones(NV,1);
     end
 end
+
+%%@krishan: add for the temperature also 
+if (options.rom.precompute_convectionT == 0 || options.rom.precompute_diffusionT == 0 || options.rom.precompute_buoyancy_force == 0)
+    BT  = options.rom.BT;
+    if (options.rom.weighted_norm_T == 0)
+        DiagT = options.grid.Omp_inv;
+    elseif (options.rom.weighted_norm_T == 1)
+        NT = options.grid.NT;
+        DiagT = ones(NT,1);
+    end
+end
+
     
 % FOM velocity field (only needed when not precomputing)
 if (options.rom.precompute_convection == 0 || options.rom.precompute_diffusion == 0 || ...
-    options.rom.precompute_force == 0)
+    options.rom.precompute_force == 0 || options.rom.precompute_convectionT == 0)
     V = getFOM_velocity(R,t,options);
 end
 
@@ -31,7 +43,7 @@ if (options.rom.div_free == 0 && options.rom.precompute_pressure == 0)
 end
 
 % FOM temperature field (only needed when not precomputing)
-if (options.rom.precompute_convectionT == 0 || options.rom.precompute_diffusionT == 0)
+if (options.rom.precompute_convectionT == 0 || options.rom.precompute_diffusionT == 0 ||options.rom.precompute_buoyancy_force == 0)
     T = getFOM_Temperature(RT,t,options);
 end
 
@@ -44,7 +56,7 @@ if (options.BC.BC_unsteady == 1)
     end
 end
 
-%@Krishan: unsteady BC maybe required for RBC in future
+%@Krishan: unsteady BC may not at all required for RBC
 
 % convection:
 if (options.rom.precompute_convection == 1)
@@ -143,14 +155,14 @@ switch options.case.boussinesq
     case 'temp'
         if (options.rom.precompute_buoyancy_force == 1)
             error("not implemented yet");
-        else  % no precomputing, use FOM expression and project to ROM (expensive)
+        elseif (options.rom.precompute_buoyancy_force == 0)  % no precomputing, use FOM expression and project to ROM (expensive)
             Nu = options.grid.Nu;
             Nv = options.grid.Nv;
             % get T at v-locations
             % note that AT_v includes the volumes Omega_v
             F_buoyancy_v     = options.discretization.AT_v*T;
             F_buoyancy = [zeros(Nu,1); F_buoyancy_v];
-            F_buoyancy_ROM = B' * F_buoyancy;
+            F_buoyancy_ROM = B'*(Diag.*F_buoyancy);
         end
         Fres = Fres + F_buoyancy_ROM;
 end
@@ -165,19 +177,47 @@ end
 %     Fres = Fres - Gp;
 % end
 
-% for Rayleigh_Benard convection
+% additional temperature equation for Rayleigh_Benard convection
 % @Krishan: implement convection and diffusion separately without
-% precomputation
+% precomputation 
+switch options.case.boussinesq
+    
+    case 'temp'
+        [FTemp,~,~]  = conv_diff_temperature(T,V,t,options,getJacobian);
+        FTemp_res = BT'*(DiagT.*FTemp);
+        Fres = [Fres; FTemp_res];
+
+    otherwise
+%         Fres = Fres;
+end
+
+% % additional temperature equation solved without precomputing the operators
 % switch options.case.boussinesq
 %     
 %     case 'temp'
-%         [FTemp,~,~]  = conv_diff_temperature(T,V,t,options,getJacobian);
+%         
+%         [FTemp,dFTemp,dFTemp_V] = conv_diff_temperature(T,V,t,options,getJacobian);
+% 
+%         switch options.temp.incl_dissipation
+%             case 1
+%                 % add dissipation to internal energy equation
+%                 [Phi,dPhi] = dissipation(V,t,options,getJacobian);
+%                 % the computed dissipation is basically V'*D*V, which has
+%                 % alfa1 as scaling
+%                 % in the internal energy equation we need alfa3, so we
+%                 % divide by gamma
+%                 gamma    = options.temp.gamma;
+%                 FTemp    = FTemp + (1/gamma)*Phi;
+%                 dFTemp_V = dFTemp_V + (1/gamma)*dPhi;
+%         end
 %         
 %         F = [FV; FTemp];
 % 
 %     otherwise
 %         F = FV;
 % end
+
+
 
 
 % for the case of non-orthogonal basis, we have to multiply with the

@@ -125,6 +125,9 @@ voi = {
     'precompute_diffusion', 1; ... % precomputed diffusion matrices
     'precompute_pressure', 0; ... % precomputed pressure matrix (only needed for non div-free basis)
     'precompute_force', 1;... % precomputed forcing term
+    'precompute_buoyancy_force', 1; ... % precomputed buoyancy force 
+    'precompute_convectionT', 1; ... % precomputed convection matrices for temperature
+    'precompute_diffusionT', 1; ... % precomputed diffusion matrices for temperature
     't_snapshots', 0; ... % snapshots 
     'dt_snapshots', 0; ...
     'mom_cons', 0; ... % momentum conserving SVD

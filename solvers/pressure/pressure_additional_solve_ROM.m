@@ -1,4 +1,4 @@
-function q = pressure_additional_solve_ROM(R,t,options)
+function q = pressure_additional_solve_ROM(R,T,t,options)
 % additional pressure solve
 % input: R, ROM coefficients of velocity field
 % returns ROM pressure coefficients; to get pressure use getROM_pressure(q)
@@ -13,9 +13,10 @@ if (options.rom.pressure_precompute==0)
     % call F with additional argument nopressure=1
     % to only get convection and diffusion
     % note that p is then irrelevant
-    [~,F_FOM] = F(V,V,0,0,t,options,0,1);
+    [~,F_FOM] = F(V,V,0,T,t,options,0,1);
     Om_inv    = options.grid.Om_inv;
-    f         = Bp' * options.discretization.M * (Om_inv.*F_FOM);
+    indV      = options.grid.indV;
+    f         = Bp' * options.discretization.M * (Om_inv.*F_FOM(indV));
     
 elseif (options.rom.pressure_precompute == 1)
     % with precomputing, see operator_rom.m for projection matrices

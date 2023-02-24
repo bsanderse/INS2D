@@ -63,5 +63,5 @@ if (size(Sp,2)>1)
 else
     SigmaP = Sp;
 end
-semilogy(SigmaP/SigmaP(1),'o');
+semilogy(SigmaP/SigmaP(1),'o','displayname','Pressure');
 

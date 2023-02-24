@@ -10,8 +10,8 @@ function [RT] = getROM_Temperature(T,t,options)
         if (options.rom.weighted_norm_T == 0)
             RT   = BT'*T;
         elseif (options.rom.weighted_norm_T == 1)
-            Om = options.grid.Om;
-            RT  = BT'*(Om.*T);
+            Omp = options.grid.Omp;
+            RT  = BT'*(Omp.*T);
         end
   %  otherwise
         

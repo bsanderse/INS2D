@@ -40,7 +40,7 @@ switch options.case.boussinesq
     case 'temp'
         % array for temperature
         kRT    = zeros(MT,s_RK);
-%         indT = options.grid.indT;  Not sure of this line
+        indT = options.grid.indT; 
 
     otherwise
         % dummy variable as solution
@@ -131,3 +131,4 @@ end
 
 Rnew = R;
 qnew = q;
+

@@ -195,7 +195,7 @@ end
 RIC  = sum(Sigma(1:M).^2)/sum(Sigma.^2);
 disp(['relative energy captured by SVD = ' num2str(RIC)]);
 figure(21)
-semilogy(Sigma/Sigma(1),'s');
+semilogy(Sigma/Sigma(1),'s','displayname','Velocity');
 % or alternatively
 % semilogy(Sigma.^2/sum(Sigma.^2),'s');
 

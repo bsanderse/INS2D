@@ -1,10 +1,13 @@
-function [Rnew,qnew] = time_ERK_ROM(Rn,qn,tn,dt,options)
-%% general explicit Runge-Kutta method for ROM
+function [Rnew,qnew,RTnew] = time_ERK_ROM_Temp(Rn,qn,RTn,tn,dt,options)
+%% general explicit Runge-Kutta method for ROM with temperature equations
 
 % number of unknowns (modes) in ROM
 M  = options.rom.M;
-
+MT = options.rom.MT; %No of temperature modes
 %% get coefficients of RK method 
+
+indR = 1:M;
+indRT = M+(1:MT);
     
 if (isnumeric(options.time.RK))
     options.time.RK = num2str(options.time.RK);
@@ -27,14 +30,26 @@ c_RK = [c_RK(2:end);1]; % 1 is the time level of final step
 %% preprocessing
 
 % store variables at start of time step
-R = Rn;
+R  = Rn;
+RT = RTn;
 % q = qn;
 
 % right hand side evaluations, initialized at zero
 kR     = zeros(M,s_RK);
+
 % array for the pressure
 % kp     = zeros(Np,s_RK);
-%
+switch options.case.boussinesq
+    
+    case 'temp'
+        % array for temperature
+        kRT    = zeros(MT,s_RK);
+
+    otherwise
+        % dummy variable as solution
+        RTnew = 0;
+
+end
 
 ti = tn;
 
@@ -47,10 +62,10 @@ for i_RK=1:s_RK
     % right-hand side for ti based on current field R at
     % level i (this includes force evaluation at ti)
     % note that input q is not used
-    [~,F_rhs]  = F_ROM(R,qn,ti,options);
+    [~,F_rhs]  = F_ROM(R,qn,RT,ti,options);
     
     % store right-hand side of stage i
-    kR(:,i_RK) = F_rhs;
+    kR(:,i_RK) = F_rhs(indR);
     
     % update coefficients R of current stage by sum of F_i's until this stage,
     % weighted with the Butcher tableau coefficients
@@ -92,14 +107,14 @@ for i_RK=1:s_RK
         R  = Rn + dt*Rtemp;
     end
     
-    % @Krishan: change to update for RT
-%     switch options.case.boussinesq
-%         
-%         case 'temp'
-%             % update temperature
-%             kT(:,i_RK)  = Omp_inv.*F_rhs(indT);
-%             T  = Tn + dt*kT*A_RK(i_RK,:)';
-%     end
+%    @Krishan: change to update for RT
+    switch options.case.boussinesq
+        
+        case 'temp'
+            % update temperature
+            kRT(:,i_RK)  = F_rhs(indRT);
+            RT  = RTn + dt*kRT*A_RK(i_RK,:)';
+    end
     
 end
 
@@ -108,7 +123,7 @@ end
 
 if (options.rom.div_free == 1)
     if (options.rom.pressure_recovery == 1)
-        q = pressure_additional_solve_ROM(R,tn+dt,options);
+        q = pressure_additional_solve_ROM(R,T,tn+dt,options);
     else
         q = qn;
     end
@@ -119,3 +134,4 @@ end
 
 Rnew = R;
 qnew = q;
+RTnew = RT;

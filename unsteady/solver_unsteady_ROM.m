@@ -82,16 +82,9 @@ precompute_end(j) = toc-precompute_start
 
 %% initialize reduced order solution
 
-[R,q] = initializeROM(V,p,t,options);
-switch options.case.boussinesq   
-    case 'temp'     
-        [RT] = initializeROM_Temp(T,t,options);      
-end   
+[R,q,RT] = initializeROM(V,p,T,t,options);
         
 %% map back to FOM space to get initial properties
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NOT YET DONE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%
-
 if (options.rom.process_iteration_FOM == 1)
     % map back to velocity space to get statistics of initial velocity field
     % note that V will not be equal to the specified initial field, because
@@ -171,6 +164,7 @@ end
 % set current velocity and pressure
 Rn = R;
 qn = q;
+tn = t;
 switch options.case.boussinesq   
     case 'temp'
         RTn=RT;
@@ -192,12 +186,12 @@ while(n<=nt)
     n = n+1;
        
     if (method == 20)
-        % [R,q] = time_ERK_ROM(Rn,qn,tn,dt,options); this is commented
-        % because of inefficiency, for the time being
-                 switch options.case.boussinesq   
-                 	case 'temp'
-                    	[R,q,RT] = time_ERK_ROM_Temp(Rn,qn,RTn,tn,dt,options); 
-                 end
+        [R,q,RT] = time_ERK_ROM(Rn,qn,RT,tn,dt,options); 
+%         % because of inefficiency, for the time being
+%                  switch options.case.boussinesq   
+%                  	case 'temp'
+%                     	[R,q,RT] = time_ERK_ROM_Temp(Rn,qn,RTn,tn,dt,options); 
+%                  end
     elseif (method == 21)
         [R,q,nonlinear_its(n)] = time_IRK_ROM(Rn,qn,tn,dt,options);
     else

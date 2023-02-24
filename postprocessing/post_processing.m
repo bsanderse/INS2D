@@ -4,7 +4,6 @@ file_name = [case_name '_pp.m'];
 full_name = [folder_cases '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
-    
     run(full_name);
     
 else
