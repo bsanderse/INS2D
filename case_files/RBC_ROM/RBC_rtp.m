@@ -1,4 +1,4 @@
-% show_figures = 0;
+%show_figures = 0;
 show_figures = 1;
 
 %% real-time plotting RBC and computing the Nusselt number
@@ -96,7 +96,7 @@ if show_figures
     grid on
     hold on
     plot(t,NusseltU,'kx');
-    ylim([0 30])
+    ylim([0 3*NusseltL])
     xlabel('t')
     ylabel('Nu')
     set(gcf,'color','w');

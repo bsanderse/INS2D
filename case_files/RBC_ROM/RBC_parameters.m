@@ -1,8 +1,7 @@
 % project = 'RBC';   % project name used in filenames
 run_multiple = 1;
-% run_multiple = 0;
 %mesh_list = [32 64 128 256];
-mesh_list = [1e4];
+mesh_list = [1e6];
 %disp(length(mesh_list));
 %mesh_list = [5e-2 1e-2 5e-3 1e-3];
 %Nsim = length(mesh_list);
@@ -18,12 +17,12 @@ mesh_list = [1e4];
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-%     Ra = 1e6;                   % Rayleigh number
+  %  Ra = 1e4;                   % Rayleigh number
     Ra = mesh_list(j);	
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
-    fprintf('Ra =');
+fprintf('Ra =');
     disp(Ra);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -37,8 +36,8 @@ mesh_list = [1e4];
 
 %    Nx=mesh_list(j);
 %    Ny=Nx;
-    Nx      = 4;                  % number of volumes in the x-direction
-    Ny      = 4;                   % number of volumes in the y-direction
+    Nx      = 64;                  % number of volumes in the x-direction
+    Ny      = 64;                   % number of volumes in the y-direction
 %	if(j==2)
 %	Nx=256;
 %	Ny=Nx;
@@ -66,12 +65,12 @@ mesh_list = [1e4];
     
     % only for unsteady problems:
 
-        dt            = 5e-2;       % time step (for explicit methods it can be
-%         dt            = 5e-1;       % time step (for explicit methods it can be
+%         dt            = 5e-2;       % time step (for explicit methods it can be
+        dt            = 1e-2;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
 %        dt=mesh_list(j); 
         t_start       = 0;        % start time
-        t_end         = 20;         % end time
+        t_end         = 70;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -165,7 +164,7 @@ mesh_list = [1e4];
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
+    rtp.n            = 200;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 10;           % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -185,7 +184,7 @@ mesh_list = [1e4];
     path_results     = 'results';  % folder where results are stored
     save_file        = 1;          % save all matlab data after program is completed
     save_unsteady    = 1;
-%    sampling_start   = 13/dt; 	   % Time to start sampling, (divided by dt)    
+    
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
                                    % 0 only works if save_results = 1
@@ -199,18 +198,17 @@ mesh_list = [1e4];
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 28;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
-                       % therefore M=2*Nx*Ny-Nx
-    Mp     = 16;     % number of pressure modes used (only needed if pressure_recovery=1)
-    MT     = 16;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
+    M      = 4;     % number of modes used
+    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
+    MT     = M;     % number of temperature modes used (only needed if boussinesq='temp')
 
-    t_sample  = t_end;  % part of snapshot matrix used for building SVD
-    dt_sample = dt; % frequency of snapshots to be used for SVD
+    t_sample  = 60;  % part of snapshot matrix used for building SVD
+    dt_sample = 25*dt; % frequency of snapshots to be used for SVD
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
 
     weighted_norm         = 1;
@@ -224,17 +222,17 @@ mesh_list = [1e4];
 
     precompute_convection = 1;
     precompute_diffusion  = 1;
-    precompute_force      = 0;
-    precompute_buoyancy_force      = 1;
+    precompute_force      = 1;
+    precompute_buoyancy_force      = 0;
 
     precompute_convectionT = 0;
     precompute_diffusionT  = 0;
 
-    pressure_recovery     = 0;
+    pressure_recovery     = 1;
     pressure_precompute   = 0;
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       
 
-%     snapshot_data = '../FOMdata/matlab_data.mat';
-    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/matlab_data_4_4.mat';
+    snapshot_data = '../decay_test/1e6_70tuonly/70_unit_periodic/matlab_data.mat';
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

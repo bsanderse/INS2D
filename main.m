@@ -73,7 +73,6 @@ if (~exist('run_multiple','var') || run_multiple == 0)
 else
     Nsim = length(mesh_list);
 end
-% Nsim = length(mesh_list);
 
 % loop over multiple simulations (e.g. different meshes or time steps)
 for j=1:Nsim

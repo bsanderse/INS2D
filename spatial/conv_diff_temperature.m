@@ -1,5 +1,5 @@
 function [conv_diff, Jac_conv_diff_T, Jac_conv_diff_V] = conv_diff_temperature(T,V,t,options,getJacobian)
-% evaluate convection and diffusion terms for temperature equation and optionally Jacobian
+% evaluate convection and diffusion terms fmat_hyor temperature equation and optionally Jacobian
 % there are two Jacobians, with respect to T and V
 % note that all terms are in integrated (finite volume) form
 

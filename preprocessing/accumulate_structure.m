@@ -217,6 +217,7 @@ voi = {
     'save_file', 0; ...
     'save_unsteady', 0; ...
     'save_eco', 0;
+    'sampling_start', 0; ...     %This is for the fully developed case
 };
 
 accumulate_object;

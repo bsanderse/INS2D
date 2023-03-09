@@ -76,7 +76,7 @@ if (rtp.show==1 && rem(n-1,rtp.n) == 0)
 end
 
 % store unsteady data in an array
-if (steady==0 && save_unsteady == 1)
+if (steady==0 && save_unsteady == 1)% && sampling_start < n)
     if (options.output.save_eco == 0)
         uh_total(n,:) = V(1:options.grid.Nu);
         vh_total(n,:) = V(options.grid.Nu+1:end);

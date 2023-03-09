@@ -12,28 +12,22 @@ ypp = options.grid.ypp;
 % Lx = options.grid.x2 - options.grid.x1;
 Ly = options.grid.y2 - options.grid.y1;
 
-% [X,Y] = meshgrid(linspace(0,1,Nux_in),linspace(0,1,Nuy_in));
-
 % constant velocity field
-u  = ones(Nux_in,Nuy_in);
-v  = ones(Nvx_in,Nvy_in);
-% u  = sin(X)
-% v  = sin(Y)
-% u(Nux_in,Nuy_in)  = sin(pi/2);
-% v(Nvx_in,Nvy_in)  = sin(pi/2);
+u  = zeros(Nux_in,Nuy_in);
+v  = zeros(Nvx_in,Nvy_in);
+
 % pressure: should in principle NOT be prescribed. will be calculated if
 % p_initial=1
 p  = zeros(Npx,Npy);
  
 % temperature: linear profile from 1 (bottom) to 0 (top)
-T  = (Ly - ypp)/Ly;
+ T  = (Ly - ypp)/Ly;
 % inverted temperature: linear profile from 1 (bottom) to 0 (top)
 % T  = 0.5 - (Ly - ypp)/Ly ;
 % homogeneous 0.5
-% T  = 0.5*ones(Npx,Npy);
+%T  = 0.5*ones(Npx,Npy);
 % homogeneous 0
-%  T  = zeros(Npx,Npy); 
-%  T  = sin(pi/2); 
+% T  = zeros(Npx,Npy); 
 % high order polynomial that has zero derivatives
 %T = 10*(ypp.^2) .* ((Ly - ypp)/Ly).^2;
 % T = 2*ypp.^3-3*ypp.^2 + 1;

@@ -57,7 +57,6 @@ if (options.BC.BC_unsteady == 1)
 end
 
 %@Krishan: unsteady BC may not at all required for RBC
-
 % convection:
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
@@ -153,11 +152,13 @@ Fres    = - conv + Diff + F;
 switch options.case.boussinesq
     
     case 'temp'
+        Nu = options.grid.Nu;
+        Nv = options.grid.Nv;
         if (options.rom.precompute_buoyancy_force == 1)
-            error("not implemented yet");
+            F_buoyancy_v     = options.discretization.AT_v*BT;
+            F_buoyancy = [zeros(Nu,1); F_buoyancy_v];
+            F_buoyancy_ROM = B'*(Diag.*F_buoyancy);
         elseif (options.rom.precompute_buoyancy_force == 0)  % no precomputing, use FOM expression and project to ROM (expensive)
-            Nu = options.grid.Nu;
-            Nv = options.grid.Nv;
             % get T at v-locations
             % note that AT_v includes the volumes Omega_v
             F_buoyancy_v     = options.discretization.AT_v*T;
@@ -177,50 +178,48 @@ end
 %     Fres = Fres - Gp;
 % end
 
-% additional temperature equation for Rayleigh_Benard convection
-% @Krishan: implement convection and diffusion separately without
+%% Implemented additional temperature equation for Rayleigh_Benard convection
+% @Krishan:Implement convection and diffusion together separately without
 % precomputation 
-switch options.case.boussinesq
-    
-    case 'temp'
-        [FTemp,~,~]  = conv_diff_temperature(T,V,t,options,getJacobian);
-        FTemp_res = BT'*(DiagT.*FTemp);
-        Fres = [Fres; FTemp_res];
-
-    otherwise
-%         Fres = Fres;
-end
-
-% % additional temperature equation solved without precomputing the operators
 % switch options.case.boussinesq
 %     
 %     case 'temp'
 %         
-%         [FTemp,dFTemp,dFTemp_V] = conv_diff_temperature(T,V,t,options,getJacobian);
-% 
-%         switch options.temp.incl_dissipation
-%             case 1
-%                 % add dissipation to internal energy equation
-%                 [Phi,dPhi] = dissipation(V,t,options,getJacobian);
-%                 % the computed dissipation is basically V'*D*V, which has
-%                 % alfa1 as scaling
-%                 % in the internal energy equation we need alfa3, so we
-%                 % divide by gamma
-%                 gamma    = options.temp.gamma;
-%                 FTemp    = FTemp + (1/gamma)*Phi;
-%                 dFTemp_V = dFTemp_V + (1/gamma)*dPhi;
-%         end
-%         
-%         F = [FV; FTemp];
+%         [FTemp,~,~]  = conv_diff_temperature(T,V,t,options,getJacobian);
+%         FTemp_res = BT'*(DiagT.*FTemp);
+%         Fres = [Fres; FTemp_res];
 % 
 %     otherwise
-%         F = FV;
+% %         Fres = Fres;
 % end
 
+% @Krishan:Implement convection and diffusion separately without
+% precomputation 
+switch options.case.boussinesq
+    
+    case 'temp'
+        if (options.rom.precompute_convectionT == 0)
+            [convT, Jac_conv_T, Jac_conv_V] = convection_temperature(T,V,t,options,getJacobian);                     
+%             Jac_conv_diff_T = -Jac_conv_T + Jac_diff_T;
+%             Jac_conv_diff_V = -Jac_conv_V;
+        elseif (options.rom.precompute_convectionT == 1)    
+            disp('not yet implemented');
+        end
+        if (options.rom.precompute_diffusionT == 0)
+            [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
+         
+        elseif (options.rom.precompute_diffusionT == 1)       
+            disp('not yet implemented');
+        end
+     
+            FTemp = -convT + diffT;        
+            FTemp_res = BT'*(DiagT.*FTemp);
+            Fres = [Fres; FTemp_res];
+    otherwise
+%         Fres = Fres;
+end
 
-
-
-% for the case of non-orthogonal basis, we have to multiply with the
+%% for the case of non-orthogonal basis, we have to multiply with the
 % inverse of (B'*B)
 switch options.rom.rom_type
     

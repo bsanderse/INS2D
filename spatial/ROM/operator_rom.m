@@ -19,13 +19,32 @@ if (options.rom.precompute_convection == 1 || options.rom.precompute_diffusion =
     P = B'*spdiags(Diag,0,NV,NV);
 
 end
-
+% added for temperature 
+switch options.case.boussinesq   
+    case 'temp'
+        BT  = options.rom.BT;
+        NT = options.grid.NT;
+        if (options.rom.weighted_norm_T == 0)
+            DiagT = options.grid.Omp_inv;
+        elseif (options.rom.weighted_norm_T == 1)
+            DiagT = ones(NT,1);
+        end
+        if (options.rom.precompute_convectionT == 1 || options.rom.precompute_diffusionT == 1)
+            % this is the projector for the temperature equation:
+            PT = BT'*spdiags(DiagT,0,NT,NT);
+        end
+    otherwise
+            PT=0;
+end
 %% diffusion
-if (options.rom.precompute_diffusion == 1)
-    [yDiff,Diff] = operator_rom_diffusion(P,options);
-
+if (options.rom.precompute_diffusion == 1 || options.rom.precompute_diffusionT == 1)
+% if (options.rom.precompute_diffusion == 1)
+%     [yDiff,Diff] = operator_rom_diffusion(P,options);
+    [yDiff,Diff,yDiffT,DiffT] = operator_rom_diffusion(P,PT,options);
+   
     options.rom.Diff  = Diff;
     options.rom.yDiff = yDiff;
+    options.rom.DiffT = DiffT;
 end
 
 %% convection 
@@ -51,6 +70,26 @@ else
     M  = options.rom.M;
     options.rom.F = zeros(M,1);
 end
+
+% %% Include buoyancy force in the momentum equation
+% switch options.case.boussinesq
+%     
+%     case 'temp'
+%         % get T at v-locations
+%         % note that AT_v includes the volumes Omega_v
+%         F = BT'*options.discretization.AT_v*BT; 
+%         
+% end
+% 
+% FV = [Fu;Fv];
+
+% %% diffusion for temperature equation
+% if (options.rom.precompute_diffusionT == 1)
+%     [yDiffT,DiffT] = operator_rom_diffusionT(PT,options);
+% 
+%     options.rom.DiffT  = DiffT;
+%     options.rom.yDiffT = yDiffT;
+% end
 
 %% pressure
 % the pressure gradient term in the momentum equation disappears in the ROM
