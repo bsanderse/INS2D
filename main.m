@@ -1,4 +1,4 @@
-function [V,p,options] = main(case_name,folder_cases)
+function [V,p,T,options] = main(case_name,folder_cases)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction

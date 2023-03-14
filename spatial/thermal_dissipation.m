@@ -39,28 +39,30 @@ epsilonT = options.temp.alfa4*(sum(dTdx2_corr) + sum(dTdy2_corr))*options.grid.O
 
 %% test correctness of dissipation
 % we compare epsilonT to T'*(Diff*T + yT);
-% these should be the same for homogeneous Neumann or homogeneous Dirichlet
+% these should be the same but ONLY for homogeneous Neumann or homogeneous Dirichlet
 % or periodic BC
-% for nonhomogeneous BC, e.g. Dirichlet we get
+
+% for nonhomogeneous BC, e.g. Dirichlet we get an additional term that
+% will evaluates to something like the Nusselt number 
 
 % general i: evalute T * Diff*T
-% u_i*((u_{i+1} - u_{i}) - (u_{i} - u_{i-1})) = 
-%  0.5*(u_{i+1} + u_{i})*(u_{i+1} - u_{i}) - 0.5*(u_{i+1} - u_{i})^2
-% -0.5*(u_{i} + u_{i-1})*(u_{i} - u_{i-1}) - 0.5*(u_{i} - u_{i-1})^2
+% T_{i}*((T_{i+1} - T_{i}) - (T_{i} - T_{i-1})) = 
+%  0.5*(T_{i+1} + T_{i})*(T_{i+1} - T_{i}) - 0.5*(T_{i+1} - T_{i})^2
+% -0.5*(T_{i} + T_{i-1})*(T_{i} - T_{i-1}) - 0.5*(T_{i} - T_{i-1})^2
 
-% i=1: u_0 + u_1 = 2*u_b, so u_0 = 2*u_b - u_1, and u_1 - u_0 = 2*u_1 - 2*ub
-% u_1*((u_{2} - u_{1}) - (u_{1} - u_{0})) = 
-%  0.5*(u_{2} + u_{1})*(u_{2} - u_{1}) - 0.5*(u_{2} - u_{1})^2
-% -0.5*(u_{1} + u_{0})*(u_{1} - u_{0}) - 0.5*(u_{1} - u_{0})^2 =
-%  0.5*(u_{2} + u_{1})*(u_{2} - u_{1}) - 0.5*(u_{2} - u_{1})^2
-%               -2*u_{b}*(u_{1} - u_{b}) - 0.5*(2*u_{1} - 2*u_{b})^2
+% i=1: T_{0} + T_{1} = 2*T_{b}, so T_{0} = 2*T_{b} - T_{1}, and T_{1} - T_{0} = 2*T_{1} - 2*ub
+% T_{1}*((T_{2} - T_{1}) - (T_{1} - T_{0})) = 
+%  0.5*(T_{2} + T_{1})*(T_{2} - T_{1}) - 0.5*(T_{2} - T_{1})^2
+% -0.5*(T_{1} + T_{0})*(T_{1} - T_{0}) - 0.5*(T_{1} - T_{0})^2 =
+%  0.5*(T_{2} + T_{1})*(T_{2} - T_{1}) - 0.5*(T_{2} - T_{1})^2
+%               -2*T_{b}*(T_{1} - T_{b}) - 0.5*(2*T_{1} - 2*T_{b})^2
 
-%  => for u_b = 0
-%  0.5*(u_{2} + u_{1})*(u_{2} - u_{1}) - 0.5*(u_{2} - u_{1})^2
-% -0.5*( (u_{1} - u_{b})/0.5)^2
+%  => for T_{b} = 0
+%  0.5*(T_{2} + T_{1})*(T_{2} - T_{1}) - 0.5*(T_{2} - T_{1})^2
+% -0.5*( (T_{1} - T_{b})/0.5)^2
 
-%  => for (du/dx)_b = 0 (u_1 - u_0 = 0 or u_b = u_1)
-%  0.5*(u_{2} + u_{1})*(u_{2} - u_{1}) - 0.5*(u_{2} - u_{1})^2
+%  => for (du/dx)_b = 0 (T_{1} - T_{0} = 0 or T_{b} = T_{1})
+%  0.5*(T_{2} + T_{1})*(T_{2} - T_{1}) - 0.5*(T_{2} - T_{1})^2
 
 % note that DiffT includes alfa4, but STx does not include alfa4
 % note that DiffT includes volume sizes Omega, so we have dimensions dy/dx,

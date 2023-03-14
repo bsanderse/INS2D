@@ -52,11 +52,11 @@ symmetry_error = max(error_u,error_v);
 flag = 0;
 if (symmetry_error > eps)
     if (~strcmp(BC.u.right,'pres') && ~strcmp(BC.u.left,'pres'))
-        fprintf(fcw,[num2str(error_u) '\n']);
+        fprintf(fcw,['error in skew-symmetry convective operator, u-component: ' num2str(error_u) '\n']);
         flag = 1;
     end
     if (~strcmp(BC.v.low,'pres') && ~strcmp(BC.v.up,'pres'))
-        fprintf(fcw,[num2str(error_v) '\n']);
+        fprintf(fcw,['error in skew-symmetry convective operator, v-component: ' num2str(error_v) '\n']);
         flag = 1;
     end
 end

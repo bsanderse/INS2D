@@ -1,6 +1,6 @@
 % project = 'RBC';   % project name used in filenames
 run_multiple = 1;
-mesh_list = 32; %[32 64 128 256];
+mesh_list = [128 128 128 128];
 Nsim = length(mesh_list);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,8 @@ Nsim = length(mesh_list);
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
     Ra = 1e5;                   % Rayleigh number
-    Ge = 0.1;                   % Gebhart number
+    Ge_list = [0 0.1 1 2];
+    Ge = Ge_list(j);                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
@@ -41,19 +42,11 @@ Nsim = length(mesh_list);
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 0;         % steady(1) or unsteady(0)
+    steady  = 1;         % steady(1) or unsteady(0)
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
-
-    % only for steady problems:
-
-%         linearization = 'Newton';  % Newton or Picard linearization
-%         nPicard       = 10;         % in case of Newton, first do nPicard Picard steps
-%         accuracy      = 1e-8;
-%         relax         = 0;
-
-    
+   
     % only for unsteady problems:
 
         dt            = 5e-2;       % time step (for explicit methods it can be
@@ -100,7 +93,7 @@ Nsim = length(mesh_list);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% solver settings
+%%% solver settings, used in both steady and unsteady problems
 
     % pressure
     poisson          = 1; % 1: direct solver, 
@@ -119,25 +112,27 @@ Nsim = length(mesh_list);
     
     % for steady problems or unsteady problems with implicit methods:
 
-    relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant
+    relax                  = 0;    % relaxation parameter to make matrix diagonal more dominant: relax*I is added to matrix
     
     nonlinear_acc          = 1e-12;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 20;
+    nonlinear_maxit        = 20;   % maximum number of iterations
         
+    % optoins for unsteady problems only (for steady problem we currently use
+    % full Newton):
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
                                    % iteration
-    Jacobian_type          = 1;    % 0: Picard linearization
-                                   % 1: Newton linearization
-                                   
-    % for steady problems only:
-    nPicard                = 5;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
-    
-    % for unsteady problems only:
     nonlinear_startingvalues = 0;  % extrapolate values from last time step to get accurate initial guess
-                                   
+    % options for steady problems only:
+    Jacobian_type          = 1;    % linearization of convective terms
+                                   % 0: Picard linearization
+                                   % 1: Newton linearization                                   
+    nPicard                = 3;    % in case of Jacobian_type=1, first do nPicard Picard steps                                   
+    
+    
+    
     % location of PETSc-matlab mex files                                    
     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +147,7 @@ Nsim = length(mesh_list);
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
+    rtp.n            = 1;
     rtp.movie        = 0;
     rtp.moviename    = 'RBC';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

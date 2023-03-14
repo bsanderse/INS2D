@@ -177,22 +177,22 @@ voi = {
     'CG_acc', 1e-8; ... % accuracy for CG (if poisson=2,3,4)
     'CG_maxit', 1000; ...    % maximum number of iterations for CG
     
-    % accuracy for non-linear solves (method 62, 72, 9)
+    % accuracy for non-linear solves (method 21 or steady problems)
     'nonlinear_acc', 1e-14; ...
     'nonlinear_relacc', 1e-14; ...
     'nonlinear_maxit', 10; ...
-    'nonlinear_Newton', 1; ...  % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+    % for unsteady computations:
+    'nonlinear_Newton', 1; ...     % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
                                    % iteration
-    'Jacobian_type', 0; ...    % 0: Picard linearization, 1: Newton linearization
-    'nonlinear_startingvalues', 0; ...
-        
-    % 
-    'nPicard', 5; ... % number of Picard steps before switching to Newton when linearization is Newton
+    'nonlinear_startingvalues', 0; ... % to be implemented: provide more accurate initial estimates for IRK schemes                                  
+    % for steady computations:
+    'Jacobian_type', 0; ...     % linearization of convective terms: 0: Picard linearization, 1: Newton linearization                                   
+    'nPicard', 5; ...           % number of Picard steps before switching to Newton when Jacobian_type=1 is Newton
+
     
-    %
-    'poisson_diffusion', 1;...
+    'poisson_diffusion', 1;... % type of method used to precompute implicit time stepping with diffusion (see 'poisson' above)
     
     % location of PETSc-matlab mex files                                    
 %     petsc_mex        ='~/Software/petsc-3.1-p5/bin/matlab/';

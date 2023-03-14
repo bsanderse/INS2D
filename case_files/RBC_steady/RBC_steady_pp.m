@@ -191,8 +191,8 @@ figure
 set(gcf,'color','w');
 l=linspace(0,1,20);
 contour(xp,yp,Temp',l,'LineWidth',2);
-hold on
-quiver(xp,yp,up',vp');
+% hold on
+% quiver(xp,yp,up',vp');
 axis equal
 axis([x1 x2 y1 y2]);
 xlabel('x');
@@ -200,4 +200,5 @@ ylabel('y');
 grid
 title('temperature');
 colorbar
-set(gca,'LineWidth',1)
+set(gca,'LineWidth',1,'FontSize',14);
+

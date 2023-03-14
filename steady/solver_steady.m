@@ -49,7 +49,8 @@ maxres(2) = maxres(1);
 
 while ( maxres(n) > options.solversettings.nonlinear_acc)
     
-    % switch to Newton after nPicard steps if Jacobian_type=1
+    % switch to Newton linearization of convective terms
+    % after nPicard steps if Jacobian_type=1
     if (options.solversettings.Jacobian_type == 1 && n>options.solversettings.nPicard)
         options.solversettings.Newton_factor = 1;
     end

@@ -555,7 +555,7 @@ end
 
 
 %% additional for implicit time stepping diffusion
-if (options.time.method==2 && strcmp(visc,'laminar'))
+if (options.case.steady == 0 && options.time.method==2 && strcmp(visc,'laminar'))
     fprintf(options.output.fcw,'implicit time-stepping for diffusion\n');
     theta = options.time.theta;
     dt    = options.time.dt;

@@ -4,7 +4,8 @@
 % T = kron(Ttest,ones(Npx,1));
 % T2D = rand(Npx,Npy);
 % T = T2D(:);
-
+Npx=options.grid.Npx;
+Npy=options.grid.Npy;
 Ttest = rand(Npx,1);
 T = kron(ones(Npy,1),Ttest);
 
@@ -40,8 +41,8 @@ e=ones(N,1);
 DiffTest = spdiags([e -2*e e],[-1 0 1],N,N) * (dx/dy);
 DiffTest(1,1) = -3*(dx/dy);
 DiffTest(end,end) = -3*(dx/dy);
-TLo = 1;
-TUp = 0;
+TLo = 3;
+TUp = 1;
 yTest= zeros(N,1);
 yTest(1) = 2*TLo*(dx/dy);
 yTest(N) = 2*TUp*(dx/dy);
@@ -55,13 +56,12 @@ Ttest'*(DiffTest*Ttest + yTest)
 dTdy = zeros(N+1,1);
 dTdy(2:N)  = (Ttest(2:end) - Ttest(1:end-1))/dy;
 dTdy(1)    = (Ttest(1) - TLo)/(0.5*dy);
-dTdy(end)  = (TUp- Ttest(end))/(0.5*dy);
+dTdy(end)  = (TUp - Ttest(end))/(0.5*dy);
 dTdy2      = dTdy.^2;
 dTdy2(1)   = 0.5*dTdy2(1);
 dTdy2(end) = 0.5*dTdy2(end);
 eps = sum(dTdy2)*dx*dy;
 
--eps - TLo*(Ttest(1)-TLo)*dx/(0.5*dy)
-% + TUp*(TUp-Ttest(end))*dx/(0.5*dy)
+-eps - TLo*(Ttest(1)-TLo)*dx/(0.5*dy) + TUp*(TUp-Ttest(end))*dx/(0.5*dy)
 
 keyboard

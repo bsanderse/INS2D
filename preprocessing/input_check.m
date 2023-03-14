@@ -110,6 +110,10 @@ else
         [maxdiv(1), umom(1), vmom(1), k(1)] = check_conservation(V,T,t,options);
     end
     
+    if (maxdiv(1)>1e-12 && steady==1)
+        fprintf(fcw,['warning: initial velocity field not (discretely) divergence free: ' num2str(maxdiv(1)) '; this will automatically be corrected while solving the steady problem\n']);
+    end
+
     [symmetry_flag, symmetry_error] = check_symmetry(V,t,options);       
     
     
@@ -152,6 +156,7 @@ else
     if (options.case.steady==1)
         options.solversettings.Newton_factor = 0;
     elseif (options.case.steady==0)
+        % for unsteady problems, we always use Newton linearization
         % implicit RK time integration: set Newton_factor to 1
         if ( (method==21 || method==22) || (exist('method_startup','var') && method_startup==21)) 
             options.solversettings.Newton_factor = 1;
