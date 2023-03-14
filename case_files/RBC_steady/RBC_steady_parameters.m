@@ -15,7 +15,8 @@ Nsim = length(mesh_list);
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 1e5;                   % Rayleigh number
+%     Ra_list = 1e3;
+    Ra = 1e5; %Ra_list(j);                   % Rayleigh number
     Ge_list = [0 0.1 1 2];
     Ge = Ge_list(j);                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)

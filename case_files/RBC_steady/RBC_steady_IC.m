@@ -20,7 +20,7 @@ Ly = options.grid.y2 - options.grid.y1;
 % u  = zeros(Nux_in,Nuy_in);
 % v  = zeros(Nvx_in,Nvy_in);
 
-load_IC = 1;
+load_IC = 0;
 
 if (load_IC)
     
@@ -43,9 +43,12 @@ else
 
     % regularized lid-driven cavity field, see T.M. Shih, C.H. Tan, and B.C. Hwang. Effects of grid staggering on numerical schemes.
     % International Journal for Numerical Methods in Fluids, 9:192–212, 1989.
-    u  = -8*(xu.^4 - 2*xu.^3 + xu.^2).*(4*yu.^3 - 2*yu);
-    v  = +8*(4*xv.^3 - 6*xv.^2 + 2*xv).*(yv.^4 - yv.^2);
-
+%     u  = -8*(xu.^4 - 2*xu.^3 + xu.^2).*(4*yu.^3 - 2*yu);
+%     v  = +8*(4*xv.^3 - 6*xv.^2 + 2*xv).*(yv.^4 - yv.^2);
+    % adapted to satisfy BC:
+    u  = -32*(xu.^4 - 2*xu.^3 + xu.^2).*(4*yu.^3 - 6*yu.^2 + 2*yu);
+    v  = +32*(4*xv.^3 - 6*xv.^2 + 2*xv).*(yv.^4 - 2*yv.^3 + yv.^2);
+    
     % pressure: should in principle NOT be prescribed. will be calculated if
     % p_initial=1
     p  = zeros(Npx,Npy);
