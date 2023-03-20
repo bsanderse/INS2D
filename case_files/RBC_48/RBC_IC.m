@@ -15,22 +15,8 @@ Ly = options.grid.y2 - options.grid.y1;
 % [X,Y] = meshgrid(linspace(0,1,Nux_in),linspace(0,1,Nuy_in));
 
 % constant velocity field
- u  = zeros(Nux_in,Nuy_in);
- v  = zeros(Nvx_in,Nvy_in);
-
-% for i = 1:Nux_in
-%     for j = 1:Nuy_in
-%         u(i,j)=i*i+j;
-%     end
-% end
-% for i = 1:Nvx_in
-%     for j = 1:Nvy_in
-%         v(i,j)=i*i+j;
-%     end
-% end
-
-%u  = ones(Nux_in,Nuy_in);
-%v  = ones(Nvx_in,Nvy_in);
+u  = ones(Nux_in,Nuy_in);
+v  = ones(Nvx_in,Nvy_in);
 % u  = sin(X)
 % v  = sin(Y)
 % u(Nux_in,Nuy_in)  = sin(pi/2);
@@ -41,7 +27,6 @@ p  = zeros(Npx,Npy);
  
 % temperature: linear profile from 1 (bottom) to 0 (top)
 T  = (Ly - ypp)/Ly;
-%T(Npx/2,Npy/2)=T(Npx/2,Npy/2)+1e-10;
 % inverted temperature: linear profile from 1 (bottom) to 0 (top)
 % T  = 0.5 - (Ly - ypp)/Ly ;
 % homogeneous 0.5

@@ -73,7 +73,7 @@ if (~exist('run_multiple','var') || run_multiple == 0)
 else
     Nsim = length(mesh_list);
 end
-
+% Nsim = length(M_list);
 % loop over multiple simulations (e.g. different meshes or time steps)
 for j=1:Nsim
     
@@ -270,10 +270,20 @@ for j=1:Nsim
     end
 
     
-    %% post-processing
+%% saving statistics
+    sampling_time=nt-sampling_start;
+    Vmean=Vmean/sampling_time;
+    pmean=pmean/sampling_time;
+    Tmean=Tmean/sampling_time;
+    V_var=V_var/sampling_time;
+    p_var=p_var/sampling_time;
+    T_var=T_var/sampling_time;
+    
+   %% post-processing
     fprintf(fcw,'post-processing...\n');
     post_processing;
     
+
     % save all data to a matlab file
     if (save_file == 1)
         fprintf(fcw,'saving results to Matlab file...\n');

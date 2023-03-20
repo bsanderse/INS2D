@@ -1,4 +1,5 @@
 function [yDiffT,DiffT] = operator_rom_diffusionT(PT,options)
+% function [DiffT] = operator_rom_diffusionT(PT,options)
 % precompute convective operators
 % projection with generic matrix P, size M x NV
 % for momentum equation, P is B' or B'*Om_inv
@@ -30,8 +31,12 @@ DiffT = zeros(MT1,MT);
 % diffusion(Vbc) returns D*Vbc + yD
 
 %% Newly added for temperature for non-homogenous boundary conditions
+% But this is simply manupulated right now
 % [d2T_bc] = diffusion_temperature(Tbc,0,options,0);
 % yDiffT           = PT*[d2T_bc];
+Nx=options.grid.Nx;
+% temp=Nx*Nx;
+yDiffT = zeros(Nx*Nx,1);
 
 %% now evaluate each column of the reduced matrix as B'*D*B, where the
 % boundary conditions are subtracted in order to get only the terms

@@ -14,10 +14,6 @@ uh   = V(options.grid.indu);
 vh   = V(options.grid.indv);
 pres = reshape(p,Npx,Npy);
 Temp = reshape(T,Npx,Npy);
-Tmean_temp = reshape(Tmean,Npx,Npy);
-%%variance calculation
-T_var=T_var-Tmean.*Tmean;
-T_var = reshape(T_var,Npx,Npy);
 
 [up,vp,qp] = get_velocity(V,t,options);
 
@@ -124,18 +120,9 @@ switch options.temp.incl_dissipation
 
 end
 
-%% saving Nu data
-time = 0:dt:t_end;
-timesave = time(1:rtp.n:end);
-if (options.rom.rom == 0)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)]
-    save("Nusselt_FOM.dat", "Nudata", "-ascii")
-elseif (options.rom.rom == 1)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)]
-    save("Nusselt_ROM.dat", "Nudata", "-ascii")  
-end
 
 % plot Nusselt over time
+time = 0:dt:t_end;
 figure
 plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'r');
 grid on
@@ -210,60 +197,3 @@ grid
 title('temperature');
 colorbar
 set(gca,'LineWidth',1)
-
-%% mean-temperature processing
-yprofile_meantemp=zeros(Ny,1);
-yprofile_vartemp=zeros(Ny,1);
-for i=1:Ny
-    for j=1:Nx
-        yprofile_meantemp(i)=yprofile_meantemp(i)+Tmean_temp(j,i);
-        yprofile_vartemp(i)=yprofile_vartemp(i)+T_var(j,i);
-    end
-    yprofile_meantemp(i)=yprofile_meantemp(i)/Nx;
-    yprofile_vartemp(i)=yprofile_vartemp(i)/Nx;
-end
-if (options.rom.rom == 0)
-    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp]
-    save("statisticsRBC_FOM.dat", "statisticsRBC", "-ascii")
-elseif (options.rom.rom == 1)
-    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp]
-    save("statisticsRBC_ROM.dat", "statisticsRBC", "-ascii")
-end
-figure(201)
-plot(yprofile_meantemp,yp,'r');
-grid on
-hold on
-xlim([0 1]);
-ylim([0 1]);
-xlabel('mean temperature');
-ylabel('y');
-set(gcf,'color','w');
-set(gca,'LineWidth',1,'FontSize',14);
-
-figure(202)
-plot(yprofile_vartemp,yp,'r');
-grid on
-hold on
-xlim([0 0.1]);
-ylim([0 1]);
-xlabel('mean temperature');
-ylabel('y');
-set(gcf,'color','w');
-set(gca,'LineWidth',1,'FontSize',14);
-
-
-figure(212)
-set(gcf,'color','w');
-l=linspace(0,1,20);
-contour(xp,yp,Tmean_temp',l,'LineWidth',2);
-hold on
-%quiver(xp,yp,up',vp');
-axis equal
-axis([x1 x2 y1 y2]);
-xlabel('x');
-ylabel('y');
-grid
-title('mean temperature');
-colorbar
-set(gca,'LineWidth',1)
-

@@ -76,19 +76,23 @@ if (rtp.show==1 && rem(n-1,rtp.n) == 0)
 end
 
 % store unsteady data in an array
-if (steady==0 && save_unsteady == 1)% && sampling_start < n)
+if (steady==0 && save_unsteady == 1 )%&& sampling_start <= n && n<nt)
     if (options.output.save_eco == 0)
-        uh_total(n,:) = V(1:options.grid.Nu);
-        vh_total(n,:) = V(options.grid.Nu+1:end);
-        p_total(n,:)  = p;
+%         nsave = n-sampling_start+1;
+        nsave = n;
+        uh_total(nsave,:) = V(1:options.grid.Nu);
+        vh_total(nsave,:) = V(options.grid.Nu+1:end);
+        p_total(nsave,:)  = p;
         switch options.case.boussinesq   
             case 'temp'
-                T_total(n,:) = T;
+                T_total(nsave,:) = T;
         end
     elseif (options.output.save_eco == 1)
         save([options.output.path_results '/snapshots/Vp_n=' num2str(n) '.mat'],'V','p');
     end
 end
+
+
 
 % write data to Tecplot file
 if (tecplot.write==1 && rem(n,tecplot.n)==0)

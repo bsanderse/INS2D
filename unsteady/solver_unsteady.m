@@ -52,7 +52,7 @@ pn = p;
 Tn = T; % temperature
 tn = t;
 
-
+    
 % for methods that need extrapolation of convective terms
 if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
     V_ep      = zeros(Nu+Nv,method_startup_no);
@@ -113,6 +113,16 @@ while(n<=nt)
     % the new time level t+dt:
     t = tn + dt;
     time(n) = t;
+    
+    %save statistics  for RBC problem
+    %% Initialize statistics 
+    switch options.case.boussinesq
+        case 'temp'
+%             if (n>nsample && n==nsample_end)
+            if (n>=sampling_start && n<=nt)
+               [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
+            end
+    end
     
     % check residuals, conservation, set timestep, write output files
     process_iteration;

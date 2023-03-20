@@ -154,20 +154,18 @@ switch options.case.boussinesq
     case 'temp'
         Nu = options.grid.Nu;
         Nv = options.grid.Nv;
-        if (options.rom.precompute_buoyancy_force == 1)
-            F_buoyancy_v     = options.discretization.AT_v*BT;
-            F_buoyancy = [zeros(Nu,1); F_buoyancy_v];
-            F_buoyancy_ROM = B'*(Diag.*F_buoyancy);
-        elseif (options.rom.precompute_buoyancy_force == 0)  % no precomputing, use FOM expression and project to ROM (expensive)
+        if (options.rom.precompute_buoyancy_force == 0)  % no precomputing, use FOM expression and project to ROM (expensive)
             % get T at v-locations
             % note that AT_v includes the volumes Omega_v
             F_buoyancy_v     = options.discretization.AT_v*T;
             F_buoyancy = [zeros(Nu,1); F_buoyancy_v];
             F_buoyancy_ROM = B'*(Diag.*F_buoyancy);
+        elseif (options.rom.precompute_buoyancy_force == 1)
+            F_buoyancy_ROM_precompute = options.rom.F_buoyancy_ROM_precompute;
+            F_buoyancy_ROM = F_buoyancy_ROM_precompute*RT;
         end
         Fres = Fres + F_buoyancy_ROM;
 end
-
 
 
 
@@ -195,6 +193,31 @@ end
 
 % @Krishan:Implement convection and diffusion separately without
 % precomputation 
+% switch options.case.boussinesq
+%     
+%     case 'temp'
+%         if (options.rom.precompute_convectionT == 0)
+%             [convT, Jac_conv_T, Jac_conv_V] = convection_temperature(T,V,t,options,getJacobian);                     
+% %             Jac_conv_diff_T = -Jac_conv_T + Jac_diff_T;
+% %             Jac_conv_diff_V = -Jac_conv_V;
+%         elseif (options.rom.precompute_convectionT == 1)    
+%             disp('not yet implemented');
+%         end
+%         if (options.rom.precompute_diffusionT == 0)
+%             [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
+%          
+%         elseif (options.rom.precompute_diffusionT == 1)       
+%             [diffT, Jac_diff_T] = diffusionROMT(RT,t,options,getJacobian);
+%         end
+%         FTemp = -convT + diffT; 
+% %        FTemp = -BT'*(DiagT.*convT) + diffT; 
+%         FTemp_res = BT'*(DiagT.*FTemp);
+%         Fres = [Fres; FTemp_res];
+% %         Fres = [Fres; FTemp];
+%     otherwise
+% %         Fres = Fres;
+% end
+
 switch options.case.boussinesq
     
     case 'temp'

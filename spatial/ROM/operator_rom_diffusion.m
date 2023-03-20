@@ -1,4 +1,4 @@
-function [yDiff,Diff,yDiffT,DiffT] = operator_rom_diffusion(P,PT,options)
+function [yDiff,Diff] = operator_rom_diffusion(P,options)
 % precompute convective operators
 % projection with generic matrix P, size M x NV
 % for momentum equation, P is B' or B'*Om_inv
@@ -15,20 +15,21 @@ Vbc = options.rom.Vbc;
 M1  = size(P,1);   
 
 %% for temperature equation only
-switch options.case.boussinesq   
-    case 'temp'
-        NT = options.grid.NT;
-        ZT  = zeros(NT,1);
-        BT   = options.rom.BT;
-        MT   = options.rom.MT;
-% Tbc = options.rom.Tbc;
-
-% PT can project to MT or modes 
-        MT1  = size(PT,1);  
-        DiffT = zeros(MT1,MT);
-    otherwise
-            PT=0;
-end
+% switch options.case.boussinesq   
+%     case 'temp'
+%         NT = options.grid.NT;
+%         ZT = zeros(NT,1);
+%         BT = options.rom.BT;
+%         MT = options.rom.MT;
+%        
+% % Tbc = options.rom.Tbc;
+% 
+% % PT can project to MT or modes 
+%         MT1  = size(PT,1);  
+%         DiffT = zeros(MT1,MT);
+%     otherwise
+%             PT=0;
+% end
 
 %% diffusion:
 % the ROM discretization will read Diff*R + yDiff, where Diff is the reduced
@@ -46,11 +47,14 @@ Diff = zeros(M1,M);
 % diffusion(Vbc) returns D*Vbc + yD
 [d2u_bc,d2v_bc] = diffusion(Vbc,0,options,0);
 yDiff           = P*[d2u_bc;d2v_bc];
-switch options.case.boussinesq   
-    case 'temp'
-        [d2T_bc] = diffusion(ZT,0,options,0);
-        yDiffT        = PT*[d2T_bc];
-end 
+
+% YdiffT = 0;
+% switch options.case.boussinesq   
+%     case 'temp'
+%         [d2T_bc] = diffusion_temperature(ZT,0,options,0);
+%         yDiffT        = PT*[d2T_bc];
+% end 
+
 % now evaluate each column of the reduced matrix as B'*D*B, where the
 % boundary conditions are subtracted in order to get only the terms
 % that involve the matrix
@@ -59,23 +63,23 @@ end
 % diffusion(B) - diffusion(0)
 [d2u_0,d2v_0] = diffusion(Z,0,options,0);
 yDiff0        = P*[d2u_0;d2v_0];
-switch options.case.boussinesq   
-    case 'temp'
-        [d2T_0] = diffusion_temperature(ZT,0,options,0);
-        yDiffT0        = PT*[d2T_0];
-end 
+% switch options.case.boussinesq   
+%     case 'temp'
+%         [d2T_0] = diffusion_temperature(ZT,0,options,0);
+%         yDiffT0        = PT*[d2T_0];
+% end 
 
 for i=1:M
     [d2u,d2v] = diffusion(B(:,i),0,options,0);
     Diff(:,i) = P*[d2u;d2v] - yDiff0;
 end
 %% Temperature equation
-switch options.case.boussinesq   
-    case 'temp'
-        for i=1:MT
-            [d2T] = diffusion_temperature(BT(:,i),0,options,0);
-            DiffT(:,i) = PT*[d2T] - yDiffT0;
-        end
-    otherwise
-        DiffT(:,:)=0;
-end
+% switch options.case.boussinesq   
+%     case 'temp'
+%         for i=1:MT
+%             [d2T] = diffusion_temperature(BT(:,i),0,options,0);
+%             DiffT(:,i) = PT*[d2T] - yDiffT0;
+%         end
+%     otherwise
+%         DiffT(:,:)=0;
+% end

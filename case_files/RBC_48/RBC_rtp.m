@@ -103,32 +103,32 @@ if show_figures
     set(gca,'LineWidth',1,'FontSize',14);
 end
 
-%% check energy conservation properties      krishan
+%% check energy conservation properties
 % change in total energy should be due to int T*v dOmega, in case viscous
 % dissipation is included and no boundary contributions are present
 
-% de_pot = vh'*(options.discretization.AT_v*T);
-% diffT   = diffusion_temperature(T,t,options,0);
-% de_cond = sum(diffT);
-% 
-% if show_figures
-%     figure(3)
-%     cmap = get(gca,'ColorOrder');
-%     if (n>1)
-%         % note that k includes e_int and (1/2)*u^2
-%         plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
-%         hold on
-%         plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
-%         grid on
-%         title('d/dt (e_k + e_{int}) vs. potential energy and conduction');
-% 
-%         xlabel('t')
-%         ylabel('energy change');
-%         set(gcf,'color','w');
-%         set(gca,'LineWidth',1,'FontSize',14);
-%         legend('d/dt (e_k + e_{int})','potential energy source + conduction');
-%     end
-% end
+de_pot = vh'*(options.discretization.AT_v*T);
+diffT   = diffusion_temperature(T,t,options,0);
+de_cond = sum(diffT);
+
+if show_figures
+    figure(3)
+    cmap = get(gca,'ColorOrder');
+    if (n>1)
+        % note that k includes e_int and (1/2)*u^2
+        plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
+        hold on
+        plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+        grid on
+        title('d/dt (e_k + e_{int}) vs. potential energy and conduction');
+
+        xlabel('t')
+        ylabel('energy change');
+        set(gcf,'color','w');
+        set(gca,'LineWidth',1,'FontSize',14);
+        legend('d/dt (e_k + e_{int})','potential energy source + conduction');
+    end
+end
 
 %% create 2D plots
 
@@ -183,7 +183,7 @@ end
 % colorbar
 % set(gca,'LineWidth',1)
 
-%% temperature    krishan
+%% temperature
 if show_figures
     figure(1)
     set(gcf,'color','w');

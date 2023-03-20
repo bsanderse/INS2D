@@ -1,9 +1,9 @@
 function index = getSampleIndex(rom)
 
 % sample dt can be used to get only a subset of the snapshots
-dt_sample    = rom.dt_sample;
-dt_snapshots = rom.dt_snapshots;
-t_sample     = rom.t_sample;
+dt_sample    = rom.dt_sample; 
+dt_snapshots = rom.dt_snapshots; % frequency of snapshots to be used for SVD = some multiple of dt
+t_sample     = rom.t_sample;    % = t_end
 if (rem(dt_sample,dt_snapshots) == 0)
     % sample dt should be a multiple of snapshot dt:
     Nskip = dt_sample/dt_snapshots;

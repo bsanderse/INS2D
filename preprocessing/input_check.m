@@ -65,7 +65,7 @@ else
         end
         % estimate number of time steps that will be taken
         nt     = ceil((t_end-t_start)/dt);
-        
+%         nsample = 
         % allocate variables, including initial condition
         maxres = zeros(nt+1,1);
         maxdiv = zeros(nt+1,1);
@@ -170,10 +170,17 @@ else
     
     if (steady==0 && save_unsteady == 1)
         if (options.output.save_eco == 0)
-            % allocate space for variables
+%             % allocate space for variables
+%             if (steady==0 && save_unsteady == 1)
+%             ntemp = nt-sampling_start;    
+%             uh_total = zeros(ntemp,options.grid.Nu);
+%             vh_total = zeros(ntemp,options.grid.Nv);
+%             p_total  = zeros(ntemp,options.grid.Np);
+%             else
             uh_total = zeros(nt,options.grid.Nu);
             vh_total = zeros(nt,options.grid.Nv);
             p_total  = zeros(nt,options.grid.Np);
+%             end                               
             % store initial solution
             V_start = V; % can have changed due to div-correction
             uh_total(1,:) = V_start(options.grid.indu);
@@ -185,7 +192,23 @@ else
         end
 
     end
-    
+                % Initialize statistics 
+    switch options.case.boussinesq
+        case 'temp'
+            %             if (n>nsample && n==nsample_end)
+            NV=options.grid.NV;
+            Np=options.grid.Np;
+            NT=options.grid.NT;
+            Vmean=zeros(NV,1);
+            pmean=zeros(Np,1);
+            Tmean=zeros(NT,1);
+            V_var=zeros(NV,1);
+            p_var=zeros(Np,1);
+            T_var=zeros(NT,1);         
+%                     options.savestatisticsRBC.Vmean=Vmean;
+%                     pmean=zeros(Np,1),options.savestatisticsRBC.Vmean=Vmean;
+%                     Tmean=zeros(NT,1);
+            end
     
 end
 

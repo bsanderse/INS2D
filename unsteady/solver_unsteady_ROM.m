@@ -158,7 +158,6 @@ if (rtp.show==1)
     end
 end
 
-
 %% start time stepping
 
 % set current velocity and pressure
@@ -230,6 +229,16 @@ while(n<=nt)
             p = getFOM_pressure(q,t,options);
         end
         process_iteration;
+    end
+        %save statistics  for RBC problem
+    %% Initialize statistics 
+    %% Initialize statistics 
+    switch options.case.boussinesq
+        case 'temp'
+%             if (n>nsample && n==nsample_end)
+            if (n>=sampling_start && n<=nt)
+               [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
+            end
     end
     
 

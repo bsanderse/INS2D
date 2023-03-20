@@ -2,9 +2,9 @@
 run_multiple = 1;
 % run_multiple = 0;
 %mesh_list = [32 64 128 256];
-mesh_list = [1e3];
+mesh_list = [3e5];
 %disp(length(mesh_list));
-% mesh_list = [5e-2 1e-2 5e-3 1e-3];
+%mesh_list = [5e-2 1e-2 5e-3 1e-3];
 %Nsim = length(mesh_list);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
@@ -18,7 +18,7 @@ mesh_list = [1e3];
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-%     Ra = 1e4;                   % Rayleigh number
+%     Ra = 1e6;                   % Rayleigh number
     Ra = mesh_list(j);	
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
@@ -37,8 +37,8 @@ mesh_list = [1e3];
 
 %    Nx=mesh_list(j);
 %    Ny=Nx;
-    Nx      = 32;                  % number of volumes in the x-direction
-    Ny      = 32;                   % number of volumes in the y-direction
+    Nx      = 48;                  % number of volumes in the x-direction
+    Ny      = 48;                   % number of volumes in the y-direction
 %	if(j==2)
 %	Nx=256;
 %	Ny=Nx;
@@ -66,7 +66,7 @@ mesh_list = [1e3];
     
     % only for unsteady problems:
 
-        dt            = 5e-3;       % time step (for explicit methods it can be
+        dt            = 1e-2;       % time step (for explicit methods it can be
 %         dt            = 5e-1;       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
 %        dt=mesh_list(j); 
@@ -185,7 +185,7 @@ mesh_list = [1e3];
     path_results     = 'results';  % folder where results are stored
     save_file        = 1;          % save all matlab data after program is completed
     save_unsteady    = 1;
-    sampling_start   = 150/dt; 	   % Time to start sampling, (divided by dt)
+%    sampling_start   = 13/dt; 	   % Time to start sampling, (divided by dt)    
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
                                    % 0 only works if save_results = 1
@@ -199,16 +199,15 @@ mesh_list = [1e3];
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
-%     M_list = [2 4 8 16];
-%     Nsim = length(M_list);
+    M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 16;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
+    M      = 4560;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
                        % therefore M=2*Nx*Ny-Nx
-    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
-    MT     = M;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
+    Mp     = 2304;     % number of pressure modes used (only needed if pressure_recovery=1)
+    MT     = 2304;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
 
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
@@ -236,8 +235,6 @@ mesh_list = [1e3];
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       
 
-%     snapshot_data = 'results/RBC_0.000e+00_4x4_10/matlab_data.mat';
-%     snapshot_data = 'results/RBCfomdata/matlab_data.mat';
-    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/modeanalysis/1e3_32x32/FOM/matlab_data.mat';
-%      snapshot_data = '//FOMdata/matlab_data_4x4_unitinitialcondition.mat';
+%     snapshot_data = '../FOMdata/matlab_data.mat';
+    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/3e5_48x48/matlab_data.mat';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
