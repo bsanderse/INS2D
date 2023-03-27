@@ -1,7 +1,7 @@
 %% post-processing RBC results
 
-line  = {'r-','b-','k-','m-','g-'};
-color = char(line(j));
+% line  = {'r-','b-','k-','m-','g-'};
+% color = char(line(j));
 
 Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;

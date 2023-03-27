@@ -1,7 +1,7 @@
 %% real-time plotting RBC and computing the Nusselt number
 
-line  = {'r-','b-','k-','m-','g-'};
-color = char(line(j));
+% line  = {'r-','b-','k-','m-','g-'};
+% color = char(line(j));
 
 Nu  = options.grid.Nu;
 Nv  = options.grid.Nv;
