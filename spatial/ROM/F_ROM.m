@@ -191,8 +191,79 @@ end
 % %         Fres = Fres;
 % end
 
-% @Krishan:Implement convection and diffusion separately without
-% precomputation 
+%% @Krishan:Implement convection and diffusion separately without precomputation 
+switch options.case.boussinesq
+    
+    case 'temp'
+        if (options.rom.precompute_convectionT == 0)
+            [convT, Jac_conv_T, Jac_conv_V] = convection_temperature(T,V,t,options,getJacobian);                     
+%             Jac_conv_diff_T = -Jac_conv_T + Jac_diff_T;
+%             Jac_conv_diff_V = -Jac_conv_V;
+            convT = BT'*(DiagT.*convT);
+        elseif (options.rom.precompute_convectionT == 1)    
+            disp('not yet implemented');
+        end
+%Original implementation of diffusion operator        
+        if (options.rom.precompute_diffusionT == 0)
+            [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
+            diffT = BT'*(DiagT.*diffT);         
+        elseif (options.rom.precompute_diffusionT == 1)       
+            [diffT, Jac_diff_T] = diffusionROMT(RT,t,options,getJacobian);
+        end        
+% % Testing of diffusion operator        
+%         if (options.rom.precompute_diffusionT == 0)
+%             [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
+%             DiffT  = options.discretization.DiffT;
+%             yDiffT = options.discretization.yDiffT;
+%             %note that DiffT and yDiffT include already the scaling with alfa4
+%             %This is created to make the multiplication compatible
+%             DiagT=spdiags(DiagT,0,NT,NT);
+%             %end this test;
+%             T1=BT';
+%             T2=DiagT;
+%             T3=DiffT;
+%             T4=T;
+%             diffphi = zeros(NT,NT);
+%             diffphi=T1*(T2.*(T3*T4));
+%             diffphi=reshape(diffphi,NT*NT,1);
+%             save("FOM_diffphi.dat", "diffphi", "-ascii");
+%             disp("Hi")
+%             
+%             diff1=(BT'*DiagT).*(DiffT*BT);
+%             diff   = (DiffT*T + yDiffT); 
+%             
+%             diffT = BT'*(DiagT.*diffT);
+%             diffT1=diffT;            
+%         elseif (options.rom.precompute_diffusionT == 1)   %Testing begins 
+%             options.rom.precompute_diffusionT = 1;
+%             options = operator_rom(options);
+%             DiffT  = options.rom.DiffT;
+%             yDiffT = options.rom.yDiffT; 
+%             DiagT=spdiags(DiagT,0,NT,NT);
+%             [diffT, Jac_diff_T] = diffusionROMT(RT,t,options,getJacobian);
+%             diffT=BT'*(DiagT.*diffT);
+%             save("ROM_diffphi.dat", "diffT", "-ascii");
+%             disp("Hi")
+% % save("ROM_diffphi.dat", "d2", "-ascii");
+% save("ROM_diffphi.dat", "d2", "-ascii");
+% disp("Hi")
+%             diff2=DiffT;
+%         end
+%% This step is the final step whether you use precomputation or not
+        FTemp = -convT + diffT; 
+        
+%% This is not required         
+%         FTemp_res = -BT'*(DiagT.*convT)+BT'*(DiagT.*diffT);
+%         FTemp_res1 = convT1+diffT1;
+%        FTemp = -BT'*(DiagT.*convT) + diffT; 
+%         FTemp_res1 = BT'*(DiagT.*FTemp); %without precompute
+%         Fres = [Fres; FTemp_res];
+% not required stuff ends here 
+        Fres = [Fres; FTemp];
+    otherwise
+%         Fres = Fres;
+end
+
 % switch options.case.boussinesq
 %     
 %     case 'temp'
@@ -207,40 +278,15 @@ end
 %             [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
 %          
 %         elseif (options.rom.precompute_diffusionT == 1)       
-%             [diffT, Jac_diff_T] = diffusionROMT(RT,t,options,getJacobian);
+%             disp('not yet implemented');
 %         end
-%         FTemp = -convT + diffT; 
-% %        FTemp = -BT'*(DiagT.*convT) + diffT; 
-%         FTemp_res = BT'*(DiagT.*FTemp);
-%         Fres = [Fres; FTemp_res];
-% %         Fres = [Fres; FTemp];
+%      
+%             FTemp = -convT + diffT;        
+%             FTemp_res = BT'*(DiagT.*FTemp);
+%             Fres = [Fres; FTemp_res];
 %     otherwise
 % %         Fres = Fres;
 % end
-
-switch options.case.boussinesq
-    
-    case 'temp'
-        if (options.rom.precompute_convectionT == 0)
-            [convT, Jac_conv_T, Jac_conv_V] = convection_temperature(T,V,t,options,getJacobian);                     
-%             Jac_conv_diff_T = -Jac_conv_T + Jac_diff_T;
-%             Jac_conv_diff_V = -Jac_conv_V;
-        elseif (options.rom.precompute_convectionT == 1)    
-            disp('not yet implemented');
-        end
-        if (options.rom.precompute_diffusionT == 0)
-            [diffT, Jac_diff_T] = diffusion_temperature(T,t,options,getJacobian);
-         
-        elseif (options.rom.precompute_diffusionT == 1)       
-            disp('not yet implemented');
-        end
-     
-            FTemp = -convT + diffT;        
-            FTemp_res = BT'*(DiagT.*FTemp);
-            Fres = [Fres; FTemp_res];
-    otherwise
-%         Fres = Fres;
-end
 
 %% for the case of non-orthogonal basis, we have to multiply with the
 % inverse of (B'*B)

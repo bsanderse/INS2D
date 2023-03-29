@@ -1,4 +1,4 @@
-function options = operator_convection_diffusion(options)
+ function options = operator_convection_diffusion(options)
 % construct convection and diffusion operators
 
 % boundary conditions

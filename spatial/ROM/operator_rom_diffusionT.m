@@ -31,12 +31,12 @@ DiffT = zeros(MT1,MT);
 % diffusion(Vbc) returns D*Vbc + yD
 
 %% Newly added for temperature for non-homogenous boundary conditions
-% But this is simply manupulated right now
+%It should be in this way
 % [d2T_bc] = diffusion_temperature(Tbc,0,options,0);
 % yDiffT           = PT*[d2T_bc];
-Nx=options.grid.Nx;
-% temp=Nx*Nx;
-yDiffT = zeros(Nx*Nx,1);
+% But this is simply manupulated right now as
+NT=options.grid.NT;
+yDiffT = zeros(NT,1);
 
 %% now evaluate each column of the reduced matrix as B'*D*B, where the
 % boundary conditions are subtracted in order to get only the terms
@@ -47,7 +47,19 @@ yDiffT = zeros(Nx*Nx,1);
 [d2T_0] = diffusion_temperature(ZT,0,options,0);
 yDiffT0        = PT*[d2T_0];
 
+%%For testing only 
+% diffphi = zeros(NT,NT);
+% %testing end
+
 for i=1:MT
     [d2T] = diffusion_temperature(BT(:,i),0,options,0);
+%     %testing only
+%     diffphi(:,i)=d2T-d2T_0;
+% %     testing end;  
     DiffT(:,i) = PT*[d2T] - yDiffT0;
 end
+% % Testinng again  remove this after testing
+% DiffT=diffphi;
+% diffphi=reshape(DiffT,NT*NT,1);
+% save("ROM_diffphi.dat", "diffphi", "-ascii");
+% disp("Hi")

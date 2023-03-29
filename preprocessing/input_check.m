@@ -180,12 +180,18 @@ else
             uh_total = zeros(nt,options.grid.Nu);
             vh_total = zeros(nt,options.grid.Nv);
             p_total  = zeros(nt,options.grid.Np);
+            T_total  = zeros(nt,options.grid.NT);
 %             end                               
             % store initial solution
             V_start = V; % can have changed due to div-correction
             uh_total(1,:) = V_start(options.grid.indu);
             vh_total(1,:) = V_start(options.grid.indv);
             p_total(1,:)  = p_start(:);
+            switch options.case.boussinesq   
+                case 'temp'
+                    T_total(1,:) = T_start(:);
+            end
+        
         elseif (options.output.save_eco == 1)
             mkdir([options.output.path_results '/snapshots']);
             save([options.output.path_results '/snapshots/Vp_n=1.mat'],'V','p');

@@ -124,15 +124,15 @@ switch options.temp.incl_dissipation
 
 end
 
-%% saving Nu data
+% saving Nu data
 time = 0:dt:t_end;
 timesave = time(1:rtp.n:end);
 if (options.rom.rom == 0)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)]
-    save("Nusselt_FOM.dat", "Nudata", "-ascii")
+    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)];
+    save("Nusselt_FOM.dat", "Nudata", "-ascii");
 elseif (options.rom.rom == 1)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)]
-    save("Nusselt_ROM.dat", "Nudata", "-ascii")  
+    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)];
+    save("Nusselt_ROM.dat", "Nudata", "-ascii");
 end
 
 % plot Nusselt over time
@@ -223,11 +223,11 @@ for i=1:Ny
     yprofile_vartemp(i)=yprofile_vartemp(i)/Nx;
 end
 if (options.rom.rom == 0)
-    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp]
-    save("statisticsRBC_FOM.dat", "statisticsRBC", "-ascii")
+    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp];
+    save("statisticsRBC_FOM.dat", "statisticsRBC", "-ascii");
 elseif (options.rom.rom == 1)
-    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp]
-    save("statisticsRBC_ROM.dat", "statisticsRBC", "-ascii")
+    statisticsRBC = [yp yprofile_meantemp yprofile_vartemp];
+    save("statisticsRBC_ROM.dat", "statisticsRBC", "-ascii");
 end
 figure(201)
 plot(yprofile_meantemp,yp,'r');

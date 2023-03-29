@@ -185,7 +185,7 @@ mesh_list = [3e5];
     path_results     = 'results';  % folder where results are stored
     save_file        = 1;          % save all matlab data after program is completed
     save_unsteady    = 1;
-%    sampling_start   = 13/dt; 	   % Time to start sampling, (divided by dt)    
+    sampling_start   = dt/dt; 	   % Time to start sampling, (divided by dt)
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
                                    % 0 only works if save_results = 1
@@ -199,7 +199,7 @@ mesh_list = [3e5];
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
     M_list = [2 4 8 16 2 4 8 16];

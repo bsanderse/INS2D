@@ -21,7 +21,7 @@ DiffT  = options.discretization.DiffT;
 yDiffT = options.discretization.yDiffT;
 
 % note that DiffT and yDiffT include already the scaling with alfa4
-diff   = (DiffT*T + yDiffT);
+diff   = (DiffT*T + yDiffT); 
 
         
 if (getJacobian == 1)

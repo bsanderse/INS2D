@@ -33,6 +33,7 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                     % uh_total is of size Nt*Nu, V_total size (Nu+Nv)*Nt
                     V_total = [uh_total vh_total]';
                     snapshots_V_total = [snapshots.uh_total(snapshot_indx,:) snapshots.vh_total(snapshot_indx,:)]';
+                    snapshots_T_total = [snapshots.T_total(snapshot_indx,:)]';
                     error_V = V_total - snapshots_V_total;
 
                     % inf-norm
@@ -61,8 +62,11 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                     % note that the norm should be consistent with the
                     % optimization problem used in the SVD
                     V_best = getFOM_velocity(getROM_velocity(snapshots_V_total,0,options),0,options);
+                    T_best = getFOM_Temperature(getROM_Temperature(snapshots_T_total,0,options),0,options);
                     error_V_best = V_best - snapshots_V_total;
+%                     error_T_best = T_best - snapshots_T_total;
                     error_V_best_2 = weightedL2norm(error_V_best,options.grid.Om)./V_2_ref;
+%                     error_T_best_2 = weightedL2norm(error_T_best,options.grid.Omp)./T_2_ref;
                     
                     figure(101)
 %                     plot(t_vec,error_V_inf);

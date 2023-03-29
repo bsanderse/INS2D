@@ -25,5 +25,9 @@ switch visc
         
 end
 
+% diffphi=reshape(DiffT,NT*NT,1);
+% save("ROM_diffphi.dat", "d2", "-ascii");
+% disp("Hi")
+
 end
 

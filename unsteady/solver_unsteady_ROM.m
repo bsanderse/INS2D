@@ -11,7 +11,7 @@ switch options.rom.rom_type
         if (j==1)
             disp(['loading datafile...: ' snapshot_data]);
             snapshots = load(snapshot_data,'uh_total','vh_total','p_total','T_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
-
+            
             % dt that was used for creating the snapshot matrix:
             dt_snapshots = snapshots.dt;
             options.rom.dt_snapshots = dt_snapshots;
