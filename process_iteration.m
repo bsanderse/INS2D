@@ -76,10 +76,10 @@ if (rtp.show==1 && rem(n-1,rtp.n) == 0)
 end
 
 % store unsteady data in an array
-if (steady==0 && save_unsteady == 1 )%&& sampling_start <= n && n<nt)
+% if (steady==0 && save_unsteady == 1 )
+if (steady==0 && save_unsteady == 1 && sampling_start <= n && n<nt)  
     if (options.output.save_eco == 0)
-%         nsave = n-sampling_start+1;
-        nsave = n;
+        nsave = n-sampling_start+1;
         uh_total(nsave,:) = V(1:options.grid.Nu);
         vh_total(nsave,:) = V(options.grid.Nu+1:end);
         p_total(nsave,:)  = p;

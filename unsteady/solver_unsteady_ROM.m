@@ -10,7 +10,12 @@ switch options.rom.rom_type
         % FOM data file does not change, so we only load it once
         if (j==1)
             disp(['loading datafile...: ' snapshot_data]);
-            snapshots = load(snapshot_data,'uh_total','vh_total','p_total','T_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
+            snapshots = load(snapshot_data,'uh_total','vh_total','p_total','T_total','dt','t_end',' sample_start_time','Re','k','umom','vmom','maxdiv','Vbc');
+            
+%             if take_all_snapshots
+%                 options.rom.dt_sample = snapshots.dt;
+%                 options.rom.t_sample = snapshots.t_end - snapshots.sampling_start_time;
+%             end    
             
             % dt that was used for creating the snapshot matrix:
             dt_snapshots = snapshots.dt;
@@ -20,8 +25,13 @@ switch options.rom.rom_type
                 error('Reynolds numbers of snapshot data and current simulation do not match');
             end
             
-            % find indices of snapshot matrix that are needed
-            snapshot_sample_index = getSampleIndex(options.rom);
+            if options.rom.take_all_snapshots
+                snapshot_sample_index = 1:1:size(snapshots.uh_total,1);
+                disp(snapshot_sample_index)
+            else
+                % find indices of snapshot matrix that are needed
+                snapshot_sample_index = getSampleIndex(options.rom);
+            end
            
         end
         

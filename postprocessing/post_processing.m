@@ -27,7 +27,7 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
             % if velocity fields have been stored, we can compute errors
             if (options.rom.process_iteration_FOM==1)
                 
-                if (options.output.save_unsteady == 1)
+                if (options.output.save_unsteady == 2)
                     % we have the velocity fields, so we can compute error wrt
                     % FOM
                     % uh_total is of size Nt*Nu, V_total size (Nu+Nv)*Nt

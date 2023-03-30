@@ -172,15 +172,16 @@ else
         if (options.output.save_eco == 0)
 %             % allocate space for variables
 %             if (steady==0 && save_unsteady == 1)
-%             ntemp = nt-sampling_start;    
-%             uh_total = zeros(ntemp,options.grid.Nu);
-%             vh_total = zeros(ntemp,options.grid.Nv);
-%             p_total  = zeros(ntemp,options.grid.Np);
+            ntemp = nt-sampling_start;    
+            uh_total = zeros(ntemp,options.grid.Nu);
+            vh_total = zeros(ntemp,options.grid.Nv);
+            p_total  = zeros(ntemp,options.grid.Np);
+            T_total  = zeros(ntemp,options.grid.NT);
 %             else
-            uh_total = zeros(nt,options.grid.Nu);
-            vh_total = zeros(nt,options.grid.Nv);
-            p_total  = zeros(nt,options.grid.Np);
-            T_total  = zeros(nt,options.grid.NT);
+%             uh_total = zeros(nt,options.grid.Nu);
+%             vh_total = zeros(nt,options.grid.Nv);
+%             p_total  = zeros(nt,options.grid.Np);
+%             T_total  = zeros(nt,options.grid.NT);
 %             end                               
             % store initial solution
             V_start = V; % can have changed due to div-correction

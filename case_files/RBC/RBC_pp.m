@@ -141,7 +141,7 @@ plot(time(1:rtp.n:end),NusseltL_time(1:rtp.n:end),'r');
 grid on
 hold on
 plot(time(1:rtp.n:end),NusseltU_time(1:rtp.n:end),'b');
-ylim([0 40])
+ylim([0 20])
 xlabel('t');
 ylabel('Nu');
 set(gcf,'color','w');
@@ -244,9 +244,9 @@ figure(202)
 plot(yprofile_vartemp,yp,'r');
 grid on
 hold on
-xlim([0 0.1]);
+xlim([0 0.01]);
 ylim([0 1]);
-xlabel('mean temperature');
+xlabel('Variance');
 ylabel('y');
 set(gcf,'color','w');
 set(gca,'LineWidth',1,'FontSize',14);

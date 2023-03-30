@@ -203,6 +203,8 @@ if show_figures
     set(gca,'LineWidth',1,'FontSize',14);
     hold off
 end
+%figure(501)
+%plot(T);
 
 %% streamfunction
 

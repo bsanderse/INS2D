@@ -71,7 +71,7 @@ mesh_list = [3e4];
                                    % determined during running with dynamic_dt)
 %        dt=mesh_list(j); 
         t_start       = 0;        % start time
-        t_end         = 200;         % end time
+        t_end         = 30;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -181,11 +181,12 @@ mesh_list = [3e4];
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_results     = 0;          % create folder with results files and input files
+    save_results     = 1;          % create folder with results files and input files
     path_results     = 'results';  % folder where results are stored
-    save_file        = 0;          % save all matlab data after program is completed
-    save_unsteady    = 0;
-    sampling_start   = 150/dt; 	   % Time to start sampling, (divided by dt)
+    save_file        = 1;          % save all matlab data after program is completed
+    save_unsteady    = 1;
+    sampling_start   = 10/dt; 	   % Time to start sampling, (divided by dt) and it is basically an index not time
+    sampling_start_time = sampling_start*dt;
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
                                    % 0 only works if save_results = 1
@@ -202,17 +203,20 @@ mesh_list = [3e4];
     rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
-    M_list = [2 4 8 16 2 4 8 16];
+%     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
     M      = 28;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
                        % therefore M=2*Nx*Ny-Nx
     Mp     = 16;     % number of pressure modes used (only needed if pressure_recovery=1)
     MT     = 16;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
 
-    t_sample  = t_end;  % part of snapshot matrix used for building SVD
+    t_sample  = t_end;%t_end; %t_end;  % part of snapshot matrix used for building SVD
+%     t_sample  = 10;%t_end; %t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
-
+    take_all_snapshots  =   1; % 1 refers to collection of all the samples; t_sample and dt_sample are not used
+                               % 0 refers to only a section of it as specified by t_sample and dt_sample
+    initialize_with_snapshots = 1; %
     weighted_norm         = 1;
     weighted_norm_T       = 1; % weighted norm for temeprature basis (only needed if boussinesq='temp')
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
@@ -228,13 +232,13 @@ mesh_list = [3e4];
     precompute_buoyancy_force      = 1;
 
     precompute_convectionT = 0;
-    precompute_diffusionT  = 1;
+    precompute_diffusionT  = 0;
 
     pressure_recovery     = 0;
     pressure_precompute   = 0;
 
-    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)       
+    process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)
 
-%     snapshot_data = '../FOMdata/matlab_data.mat';
-    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/matlab_data3e4_4x4.mat';
+    snapshot_data = 'RBC_data/matlab_data.mat';
+%     snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/matlab_data3e4_4x4.mat';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
