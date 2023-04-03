@@ -45,7 +45,8 @@ dTdyU = dTdy(end-Npx+1:end);
 
 NusseltL = sum(-dTdyL.*hx)/Lx; % integrate over lower plate
 NusseltU = sum(-dTdyU.*hx)/Lx; % integrate over upper plate
- 
+Rey_comp = sqrt(Ra*(sum(uh.*uh)/Nu+sum(vh.*vh)/Nv)/Pr); %Calculation of Reynolds number
+
 % old implementation based on 'manually' getting derivatives 
 % % get temperature derivative at lower plate
 % TLo  = TBC(xp,y(1),t,options);
@@ -89,7 +90,7 @@ NusseltU = sum(-dTdyU.*hx)/Lx; % integrate over upper plate
 % currently, store the second order approximation
 NusseltL_time(n,1) = NusseltL;
 NusseltU_time(n,1) = NusseltU;
-
+Rey_time(n,1) = Rey_comp;
 if show_figures
     figure(2)
     plot(t,NusseltL,'ks');
@@ -102,7 +103,17 @@ if show_figures
     set(gcf,'color','w');
     set(gca,'LineWidth',1,'FontSize',14);
 end
-
+if show_figures
+    figure(203)
+    plot(t,Rey_comp,'ks');
+    grid on
+    hold on
+%     ylim([0 1000])
+    xlabel('t')
+    ylabel('Re')
+    set(gcf,'color','w');
+    set(gca,'LineWidth',1,'FontSize',16);
+end
 %% check energy conservation properties      krishan
 % change in total energy should be due to int T*v dOmega, in case viscous
 % dissipation is included and no boundary contributions are present
@@ -183,26 +194,26 @@ end
 % colorbar
 % set(gca,'LineWidth',1)
 
-%% temperature    krishan
-if show_figures
-    figure(1)
-    set(gcf,'color','w');
-    % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-    l=linspace(0,1,20);
-    % l = 20;
-    contour(xp,yp,Temp',l,'LineWidth',2);
-    hold on
-    quiver(xp,yp,up',vp');
-    axis equal
-    axis([x1 x2 y1 y2]);
-    xlabel('x');
-    ylabel('y');
-    grid
-    title('temperature');
-    colorbar
-    set(gca,'LineWidth',1,'FontSize',14);
-    hold off
-end
+% %% temperature    krishan
+% if show_figures
+%     figure(1)
+%     set(gcf,'color','w');
+%     % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
+%     l=linspace(0,1,20);
+%     % l = 20;
+%     contour(xp,yp,Temp',l,'LineWidth',2);
+%     hold on
+%     quiver(xp,yp,up',vp');
+%     axis equal
+%     axis([x1 x2 y1 y2]);
+%     xlabel('x');
+%     ylabel('y');
+%     grid
+%     title('temperature');
+%     colorbar
+%     set(gca,'LineWidth',1,'FontSize',14);
+%     hold off
+% end
 %figure(501)
 %plot(T);
 

@@ -55,7 +55,7 @@ dTdyU = dTdy(end-Npx+1:end);
 
 NusseltL = sum(-dTdyL.*hx)/Lx % integrate over lower plate
 NusseltU = sum(-dTdyU.*hx)/Lx % integrate over upper plate
-
+Rey_comp = sqrt(Ra*(sum(uh.*uh)/Nu+sum(vh.*vh)/Nv)/Pr); %Calculation of Reynolds number
 
 % alternative below is to manually get derivatives
 % % get temperature derivative at lower plate
@@ -128,10 +128,10 @@ end
 time = 0:dt:t_end;
 timesave = time(1:rtp.n:end);
 if (options.rom.rom == 0)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)];
+    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end) Rey_time(1:rtp.n:end)];
     save("Nusselt_FOM.dat", "Nudata", "-ascii");
 elseif (options.rom.rom == 1)
-    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end)];
+    Nudata = [timesave' NusseltL_time(1:rtp.n:end) NusseltU_time(1:rtp.n:end) Rey_time(1:rtp.n:end)];
     save("Nusselt_ROM.dat", "Nudata", "-ascii");
 end
 
@@ -147,7 +147,15 @@ ylabel('Nu');
 set(gcf,'color','w');
 set(gca,'LineWidth',1,'FontSize',14);
 
-
+figure
+plot(time(1:rtp.n:end),Rey_time(1:rtp.n:end),'r');
+grid on
+% hold on
+% ylim([0 20])
+xlabel('t');
+ylabel('Re');
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',16);
 %% create 2D plots
 
 %% vorticity

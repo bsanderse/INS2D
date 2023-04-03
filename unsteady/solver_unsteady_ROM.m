@@ -27,7 +27,6 @@ switch options.rom.rom_type
             
             if options.rom.take_all_snapshots
                 snapshot_sample_index = 1:1:size(snapshots.uh_total,1);
-                disp(snapshot_sample_index)
             else
                 % find indices of snapshot matrix that are needed
                 snapshot_sample_index = getSampleIndex(options.rom);
