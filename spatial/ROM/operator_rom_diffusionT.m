@@ -7,7 +7,9 @@ function [yDiffT,DiffT] = operator_rom_diffusionT(PT,options)
 
 NT = options.grid.NT;
 ZT  = zeros(NT,1);
-
+% Z1  = ones(4,1);
+% Z2  =zeros(12,1);
+% Tbc = [Z2;Z1];
 BT   = options.rom.BT;
 MT   = options.rom.MT;
 % Tbc = options.rom.Tbc;
@@ -46,7 +48,10 @@ yDiffT = zeros(NT,1);
 % diffusion(B) - diffusion(0)
 [d2T_0] = diffusion_temperature(ZT,0,options,0);
 yDiffT0        = PT*[d2T_0];
-
+yDiffT=yDiffT0;
+% a=BT*yDiffT0;
+% a=options.discretization.yDiffT;
+% vis_p(a,options);
 %%For testing only 
 % diffphi = zeros(NT,NT);
 % %testing end

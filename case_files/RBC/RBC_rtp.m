@@ -194,29 +194,33 @@ end
 % colorbar
 % set(gca,'LineWidth',1)
 
-% %% temperature    krishan
-% if show_figures
-%     figure(1)
-%     set(gcf,'color','w');
-%     % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-%     l=linspace(0,1,20);
-%     % l = 20;
-%     contour(xp,yp,Temp',l,'LineWidth',2);
-%     hold on
-%     quiver(xp,yp,up',vp');
-%     axis equal
-%     axis([x1 x2 y1 y2]);
-%     xlabel('x');
-%     ylabel('y');
-%     grid
-%     title('temperature');
-%     colorbar
-%     set(gca,'LineWidth',1,'FontSize',14);
-%     hold off
-% end
-%figure(501)
-%plot(T);
-
+%% temperature    krishan
+if show_figures
+    figure(1)
+    set(gcf,'color','w');
+    % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
+    l=linspace(0,1,20);
+    % l = 20;
+    contour(xp,yp,Temp',l,'LineWidth',2);
+    hold on
+    quiver(xp,yp,up',vp');
+    axis equal
+    axis([x1 x2 y1 y2]);
+    xlabel('x');
+    ylabel('y');
+    grid
+    title('temperature');
+    colorbar
+    set(gca,'LineWidth',1,'FontSize',14);
+    hold off
+end
+% vis_p(T,options);
+% figure(501)
+% plot(T);
+% hold on
+% xlabel('number of cells');
+% ylabel('Temperature');
+% disp("Hi");
 %% streamfunction
 
 % figure

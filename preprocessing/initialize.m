@@ -1,6 +1,7 @@
 t       = options.time.t_start;
 if options.rom.initialize_with_snapshots
-    snapshot_data = 'RBC_data/matlab_data.mat';
+%     snapshot_data = 'RBC_data/matlab_data.mat';
+    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/data_generation/1e4/FOM/matlab_data.mat';
     disp(['loading datafile...: ' snapshot_data]);
     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','T_total');
     

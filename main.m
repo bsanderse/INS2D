@@ -268,22 +268,11 @@ for j=1:Nsim
     if (rtp.movie == 1)
         close(writerObj);
     end
-
-    
-%% saving statistics
-    sampling_time=nt-sampling_start;
-    Vmean=Vmean/sampling_time;
-    pmean=pmean/sampling_time;
-    Tmean=Tmean/sampling_time;
-    V_var=V_var/sampling_time;
-    p_var=p_var/sampling_time;
-    T_var=T_var/sampling_time;
-    
+   
    %% post-processing
     fprintf(fcw,'post-processing...\n');
     post_processing;
     
-
     % save all data to a matlab file
     if (save_file == 1)
         fprintf(fcw,'saving results to Matlab file...\n');

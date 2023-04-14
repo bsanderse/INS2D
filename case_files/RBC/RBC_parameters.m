@@ -2,7 +2,7 @@
 run_multiple = 1;
 % run_multiple = 0;
 %mesh_list = [32 64 128 256];
-mesh_list = [1e6];
+mesh_list = [1e4];
 %disp(length(mesh_list));
 %mesh_list = [5e-2 1e-2 5e-3 1e-3];
 %Nsim = length(mesh_list);
@@ -18,7 +18,7 @@ mesh_list = [1e6];
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-%     Ra = 1e6;                   % Rayleigh number
+%     Ra = 1e4;                   % Rayleigh number
     Ra = mesh_list(j);	
     Ge = 1;                   % Gebhart number
     incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
@@ -37,8 +37,8 @@ mesh_list = [1e6];
 
 %    Nx=mesh_list(j);
 %    Ny=Nx;
-    Nx      = 80;                  % number of volumes in the x-direction
-    Ny      = 80;                   % number of volumes in the y-direction
+    Nx      = 48;                  % number of volumes in the x-direction
+    Ny      = 48;                   % number of volumes in the y-direction
 %	if(j==2)
 %	Nx=256;
 %	Ny=Nx;
@@ -88,8 +88,8 @@ mesh_list = [1e6];
         % method 21 : generic implicit RK, can also be used for ROM   
         % method 22 : implicit midpoint (energy conserving) for Boussinesq
         %             system
-        method            = 2;
-%         method            = 20;
+%         method            = 2;
+        method            = 20;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -185,8 +185,10 @@ mesh_list = [1e6];
     path_results     = 'results';  % folder where results are stored
     save_file        = 0;          % save all matlab data after program is completed
     save_unsteady    = 0;
-    sampling_start   = 150/dt; 	   % Time to start sampling, (divided by dt) and it is basically an index not time
-    sampling_start_time = sampling_start*dt;
+    sampling_start   = dt/dt; 	   % Time to start sampling, (divided by dt) and it is basically an index not time
+    sampling_start_time = sampling_start*dt; %Time value of the above sampling index;
+%     sampling_interval = 0.5/dt;    % enter the time after which samples will be collected;
+                                   % This is used to take only that snapshots for SVD; 
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
                                    % 0 only works if save_results = 1
@@ -200,21 +202,21 @@ mesh_list = [1e6];
 %%% reduced order model
 
 %     rom    = 0;      % set to 1 to use ROM solver
-    rom    = 0;      % set to 1 to use ROM solver
+    rom    = 1;      % set to 1 to use ROM solver
 
     run_multiple = 0;  % set to 1 to avoid loading FOM data multiple times
 %     M_list = [2 4 8 16 2 4 8 16];
 %     M      = M_list(j);     % number of modes used
-    M      = 1;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
+    M      = 32;     % number of modes used (Total velocity modes = Nu+Nv; and Nu=Nx*Ny but Nv= (Ny-1)*Nx
                        % therefore M=2*Nx*Ny-Nx
-    Mp     = 1;     % number of pressure modes used (only needed if pressure_recovery=1)
-    MT     = 1;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
+    Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
+    MT     = Mp;     % number of temperature modes (MT=MP=Nx*Ny) used (only needed if boussinesq='temp')
 
     t_sample  = t_end;%t_end; %t_end;  % part of snapshot matrix used for building SVD
 %     t_sample  = 10;%t_end; %t_end;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
 %     dt_sample = 100*dt; % frequency of snapshots to be used for SVD
-    take_all_snapshots  =   1; % 1 refers to collection of all the samples; t_sample and dt_sample are not used
+    take_all_snapshots  =   0; % 1 refers to collection of all the samples; t_sample and dt_sample are not used
                                % 0 refers to only a section of it as specified by t_sample and dt_sample
                                
     initialize_with_snapshots = 0; % This should be turned zero for FOM otherwise it will give error;
@@ -241,6 +243,6 @@ mesh_list = [1e6];
 
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)
 
-    snapshot_data = 'RBC_data/matlab_data.mat';
-%     snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/matlab_data3e4_4x4.mat';
+%     snapshot_data = 'RBC_data/matlab_data.mat';
+    snapshot_data = '/export/scratch1/krishan/INS2D_scratch/FOMdata/3e5_48x48/matlab_data.mat';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

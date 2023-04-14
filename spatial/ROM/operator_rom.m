@@ -92,7 +92,6 @@ end
 %% diffusion for temperature equation
 if (options.rom.precompute_diffusionT == 1)
     [yDiffT,DiffT] = operator_rom_diffusionT(PT,options);
-%     [DiffT] = operator_rom_diffusionT(PT,options);
 
     options.rom.DiffT  = DiffT;
     options.rom.yDiffT = yDiffT;

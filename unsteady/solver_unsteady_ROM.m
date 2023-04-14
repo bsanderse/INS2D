@@ -239,14 +239,13 @@ while(n<=nt)
         end
         process_iteration;
     end
-        %save statistics  for RBC problem
-    %% Initialize statistics 
+%save statistics  for RBC problem
     %% Initialize statistics 
     switch options.case.boussinesq
         case 'temp'
 %             if (n>nsample && n==nsample_end)
             if (n>=sampling_start && n<=nt)
-               [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
+                [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
             end
     end
     

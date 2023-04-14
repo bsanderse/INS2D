@@ -1,4 +1,12 @@
 %% post-processing
+%% saving statistics
+sampling_time=nt-sampling_start;
+Vmean=Vmean/sampling_time;
+pmean=pmean/sampling_time;
+Tmean=Tmean/sampling_time;
+V_var=V_var/sampling_time;
+p_var=p_var/sampling_time;
+T_var=T_var/sampling_time;
 
 file_name = [case_name '_pp.m'];
 full_name = [folder_cases '/' case_name '/' file_name];

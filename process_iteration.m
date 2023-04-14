@@ -77,7 +77,7 @@ end
 
 % store unsteady data in an array
 % if (steady==0 && save_unsteady == 1 )
-if (steady==0 && save_unsteady == 1 && sampling_start <= n && n<nt)  
+if (steady==0 && save_unsteady == 1 && sampling_start <= n && n<nt)% && rem(n,sampling_interval)==0)  
     if (options.output.save_eco == 0)
         nsave = n-sampling_start+1;
         uh_total(nsave,:) = V(1:options.grid.Nu);
@@ -87,12 +87,11 @@ if (steady==0 && save_unsteady == 1 && sampling_start <= n && n<nt)
             case 'temp'
                 T_total(nsave,:) = T;
         end
+      
     elseif (options.output.save_eco == 1)
         save([options.output.path_results '/snapshots/Vp_n=' num2str(n) '.mat'],'V','p');
     end
 end
-
-
 
 % write data to Tecplot file
 if (tecplot.write==1 && rem(n,tecplot.n)==0)

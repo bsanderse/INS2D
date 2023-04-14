@@ -65,7 +65,7 @@ dtn    = dt;
 % eps    = 1e-12;
 
 method_temp = method;
-
+counter = 0;
 %% start time stepping
 time_start = toc
 
@@ -118,9 +118,11 @@ while(n<=nt)
     %% Initialize statistics 
     switch options.case.boussinesq
         case 'temp'
-%             if (n>nsample && n==nsample_end)
-            if (n>=sampling_start && n<=nt)
-               [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
+            if (n>sampling_start && n<=nt)
+%                 disp("Hi")
+                [Vmean,pmean,Tmean,V_var,p_var,T_var] = save_RBC_statistics(V,p,T,Vmean,pmean,Tmean,V_var,p_var,T_var);
+%                 disp("By")
+                counter=counter+1;
             end
     end
     
