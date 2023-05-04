@@ -58,8 +58,8 @@ G      = options.discretization.G;
 % divergence operator
 M      = options.discretization.M;
 
-uh     = Vn(indu);
-vh     = Vn(indv);
+un     = Vn(indu);
+vn     = Vn(indv);
 
 
 %% convection from previous time step
@@ -176,12 +176,12 @@ switch options.case.boussinesq
 end
 
 %% right hand side of the momentum equation update
-Rur = uh + Omu_inv*dt.*(- (alfa1*convu + alfa2*convu_old) + ...
-    + (1-theta)*Diffu*uh + yDiffu + ...
+Rur = un + Omu_inv*dt.*(- (alfa1*convu + alfa2*convu_old) + ...
+    + (1-theta)*Diffu*un + yDiffu + ...
     + Fx - Gx*pn - y_px);
 
-Rvr = vh + Omv_inv*dt.*(- (alfa1*convv + alfa2*convv_old) + ...
-    + (1-theta)*Diffv*vh + yDiffv + ...
+Rvr = vn + Omv_inv*dt.*(- (alfa1*convv + alfa2*convv_old) + ...
+    + (1-theta)*Diffv*vn + yDiffv + ...
     + Fy - Gy*pn - y_py);
 
 % LU decomposition of diffusion part has been calculated already in

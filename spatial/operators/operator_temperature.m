@@ -159,7 +159,7 @@ AT_v = options.temp.alfa2*spdiags(options.grid.Omv,0,options.grid.Nv,options.gri
 
 
 %% in case of implicit time integration, precalculate decomposition
-if (options.case.steady == 0 && options.time.method==2)   
+if (options.case.steady == 0 && (options.time.method==2 || options.time.method==23))   
     fcw        = options.output.fcw;
 
     Omp_inv    = options.grid.Omp_inv;

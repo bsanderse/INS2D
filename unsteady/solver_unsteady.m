@@ -104,6 +104,8 @@ while(n<=nt)
             [V,p,nonlinear_its(n)] = time_IRK(Vn,pn,tn,dt,options);
         case 22
             [V,p,T,nonlinear_its(n)] = time_IM_Boussinesq(Vn,pn,Tn,tn,dt,options);
+        case 23
+            [V,p,T,nonlinear_its(n)] = time_IM_Boussinesq_split(Vn,pn,Tn,tn,dt,options);
         otherwise
             error('time integration method unknown');
     end

@@ -555,7 +555,7 @@ end
 
 
 %% additional for implicit time stepping diffusion
-if (options.case.steady == 0 && options.time.method==2 && strcmp(visc,'laminar'))
+if (options.case.steady == 0 && (options.time.method==2 || options.time.method==23) && strcmp(visc,'laminar'))
     fprintf(options.output.fcw,'implicit time-stepping for diffusion\n');
     theta = options.time.theta;
     dt    = options.time.dt;
@@ -595,6 +595,20 @@ if (options.case.steady == 0 && options.time.method==2 && strcmp(visc,'laminar')
             %             poisson = 4;
         end
     end
+    
+    if (options.time.method==23) % splitting method, we use precomputing of M (I-theta*dt*Om_inv*D)^{-1} \Omega^{-1} G
+    
+%         fprintf(options.output.fcw,'decomposition of generalized Poisson matrix...\n');
+%         tic;
+%         b  = options.discretization.L_diffu\(spdiags(Omu_inv,0,Nu,Nu)*options.discretization.Gx);
+%         R1 = options.discretization.U_diffu\b;
+%         b  = options.discretization.L_diffv\(spdiags(Omv_inv,0,Nv,Nv)*options.discretization.Gy);
+%         R2 = options.discretization.U_diffv\b;
+%         options.solver_settings.A_split = options.discretization.M*[R1; R2];
+%         toc;
+    end
+    
+        
     
     % CG
     %     [Diffu_diag, d_diffu]   = spdiags(speye(Nu,Nu)-theta*dt*spdiags(Omu_inv,0,Nu,Nu)*Diffu);

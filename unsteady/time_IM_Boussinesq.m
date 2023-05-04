@@ -121,6 +121,7 @@ while (max(abs(f))> options.solversettings.nonlinear_acc)
         % approximate Newton
         % do not rebuild Z
         dQj = Z\f;
+%         dQj = gmres(Z,f,[],1e-8,100);
         % re-use the LU decomposition (often too slow):
         %         dQj = U\(L\f);
         

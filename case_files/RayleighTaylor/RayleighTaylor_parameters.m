@@ -15,10 +15,10 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 1e6;                   % Rayleigh number
-    Ge = 1;                   % Gebhart number
-    incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
-    nondim_type = 3;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
+    Ra = 5e4;                   % Rayleigh number
+    Ge = 0;                   % Gebhart number
+    incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
+    nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -56,7 +56,7 @@
     
     % only for unsteady problems:
 
-        dt            = 5e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
+        dt            = 1e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 100; %/sqrt(Ge);         % end time
@@ -76,7 +76,10 @@
         % method 21 : generic implicit RK, can also be used for ROM   
         % method 22 : implicit midpoint (energy conserving) for Boussinesq
         %             system
-        method            = 2;
+        % method 23 : implicit midpoint (energy conserving) for Boussinesq
+        %             system by iterating with viscous Jacobians only
+        
+        method            = 23;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -125,7 +128,7 @@
     nonlinear_relacc       = 1e-14;
     nonlinear_maxit        = 10;
         
-    nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
+    nonlinear_Newton       = 1;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
                                    % iteration
@@ -152,7 +155,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 50;
+    rtp.n            = 200;
     rtp.movie        = 0;
     rtp.moviename    = 'RayleighTaylor';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

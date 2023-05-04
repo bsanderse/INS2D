@@ -111,16 +111,23 @@ end
 % change in total energy should be due to int T*v dOmega, in case viscous
 % dissipation is included and no boundary contributions are present
 
-de_pot = vh'*(options.discretization.AT_v*T);
-diffT   = diffusion_temperature(T,t,options,0);
-de_cond = sum(diffT);
+% de_pot = vh'*(options.discretization.AT_v*T);
 
 if (show_energy)
-    figure(3)
+    figure(30)
     cmap = get(gca,'ColorOrder');
     if (n>1)
-        % note that k includes e_int and (1/2)*u^2
-        plot(t,(k(n)-k(n-1))/dt,'s','Color',cmap(1,:));
+        % in implicit midpoint, the contribution equals
+        % V^{n+1/2} * A * T^{n+1/2}
+        V_mid = 0.5*(V + Vn);
+        T_mid = 0.5*(T + Tn);
+        dkdt   = (k(n)-k(n-1))/dt;
+        de_pot = V_mid(options.grid.indv)'*(options.discretization.AT_v*T_mid);
+        diffT   = diffusion_temperature(T,t,options,0);
+        de_cond = sum(diffT); % zero if all BC are adiabatic, like in Rayleigh Taylor
+
+        % note that k includes both e_int and (1/2)*u^2 !!
+        plot(t,dkdt,'s','Color',cmap(1,:));
         hold on
         plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
         grid on
@@ -130,22 +137,42 @@ if (show_energy)
         ylabel('energy change');
         set(gcf,'color','w');
         set(gca,'LineWidth',1,'FontSize',14);
-        legend('d/dt (e_k + e_{int})','potential energy source + conduction');
+        legend('d/dt (e_{k} + e_{i})','potential energy source + conduction');
     end
+    
+    figure(31) % same as 30, but plotting differences
+    cmap = get(gca,'ColorOrder');
+    if (n>1)
+        % note that k includes both e_int and (1/2)*u^2 !!
+        energy_diff = dkdt - (de_pot + de_cond);
+        plot(t,energy_diff,'s','Color',cmap(1,:));
+        hold on
+%         plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+        grid on
+        title('d/dt (e_{k} + e_{i}) - potential energy');
+        
+        xlabel('t')
+        ylabel('energy change');
+        set(gcf,'color','w');
+        set(gca,'LineWidth',1,'FontSize',14);
+%         legend('d/dt (e_k + e_{int})','potential energy source + conduction');
+    end
+    
+    
     
     figure(4)
     % average temperature on domain
     cmap = get(gca,'ColorOrder');
     T_avg = sum(options.grid.Omp.*T)/(Lx*Ly);
     % get only kinetic energy (without internal energy):
-    k     = 0.5*sum(options.grid.Omu.*uh.^2) + 0.5*sum(options.grid.Omv.*vh.^2); % this equals 0.5*(V')*(Omega.*V);
+    Ek    = 0.5*sum(options.grid.Omu.*uh.^2) + 0.5*sum(options.grid.Omv.*vh.^2); % this equals 0.5*(V')*(Omega.*V);
 
-    u_avg = sqrt(2*k./options.grid.Omp(1));
+    u_avg = sqrt(2*Ek/(Lx*Ly));
     plot(t,T_avg,'o','Color',cmap(1,:));
     hold on
     plot(t,u_avg,'x','Color',cmap(2,:));
     grid on
-    ylabel('average temperature');
+    ylabel('average temperature and average velocity');
 %     ylim([0.48 0.53]);
     xlim([options.time.t_start options.time.t_end]);
     set(gcf,'color','w');
