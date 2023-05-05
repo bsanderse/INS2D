@@ -1,4 +1,4 @@
-function [Vnew,pnew] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options)
+function [Vnew,pnew,Tnew] = time_oneleg(Vn,pn,Tn,V_old,p_old,T_old,tn,dt,options)
 
 %% one-leg beta method following 
 % Symmetry-preserving discretization of turbulent flow, Verstappen and Veldman (JCP 2003)
@@ -13,6 +13,8 @@ function [Vnew,pnew] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options)
 % Nu = options.grid.Nu;
 % Nv = options.grid.Nv;
 Om_inv = options.grid.Om_inv;
+Omp_inv = options.grid.Omp_inv;
+indV = options.grid.indV;
 
 %% coefficients of oneleg method
 beta = options.time.beta;
@@ -33,20 +35,33 @@ G      = options.discretization.G;
 M      = options.discretization.M;
 
 
+switch options.case.boussinesq
+    
+    case 'temp'
+        % indices for temperature
+        indT = options.grid.indT;
+
+    otherwise
+        % dummy variable as solution
+        Tnew = 0;
+
+end
+
 %% take time step
 
 % intermediate ('offstep') velocities
 t_int  = tn + beta*dt;
 V_int  = (1+beta)*Vn - beta*V_old;
 p_int  = (1+beta)*pn - beta*p_old; % see paper: 'DNS at lower cost'
+T_int  = (1+beta)*Tn - beta*T_old;
 %p_temp = p;
 
 % right-hand side of the momentum equation
-[~,F_rhs]  = F(V_int,V_int,p_int,0,t_int,options);
+[~,F_rhs]  = F(V_int,V_int,p_int,T_int,t_int,options);
 
 % take a time step with this right-hand side, this gives an 
 % intermediate velocity field (not divergence free)
-Vtemp = (2*beta*Vn - (beta-0.5)*V_old + dt*Om_inv.*F_rhs)/(beta+0.5);
+Vtemp = (2*beta*Vn - (beta-0.5)*V_old + dt*Om_inv.*F_rhs(indV))/(beta+0.5);
 
 % to make the velocity field u(n+1) at t(n+1) divergence-free we need
 % the boundary conditions at t(n+1)
@@ -66,14 +81,22 @@ f = (M*Vtemp + yM)/dt_beta;
 dp = pressure_poisson(f,tn + dt,options);
 
 % update velocity field
-Vnew  = Vtemp - dt_beta*Om_inv.*G*dp;
+Vnew  = Vtemp - dt_beta*Om_inv.*(G*dp);
+
+switch options.case.boussinesq
+
+    case 'temp'
+        % update temperature
+        Tnew  = (2*beta*Tn - (beta-0.5)*T_old + dt*Omp_inv.*F_rhs(indT))/(beta+0.5);
+        
+end
 
 % update pressure (second order)
 pnew  = 2*pn - p_old + (4/3)*dp;
 
 % alternatively, do an additional Poisson solve:
 if (options.solversettings.p_add_solve == 1)
-    pnew = pressure_additional_solve(Vnew,pn,0,tn+dt,options);
+    pnew = pressure_additional_solve(Vnew,pn,Tnew,tn+dt,options);
 end
 
 

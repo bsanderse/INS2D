@@ -56,7 +56,7 @@
     
     % only for unsteady problems:
 
-        dt            = 1e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
+        dt            = 2e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 100; %/sqrt(Ge);         % end time
@@ -79,7 +79,7 @@
         % method 23 : implicit midpoint (energy conserving) for Boussinesq
         %             system by iterating with viscous Jacobians only
         
-        method            = 23;
+        method            = 5;
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -98,7 +98,7 @@
 %             alfa1   = 3/2;
 %             alfa2   = -1/2;
         % one-leg beta (method 5):
-%             beta    = 0.5; % in fact, this should be Reynolds dependent
+            beta    = 0.5; % in fact, this should be Reynolds dependent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

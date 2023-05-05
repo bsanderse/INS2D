@@ -97,7 +97,7 @@ while(n<=nt)
             %         conv_old = conv;
             %         convT_old = convT;
         case 5
-            [V,p] = time_oneleg(Vn,pn,V_old,p_old,tn,dt,options);
+            [V,p,T] = time_oneleg(Vn,pn,Tn,V_old,p_old,T_old,tn,dt,options);
         case 20
             [V,p,T] = time_ERK(Vn,pn,Tn,tn,dt,options);
         case 21
