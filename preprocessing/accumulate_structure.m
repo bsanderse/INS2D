@@ -123,6 +123,7 @@ voi = {
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'time_discB4pres_elim', 1; ... % 0: time derivative ... ; 1: time difference quotient ... in RHS of ROM PPE for F computation
     'bases_construction', 'qr'; ...
+    'BC_DEIM', 0; ... % 0: BC approximation via precomputed projection; 1: ... via DEIM
     };
 
 accumulate_object;

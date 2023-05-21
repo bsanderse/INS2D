@@ -260,29 +260,33 @@ Mbc = size(phi_bc,2);
 options.rom.Mbc = Mbc;
 end
 
-%% precompute a bc for all time steps
-[~,~,c_RK] = getRKmethod(options.time.RK);
-% c_RK = [c_RK(2:end);1];
+if options.rom.BC_DEIM == 0
+    %% precompute a bc for all time steps
+    [~,~,c_RK] = getRKmethod(options.time.RK);
+    % c_RK = [c_RK(2:end);1];
 
-a_bc_matrix = zeros(nt,numel(c_RK),Mbc);
-time_control = zeros(nt,numel(c_RK));
-for jj = 1:nt
-     tn = t + (jj-1)*dt;
-     for jjj = 1:numel(c_RK)
-         ti         = tn + c_RK(jjj)*dt;
-         a_bc       = get_a_bc_precomp(ti,options);
-         a_bc_matrix(jj,jjj,:) = a_bc;
-         time_control(jj,jjj) = ti;
-     end
+    a_bc_matrix = zeros(nt,numel(c_RK),Mbc);
+    time_control = zeros(nt,numel(c_RK));
+    for jj = 1:nt
+        tn = t + (jj-1)*dt;
+        for jjj = 1:numel(c_RK)
+            ti         = tn + c_RK(jjj)*dt;
+            a_bc       = get_a_bc_precomp(ti,options);
+            a_bc_matrix(jj,jjj,:) = a_bc;
+            time_control(jj,jjj) = ti;
+        end
+    end
+    options.rom.a_bc_matrix = a_bc_matrix;
+    options.rom.time_control = time_control;
+
+    a_bc_vec = a_bc_matrix(1,1,:);
+    options.rom.a_bc_vec = a_bc_vec(:);
+    time_vec = time_control(1,1);
+    options.rom.time_vec = time_vec(:);
+    %%
+else
+    bc_deim_inds = getDEIMinds(phi_bc)
 end
-options.rom.a_bc_matrix = a_bc_matrix;
-options.rom.time_control = time_control;
-
-a_bc_vec = a_bc_matrix(1,1,:);
-options.rom.a_bc_vec = a_bc_vec(:);
-time_vec = time_control(1,1);
-options.rom.time_vec = time_vec(:);
-%%
 
 
 %%
