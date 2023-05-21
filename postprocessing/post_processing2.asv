@@ -150,14 +150,14 @@ end
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
-                    velocity_error_plot;
+%                     velocity_error_plot;
                     velocity_comparison_plot;
 % % % % % %                     pressure_error_plot;
 % % % % % %                     pressure_gradient_error_plot;
 % % % % % %                     projected_pressure_gradient_error_plot;
 % % % % % %                     projected_pressure_gradient_comparison_plot;
-                    mass_violation_plots;
-                    approx_mass_violation_plots;
+%                     mass_violation_plots;
+%                     approx_mass_violation_plots;
                     kinetic_energy;
                     kinetic_energy_error_plots;
 % % % % % %                     ROM_coefficient_plot;

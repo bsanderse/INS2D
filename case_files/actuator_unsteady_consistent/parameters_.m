@@ -22,7 +22,7 @@ M_list = base_M;
 M_list = [2 5 10 20 40 60];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = [2 5 10];
 % M_list = [2 5 8];
-% M_list = kron(M_list, [1 1]);
+M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -129,12 +129,15 @@ changing_snapshotdata = 0;
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
     % method 21 : generic implicit RK, can also be used for ROM    
-    method        = 20;
-    RK = 'RK44';
-%     RK = 'FE11';
-%     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-%     method = 21;
-%     RK = 'GL1';
+    if mod(j,2) ~= 0
+        method        = 20;
+        RK = 'RK44';
+        %     RK = 'FE11';
+        %     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
+    else
+        method = 21;
+        RK = 'GL1';
+    end
 %     RK = 'RIA1';
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
