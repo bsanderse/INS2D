@@ -285,7 +285,7 @@ if options.rom.BC_DEIM == 0
     options.rom.time_vec = time_vec(:);
     %%
 else
-    bc_deim_inds = getDEIMinds(phi_bc)
+    [options.rom.bc_deim_inds, options.rom.bc_deim_PTUinv] = getDEIMinds(phi_bc,options.rom.BC_DEIMdim);
 end
 
 
@@ -473,8 +473,10 @@ while(n<=nt)
     % set_timestep;
     
     %%
+    if options.rom.BC_DEIM == 0
     a_bc_slice = options.rom.a_bc_matrix(n,:,:);
     time_slice = options.rom.time_control(n,:);
+    end
     
     n = n+1;
     

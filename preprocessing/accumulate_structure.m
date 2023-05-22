@@ -124,6 +124,8 @@ voi = {
     'time_discB4pres_elim', 1; ... % 0: time derivative ... ; 1: time difference quotient ... in RHS of ROM PPE for F computation
     'bases_construction', 'qr'; ...
     'BC_DEIM', 0; ... % 0: BC approximation via precomputed projection; 1: ... via DEIM
+    'Mbc', 10; % number of bc approximation modes for reduced order model
+    'BC_DEIMdim', 10; ... % number of DEIM interpolation points for BC approximation
     };
 
 accumulate_object;

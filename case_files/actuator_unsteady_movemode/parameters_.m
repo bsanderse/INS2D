@@ -6,9 +6,9 @@ run_multiple = 1;
 % M_list = [10 10 10 10];
 % M_list = [10 10 10 20];
 % base_M = 20;
-% base_M = 10;
-base_M = 16;
-% M_list = base_M;
+base_M = 10;
+% base_M = 16;
+M_list = base_M;
 % M_list = [base_M base_M base_M 2*base_M];
 % M_list = [base_M base_M 2*base_M];
 % M_list = [base_M base_M base_M];
@@ -196,8 +196,6 @@ end
 %     precompute_force      = 0;
 %     precompute_obc       = 0;
 
-    BC_DEIM = 1;
-
 %     snapshot_data = 'results/actuator_unsteady_movemode_1.000e+02_200x80_fomdata/matlab_data.mat';
     snapshot_data = 'results/actuator_unsteady_movemode_1.000e+02_200x80_finetime/matlab_data.mat';
     
@@ -241,6 +239,9 @@ end
                   % 3: POD-based Vbc approximation
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
+
+    BC_DEIM = 1;
+    BC_DEIMdim = Mbc;
 
     if bc_recon == 3
         suffix = " vo Mbc = "+num2str(Mbc);

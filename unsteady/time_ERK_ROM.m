@@ -51,12 +51,14 @@ for i_RK=1:s_RK
     % ...
     % at i=s we calculate F_s, p_(n+1) and u_(n+1)
     
-    a_bc_vec = a_bc_slice(1,i_RK,:);
-    a_bc_vec = a_bc_vec(:);
-    options.rom.a_bc_vec = a_bc_vec;
-    
-    time_vec = time_slice(1,i_RK);
-    options.rom.time_vec = time_vec;
+    if options.rom.BC_DEIM == 0
+        a_bc_vec = a_bc_slice(1,i_RK,:);
+        a_bc_vec = a_bc_vec(:);
+        options.rom.a_bc_vec = a_bc_vec;
+
+        time_vec = time_slice(1,i_RK);
+        options.rom.time_vec = time_vec;
+    end
     
     if options.rom.bc_recon == 2
         V = getFOM_velocity(R,t,options);
