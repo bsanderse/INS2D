@@ -16,12 +16,26 @@ if options.rom.BC_DEIM == 0
 
 else
     %% DEIM botch
-    y_bc = get_bc_vector_yBC(t,options);
-    PTf = y_bc(options.rom.bc_deim_inds);
-    a_bc = doDEIM(options.rom.bc_deim_PTUinv,PTf);
+%     y_bc = get_bc_vector_yBC(t,options);
+%     PTf = y_bc(options.rom.bc_deim_inds);
+%     a_bc = doDEIM(options.rom.bc_deim_PTUinv,PTf);
 
     %% testing
-    if options.rom.BC_DEIMdim == options.rom.Mbc
-        norm(a_bc - get_a_bc_precomp(t,options))
-    end
+%     if options.rom.BC_DEIMdim == options.rom.Mbc
+%         norm(a_bc - get_a_bc_precomp(t,options))
+%     end
+
+% efficient
+    PTybc = ybc_entries(options.rom.bc_deim_inds, ...
+        options.rom.ybc_coords,t,options);
+    a_bc = doDEIM(options.rom.bc_deim_PTUinv,PTybc);
+
+% inefficient
+%     PTybc2 = ybc_entries2(options.rom.bc_deim_inds, ...
+%         options.rom.ybc_coords,t,options);
+
+
+%     a_bc_effic = doDEIM(options.rom.bc_deim_PTUinv,PTybc);
+% %     norm(a_bc - a_bc_effic)
+%     norm(PTybc - PTybc2)
 end

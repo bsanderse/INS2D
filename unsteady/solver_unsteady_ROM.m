@@ -69,15 +69,17 @@ if (j==1) || changing_snapshotdata
 %     %%
 %     
 %     %% analysis
-%     [U_h,S_h,V_h] = svd(X_h);
-%     Sigma_h = diag(S_h);
-%     figure
-%     semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
-%     legend('show')
-%     xlabel("mode index")
-%     ylabel("\sigma_j/\sigma_1")
-%     set(gcf, 'Position', [100, 100, 400, 300])
+if options.rom.standardPODvpROM
+    [U_h,S_h,V_h] = svd(X_h);
+    Sigma_h = diag(S_h);
+    figure
+    semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
+    legend('show')
+    xlabel("mode index")
+    ylabel("\sigma_j/\sigma_1")
+    set(gcf, 'Position', [100, 100, 400, 300])
     %
+else
         %% analysis
                 X_hom = X_h - X_inhom;
 
@@ -90,6 +92,8 @@ if (j==1) || changing_snapshotdata
     ylabel("\sigma_j/\sigma_1")
     set(gcf, 'Position', [100, 100, 400, 300])
     grid
+end
+
 end
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
@@ -202,17 +206,17 @@ basis = [phi_hom phi_inhom];
 
 if options.rom.bc_recon == 3
 
-B = phi_hom;
+    B = phi_hom;
 
-% options.rom.B1 = B;
-% options.rom.phi_bc1 = phi_bc;
-% options.rom.phi_inhom1 = phi_inhom;
-% options.rom.R_inhom1 = R_inhom;
+    % options.rom.B1 = B;
+    % options.rom.phi_bc1 = phi_bc;
+    % options.rom.phi_inhom1 = phi_inhom;
+    % options.rom.R_inhom1 = R_inhom;
 
-options.rom.phi_inhom = phi_inhom;
-options.rom.R_inhom = R_inhom;
-M_inhom = size(phi_inhom,2);
-options.rom.M_inhom = M_inhom;
+    options.rom.phi_inhom = phi_inhom;
+    options.rom.R_inhom = R_inhom;
+    M_inhom = size(phi_inhom,2);
+    options.rom.M_inhom = M_inhom;
 
 elseif options.rom.bc_recon == 5
     options.rom.phi_hom = phi_hom; %botch
@@ -224,30 +228,30 @@ elseif options.rom.bc_recon == 5
             B = [phi_hom phi_inhom];
         case "closest"
             B = [phi_hom phi_inhom];
-            
-% %             F_M = options.discretization.F_M;
-% %             Bp = orthonormalize(F_M*phi_bc); 
-%             % in theory, F_M*phi_bc = M_h*phi_h
-%             % in practice, however, rank computations are error-prone
-%             M_h = options.discretization.M;
-%             Bp = orthonormalize(M_h*phi_inhom);
-%             % M_h*phi_inhom should span the same space as F_M*phi_bc while
-%             % having smaller or equal (computed) rank
+
+            % %             F_M = options.discretization.F_M;
+            % %             Bp = orthonormalize(F_M*phi_bc);
+            %             % in theory, F_M*phi_bc = M_h*phi_h
+            %             % in practice, however, rank computations are error-prone
+            %             M_h = options.discretization.M;
+            %             Bp = orthonormalize(M_h*phi_inhom);
+            %             % M_h*phi_inhom should span the same space as F_M*phi_bc while
+            %             % having smaller or equal (computed) rank
         case "optimal"
             B = [phi_hom phi_inhom];
         case "qr"
             B = phi_h;
-%                         B = [phi_hom phi_inhom]; %botch!
+            %                         B = [phi_hom phi_inhom]; %botch!
 
-%             Bp = orthonormalize(R1');
+            %             Bp = orthonormalize(R1');
     end
-    
-%     options.rom.Bp = Bp;
-%     Mp = size(Bp,2);
-%     options.rom.Mp = Mp;
 
-% condition6(j) = cond(options.discretization.M*B)
-% condition7(j) = cond(options.discretization.M*phi_inhom)
+    %     options.rom.Bp = Bp;
+    %     Mp = size(Bp,2);
+    %     options.rom.Mp = Mp;
+
+    % condition6(j) = cond(options.discretization.M*B)
+    % condition7(j) = cond(options.discretization.M*phi_inhom)
 
 end
 
@@ -285,7 +289,10 @@ if options.rom.BC_DEIM == 0
     options.rom.time_vec = time_vec(:);
     %%
 else
+    phi_bc = phi_bc(:,1:options.rom.BC_DEIMdim);
+    options.rom.phi_bc = phi_bc;
     [options.rom.bc_deim_inds, options.rom.bc_deim_PTUinv] = getDEIMinds(phi_bc,options.rom.BC_DEIMdim);
+    options.rom.ybc_coords = ybc_coords(options.rom.bc_deim_inds,t,options);
 end
 
 

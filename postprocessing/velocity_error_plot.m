@@ -54,13 +54,13 @@ disp('velocity error')
 % figure(99)
 % plot(t_vec,error_V_2,color,'displayname',"ROM "+suffix);
 %%
-% plot(t_vec,error_V_2,'color',color,'displayname',name); %%non-botch
-if mod(j,2) == 0
-    plot(t_vec,error_V_2,'color',color_old,'linestyle','-' ,'displayname',name);
-else
-    plot(t_vec,error_V_2,'color',color,'linewidth',2,'linestyle',':','displayname',name);
-    color_old = color;
-end
+plot(t_vec,error_V_2,'color',color,'displayname',name); %%non-botch
+% if mod(j,2) == 0
+%     plot(t_vec,error_V_2,'color',color_old,'linestyle','-' ,'displayname',name);
+% else
+%     plot(t_vec,error_V_2,'color',color,'linewidth',2,'linestyle',':','displayname',name);
+%     color_old = color;
+% end
 %%
 sum_error_V_2(j) = sum(error_V_2)
 hold on

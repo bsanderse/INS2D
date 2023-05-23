@@ -69,15 +69,17 @@ if (j==1) || changing_snapshotdata
 %     %%
 %     
 %     %% analysis
-%     [U_h,S_h,V_h] = svd(X_h);
-%     Sigma_h = diag(S_h);
-%     figure
-%     semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
-%     legend('show')
-%     xlabel("mode index")
-%     ylabel("\sigma_j/\sigma_1")
-%     set(gcf, 'Position', [100, 100, 400, 300])
+if options.rom.standardPODvpROM
+    [U_h,S_h,V_h] = svd(X_h);
+    Sigma_h = diag(S_h);
+    figure
+    semilogy(Sigma_h/Sigma_h(1),'s','displayname', 'singular values of V_h snapshots');
+    legend('show')
+    xlabel("mode index")
+    ylabel("\sigma_j/\sigma_1")
+    set(gcf, 'Position', [100, 100, 400, 300])
     %
+else
         %% analysis
                 X_hom = X_h - X_inhom;
 
@@ -90,6 +92,8 @@ if (j==1) || changing_snapshotdata
     ylabel("\sigma_j/\sigma_1")
     set(gcf, 'Position', [100, 100, 400, 300])
     grid
+end
+
 end
 
 %% get Vbc into options (this has to be outside the j==1 if statement)
@@ -285,7 +289,10 @@ if options.rom.BC_DEIM == 0
     options.rom.time_vec = time_vec(:);
     %%
 else
+    phi_bc = phi_bc(:,1:options.rom.BC_DEIMdim);
+    options.rom.phi_bc = phi_bc;
     [options.rom.bc_deim_inds, options.rom.bc_deim_PTUinv] = getDEIMinds(phi_bc,options.rom.BC_DEIMdim);
+    options.rom.ybc_coords = ybc_coords(options.rom.bc_deim_inds,t,options);
 end
 
 
@@ -474,8 +481,8 @@ while(n<=nt)
     
     %%
     if options.rom.BC_DEIM == 0
-    a_bc_slice = options.rom.a_bc_matrix(n,:,:);
-    time_slice = options.rom.time_control(n,:);
+        a_bc_slice = options.rom.a_bc_matrix(n,:,:);
+        time_slice = options.rom.time_control(n,:);
     end
     
     n = n+1;

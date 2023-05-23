@@ -51,6 +51,7 @@ addpath('spatial/operators/');
 addpath('spatial/boundaryconditions/');
 addpath('spatial/boundaryconditions/proposed/');
 addpath('spatial/ROM/');
+addpath('spatial/ROM/DEIM');
 addpath('steady/');
 addpath('unsteady/');
 addpath('testsuite/');

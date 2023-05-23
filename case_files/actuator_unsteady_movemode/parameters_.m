@@ -20,7 +20,7 @@ M_list = base_M;
 % M_list = 2;
 % M_list = [2 5 10];
 % M_list = [80 79 40];
-M_list = 80;
+% M_list = 80;
 % M_list = 79;
 % M_list = 50;
 % M_list = 40;
@@ -137,16 +137,14 @@ changing_snapshotdata = 0;
     % method 5 : explicit one leg beta; 2nd order
     % method 20 : generic explicit RK, can also be used for ROM
 %     method 21 : generic implicit RK, can also be used for ROM 
-if mod(j,2) ~= 0
+
+% if mod(j,2) ~= 0
     method        = 20;
     RK = 'RK44';
-%     RK = 'FE11';
-%     RK            = 'M2S4R4'; %'FE11'; %'M2S4R4'; %'RK44P2';
-else
-    method = 21;
-    RK = 'GL1';
-end
-%     RK = 'RIA1';
+% else
+%     method = 21;
+%     RK = 'GL1';
+% end
 
     % for methods that are not self-starting, e.g. AB-CN or one-leg
     % beta, we need a startup method.
