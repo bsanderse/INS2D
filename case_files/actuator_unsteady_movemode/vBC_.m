@@ -12,6 +12,7 @@ if dare_vectors
     else
         v = zeros(length(x),1);
     end
+else
     v = zeros(length(x)*length(y),1);
 end
 

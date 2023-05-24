@@ -21,6 +21,7 @@ M_list = base_M;
 % M_list = [2 5 10];
 % M_list = [80 79 40];
 % M_list = 80;
+M_list = 160;
 % M_list = 79;
 % M_list = 50;
 % M_list = 40;
@@ -208,15 +209,19 @@ changing_snapshotdata = 0;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-%     bc_recon = 5;
-    bc_recon = 3;
+    bc_recon = 5;
+%     bc_recon = 3; % for vo ROM!!! HR 24/05/2023
 % %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
 %     bc_recons = kron([1 1 1 1 1 1],[3 5]);
 %     bc_recon = bc_recons(j);
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
+
+
     Mp = M;
+    Mp = 1;
+    Mp = 80;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
 %     Mbc = Mps(j) + 1;
@@ -224,7 +229,7 @@ changing_snapshotdata = 0;
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 
-    Mbc = M;
+    Mbc = Mp;
 %      Mbc = 80;
 %      Mbc = 2;
 %          Mp = Mbc;
@@ -239,6 +244,7 @@ changing_snapshotdata = 0;
                   % 5: new standard ROM (= with projected mass equation)
 
     BC_DEIM = 1;
+    BC_DEIM = 0;
     BC_DEIMdim = Mbc;
 
     if bc_recon == 3
@@ -264,7 +270,8 @@ changing_snapshotdata = 0;
 % %     bases_constructions = bases_constructions(:);
 %     bases_construction = bases_constructions(j);
 
-    bases_construction = "mthesis";
+    bases_construction = "POD";
+%     bases_construction = "mthesis";
 %     bases_construction = "closest";
 %     bases_construction = "optimal";
 %     bases_construction = "qr";

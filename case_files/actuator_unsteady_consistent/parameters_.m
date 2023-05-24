@@ -208,8 +208,8 @@ changing_snapshotdata = 0;
     bc_recons = kron([1 1 1 1 1 1],[3 5]);
     bc_recon = bc_recons(j);
 
-%     bc_recon = 5;
-    bc_recon = 3;
+    bc_recon = 5;
+%     bc_recon = 3;
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
@@ -258,7 +258,8 @@ changing_snapshotdata = 0;
 % %     bases_constructions = bases_constructions(:);
 %     bases_construction = bases_constructions(j);
     
-    bases_construction = "mthesis";
+    bases_construction = "POD";
+%     bases_construction = "mthesis";
 %     bases_construction = "closest";
 %     bases_construction = "optimal";
  

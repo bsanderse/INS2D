@@ -122,6 +122,12 @@ options.rom.Mbc = Mbc; % botch
 
 
 switch options.rom.bases_construction
+    case "POD"
+        [phi_h,~,~] = Om_POD(X_h,M,options,cond_fac);
+        phi_hom = phi_h;
+        [phi_bc,~,~] = POD(X_bc,Mbc,cond_fac);
+        phi_inhom = []; %-666;
+        R_inhom = []; %-666;
     case "mthesis"
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
@@ -224,6 +230,8 @@ elseif options.rom.bc_recon == 5
 
 
     switch options.rom.bases_construction
+        case "POD"
+            B = phi_hom;
         case "mthesis"
             B = [phi_hom phi_inhom];
         case "closest"
@@ -318,7 +326,12 @@ end
 
 %% pressure recovery
 if options.rom.bc_recon == 5
-    if options.rom.bases_construction == "qr"
+    if options.rom.bases_construction == "POD"
+        p_total_snapshots = snapshots.p_total';
+        Bp = POD(p_total_snapshots,Mp,cond_fac);
+
+        options.rom.Bp = Bp;
+    elseif options.rom.bases_construction == "qr"
         %     M_h = options.discretization.M;
         %     Bp = orthonormalize(M_h*phi_inhom,false);
         %     options.rom.Bp = Bp;
@@ -331,7 +344,7 @@ if options.rom.bc_recon == 5
         
         options.rom.Bp = Bp;
     else
-        %     pressure_basis_construction;
+%             pressure_basis_construction;
         
         M_h = options.discretization.M;
         Bp = orthonormalize(M_h*phi_inhom,false);
