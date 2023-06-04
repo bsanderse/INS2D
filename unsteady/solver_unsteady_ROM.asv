@@ -122,6 +122,12 @@ options.rom.Mbc = Mbc; % botch
 
 
 switch options.rom.bases_construction
+    case "POD"
+        [phi_h,~,~] = Om_POD(X_h,M,options,cond_fac);
+        phi_hom = phi_h;
+        [phi_bc,~,~] = POD(X_bc,Mbc,cond_fac);
+        phi_inhom = []; %-666;
+        R_inhom = []; %-666;
     case "mthesis"
         X_hom = X_h - X_inhom;
         [phi_hom,~,M] = Om_POD(X_hom,M,options,cond_fac);
@@ -206,17 +212,17 @@ basis = [phi_hom phi_inhom];
 
 if options.rom.bc_recon == 3
 
-B = phi_hom;
+    B = phi_hom;
 
-% options.rom.B1 = B;
-% options.rom.phi_bc1 = phi_bc;
-% options.rom.phi_inhom1 = phi_inhom;
-% options.rom.R_inhom1 = R_inhom;
+    % options.rom.B1 = B;
+    % options.rom.phi_bc1 = phi_bc;
+    % options.rom.phi_inhom1 = phi_inhom;
+    % options.rom.R_inhom1 = R_inhom;
 
-options.rom.phi_inhom = phi_inhom;
-options.rom.R_inhom = R_inhom;
-M_inhom = size(phi_inhom,2);
-options.rom.M_inhom = M_inhom;
+    options.rom.phi_inhom = phi_inhom;
+    options.rom.R_inhom = R_inhom;
+    M_inhom = size(phi_inhom,2);
+    options.rom.M_inhom = M_inhom;
 
 elseif options.rom.bc_recon == 5
     options.rom.phi_hom = phi_hom; %botch
@@ -224,34 +230,36 @@ elseif options.rom.bc_recon == 5
 
 
     switch options.rom.bases_construction
+        case "POD"
+            B = phi_hom;
         case "mthesis"
             B = [phi_hom phi_inhom];
         case "closest"
             B = [phi_hom phi_inhom];
-            
-% %             F_M = options.discretization.F_M;
-% %             Bp = orthonormalize(F_M*phi_bc); 
-%             % in theory, F_M*phi_bc = M_h*phi_h
-%             % in practice, however, rank computations are error-prone
-%             M_h = options.discretization.M;
-%             Bp = orthonormalize(M_h*phi_inhom);
-%             % M_h*phi_inhom should span the same space as F_M*phi_bc while
-%             % having smaller or equal (computed) rank
+
+            % %             F_M = options.discretization.F_M;
+            % %             Bp = orthonormalize(F_M*phi_bc);
+            %             % in theory, F_M*phi_bc = M_h*phi_h
+            %             % in practice, however, rank computations are error-prone
+            %             M_h = options.discretization.M;
+            %             Bp = orthonormalize(M_h*phi_inhom);
+            %             % M_h*phi_inhom should span the same space as F_M*phi_bc while
+            %             % having smaller or equal (computed) rank
         case "optimal"
             B = [phi_hom phi_inhom];
         case "qr"
             B = phi_h;
-%                         B = [phi_hom phi_inhom]; %botch!
+            %                         B = [phi_hom phi_inhom]; %botch!
 
-%             Bp = orthonormalize(R1');
+            %             Bp = orthonormalize(R1');
     end
-    
-%     options.rom.Bp = Bp;
-%     Mp = size(Bp,2);
-%     options.rom.Mp = Mp;
 
-% condition6(j) = cond(options.discretization.M*B)
-% condition7(j) = cond(options.discretization.M*phi_inhom)
+    %     options.rom.Bp = Bp;
+    %     Mp = size(Bp,2);
+    %     options.rom.Mp = Mp;
+
+    % condition6(j) = cond(options.discretization.M*B)
+    % condition7(j) = cond(options.discretization.M*phi_inhom)
 
 end
 
@@ -318,7 +326,12 @@ end
 
 %% pressure recovery
 if options.rom.bc_recon == 5
-    if options.rom.bases_construction == "qr"
+    if options.rom.bases_construction == "POD"
+        p_total_snapshots = snapshots.p_total';
+        Bp = POD(p_total_snapshots,Mp,cond_fac);
+
+        options.rom.Bp = Bp;
+    elseif options.rom.bases_construction == "qr"
         %     M_h = options.discretization.M;
         %     Bp = orthonormalize(M_h*phi_inhom,false);
         %     options.rom.Bp = Bp;
@@ -331,7 +344,7 @@ if options.rom.bc_recon == 5
         
         options.rom.Bp = Bp;
     else
-        %     pressure_basis_construction;
+%             pressure_basis_construction;
         
         M_h = options.discretization.M;
         Bp = orthonormalize(M_h*phi_inhom,false);
@@ -365,6 +378,8 @@ end
 % options.rom.B = B;
 % phi_bc = phi_bc1;
 % options.rom.phi_bc = phi_bc;
+
+plot_bc_approximation;
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure

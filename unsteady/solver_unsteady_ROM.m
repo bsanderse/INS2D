@@ -379,6 +379,8 @@ end
 % phi_bc = phi_bc1;
 % options.rom.phi_bc = phi_bc;
 
+% plot_bc_approximation;
+
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
 if options.rom.bc_recon ~= 4 || options.rom.bc_recon ~= 2

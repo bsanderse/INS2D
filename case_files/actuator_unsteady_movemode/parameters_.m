@@ -16,12 +16,12 @@ M_list = base_M;
 % M_list = kron(M_list, [1 1]);
 % 
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
-% M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 2;
 % M_list = [2 5 10];
 % M_list = [80 79 40];
 % M_list = 80;
-M_list = 160;
+% M_list = 160;
 % M_list = 79;
 % M_list = 50;
 % M_list = 40;
@@ -30,7 +30,7 @@ M_list_raw = M_list;
 % M_list = flip(kron(ones(1,repetitions),M_list_raw));
 
 % M_list = [2 5 8];
-% M_list = kron(M_list, [1 1]);
+M_list = kron(M_list, [1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -38,7 +38,7 @@ M_list_raw = M_list;
 % M_list = 10*ones(6,1);
 % M_list = 10;
 % M_list = 20;
-% M_list = 60;
+% M_list = 80;
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -209,19 +209,21 @@ changing_snapshotdata = 0;
 %                 bc_recons = [3 5]; 
 %                 bc_recon = bc_recons(j); Mp = M;
 
-    bc_recon = 5;
-%     bc_recon = 3; % for vo ROM!!! HR 24/05/2023
+%     bc_recon = 5;
+    bc_recon = 3; % for vo ROM!!! HR 24/05/2023
 % %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
+
 %     bc_recons = kron([1 1 1 1 1 1],[3 5]);
 %     bc_recon = bc_recons(j);
+
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
 
 
     Mp = M;
-    Mp = 1;
-    Mp = 80;
+%     Mp = 1;
+%     Mp = 80;
 %     Mps = [1 2 3 4];
 %     Mp = Mps(j);
 %     Mbc = Mps(j) + 1;
@@ -243,8 +245,10 @@ changing_snapshotdata = 0;
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
 
-    BC_DEIM = 1;
+%     BC_DEIM = 1;
     BC_DEIM = 0;
+    BC_DEIMs = repmat([0 1],1,10);
+    BC_DEIM = BC_DEIMs(j);
     BC_DEIMdim = Mbc;
 
     if bc_recon == 3
@@ -252,7 +256,8 @@ changing_snapshotdata = 0;
         name = "vo M= "+num2str(M)+" Mbc= "+num2str(Mbc);
     elseif bc_recon == 5
         suffix = " vp ";
-        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);     
+        name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);
+        M = 2*M;
     else
         suffix = " bc recon = " + bc_recon;
     end
@@ -261,16 +266,18 @@ changing_snapshotdata = 0;
 %     bases_constructions = ["mthesis" "optimal" "qr"];
 %     bases_constructions = ["mthesis" "optimal"];
 %     bases_constructions = [ "optimal"  "mthesis"];
-%     bases_constructions = ["mthesis"];
+%     bases_constructions = [ "mthesis" "POD"];
+    bases_constructions = ["mthesis"];
 % %     bases_constructions = ["qr"];
 %     bases_constructions = [bases_constructions bases_constructions ...
 %                            bases_constructions bases_constructions ...
 %                            bases_constructions bases_constructions];
 % %     bases_constructions = [bases_constructions; bases_constructions];
 % %     bases_constructions = bases_constructions(:);
-%     bases_construction = bases_constructions(j);
+    bases_constructions = repmat(bases_constructions,1,20);
+    bases_construction = bases_constructions(j);
 
-    bases_construction = "POD";
+%     bases_construction = "POD";
 %     bases_construction = "mthesis";
 %     bases_construction = "closest";
 %     bases_construction = "optimal";

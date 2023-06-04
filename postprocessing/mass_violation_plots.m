@@ -15,7 +15,8 @@ disp('mass viola')
 figure(111)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 % semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
-semilogy(t_vec,mass_viola_L2,'color',color,'displayname',name);
+% semilogy(t_vec,mass_viola_L2,'color',color,'displayname',name);
+semilogy(t_vec,mass_viola_L2,'color',color,'linestyle',linestyle,'linewidth', linewidth,'displayname',name);
 sum_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 
@@ -31,8 +32,10 @@ set(gca,'Yscale','log');
 xlabel('t')
 ylabel('mass equation violation')
 % legend('show','NumColumns',2,'Orientation','horizontal')
-legend('show','NumColumns',1,'Orientation','horizontal')
+% legend('show','NumColumns',3,'Orientation','horizontal')
+legend('show','NumColumns',3,'Orientation','vertical')
     set(gcf, 'Position', [100, 100, 400, 300])
+    grid on
 
 % figure(113)
 % % plot(t_vec,dot(mass_viola_L2,error_p),color,'displayname',"pressure term

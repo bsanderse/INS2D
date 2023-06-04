@@ -34,9 +34,15 @@ f = plot(6*[2 3]);
 g = plot(7*[2 3]);
 
 colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
-% colors = kron(colors,[1; 1]);
+colors = kron(colors,[1; 1]);
 
 color = colors(j,:);
+
+% linestyles = repelem("-",7);
+% linestyles = repelem("-",14);
+linestyles = repmat(["-", "--"],1,7);
+linestyle = linestyles(j);
+
 
 
 % line  = {'r-','b-','k-','m-','g-','c-'};
@@ -150,6 +156,8 @@ end
             if (options.rom.process_iteration_FOM==1)
                 
                 if (options.output.save_unsteady == 1)
+linewidth = 1;
+
                     velocity_error_plot;
                     velocity_comparison_plot;
 % % % % % %                     pressure_error_plot;
@@ -158,7 +166,7 @@ end
 % % % % % %                     projected_pressure_gradient_comparison_plot;
                     mass_violation_plots;
                     approx_mass_violation_plots;
-                    kinetic_energy;
+%                     kinetic_energy;
                     kinetic_energy_error_plots;
 % % % % % %                     ROM_coefficient_plot;
                 end

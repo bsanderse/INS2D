@@ -4,13 +4,14 @@ function [R,options] = ROM_initialization(V,t,options)
 % B*R
 % V = B*R + Vbc
 
-if true %options.rom.bc_recon ~= 5
+% if true %options.rom.bc_recon ~= 5
+if options.rom.bc_recon ~= 5
 % get the coefficients of the ROM
 R = getROM_velocity(V,t,options);
 
 % for projected-divergence-free ROM, enforce projected divergence-freeness
-if options.rom.bc_recon == 5
-    % else
+% if options.rom.bc_recon == 5 && options.rom.bases_construction == "POD"
+else
     % construct ROM divergence operator
     Bp = options.rom.Bp;
     B = options.rom.B;
@@ -21,10 +22,14 @@ if options.rom.bc_recon == 5
     hatL = -hatM*hatG;
     options.rom.hatL = hatL;
 
+    if options.rom.bc_recon == 5 && options.rom.bases_construction == "POD"
+
     F_M = options.discretization.F_M;
     phi_bc = options.rom.phi_bc;
     yM = - F_M*phi_bc*get_a_bc(t,options); % consistent sign inconsistency
     hatyM = Bp'*yM;
+
+    R = getROM_velocity(V,t,options);
 
     q = hatL\(hatM*R-hatyM);
 
@@ -32,8 +37,8 @@ if options.rom.bc_recon == 5
 
     % testing
     norm(hatM*R+hatyM)
-end
-else
+    end
+% else
 
 
 %         condition3(j) = cond(hatL)

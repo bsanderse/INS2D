@@ -36,7 +36,8 @@ disp('approx mass viola')
 figure(112)
 % plot(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
 % semilogy(t_vec,mass_viola_L2,color,'displayname',"ROM M="+M+suffix);
-semilogy(t_vec,mass_viola_L2,'color', color,'displayname',name);
+% semilogy(t_vec,mass_viola_L2,'color', color,'displayname',name);
+semilogy(t_vec,mass_viola_L2,'color', color,'linestyle',linestyle,'linewidth', linewidth,'displayname',name);
 sum2_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 % semilogy(t_vec,mass_viola_L2_FOM,color2,'displayname',"FOM");
@@ -48,7 +49,10 @@ hold on
 set(gca,'Yscale','log');
 xlabel('t')
 ylabel('approx mass equation violation')
-legend('show','NumColumns',2,'Orientation','horizontal')
+legend('show','NumColumns',3,'Orientation','vertical')
+
+    set(gcf, 'Position', [100, 100, 400, 300])
+grid on
 
 % figure(113)
 % % plot(t_vec,dot(mass_viola_L2,error_p),color,'displayname',"pressure term

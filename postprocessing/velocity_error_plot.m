@@ -54,7 +54,8 @@ disp('velocity error')
 % figure(99)
 % plot(t_vec,error_V_2,color,'displayname',"ROM "+suffix);
 %%
-plot(t_vec,error_V_2,'color',color,'displayname',name); %%non-botch
+% plot(t_vec,error_V_2,'color',color,'displayname',name); %%non-botch
+plot(t_vec,error_V_2,'color',color,'linestyle', linestyle, 'linewidth', linewidth,'displayname',name); %%non-botch
 % if mod(j,2) == 0
 %     plot(t_vec,error_V_2,'color',color_old,'linestyle','-' ,'displayname',name);
 % else
@@ -87,4 +88,6 @@ set(gca,'Yscale','log');
 xlabel('t')
     set(gcf, 'Position', [100, 100, 400, 300])
 % legend('show','NumColumns',2,'Orientation','horizontal')
-legend('show','NumColumns',1,'Orientation','horizontal')
+legend('show','NumColumns',3,'Orientation','vertical')
+    set(gcf, 'Position', [100, 100, 400, 300])
+grid on

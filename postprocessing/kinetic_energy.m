@@ -1,6 +1,7 @@
                 figure(117)
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
-                plot(t_vec,k,'color',color,'displayname',name);
+%                 plot(t_vec,k,'color',color,'displayname',name);
+                plot(t_vec,k,'color',color,'linestyle',linestyle,'displayname',name);
                 hold on
                 if j==Nsim
                     plot(t_vec,snapshots.k(snapshot_indx'),'color','k','linestyle',':','marker','x','displayname',"FOM");

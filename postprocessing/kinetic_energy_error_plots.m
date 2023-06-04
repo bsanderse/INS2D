@@ -2,7 +2,7 @@
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx')),'color',color,'displayname',name); ylabel('energy error')
                 k_avg = sum(k)/numel(k)
-                semilogy(t_vec,abs(k - snapshots.k(snapshot_indx'))/k_avg,'color',color,'displayname',name); ylabel('relative energy error')
+                semilogy(t_vec,abs(k - snapshots.k(snapshot_indx'))/k_avg,'color',color,'linestyle', linestyle,'linewidth', linewidth,'displayname',name); ylabel('relative energy error')
 
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k-k(1))/k(1));
@@ -19,6 +19,9 @@
 %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
 %                 legend('(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)')
 %                 title('error in kinetic energy ROM');
-                  legend('show')
+%                   legend('show')
+legend('show','NumColumns',3,'Orientation','vertical')
+
 
                       set(gcf, 'Position', [100, 100, 400, 300])
+                      grid on
