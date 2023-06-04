@@ -34,6 +34,7 @@ for l = 2:1:DEIMdim  %8% size(us,2)
     ps = [ps pl];
 end
 
+cond(P'*U)
 PTUinv = inv(P'*U);
 
 end

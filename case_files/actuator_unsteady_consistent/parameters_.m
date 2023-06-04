@@ -30,7 +30,7 @@ M_list = kron(M_list, [1 1]);
 % M_list = 10*ones(6,1);
 % M_list = 10;
 % M_list = 20;
-% M_list = 80;
+M_list = 80;
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
