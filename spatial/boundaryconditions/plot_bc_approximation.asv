@@ -23,7 +23,8 @@ err2 = zeros(nt+1,1);
 ybc_norms = zeros(nt+1,1);
 
 % Rs = [2 5 10 20 40 79 80];
-Rs = [2 5 10 20 40]; %79 80];
+% Rs = [2 5 10 20 40]; %79 80];
+Rs = 20 + [1:6];
 
 phi_bc0 = options.rom.phi_bc;
 
