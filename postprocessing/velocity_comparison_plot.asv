@@ -59,10 +59,10 @@ else
 
     disp('rom equivalence')
 %     figure(999)
-figure(2)
+figure
 %     plot(t_vec,error_V_2,'color',color_old,'displayname',"R = "+num2str(M_old));
 %     plot(t_vec,error_V_2,'color',color_old,'displayname',name);
-    plot(t_vec,error_V_2,'color', color, 'linewidth', linewidth,'linestyle', '--','displayname', name_old);
+    plot(t_vec,error_V_2,'linewidth', linewidth,'linestyle', '--','displayname', name_old);
 %     plot(t_vec,error_V_2,'linewidth', linewidth,'displayname',name + "/" + name_old);
 %     plot(t_vec,error_V_2,color_old,'displayname',"velo diff: "+ name +" / "+ name_old);
     sum2_error_V_2(j) = sum(error_V_2)

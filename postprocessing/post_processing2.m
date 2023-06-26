@@ -40,7 +40,7 @@ color = colors(j,:);
 
 % linestyles = repelem("-",7);
 % linestyles = repelem("-",14);
-linestyles = repmat(["-", "--"],1,7);
+linestyles = repmat(["--", "-"],1,7);
 linestyle = linestyles(j);
 
 
@@ -166,7 +166,7 @@ linewidth = 1;
 % % % % % %                     projected_pressure_gradient_comparison_plot;
                     mass_violation_plots;
                     approx_mass_violation_plots;
-%                     kinetic_energy;
+                    kinetic_energy;
                     kinetic_energy_error_plots;
 % % % % % %                     ROM_coefficient_plot;
                 end

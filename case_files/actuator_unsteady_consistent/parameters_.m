@@ -30,7 +30,7 @@ M_list = kron(M_list, [1 1]);
 % M_list = 10*ones(6,1);
 % M_list = 10;
 % M_list = 20;
-M_list = 80;
+% M_list = 80;
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -209,7 +209,7 @@ changing_snapshotdata = 0;
     bc_recon = bc_recons(j);
 
 %     bc_recon = 5;
-    bc_recon = 3;
+%     bc_recon = 3;
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
@@ -220,7 +220,7 @@ changing_snapshotdata = 0;
 %     bc_recon = 4; 
 %     bc_recon = 2; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
 %     bc_recon = 3; %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1;
-    Mbc = M;
+    Mbc = min(M,23);
 %      Mbc = 80;
 %     bc_recon = 2+mod(j,2); %3-2*(j>1); % 2-mod(j,2); %(j>4)+1; %2-mod(j,2); %(j>4)+1; 
                   % 0: unsteady is always computed by solving a poisson eq
@@ -231,10 +231,10 @@ changing_snapshotdata = 0;
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
 
-%     BC_DEIM = 1;
+    BC_DEIM = 1;
 %     BC_DEIM = 0;
-    BC_DEIMs = repmat([0 1],1,10);
-    BC_DEIM = BC_DEIMs(j);
+%     BC_DEIMs = repmat([0 1],1,10);
+%     BC_DEIM = BC_DEIMs(j);
     BC_DEIMdim = Mbc;
 
 %     standardPODvpROM = true; % standard POD velocity pressure ROM
@@ -245,7 +245,7 @@ changing_snapshotdata = 0;
     elseif bc_recon == 5
         suffix = " vp ";
         name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc); 
-        M = 2*M;
+%         M = 2*M;
     else
         suffix = " bc recon = " + bc_recon;
     end

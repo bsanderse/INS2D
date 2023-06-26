@@ -58,15 +58,23 @@ if (j==1) || changing_snapshotdata
 %     
 %         %% analysis
 %     F_M = options.discretization.F_M;
-%     [U_bc,S_bc,V_bc] = svd(X_bc);
-%     Sigma_bc = diag(S_bc);
-%     figure
-%     semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', "singular values of y_{bc} snapshots");
-%     legend('show')
-%     xlabel("mode index")
-%     ylabel("\sigma_j/\sigma_1")
-%     set(gcf, 'Position', [100, 100, 400, 300])
-%     %%
+    [U_bc,S_bc,V_bc] = svd(X_bc);
+    Sigma_bc = diag(S_bc);
+    figure
+    yyaxis left
+    semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', "singular values of y_{bc} snapshots");
+    ylabel("\sigma_j/\sigma_1")
+    
+    PODenergy = cumsum(Sigma_hom);
+    relPODenergy = PODenergy/PODenergy(end);
+    yyaxis right
+    plot(relPODenergy,'rx','displayname', "POD snapshot energy")
+
+    legend('show')
+    xlabel("mode index")
+    ylabel("\sigma_j/\sigma_1")
+    set(gcf, 'Position', [100, 100, 400, 300])
+    %%
 %     
 %     %% analysis
 if options.rom.standardPODvpROM
@@ -87,8 +95,14 @@ else
     Sigma_hom = diag(S_hom);
     figure
     semilogy(Sigma_hom/Sigma_hom(1),'s','displayname', "singular values of V_{hom} snapshots");
+    PODenergy = cumsum(Sigma_hom);
+    relPODenergy = PODenergy/PODenergy(end);
+    yyaxis right
+    plot(relPODenergy,'rx','displayname', "POD snapshot energy")
+    ylabel("% POD energy")
     legend('show')
     xlabel("mode index")
+    yyaxis left
     ylabel("\sigma_j/\sigma_1")
     set(gcf, 'Position', [100, 100, 400, 300])
     grid
@@ -379,7 +393,7 @@ end
 % phi_bc = phi_bc1;
 % options.rom.phi_bc = phi_bc;
 
-plot_bc_approximation;
+% plot_bc_approximation;
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure

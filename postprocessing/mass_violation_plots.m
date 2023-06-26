@@ -21,7 +21,7 @@ sum_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 
 if j==Nsim
-    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM");
+    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM", 'color','k', 'linewidth', linewidth);
     set(gca,'Yscale','log');
     xlabel('M')
     ylabel('orthonormality error')

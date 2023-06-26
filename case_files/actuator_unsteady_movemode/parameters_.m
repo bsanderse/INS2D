@@ -17,6 +17,7 @@ M_list = base_M;
 % 
 % M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 M_list = [2 5 10 20 40 80];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
+% M_list = [10 20 40 80 81 85];%ones(1,5);%kron([2 5 10 20 50 100],ones(1,5));
 % M_list = 2;
 % M_list = [2 5 10];
 % M_list = [80 79 40];
@@ -39,6 +40,7 @@ M_list = kron(M_list, [1 1]);
 % M_list = 10;
 % M_list = 20;
 % M_list = 80;
+% M_list = 90;
 
 % M_list = [2 5 10 20 2 5 10 20];
 % M_list = [2 2 5 5 10 10 20 20];
@@ -210,12 +212,12 @@ changing_snapshotdata = 0;
 %                 bc_recon = bc_recons(j); Mp = M;
 
 %     bc_recon = 5;
-    bc_recon = 3; % for vo ROM!!! HR 24/05/2023
+%     bc_recon = 3; % for vo ROM!!! HR 24/05/2023
 % %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
 
-%     bc_recons = kron([1 1 1 1 1 1],[3 5]);
-%     bc_recon = bc_recons(j);
+    bc_recons = kron([1 1 1 1 1 1],[3 5]);
+    bc_recon = bc_recons(j);
 
 %     Mps = 4*[5 10 15 20];
 %     Mp = Mps(j);
@@ -233,6 +235,7 @@ changing_snapshotdata = 0;
 
     Mbc = Mp;
 %      Mbc = 80;
+%      Mbc = 14;
 %      Mbc = 2;
 %          Mp = Mbc;
 
@@ -245,10 +248,10 @@ changing_snapshotdata = 0;
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
 
-%     BC_DEIM = 1;
-    BC_DEIM = 0;
-    BC_DEIMs = repmat([0 1],1,10);
-    BC_DEIM = BC_DEIMs(j);
+    BC_DEIM = 1;
+%     BC_DEIM = 0;
+%     BC_DEIMs = repmat([0 1],1,10);
+%     BC_DEIM = BC_DEIMs(j);
     BC_DEIMdim = Mbc;
 
     if bc_recon == 3
@@ -257,7 +260,7 @@ changing_snapshotdata = 0;
     elseif bc_recon == 5
         suffix = " vp ";
         name = "vp M= "+num2str(M)+" Mbc= "+num2str(Mbc);
-        M = 2*M;
+%         M = 2*M;
     else
         suffix = " bc recon = " + bc_recon;
     end

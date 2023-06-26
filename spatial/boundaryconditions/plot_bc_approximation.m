@@ -26,8 +26,14 @@ ybc_norms = zeros(nt+1,1);
 % Rs = [2 5 10 20 40]; %79 80];
 % Rs = 20 + [1:6];
 
-Rs = [2 5 10 20 23 24 40];
+% Rs = [2 5 10 20 23 24 40];
 % Rs = 80;
+
+Rs = [2 5 10 20 22 23 24];
+% Rs = [10 20 40 80 81 85];
+% Rs = [81 82 83 84 85];
+% Rs = [2 5 20 79 80 84];
+
 
 phi_bc0 = options.rom.phi_bc;
 
@@ -61,11 +67,11 @@ for l = 1:numel(Rs)
     ybc_norm_avg = sum(ybc_norms)/(nt+1);
 
     linewidth = 1;
-    figure(377)
+    figure(377111)
     color = colors(l,:);
-    semilogy(ts,err1/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','-', 'displayname', "R="+num2str(R))
+    semilogy(ts,err1/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','--', 'displayname', "R="+num2str(R))
     hold on
-    semilogy(ts,err2/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','--', 'displayname', "R="+num2str(R))
+    semilogy(ts,err2/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','-', 'displayname', "R="+num2str(R))
 
 
 end

@@ -67,19 +67,6 @@ disp('velocity error')
 %%
 % plot(t_vec,error_V_2,'color',color,'displayname',name); %%non-botch
 plot(t_vec,error_V_2,'color',color,'linestyle', linestyle, 'linewidth', linewidth,'displayname',name); %%non-botch
-hold on
-
-
-set(gca,'Yscale','log');
-xlabel('t')
-    set(gcf, 'Position', [100, 100, 400, 300])
-% legend('show','NumColumns',2,'Orientation','horizontal')
-legend('show','NumColumns',3,'Orientation','vertical')
-    set(gcf, 'Position', [100, 100, 400, 300])
-grid on
-
-
-
 % if mod(j,2) == 0
 %     plot(t_vec,error_V_2,'color',color_old,'linestyle','-' ,'displayname',name);
 % else
@@ -88,11 +75,8 @@ grid on
 % end
 %%
 sum_error_V_2(j) = sum(error_V_2)
-figure(9999) % botch
 hold on
-% plot(t_vec,error_V_best_2,'color',color,'linestyle','--','displayname',"best approx "+suffix);
-plot(t_vec,error_V_best_2,'color',color,'linestyle','--','displayname',name);
-
+plot(t_vec,error_V_best_2,'color',color,'linestyle','--','displayname',"best approx "+suffix);
 sum_error_V_best_2(j) = sum(error_V_best_2)
 
 

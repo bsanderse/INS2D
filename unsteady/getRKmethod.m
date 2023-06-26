@@ -290,7 +290,7 @@ switch name
         b=[0 1]'; c=[0 1/2]';
         
     case 'Mid00'
-        %standard Midpoint method HR
+        %standard Midpoint method HR 
 %         s=2; r=0.5;
         A=[1/2];
         b=[1]'; c=[1/2]';
