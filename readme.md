@@ -1,6 +1,8 @@
 # Energy-conserving Finite Volume method for the incompressible Navier-Stokes equations
 This is the 2D version. [For 3D, click here](https://github.com/bsanderse/INS3D).
 
+This is the Matlab version. [For Julia, click here](https://github.com/agdestein/IncompressibleNavierStokes.jl).
+
 ## Quick installation and run
 - MATLAB is required, but no specific toolboxes. The code has been tested succesfully under Octave in the past (no guarantees).
 - Run one of the existing case files by typing `main('casename')`, e.g. `main('LDC')` to run the lid-driven cavity test case
