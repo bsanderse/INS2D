@@ -33,14 +33,19 @@ e = plot(5*[2 3]);
 f = plot(6*[2 3]);
 g = plot(7*[2 3]);
 
-colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
-colors = kron(colors,[1; 1]);
+% colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
+colors = [a.Color; b.Color; c.Color; d.Color; e.Color; [0 0 0]; g.Color];
+% colors = kron(colors,[1; 1]);
+colors = kron(colors,[1; 1; 1; 1]);
 
 color = colors(j,:);
 
 % linestyles = repelem("-",7);
 % linestyles = repelem("-",14);
-linestyles = repmat(["--", "-"],1,7);
+% linestyles = repmat(["--", "-"],1,7);
+% linestyles = repmat(["-", "--"],1,7);
+linestyles = repmat(["-", "-", "--", "--"],1,7);
+% linestyles = repmat(["-", "-"],1,7);
 linestyle = linestyles(j);
 
 

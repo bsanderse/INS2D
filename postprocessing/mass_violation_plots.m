@@ -21,7 +21,7 @@ sum_mass_viola_L2(j) = sum(mass_viola_L2)
 hold on
 
 if j==Nsim
-    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM", 'color','k', 'linewidth', linewidth);
+    semilogy(t_vec,snapshots.maxdiv(snapshot_indx),'displayname',"FOM", 'color',.6*[1 1 1], 'linewidth', linewidth);
     set(gca,'Yscale','log');
     xlabel('M')
     ylabel('orthonormality error')
@@ -34,7 +34,9 @@ ylabel('mass equation violation')
 % legend('show','NumColumns',2,'Orientation','horizontal')
 % legend('show','NumColumns',3,'Orientation','horizontal')
 legend('show','NumColumns',3,'Orientation','vertical')
-    set(gcf, 'Position', [100, 100, 400, 300])
+%     set(gcf, 'Position', [100, 100, 400, 300])
+    set(gcf, 'Position', [100, 100, 400, 400])
+    ylim([1e-18 1])
     grid on
 
 % figure(113)

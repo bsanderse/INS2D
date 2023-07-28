@@ -118,4 +118,5 @@ xlabel('t')
 % legend('show','NumColumns',2,'Orientation','horizontal')
 legend('show','NumColumns',3,'Orientation','vertical')
     set(gcf, 'Position', [100, 100, 400, 300])
+    ylim([1e-9 1])
 grid on

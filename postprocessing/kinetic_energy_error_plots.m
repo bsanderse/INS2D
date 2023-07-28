@@ -2,8 +2,9 @@
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx')),'color',color,'displayname',name); ylabel('energy error')
                 k_avg = sum(k)/numel(k)
-                semilogy(t_vec,abs(k - snapshots.k(snapshot_indx'))/k_avg,'color',color,'linestyle', linestyle,'linewidth', linewidth,'displayname',name); ylabel('relative energy error')
-
+                if mod(j,2) ~= 0
+                    semilogy(t_vec,abs(k - snapshots.k(snapshot_indx'))/k_avg,'color',color,'linestyle', linestyle,'linewidth', linewidth,'displayname',name); ylabel('relative energy error')
+                end
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k-k(1))/k(1));
 
@@ -25,3 +26,5 @@ legend('show','NumColumns',3,'Orientation','vertical')
 
                       set(gcf, 'Position', [100, 100, 400, 300])
                       grid on
+                      ylabel('relative energy error')
+                      xlabel('t')

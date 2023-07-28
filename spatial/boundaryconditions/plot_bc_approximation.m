@@ -9,7 +9,8 @@ e = plot(5*[2 3]);
 f = plot(6*[2 3]);
 g = plot(7*[2 3]);
 
-colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
+% colors = [a.Color; b.Color; c.Color; d.Color; e.Color; f.Color; g.Color];
+colors = [a.Color; b.Color; c.Color; d.Color; e.Color; [0 0 0]; g.Color];
 % colors = kron(colors,[1; 1]);
 
 % color = colors(j,:);
@@ -26,10 +27,10 @@ ybc_norms = zeros(nt+1,1);
 % Rs = [2 5 10 20 40]; %79 80];
 % Rs = 20 + [1:6];
 
-% Rs = [2 5 10 20 23 24 40];
+Rs = [2 5 10 20 23 24];
 % Rs = 80;
 
-Rs = [2 5 10 20 22 23 24];
+% Rs = [2 5 10 20 22 23 24];
 % Rs = [10 20 40 80 81 85];
 % Rs = [81 82 83 84 85];
 % Rs = [2 5 20 79 80 84];
@@ -69,14 +70,16 @@ for l = 1:numel(Rs)
     linewidth = 1;
     figure(377111)
     color = colors(l,:);
-    semilogy(ts,err1/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','--', 'displayname', "R="+num2str(R))
-    hold on
     semilogy(ts,err2/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','-', 'displayname', "R="+num2str(R))
-
+    hold on
+    semilogy(ts,err1/ybc_norm_avg,'color',color,'linewidth',linewidth,'linestyle','--', 'displayname', "R="+num2str(R))
 
 end
 
 % legend('show')
     set(gcf, 'Position', [100, 100, 400, 600])
+    ylim([1e-17 10])
     grid on
 legend('show','NumColumns',3,'Orientation','vertical')
+xlabel('t')
+ylabel('relative boundary condition approximation error')

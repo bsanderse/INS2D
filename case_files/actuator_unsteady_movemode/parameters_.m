@@ -31,7 +31,8 @@ M_list_raw = M_list;
 % M_list = flip(kron(ones(1,repetitions),M_list_raw));
 
 % M_list = [2 5 8];
-M_list = kron(M_list, [1 1]);
+% M_list = kron(M_list, [1 1]);
+M_list = kron(M_list, [1 1 1 1]);
 % M_list = kron([2 5 10 20 40],[1 1]);
 % M_list = [40 40];
 % M_list = [60 60];
@@ -141,7 +142,7 @@ changing_snapshotdata = 0;
     % method 20 : generic explicit RK, can also be used for ROM
 %     method 21 : generic implicit RK, can also be used for ROM 
 
-% if mod(j,2) ~= 0
+% if mod(j,2) == 0
     method        = 20;
     RK = 'RK44';
 % else
@@ -212,11 +213,12 @@ changing_snapshotdata = 0;
 %                 bc_recon = bc_recons(j); Mp = M;
 
 %     bc_recon = 5;
-%     bc_recon = 3; % for vo ROM!!! HR 24/05/2023
+    bc_recon = 3; % for vo ROM!!! HR 24/05/2023
 % %     bc_recon = 5; M=M+1;
 %     bc_recons = kron([1 1 1],[3 5]);
+    bc_recons = kron(ones(1,32),[3 5]);
 
-    bc_recons = kron([1 1 1 1 1 1],[3 5]);
+%     bc_recons = kron([1 1 1 1 1 1],[3 5]);
     bc_recon = bc_recons(j);
 
 %     Mps = 4*[5 10 15 20];
@@ -248,10 +250,13 @@ changing_snapshotdata = 0;
                   % 4: POD ROM with F_ROM_notvelocityonly
                   % 5: new standard ROM (= with projected mass equation)
 
-    BC_DEIM = 1;
-%     BC_DEIM = 0;
+%     BC_DEIM = 1;
+    BC_DEIM = 0;
 %     BC_DEIMs = repmat([0 1],1,10);
+%     BC_DEIMs = repmat([1 0],1,10);
 %     BC_DEIM = BC_DEIMs(j);
+    BC_DEIMs = repmat([1 1 0 0],1,10);
+    BC_DEIM = BC_DEIMs(j);
     BC_DEIMdim = Mbc;
 
     if bc_recon == 3
@@ -277,7 +282,7 @@ changing_snapshotdata = 0;
 %                            bases_constructions bases_constructions];
 % %     bases_constructions = [bases_constructions; bases_constructions];
 % %     bases_constructions = bases_constructions(:);
-    bases_constructions = repmat(bases_constructions,1,20);
+    bases_constructions = repmat(bases_constructions,1,40);
     bases_construction = bases_constructions(j);
 
 %     bases_construction = "POD";

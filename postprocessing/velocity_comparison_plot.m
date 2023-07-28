@@ -62,7 +62,7 @@ else
 figure(2)
 %     plot(t_vec,error_V_2,'color',color_old,'displayname',"R = "+num2str(M_old));
 %     plot(t_vec,error_V_2,'color',color_old,'displayname',name);
-    plot(t_vec,error_V_2,'color', color, 'linewidth', linewidth,'linestyle', '--','displayname', name_old);
+    plot(t_vec,error_V_2,'color', color, 'linewidth', linewidth,'linestyle', linestyle,'displayname', name_old);
 %     plot(t_vec,error_V_2,'linewidth', linewidth,'displayname',name + "/" + name_old);
 %     plot(t_vec,error_V_2,color_old,'displayname',"velo diff: "+ name +" / "+ name_old);
     sum2_error_V_2(j) = sum(error_V_2)
@@ -84,8 +84,8 @@ end
 set(gca,'Yscale','log');
 xlabel('t')
 ylabel("||\cdot||_{\Omega_h}")
-% legend('show','NumColumns',2,'Orientation','horizontal')
-legend('show','NumColumns',1,'Orientation','vertical')
+legend('show','NumColumns',3,'Orientation','vertical')
+% legend('show','NumColumns',1,'Orientation','vertical')
     set(gcf, 'Position', [100, 100, 400, 300])
 grid on
 
