@@ -71,7 +71,9 @@ run([folder_cases '/' case_name '/' case_name '_parameters.m']);
 if (~exist('run_multiple','var') || run_multiple == 0)
     Nsim = 1;
 else
-    Nsim = length(mesh_list);
+    if (~exist('Nsim','var') || Nsim == 0)
+        Nsim = length(mesh_list);
+    end
 end
     
 % loop over multiple simulations (e.g. different meshes or time steps)

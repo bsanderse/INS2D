@@ -37,6 +37,8 @@ disp(['residual of momentum and energy equations: ' num2str(Fres)])
 
 %% compute Nusselt number with final solution
 
+alfa1 = options.temp.alfa1;
+alfa2 = options.temp.alfa2;
 alfa3 = options.temp.alfa3;
 alfa4 = options.temp.alfa4;
 
@@ -91,7 +93,8 @@ NusseltU = sum(-dTdyU.*hx)/Lx % integrate over upper plate
 
 switch options.temp.incl_dissipation
     case 1
-        % check difference between the upper and lower Nusselt number,
+        %% check internal energy balance
+        % difference between the upper and lower Nusselt number,
         % this should equal the dissipation
         [Phi] = dissipation(V,t,options,0);
         % the computed dissipation is basically V'*D*V, which includes
@@ -107,17 +110,34 @@ switch options.temp.incl_dissipation
         FTemp = conv_diff_temperature(T,V,t,options,0);
         sum(FTemp)/Lx + alfa3_Phi_tot/Lx % 1^T * (-conv +diff)
         
-        %% check thermal dissipation balance
+        %% check thermal dissipation balance (T^2 balance)
         % note: diffusion_temperature already includes alfa4
         diffT   = diffusion_temperature(T,t,options,0);
         % note we should have T'*convT=0
         % we should also have T'*diffT = alfa*NusseltL - epsilonT
-        % check this:
+        % check this: (note that thermal_dissipation already includes
+        % alfa4)
         epsilonT = thermal_dissipation(T,t,options);
         T'*diffT/Lx - (alfa4*NusseltL - epsilonT/Lx)
         % then we also have the balance
         alfa4*NusseltL - epsilonT/Lx + T'*alfa3_Phi/Lx
-
+        % store for plotting
+        epsilonT_array(j,1) = epsilonT/Lx
+        TPhi_array(j,1) = T'*alfa3_Phi/Lx
+        alfa4_array(j,1) = alfa4
+        
+        %% check kinetic energy balance
+        % we need integral of Phi:
+        % convert vector to 2D field to ease integration
+        Phi2D = reshape(Phi,options.grid.Npx,options.grid.Npy);
+        % integrate in x-direction
+        Phi2D_int = sum(Phi2D,1);
+        % we now have a vector which is only a function of y, which we
+        % integrate "at each point", i.e. int_{0}^{y}
+        Phi2D_int_cum = cumsum(Phi2D_int);
+        Phi2D_int_cum_tot = sum(Phi2D_int_cum);
+        % note that Phi includes alfa1 as scaling
+        alfa2*alfa4*(NusseltL - 1) - sum(Phi) + (alfa2/gamma)*Phi2D_int_cum_tot*options.grid.hy(1)
 end
 
 NusseltL_array(j,1) = NusseltL
@@ -201,4 +221,15 @@ grid
 title('temperature');
 colorbar
 set(gca,'LineWidth',1,'FontSize',14);
+
+%% 
+if (j==Nsim && Nsim>1)
+    figure
+    loglog(Ra_list,NusseltL_array)
+    hold on
+    loglog(Ra_list,NusseltU_array)
+    loglog(Ra_list,epsilonT_array./alfa4_array)
+    xlim([1e3 5e5])
+    ylim([0.9 8])
+end
 

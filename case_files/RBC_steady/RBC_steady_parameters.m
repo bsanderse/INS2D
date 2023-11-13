@@ -1,6 +1,6 @@
 % project = 'RBC';   % project name used in filenames
 run_multiple = 1;
-mesh_list = 128*ones(14,1); %[128 128 128 128];
+mesh_list = 128; %*ones(14,1); %[128 128 128 128];
 Nsim = length(mesh_list);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,12 +15,12 @@ Nsim = length(mesh_list);
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra_list = [1e3 2.585e3 2.586e3 2.59e3 2.6e3 3e3 4e3 5e3 7e3 1e4 2e4 5e4 1e5 2e5];
+    Ra_list = 5e3; %[1e3 2.585e3 2.586e3 2.59e3 2.6e3 3e3 4e3 5e3 7e3 1e4 2e4 5e4 1e5 2e5];
     Ra = Ra_list(j);                   % Rayleigh number
-    Ge_list = [0 0.1 1 2];
-    Ge = 0.5; %Ge_list(j);                   % Gebhart number
+%     Ge_list = %[0 0.1 1 2];
+    Ge = 0.1; %Ge_list(j);                   % Gebhart number
     incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
-    nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
+    nondim_type = 1;            % see constants_boussinesq.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
