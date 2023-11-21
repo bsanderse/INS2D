@@ -7,9 +7,9 @@ Nux_in = options.grid.Nux_in;
 Nuy_in = options.grid.Nuy_in;
 Nvx_in = options.grid.Nvx_in;
 Nvy_in = options.grid.Nvy_in;
-% xpp = options.grid.xpp;
+xpp = options.grid.xpp;
 ypp = options.grid.ypp;
-% Lx = options.grid.x2 - options.grid.x1;
+Lx = options.grid.x2 - options.grid.x1;
 Ly = options.grid.y2 - options.grid.y1;
 
 % constant velocity field
@@ -20,7 +20,10 @@ v  = zeros(Nvx_in,Nvy_in);
 % p_initial=1
 p  = zeros(Npx,Npy);
  
-% inverted profile for temperature
-T  = ypp<(Ly/2);
+% inverted profile for temperature with perturbation
+y_pert = Ly/2 + 0.05*sin(2*pi*xpp/Lx);
+T = y_pert > ypp;
+% no perturbation:
+% T  = ypp<(Ly/2);
 
 end

@@ -137,6 +137,75 @@ set(gcf,'color','w');
 set(gca,'LineWidth',1,'FontSize',14);
 
 
+% plot energy balances
+figure(102)
+cmap = get(gca,'ColorOrder');
+
+% note that k includes both e_int and (1/2)*u^2 !!
+plot(time(1:rtp.n:end),dkdt(:,j),'s','Color',cmap(j,:));
+hold on
+plot(time(1:rtp.n:end),de_pot(:,j) + de_cond(:,j),'o','Color',cmap(j,:));
+
+grid on
+title('d/dt (e_k + e_{i}) vs. potential energy and conduction');        
+xlabel('t')
+ylabel('energy change');
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',14);
+legend('d/dt (e_{k} + e_{i})','potential energy source + conduction');
+
+
+figure(103)
+cmap = get(gca,'ColorOrder');
+semilogy(time(1:rtp.n:end),abs(energy_diff(:,j)),'s','Color',cmap(j,:));
+hold on
+
+grid on
+title('d/dt (e_{k} + e_{i}) - potential energy');
+
+xlabel('t')
+ylabel('energy change');
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',14);
+if (j==Nsim)
+    legend('Ge=0.1, OL','Ge=1, OL','Ge=0.1, IM','Ge=1, IM');
+    % ylabel('$\varepsilon_{E}$','Interpreter','Latex');
+end
+
+figure(104)
+% average temperature on domain
+
+cmap = get(gca,'ColorOrder');
+
+plot(time(1:rtp.n:end),T_avg(:,j),'o','Color',cmap(j,:));
+hold on
+plot(time(1:rtp.n:end),u_avg(:,j),'x','Color',cmap(j,:));
+grid on
+ylabel('average temperature and average velocity');
+%     ylim([0.48 0.53]);
+xlim([options.time.t_start options.time.t_end]);
+set(gcf,'color','w');
+set(gca,'LineWidth',1,'FontSize',14);
+
+% do some postprocessing after last run finishes
+if (j==Nsim)
+    legend('T, Ge=0.1, OL','u, Ge=0.1, OL','T, Ge=1, OL','u, Ge=1, OL','T, Ge=0.1, IM','u, Ge=0.1, IM','T, Ge=1, IM','u, Ge=1, IM');
+    hline = findobj(gcf, 'type', 'line');
+    % set(hline,'Marker','none');
+    % set(hline(1:2:end),'LineStyle','--')
+    % set(hline(2:2:end),'LineStyle','-')
+    set(hline(5:8),'LineStyle','-')
+    set(hline(1:4),'LineStyle','none','Marker','o','MarkerIndices',1:20:1001)
+    set(hline(5),'Color',cmap(8,:))
+    set(hline(8),'Color',cmap(1,:))
+    set(hline(7),'Color',cmap(2,:))
+    set(hline(6),'Color',cmap(3,:))
+    set(hline(1),'Color',cmap(4,:))
+    set(hline(2),'Color',cmap(3,:))
+    set(hline(3),'Color',cmap(2,:))
+    set(hline(4),'Color',cmap(1,:))
+end
+
 %% create 2D plots
 
 %% vorticity

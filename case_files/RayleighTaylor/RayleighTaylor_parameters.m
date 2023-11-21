@@ -1,8 +1,11 @@
 % project = 'RayleighTaylor';   % project name used in filenames
-% run_multiple = 1;
+run_multiple = 1;
 % mesh_list = 32; %[32 64 128 256];
 % Nsim = length(mesh_list);
 
+Ge_list = [0.1;1;0.1;1];
+time_methods_list = [5;5;23;23];
+Nsim = length(time_methods_list);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 0;                  % Reynolds number
@@ -15,9 +18,9 @@
     % if boussinesq is used, then the value for Re is not used but
     % calculated from Pr and Ra
     Pr = 0.71;                  % Prandtl number
-    Ra = 5e4;                   % Rayleigh number
-    Ge = 0;                   % Gebhart number
-    incl_dissipation = 0;       % use dissipation term in temperature equation (1=yes,0=no)
+    Ra = 1e6;                   % Rayleigh number
+    Ge = Ge_list(j);                   % Gebhart number
+    incl_dissipation = 1;       % use dissipation term in temperature equation (1=yes,0=no)
     nondim_type = 1;            % see thermal_constants.m: 1 => uref= sqrt(beta*g*Delta T*H), 2=> uref = kappa/H, 3=> uref = sqrt(c*DeltaT)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,10 +59,10 @@
     
     % only for unsteady problems:
 
-        dt            = 2e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
+        dt            = 5e-3; %/sqrt(Ge);       % time step (for explicit methods it can be
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 100; %/sqrt(Ge);         % end time
+        t_end         = 50; %/sqrt(Ge);         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -79,7 +82,7 @@
         % method 23 : implicit midpoint (energy conserving) for Boussinesq
         %             system by iterating with viscous Jacobians only
         
-        method            = 5;
+        method            = time_methods_list(j);
         RK                = 'RK44'; % only used when method = 20 or 21
         
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -155,7 +158,7 @@
     
     rtp.show         = 1;          % real time plotting 
     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
-    rtp.n            = 200;
+    rtp.n            = 10;
     rtp.movie        = 0;
     rtp.moviename    = 'RayleighTaylor';
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps

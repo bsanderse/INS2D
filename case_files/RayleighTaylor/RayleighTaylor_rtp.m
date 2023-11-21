@@ -14,7 +14,7 @@ pres = reshape(p,Npx,Npy);
 Temp = reshape(T,Npx,Npy);
 
 % show_figures = 1;
-show_energy = 1;
+show_energy = 0;
 show_Nusselt = 0;
 show_temperature = 1;
 [up,vp,qp] = get_velocity(V,t,options);
@@ -112,42 +112,53 @@ end
 % dissipation is included and no boundary contributions are present
 
 % de_pot = vh'*(options.discretization.AT_v*T);
+ind = ceil(n/rtp.n); % index that counts how often the rtp function has been called
+
+if (n>1) % only perform after first time step has been taken
+    V_mid = 0.5*(V + Vn);
+    T_mid = 0.5*(T + Tn);    
+    dkdt(ind,j)    = (k(n)-k(n-1))/dt;
+    de_pot(ind,j)  = V_mid(options.grid.indv)'*(options.discretization.AT_v*T_mid);
+    diffT        = diffusion_temperature(T,t,options,0);
+    de_cond(ind,j) = sum(diffT); % zero if all BC are adiabatic, like in Rayleigh Taylor
+    energy_diff(ind,j) = dkdt(ind,j) - (de_pot(ind,j) + de_cond(ind,j));
+end
+
+% average temperature and velocity
+T_avg(ind,j) = sum(options.grid.Omp.*T)/(Lx*Ly);
+% get only kinetic energy (without internal energy):
+Ek(ind,j)    = 0.5*sum(options.grid.Omu.*uh.^2) + 0.5*sum(options.grid.Omv.*vh.^2); % this equals 0.5*(V')*(Omega.*V);
+u_avg(ind,j) = sqrt(2*Ek(ind,j)/(Lx*Ly));
+
 
 if (show_energy)
+    
     figure(30)
     cmap = get(gca,'ColorOrder');
-    if (n>1)
-        % in implicit midpoint, the contribution equals
-        % V^{n+1/2} * A * T^{n+1/2}
-        V_mid = 0.5*(V + Vn);
-        T_mid = 0.5*(T + Tn);
-        dkdt   = (k(n)-k(n-1))/dt;
-        de_pot = V_mid(options.grid.indv)'*(options.discretization.AT_v*T_mid);
-        diffT   = diffusion_temperature(T,t,options,0);
-        de_cond = sum(diffT); % zero if all BC are adiabatic, like in Rayleigh Taylor
-
-        % note that k includes both e_int and (1/2)*u^2 !!
-        plot(t,dkdt,'s','Color',cmap(1,:));
-        hold on
-        plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+    if (n==1)
         grid on
-        title('d/dt (e_k + e_{i}) vs. potential energy and conduction');
-        
+        title('d/dt (e_k + e_{i}) vs. potential energy and conduction');        
         xlabel('t')
         ylabel('energy change');
         set(gcf,'color','w');
         set(gca,'LineWidth',1,'FontSize',14);
+        hold on
+    end
+    if (n>1)
+        % in implicit midpoint, the contribution equals
+        % V^{n+1/2} * A * T^{n+1/2}
+ 
+        % note that k includes both e_int and (1/2)*u^2 !!
+        plot(t,dkdt(ind,j),'s','Color',cmap(1,:));
+        hold on
+        plot(t,de_pot(ind,j) + de_cond(ind,j),'o','Color',cmap(2,:));
         legend('d/dt (e_{k} + e_{i})','potential energy source + conduction');
+
     end
     
-    figure(31) % same as 30, but plotting differences
+    figure(31) % same as 30, but plotting difference between energies
     cmap = get(gca,'ColorOrder');
-    if (n>1)
-        % note that k includes both e_int and (1/2)*u^2 !!
-        energy_diff = dkdt - (de_pot + de_cond);
-        plot(t,energy_diff,'s','Color',cmap(1,:));
-        hold on
-%         plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+    if (n==1)
         grid on
         title('d/dt (e_{k} + e_{i}) - potential energy');
         
@@ -155,22 +166,23 @@ if (show_energy)
         ylabel('energy change');
         set(gcf,'color','w');
         set(gca,'LineWidth',1,'FontSize',14);
+        hold on
 %         legend('d/dt (e_k + e_{int})','potential energy source + conduction');
     end
-    
+    if (n>1)
+        % note that k includes both e_int and (1/2)*u^2 !!
+        plot(t,abs(energy_diff(ind,j)),'s','Color',cmap(1,:));
+%         plot(t,de_pot + de_cond,'o','Color',cmap(2,:));
+    end   
     
     
     figure(4)
     % average temperature on domain
     cmap = get(gca,'ColorOrder');
-    T_avg = sum(options.grid.Omp.*T)/(Lx*Ly);
-    % get only kinetic energy (without internal energy):
-    Ek    = 0.5*sum(options.grid.Omu.*uh.^2) + 0.5*sum(options.grid.Omv.*vh.^2); % this equals 0.5*(V')*(Omega.*V);
 
-    u_avg = sqrt(2*Ek/(Lx*Ly));
-    plot(t,T_avg,'o','Color',cmap(1,:));
+    plot(t,T_avg(ind,j),'o','Color',cmap(1,:));
     hold on
-    plot(t,u_avg,'x','Color',cmap(2,:));
+    plot(t,u_avg(ind,j),'x','Color',cmap(2,:));
     grid on
     ylabel('average temperature and average velocity');
 %     ylim([0.48 0.53]);
@@ -235,7 +247,7 @@ end
 % set(gca,'LineWidth',1)
 
 %% temperature
-t_list = 0:5:150; % time instants where we want plot
+t_list = 0:5:50; % time instants where we want plot
 t_index = find(abs(t_list-t)<dt/10);
 save_and_export = 0; % save figures and export to pdf
 if (show_temperature && any(t_index))
@@ -243,8 +255,8 @@ if (show_temperature && any(t_index))
     if (n==1)
         fig1=figure(1);
         %     sgtitle(['Pr = ' num2str(options.temp.Pr) ', Ra = ' num2str(options.temp.Ra) ', Ge = ' num2str(options.temp.Ge)])
-        fig1.Position(3) = fig1.Position(3);
-        fig1.Position(4) = 2*fig1.Position(4);
+        fig1.Position(3) = 560; %fig1.Position(3);
+        fig1.Position(4) = 840; %2*fig1.Position(4);
         cmap = get(gca,'ColorOrder');
         
     elseif (n>1)
@@ -252,7 +264,7 @@ if (show_temperature && any(t_index))
         %     subplot(1,2,1)
         set(gcf,'color','w');
         % l = [0.3 0.17 0.12 0.11 0.09 0.07 0.05 0.02 0.0 -0.002];
-        l=linspace(0,1,20);
+        l=linspace(-0.01,1,20);
         % l = 20;
         contourf(xp,yp,Temp',l,'LineWidth',2);
         %     hold on
@@ -268,7 +280,7 @@ if (show_temperature && any(t_index))
         set(gca,'LineWidth',1,'FontSize',14);
         hold off
         if (save_and_export == 1)
-            fig_name = ['../../results/RayleighTaylor/T_' num2str(t_list(t_index))];
+            fig_name = ['../../results/RayleighTaylor/perturbation/T_method_' num2str(method) '_Ge_' num2str(Ge) '_t_' num2str(t_list(t_index))];
             savefig([fig_name '.fig']);
             export_fig(fig_name,'-pdf','-transparent');
         end
