@@ -122,11 +122,12 @@ voi = {
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'time_discB4pres_elim', 1; ... % 0: time derivative ... ; 1: time difference quotient ... in RHS of ROM PPE for F computation
-    'bases_construction', 'qr'; ...
+    'bases_construction', 'POD'; ...
     'BC_DEIM', 0; ... % 0: BC approximation via precomputed projection; 1: ... via DEIM
     'Mbc', 10; % number of bc approximation modes for reduced order model
     'BC_DEIMdim', 10; ... % number of DEIM interpolation points for BC approximation
     'standardPODvpROM', false; ... % standard POD velocity pressure ROM
+    'rom_type', 'intrusive'; ... % 'intrusive', 'OpInf' = operator inference, 'EC-OpInf' = energy-conserving operator inference
     };
 
 accumulate_object;

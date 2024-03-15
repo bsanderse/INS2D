@@ -58,22 +58,22 @@ if (j==1) || changing_snapshotdata
 %     
 %         %% analysis
 %     F_M = options.discretization.F_M;
-    [U_bc,S_bc,V_bc] = svd(X_bc);
-    Sigma_bc = diag(S_bc);
-    figure
-    yyaxis left
-    semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', "singular values of y_{bc} snapshots");
-    ylabel("\sigma_j/\sigma_1")
-    
-    PODenergy = cumsum(Sigma_hom);
-    relPODenergy = PODenergy/PODenergy(end);
-    yyaxis right
-    plot(relPODenergy,'rx','displayname', "POD snapshot energy")
-
-    legend('show')
-    xlabel("mode index")
-    ylabel("\sigma_j/\sigma_1")
-    set(gcf, 'Position', [100, 100, 400, 300])
+% % %     [U_bc,S_bc,V_bc] = svd(X_bc);
+% % %     Sigma_bc = diag(S_bc);
+% % %     figure
+% % %     yyaxis left
+% % %     semilogy(Sigma_bc/Sigma_bc(1),'s','displayname', "singular values of y_{bc} snapshots");
+% % %     ylabel("\sigma_j/\sigma_1")
+% % %     
+% % %     PODenergy = cumsum(Sigma_bc);
+% % %     relPODenergy = PODenergy/PODenergy(end);
+% % %     yyaxis right
+% % %     plot(relPODenergy,'rx','displayname', "POD snapshot energy")
+% % % 
+% % %     legend('show')
+% % %     xlabel("mode index")
+% % %     ylabel("\sigma_j/\sigma_1")
+% % %     set(gcf, 'Position', [100, 100, 400, 300])
     %%
 %     
 %     %% analysis
@@ -89,23 +89,27 @@ if options.rom.standardPODvpROM
     %
 else
         %% analysis
+            if options.rom.rom_bc == 2
                 X_hom = X_h - X_inhom;
 
-    [U_hom,S_hom,V_hom] = svd(X_hom);
-    Sigma_hom = diag(S_hom);
-    figure
-    semilogy(Sigma_hom/Sigma_hom(1),'s','displayname', "singular values of V_{hom} snapshots");
-    PODenergy = cumsum(Sigma_hom);
-    relPODenergy = PODenergy/PODenergy(end);
-    yyaxis right
-    plot(relPODenergy,'rx','displayname', "POD snapshot energy")
-    ylabel("% POD energy")
-    legend('show')
-    xlabel("mode index")
-    yyaxis left
-    ylabel("\sigma_j/\sigma_1")
-    set(gcf, 'Position', [100, 100, 400, 300])
-    grid
+                    [U_hom,S_hom,V_hom] = svd(X_hom);
+                    Sigma_hom = diag(S_hom);
+                    figure
+                    semilogy(Sigma_hom/Sigma_hom(1),'s','displayname', "singular values of V_{hom} snapshots");
+                    PODenergy = cumsum(Sigma_hom);
+                    relPODenergy = PODenergy/PODenergy(end);
+                    yyaxis right
+                    plot(relPODenergy,'rx','displayname', "POD snapshot energy")
+                    ylabel("% POD energy")
+                    legend('show')
+                    xlabel("mode index")
+                    yyaxis left
+                    ylabel("\sigma_j/\sigma_1")
+                    set(gcf, 'Position', [100, 100, 400, 300])
+                    grid
+            end
+
+
 end
 
 end
@@ -132,8 +136,9 @@ if true
 % % options.rom.bases_construction = "optimal";
 % options.rom.bases_construction = "qr";
 
-options.rom.Mbc = Mbc; % botch
+% options.rom.Mbc = Mbc; % botch
 
+Mbc = options.rom.Mbc;
 
 switch options.rom.bases_construction
     case "POD"
@@ -275,6 +280,9 @@ elseif options.rom.bc_recon == 5
     % condition6(j) = cond(options.discretization.M*B)
     % condition7(j) = cond(options.discretization.M*phi_inhom)
 
+else
+    B = phi_hom;
+
 end
 
 options.rom.B = B;
@@ -286,35 +294,37 @@ Mbc = size(phi_bc,2);
 options.rom.Mbc = Mbc;
 end
 
-if options.rom.BC_DEIM == 0
-    %% precompute a bc for all time steps
-    [~,~,c_RK] = getRKmethod(options.time.RK);
-    % c_RK = [c_RK(2:end);1];
+if rom_bc ~= 0
+    if options.rom.BC_DEIM == 0
+        %% precompute a bc for all time steps
+        [~,~,c_RK] = getRKmethod(options.time.RK);
+        % c_RK = [c_RK(2:end);1];
 
-    a_bc_matrix = zeros(nt,numel(c_RK),Mbc);
-    time_control = zeros(nt,numel(c_RK));
-    for jj = 1:nt
-        tn = t + (jj-1)*dt;
-        for jjj = 1:numel(c_RK)
-            ti         = tn + c_RK(jjj)*dt;
-            a_bc       = get_a_bc_precomp(ti,options);
-            a_bc_matrix(jj,jjj,:) = a_bc;
-            time_control(jj,jjj) = ti;
+        a_bc_matrix = zeros(nt,numel(c_RK),Mbc);
+        time_control = zeros(nt,numel(c_RK));
+        for jj = 1:nt
+            tn = t + (jj-1)*dt;
+            for jjj = 1:numel(c_RK)
+                ti         = tn + c_RK(jjj)*dt;
+                a_bc       = get_a_bc_precomp(ti,options);
+                a_bc_matrix(jj,jjj,:) = a_bc;
+                time_control(jj,jjj) = ti;
+            end
         end
-    end
-    options.rom.a_bc_matrix = a_bc_matrix;
-    options.rom.time_control = time_control;
+        options.rom.a_bc_matrix = a_bc_matrix;
+        options.rom.time_control = time_control;
 
-    a_bc_vec = a_bc_matrix(1,1,:);
-    options.rom.a_bc_vec = a_bc_vec(:);
-    time_vec = time_control(1,1);
-    options.rom.time_vec = time_vec(:);
-    %%
-else
-    phi_bc = phi_bc(:,1:options.rom.BC_DEIMdim);
-    options.rom.phi_bc = phi_bc;
-    [options.rom.bc_deim_inds, options.rom.bc_deim_PTUinv] = getDEIMinds(phi_bc,options.rom.BC_DEIMdim);
-    options.rom.ybc_coords = ybc_coords(options.rom.bc_deim_inds,t,options);
+        a_bc_vec = a_bc_matrix(1,1,:);
+        options.rom.a_bc_vec = a_bc_vec(:);
+        time_vec = time_control(1,1);
+        options.rom.time_vec = time_vec(:);
+        %%
+    else
+        phi_bc = phi_bc(:,1:options.rom.BC_DEIMdim);
+        options.rom.phi_bc = phi_bc;
+        [options.rom.bc_deim_inds, options.rom.bc_deim_PTUinv] = getDEIMinds(phi_bc,options.rom.BC_DEIMdim);
+        options.rom.ybc_coords = ybc_coords(options.rom.bc_deim_inds,t,options);
+    end
 end
 
 
