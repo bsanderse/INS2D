@@ -14,6 +14,7 @@ switch options.rom.rom_type
 
         % compute snapshot ROM coefficient time derivative approximation
         A_ = options.rom.A;
+        %
         A_dot = (A_(:,2:end) - A_(:,1:end-1))/options.time.dt;
 
         A = A_(:,2:end);
@@ -31,8 +32,9 @@ switch options.rom.rom_type
 
         O = (A_hat\A_dot')';
 
-        Diff = O(:,1:r);
+        Diff = O(:,1:r)/options.fluid.Re;
         Conv = O(:,r+1:end);
+        %
 
         options.rom.Diff = Diff;
         options.rom.Conv_quad = Conv;

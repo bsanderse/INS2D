@@ -405,11 +405,27 @@ end
 
 % plot_bc_approximation;
 
-if options.rom.rom_type == 'OpInf' || options.rom.rom_type == 'EC-OpInf'
+if options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
     options.rom.A = options.rom.B'*(options.grid.Om.*V_svd);
 end
 
 % OpInf testing
+opinf_testing = true;
+if opinf_testing
+    rom_type = options.rom.rom_type;
+
+    options.rom.rom_type = "OpInf";
+    options = operator_rom(options);
+    Diff_OpInf = options.rom.Diff;
+    Conv_OpInf = options.rom.Conv_quad;
+
+    options.rom.rom_type = "intrusive";
+    options = operator_rom(options);
+    Diff_intrusive = options.rom.Diff;
+    Conv_intrusive = options.rom.Conv_quad;
+
+    options.rom.rom_type = rom_type;
+end
 
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
