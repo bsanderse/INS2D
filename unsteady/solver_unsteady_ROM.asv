@@ -38,7 +38,7 @@ if (j==1) || changing_snapshotdata
     % select snapshots
     V_svd = V_total_snapshots(:,snapshot_sample);
     
-    X_h = pro_X_h(:,snapshot_sample);
+    X_h = pro_X_h(:,snapshot_sample); % why parallelism with line 39?
     
     clear V_total_snapshots;  
     
@@ -405,6 +405,10 @@ end
 
 % plot_bc_approximation;
 
+if options.rom.rom_type == 'OpInf' || options.rom.rom_type == 'EC-OpInf'
+    options.rom.A = options.rom.B'*(options.grid.Om.*V_svd);
+end
+
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
 if options.rom.bc_recon ~= 4 || options.rom.bc_recon ~= 2
@@ -519,7 +523,7 @@ while(n<=nt)
     % set_timestep;
     
     %%
-    if options.rom.BC_DEIM == 0
+    if options.rom.rom_bc ~= 0 && options.rom.BC_DEIM == 0 
         a_bc_slice = options.rom.a_bc_matrix(n,:,:);
         time_slice = options.rom.time_control(n,:);
     end

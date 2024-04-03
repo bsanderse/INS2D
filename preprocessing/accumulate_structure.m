@@ -127,7 +127,7 @@ voi = {
     'Mbc', 10; % number of bc approximation modes for reduced order model
     'BC_DEIMdim', 10; ... % number of DEIM interpolation points for BC approximation
     'standardPODvpROM', false; ... % standard POD velocity pressure ROM
-    'rom_type', 'intrusive'; ... % 'intrusive', 'OpInf' = operator inference, 'EC-OpInf' = energy-conserving operator inference
+    'rom_type', "intrusive"; ... % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
     };
 
 accumulate_object;

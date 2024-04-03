@@ -160,7 +160,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %                 Mbc = 0;
                 %%
 
-    rom_type = 'OpInf'; % 'intrusive', 'OpInf' = operator inference, 'EC-OpInf' = energy-conserving operator inference
+    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';

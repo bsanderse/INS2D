@@ -4,7 +4,41 @@ NV  = options.grid.Nu+options.grid.Nv;
 B   = options.rom.B;
 
 switch options.rom.rom_type
-    case 'intrusive'
+    case "OpInf"
+        % make this a function!!!
+
+        % based on notation https://www.overleaf.com/read/mqqgbfqwvjvw#2b8e20
+        if (options.rom.weighted_norm == 0)
+            error('not implemented')
+        end
+
+        % compute snapshot ROM coefficient time derivative approximation
+        A_ = options.rom.A;
+        A_dot = (A_(:,2:end) - A_(:,1:end-1))/options.time.dt;
+
+        A = A_(:,2:end);
+
+        r = size(A,1);
+        K = size(A,2);
+
+        A_kron = zeros(r^2,K);
+        for j = 1:K
+            a_j = A(:,j);
+            A_kron(:,j) = kron(a_j,a_j);
+        end
+
+        A_hat = [A', A_kron'];
+
+        O = (A_hat\A_dot')';
+
+        Diff 
+
+
+
+
+
+
+    case "intrusive"
 
         if (options.rom.weighted_norm == 0)
             Diag = options.grid.Om_inv;
