@@ -4,7 +4,7 @@
 
 % N = 4;
 
-function s_ = evaluate_quad_invariance(N)
+function s_ = reduced_coordinates2(N)
 
 N_ = N^2;
 p_ = primes(N_);
