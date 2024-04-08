@@ -4,10 +4,13 @@
 run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
+M_list = 32;
 % M_list = [16 16 16];
 % M_list = [16 16];
 % M_list = [4 -1];% 8 16 32];
-M_list = [4 8 16 32 -1];
+% M_list = [4 8 16 32 -1];
+% M_list = 2;
+% M_list = 5;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);

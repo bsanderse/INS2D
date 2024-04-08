@@ -1,4 +1,4 @@
-function [Diff,Conv] = standardOpInf(A_,dt,nu)
+function [Diff,Conv] = standardOpInf2(A_,dt,nu)
 
 A_dot = (A_(:,2:end) - A_(:,1:end-1))/dt;
 
@@ -8,10 +8,13 @@ A_dot = (A_(:,2:end) - A_(:,1:end-1))/dt;
         r = size(A,1);
         K = size(A,2);
 
-        A_kron = zeros(r^2,K);
+        [~,~,u] = reduced_coordinates(r);
+
+        A_kron = zeros(numel(u),K);
         for j = 1:K
             a_j = A(:,j);
-            A_kron(:,j) = kron(a_j,a_j);
+            kron_a_j = kron(a_j,a_j);
+            A_kron(:,j) = kron_a_j(u);
         end
 
         A_hat = [A', A_kron'];

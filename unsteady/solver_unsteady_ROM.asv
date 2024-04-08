@@ -431,7 +431,7 @@ if opinf_testing
     Conv_OpInf_r = Conv_OpInf;
 
     norm(Diff_intrusive - Diff_OpInf)
-    norm(reduced_convection_operator(Conv_intrusive)-Conv_OpInf_r)
+    norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(Conv_OpInf))
 end
 
 %% precompute ROM operators by calling operator_rom
