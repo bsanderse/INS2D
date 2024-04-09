@@ -40,6 +40,12 @@ n_x0 = 1;
 % x0 = (sin(2*pi*(1:N)/N)').^2;
 X0 = (sin(2*pi*(1:N)/N)') + 2;
 
+% v_max = max(X0,[],'all');
+% 
+% dt = .1*dx/v_max;
+% dt = dx/v_max;
+
+
 nts = 10*(1:5);
 
 for tt = 1:numel(nts)
@@ -77,13 +83,8 @@ end
 figure
 heatmap(X)
 grid off
-% % 
-% figure
-% hold on
-% for i =1:nt-1
-%     plot(X(:,i),displayname = "t_"+ i)
-% end
-% legend("show")
+% 
+% figur ("show")
 
 figure
 semilogy(nts,D_error,'gx-',displayname = "||D\_intrusive - D\_OpInf||")
