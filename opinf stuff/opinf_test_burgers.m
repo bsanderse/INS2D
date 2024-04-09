@@ -11,7 +11,7 @@ D(N,1) = 1;
 D(1,N) = 1;
 D = D/dx^2;
 
-% D = 0*D;
+D = 0*D;
 
 index = @(x) mod(x-1,N)+1;
 kron_ind = @(i,j) i+(j-1)*N;
@@ -28,15 +28,19 @@ C = C/(3*dx);
 
 % C = 0*C;
  
-nu = 1;
-dt = .001;
+nu = .1;
+dt = .01;
 
 %% start simulation
-n_x0 = N;
-[V,E] = eig(D);
-X0 = V;
+% n_x0 = N;
+% [V,E] = eig(D);
+% X0 = V +2;
 
-nts = 10*(1:4);
+n_x0 = 1;
+% x0 = (sin(2*pi*(1:N)/N)').^2;
+X0 = (sin(2*pi*(1:N)/N)') + 2;
+
+nts = 10*(1:5);
 
 for tt = 1:numel(nts)
 nt = nts(tt);
@@ -44,8 +48,6 @@ nt = nts(tt);
            % = number of snapshots per trajectory
 
 K = n_x0 * nt;
-% x0 = (sin(2*pi*(1:N)/N)').^2;
-% x0 = (sin(2*pi*(1:N)/N)');
 
 X = zeros(N,K);
 % X(:,1) = x0;
@@ -70,20 +72,23 @@ D_error2(tt) =norm(D-Diff2)
 C_error(tt) = norm(reduced_convection_operator(C) - reduced_convection_operator(Conv))
 C_error2(tt) =norm(reduced_convection_operator(C) - reduced_convection_operator(Conv2))
 
-% heatmap(X)
-% grid off
-% 
-% figure
-% 
-% plot(X(:,1))
-% hold on
-% plot(X(:,2))
-% plot(X(:,K))
-
 end
+
+figure
+heatmap(X)
+grid off
+% % 
+% figure
+% hold on
+% for i =1:nt-1
+%     plot(X(:,i),displayname = "t_"+ i)
+% end
+% legend("show")
+
+figure
 semilogy(nts,D_error,'gx-',displayname = "||D\_intrusive - D\_OpInf||")
 hold on
-% semilogy(nts,D_error2,'gx-',displayname = "||D\_intrusive - D\_OpInf2||")
+semilogy(nts,D_error2,'gx-',displayname = "||D\_intrusive - D\_OpInf2||")
 
 % title("||D\_intrusive - D\_OpInf||")
 % xlabel("number of snapshots per initial condition trajectory")
@@ -91,7 +96,7 @@ hold on
 
 % figure
 semilogy(nts,C_error,'bx-',displayname = "||C\_intrusive - C\_OpInf||")
-% semilogy(nts,C_error2,'bx-',displayname = "||C\_intrusive - C\_OpInf2||")
+semilogy(nts,C_error2,'bx-',displayname = "||C\_intrusive - C\_OpInf2||")
 % title("||C\_intrusive - C\_OpInf||")
 xlabel("number of snapshots per initial condition trajectory")
 ylabel("error magnitude")
