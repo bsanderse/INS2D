@@ -65,10 +65,10 @@ end
 [Diff2,Conv2] = standardOpInf2(X,dt,nu);
 
 D_error(tt) = norm(D-Diff)
-D_error2(tt) =norm(D-Diff2)
+norm(D-Diff2)
 
 C_error(tt) = norm(reduced_convection_operator(C) - reduced_convection_operator(Conv))
-C_error2(tt) =norm(reduced_convection_operator(C) - reduced_convection_operator(Conv2))
+norm(reduced_convection_operator(C) - reduced_convection_operator(Conv2))
 
 % heatmap(X)
 % grid off
@@ -81,19 +81,14 @@ C_error2(tt) =norm(reduced_convection_operator(C) - reduced_convection_operator(
 % plot(X(:,K))
 
 end
-semilogy(nts,D_error,'gx-',displayname = "||D\_intrusive - D\_OpInf||")
-hold on
-% semilogy(nts,D_error2,'gx-',displayname = "||D\_intrusive - D\_OpInf2||")
-
-% title("||D\_intrusive - D\_OpInf||")
-% xlabel("number of snapshots per initial condition trajectory")
-% ylabel("error magnitude")
-
-% figure
-semilogy(nts,C_error,'bx-',displayname = "||C\_intrusive - C\_OpInf||")
-% semilogy(nts,C_error2,'bx-',displayname = "||C\_intrusive - C\_OpInf2||")
-% title("||C\_intrusive - C\_OpInf||")
+semilogy(nts,D_error,'gx-')
+title("||D\_intrusive - D\_OpInf||")
 xlabel("number of snapshots per initial condition trajectory")
 ylabel("error magnitude")
-legend("show")
+
+% figure
+semilogy(nts,C_error,'bx-')
+title("||C\_intrusive - C\_OpInf||")
+xlabel("number of snapshots per initial condition trajectory")
+ylabel("error magnitude")
 
