@@ -11,7 +11,7 @@ D(N,1) = 1;
 D(1,N) = 1;
 D = D/dx^2;
 
-% D = 0*D;
+D = 0*D;
 
 index = @(x) mod(x-1,N)+1;
 kron_ind = @(i,j) i+(j-1)*N;
