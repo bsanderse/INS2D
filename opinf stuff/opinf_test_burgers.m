@@ -29,20 +29,20 @@ C = C/(3*dx);
 % C = 0*C;
  
 nu = .01;
-dt = .01;
+dt = .0001;
 
 %% start simulation
-% n_offsets = 5;
-% offsets = 1:n_offsets;
-% n_x0 = N;
-% [V,E] = eig(D);
-% X0 = V + permute(repmat(offsets,N,1,n_x0),[3 1 2]);
-% X0 = X0(:,:);
-% n_x0 = n_x0*n_offsets;
+n_offsets = 1;
+offsets = 1:n_offsets;
+n_x0 = N;
+[V,E] = eig(D);
+X0 = V + permute(repmat(offsets,N,1,n_x0),[3 1 2]);
+X0 = X0(:,:);
+n_x0 = n_x0*n_offsets;
 
-n_x0 = 1;
-% x0 = (sin(2*pi*(1:N)/N)').^2;
-X0 = (sin(2*pi*(1:N)/N)') + 2;
+% n_x0 = 1;
+% % x0 = (sin(2*pi*(1:N)/N)').^2;
+% X0 = (sin(2*pi*(1:N)/N)') + 2;
 
 % v_max = max(X0,[],'all');
 % 
@@ -60,6 +60,8 @@ nt = nts(tt);
 K = n_x0 * nt;
 
 X = zeros(N,nt,n_x0);
+X_dot = zeros(N,nt-1,n_x0);
+
 energies = zeros(nt,n_x0);
 % X(:,1) = x0;
 
@@ -69,13 +71,14 @@ for ii = 1:n_x0
     energies(1,ii) = norm(x)^2/2;
     for i = 1:nt-1
         %% forward Euler
-%         x = x + dt*(nu*D*x + C*kron(x,x));  
+        x = x + dt*(nu*D*x + C*kron(x,x));  
         %% Gaus method (energy-conserving!)
             % still waiting for license
         %% linear implicit method
-            T = (nu*D + C*kron(x,eye(N)));
-            x12 = (eye(N) - .5*dt*T)\x;
-            x = x + dt*T*x12;
+%             T = (nu*D + C*kron(x,eye(N)));
+%             x12 = (eye(N) - .5*dt*T)\x;
+%             x = x + dt*T*x12;
+% %             X_dot(:,i,ii);
         %%
         X(:,1+i,ii) = x;
         energies(1+i,ii) = norm(x)^2/2;
