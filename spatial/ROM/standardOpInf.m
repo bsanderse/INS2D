@@ -1,9 +1,12 @@
 function [Diff,Conv] = standardOpInf(A_,dt,nu)
 
-A_dot = (A_(:,2:end) - A_(:,1:end-1))/dt;
+A_dot = (A_(:,2:end,:) - A_(:,1:end-1,:))/dt;
 
-        A = A_(:,1:end-1);
-%         A = A_(:,2:end);
+        A = A_(:,1:end-1,:);
+%         A = A_(:,2:end,:);
+
+        A_dot = A_dot(:,:);
+        A = A(:,:);
 
         r = size(A,1);
         K = size(A,2);
