@@ -11,7 +11,7 @@ D(N,1) = 1;
 D(1,N) = 1;
 D = D/dx^2;
 
-D = 0*D;
+% D = 0*D;
 
 index = @(x) mod(x-1,N)+1;
 kron_ind = @(i,j) i+(j-1)*N;
@@ -28,17 +28,17 @@ C = C/(3*dx);
 
 % C = 0*C;
  
-nu = .1;
-dt = .01;
+nu = .01;
+dt = .001;
 
 %% start simulation
-% n_x0 = N;
-% [V,E] = eig(D);
-% X0 = V +2;
+n_x0 = N;
+[V,E] = eig(D);
+X0 = V +2;
 
-n_x0 = 1;
-% x0 = (sin(2*pi*(1:N)/N)').^2;
-X0 = (sin(2*pi*(1:N)/N)') + 2;
+% n_x0 = 1;
+% % x0 = (sin(2*pi*(1:N)/N)').^2;
+% X0 = (sin(2*pi*(1:N)/N)') + 2;
 
 % v_max = max(X0,[],'all');
 % 
@@ -46,7 +46,7 @@ X0 = (sin(2*pi*(1:N)/N)') + 2;
 % dt = dx/v_max;
 
 
-nts = 10*(1:5);
+nts = 100*(1:15);
 
 for tt = 1:numel(nts)
 nt = nts(tt);
@@ -56,20 +56,33 @@ nt = nts(tt);
 K = n_x0 * nt;
 
 X = zeros(N,K);
+energies = zeros(1,K);
 % X(:,1) = x0;
 
 for ii = 1:n_x0
     x = X0(:,ii);
     X(:,(ii-1)*nt + 1) = x;
+    energies((ii-1)*nt + 1) = norm(x)^2/2;
     for i = 1:nt-1
-        x = x + dt*(nu*D*x + C*kron(x,x));
+        %% forward Euler
+%         x = x + dt*(nu*D*x + C*kron(x,x));  
+        %% Gaus method (energy-conserving!)
+            % still waiting for license
+        %% linear implicit method
+            T = (nu*D + C*kron(diag(x),ones(N,1)));
+            x12 = (eye(N) - .5*dt*T)\x;
+            x = x + dt*T*x12;
+        %%
         X(:,(ii-1)*nt + 1+i) = x;
+        energies((ii-1)*nt + 1+i) = norm(x)^2/2;
     end
 end
 
 %% end simulation
 
 [Diff,Conv] = standardOpInf(X,dt,nu);
+Conv_r = reduced_convection_operator(Conv);
+C_r = reduced_convection_operator(C);
 [Diff2,Conv2] = standardOpInf2(X,dt,nu);
 
 D_error(tt) = norm(D-Diff)
@@ -89,7 +102,7 @@ grid off
 figure
 semilogy(nts,D_error,'gx-',displayname = "||D\_intrusive - D\_OpInf||")
 hold on
-semilogy(nts,D_error2,'gx-',displayname = "||D\_intrusive - D\_OpInf2||")
+semilogy(nts,D_error2,'gx:',displayname = "||D\_intrusive - D\_OpInf2||")
 
 % title("||D\_intrusive - D\_OpInf||")
 % xlabel("number of snapshots per initial condition trajectory")
@@ -97,7 +110,7 @@ semilogy(nts,D_error2,'gx-',displayname = "||D\_intrusive - D\_OpInf2||")
 
 % figure
 semilogy(nts,C_error,'bx-',displayname = "||C\_intrusive - C\_OpInf||")
-semilogy(nts,C_error2,'bx-',displayname = "||C\_intrusive - C\_OpInf2||")
+semilogy(nts,C_error2,'bx:',displayname = "||C\_intrusive - C\_OpInf2||")
 % title("||C\_intrusive - C\_OpInf||")
 xlabel("number of snapshots per initial condition trajectory")
 ylabel("error magnitude")
