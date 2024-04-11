@@ -29,10 +29,10 @@ C = C/(3*dx);
 % C = 0*C;
  
 nu = .01;
-dt = .01;
 
 %% start simulation
-% n_offsets = 5;
+%% eigenvector-based initial conditions
+% n_offsets = 1;
 % offsets = 1:n_offsets;
 % n_x0 = N;
 % [V,E] = eig(D);
@@ -40,17 +40,42 @@ dt = .01;
 % X0 = X0(:,:);
 % n_x0 = n_x0*n_offsets;
 
-n_x0 = 1;
-% x0 = (sin(2*pi*(1:N)/N)').^2;
-X0 = (sin(2*pi*(1:N)/N)') + 2;
+%% just some wild idea for initial condition
+% n_x0 = 1;
+% % x0 = (sin(2*pi*(1:N)/N)').^2;
+% X0 = (sin(2*pi*(1:N)/N)') + 2;
 
+%% Koike et al. initial conditions
+omega = dx*(1:N)';
+x0_ = @(omega,A,f,phi) A*sin(2*pi*f*omega + phi);
+As = [.8, .9, 1., 1.1, 1.2];
+fs = [1 2 3];
+phis = [-.25, -.125, 0 , .125 .25];
+
+X0 = zeros(N,numel(As))
+for i_A = 1:numel(As)
+    A = As(i_A);
+    for i_f = 1: numel(fs)
+        f = fs(i_f);
+        for i_phi = 1:numel(phis)
+            phi = phis(i_phi);
+
+        end
+    end
+end
+
+
+%% CFL-based time step size
 % v_max = max(X0,[],'all');
 % 
 % dt = .1*dx/v_max;
 % dt = dx/v_max;
 
+%% fixed time step size
+dt = .0001;
 
-nts = 10*(1:5);
+
+nts = 10*(1:15);
 
 for tt = 1:numel(nts)
 nt = nts(tt);
@@ -60,6 +85,8 @@ nt = nts(tt);
 K = n_x0 * nt;
 
 X = zeros(N,nt,n_x0);
+X_dot = zeros(N,nt-1,n_x0);
+
 energies = zeros(nt,n_x0);
 % X(:,1) = x0;
 
@@ -69,13 +96,14 @@ for ii = 1:n_x0
     energies(1,ii) = norm(x)^2/2;
     for i = 1:nt-1
         %% forward Euler
-%         x = x + dt*(nu*D*x + C*kron(x,x));  
+        x = x + dt*(nu*D*x + C*kron(x,x));  
         %% Gaus method (energy-conserving!)
             % still waiting for license
         %% linear implicit method
-            T = (nu*D + C*kron(diag(x),ones(N,1)));
-            x12 = (eye(N) - .5*dt*T)\x;
-            x = x + dt*T*x12;
+%             T = (nu*D + C*kron(x,eye(N)));
+%             x12 = (eye(N) - .5*dt*T)\x;
+%             x = x + dt*T*x12;
+% %             X_dot(:,i,ii);
         %%
         X(:,1+i,ii) = x;
         energies(1+i,ii) = norm(x)^2/2;
