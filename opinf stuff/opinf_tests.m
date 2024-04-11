@@ -8,7 +8,7 @@ q = 1;
 nu = .1;
 dt = .01;
 
-K = 200;
+K = 20;
 x0 = .005;
 
 X = zeros(1,K+1);
@@ -21,5 +21,6 @@ for i =1:K
 end
 
 [Diff,Conv] = standardOpInf(X,dt,nu)
+[Diff2,Conv2] = standardOpInf2(X,dt,nu)
 
 
