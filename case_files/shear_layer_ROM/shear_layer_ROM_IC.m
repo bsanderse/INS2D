@@ -6,11 +6,17 @@ xv = options.grid.xv;
 Npx = options.grid.Npx;
 Npy = options.grid.Npy;
 
-d   = pi/15;
-e   = 0.05;
+% offset = -1;
+% d   = pi/15;
+% e   = 0.05;
+
+offset = options.case.IC_params(1);
+d   = options.case.IC_params(2);
+e   = options.case.IC_params(3);
+
 % note: we add 1 to u in order to make global momentum conservation less
 % trivial
-u   = 1 + tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
+u   = offset + tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
 v   = e*sin(xv);
 p   = zeros(Npx,Npy);
 

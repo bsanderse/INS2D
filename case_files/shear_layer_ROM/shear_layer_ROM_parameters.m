@@ -1,7 +1,7 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 M_list = 32;
@@ -15,6 +15,30 @@ M_list = 32;
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% initial condition parameters
+    % offset = 1;
+    % delta   = pi/15;
+    % epsilon   = 0.05;    
+    offset = 1;
+    delta   = pi/15*10;
+    epsilon   = 0.05;
+
+    % offsets = [1 .5 0 -.5 -1];
+    % deltas  = pi/15*[1 2 -2 -1];
+    % epsilons = .05*[1 .5 -.5 1];
+
+        offsets = .5*[1 -1];
+
+        offset = offsets(j);
+    mesh_list = ones(length(offsets),1);
+
+    IC_params = [offset delta epsilon];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1e100;                  % Reynolds number
@@ -124,10 +148,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    rom = 1
+    rom = 0
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
-    M      = M_list(j);     % number of modes used
+    % M      = M_list(j);     % number of modes used
+    M      = M_list;     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
@@ -230,8 +255,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
+    rtp.movie        = 1;          % make movie based on the real time plots
+    % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
+    rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -245,11 +271,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
+    results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved
+
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
     

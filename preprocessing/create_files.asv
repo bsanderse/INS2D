@@ -3,34 +3,28 @@
 
     
 if (restart.load==0 && options.output.save_results==1)
-    if options.output.results_name == 0
-        file         = [options.case.project,'_',num2str(Re,'%10.3e'),'_',num2str(Nx),'x',num2str(Ny)];
-
-        % create results directory if not present
-        if (~isdir(path_results))
-            mkdir(path_results);
-        end
-
-        path_results = [path_results '/' file];
-
-        i_file = 0;
-        while (exist(path_results,'dir')==7)
-            path_results = ['results/' file '_' num2str(i_file)];
-            i_file = i_file+1;
-        end
-        % copy inputfiles in result folder so that restart is possible and settings
-        % can be reproduced
-        %     mkdir([path_results '/inputfiles']);
-        %     copyfile('inputfiles/*.m ' path_results '/inputfiles']);
-    else
-        file = results_name;
-        path_results = [path_results '/' file];
-        if (exist(path_results,'dir')==7)
-            error("folder with name results_name already exists")
-        end
-    end  
-
+    if options
+    file         = [options.case.project,'_',num2str(Re,'%10.3e'),'_',num2str(Nx),'x',num2str(Ny)];
+    
+    % create results directory if not present
+    if (~isdir(path_results))
+        mkdir(path_results);
+    end
+    
+    path_results = [path_results '/' file];
+    
+    i_file = 0;
+    while (exist(path_results,'dir')==7)
+        path_results = ['results/' file '_' num2str(i_file)];
+        i_file = i_file+1;
+    end
     mkdir(path_results);
+    
+    % copy inputfiles in result folder so that restart is possible and settings
+    % can be reproduced
+    %     mkdir([path_results '/inputfiles']);
+    %     copyfile('inputfiles/*.m ' path_results '/inputfiles']);
+    
 end
 
 % newline and tab

@@ -4,14 +4,34 @@
 run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
+M_list = 32;
 % M_list = [16 16 16];
 % M_list = [16 16];
 % M_list = [4 -1];% 8 16 32];
-M_list = [4 8 16 32 -1];
+% M_list = [4 8 16 32 -1];
+% M_list = 2;
+% M_list = 5;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% initial condition parameters
+    % offset = 1;
+    % delta   = pi/15;
+    % epsilon   = 0.05;    
+    % offset = 1;
+    % delta   = pi/15;
+    % epsilon   = 0.05;
+
+    offsets = [1 .5]
+
+    IC_params = [offset delta epsilon];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1e100;                  % Reynolds number
@@ -121,7 +141,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    rom = 1
+    rom = 0
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     M      = M_list(j);     % number of modes used
@@ -160,7 +180,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %                 Mbc = 0;
                 %%
 
-    rom_type 
+    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
@@ -227,8 +247,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
+    rtp.movie        = 1;          % make movie based on the real time plots
+    % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
+    rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
