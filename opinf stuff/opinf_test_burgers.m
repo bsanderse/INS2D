@@ -3,7 +3,11 @@ close all;
 % toy problems for op inf - 1D Burgers periodic BC
 % function D_error = opinf_test_burgers(nt)
 
-N = 1;
+addpath('spatial/ROM/');
+addpath('opinf stuff/');
+
+
+N = 10;
 
 % dx = .1;
 dx = 1/2^4;
@@ -36,13 +40,14 @@ nu = .1;
 
 %% start simulation
 %% eigenvector-based initial conditions
-% n_offsets = 1;
-% offsets = 1:n_offsets;
+% % n_offsets = 1;
+% % offsets = 1:n_offsets;
 % n_x0 = N;
 % [V,E] = eig(D);
-% X0 = V + permute(repmat(offsets,N,1,n_x0),[3 1 2]);
+% X0 = V;
+% % X0 = V + permute(repmat(offsets,N,1,n_x0),[3 1 2]);
 % X0 = X0(:,:);
-% n_x0 = n_x0*n_offsets;
+% % n_x0 = n_x0*n_offsets;
 
 %% just some wild idea for initial condition
 % n_x0 = 1;
@@ -52,37 +57,38 @@ nu = .1;
 % X0 = [X0 (sin(2*pi*(1:N)/N)').^2];
 % 
 
-n_x0 = 2;
-X0 = [ones(N,1) 2*ones(N,1)];
+% n_x0 = 2;
+% X0 = [ones(N,1) 2*ones(N,1)];
 
 % n_x0 = 1;
 % X0 = ones(N,1);
 
 
 %% Koike et al. initial conditions
-% omega = dx*(1:N)';
-% x0_ = @(omega,A,f,phi) A*sin(2*pi*f*omega + phi);
-% % As = [.8, .9, 1., 1.1, 1.2];
-% % fs = [1 2 3];
-% % phis = [-.25, -.125, 0 , .125 .25];
-% % As = [.8 .9];
-% As = .8;
+omega = dx*(1:N)';
+x0_ = @(omega,A,f,phi) A*sin(2*pi*f*omega + phi);
+As = [.8, .9, 1., 1.1, 1.2];
+fs = [1 2 3];
+phis = [-.25, -.125, 0 , .125 .25];
+% As = [.8 .9];
+% % As = .8;
 % fs = 1;
+% fs = 3;
 % phis = -.25;
-% 
-% X0 = zeros(N,numel(As),numel(fs),numel(phis));
-% for i_A = 1:numel(As)
-%     A = As(i_A);
-%     for i_f = 1: numel(fs)
-%         f = fs(i_f);
-%         for i_phi = 1:numel(phis)
-%             phi = phis(i_phi);
-%             X0(:,i_A,i_f,i_phi) = x0_(omega,A,f,phi);
-%         end
-%     end
-% end
-% X0 = X0(:,:);
-% n_x0 = size(X0,2);
+
+X0 = zeros(N,numel(As),numel(fs),numel(phis));
+for i_A = 1:numel(As)
+    A = As(i_A);
+    for i_f = 1: numel(fs)
+        f = fs(i_f);
+        for i_phi = 1:numel(phis)
+            phi = phis(i_phi);
+            X0(:,i_A,i_f,i_phi) = x0_(omega,A,f,phi);
+        end
+    end
+end
+X0 = X0(:,:);
+n_x0 = size(X0,2);
 
 
 %% CFL-based time step size
@@ -92,15 +98,17 @@ X0 = [ones(N,1) 2*ones(N,1)];
 % dt = dx/v_max;
 
 %% fixed time step size
-dt = .0001;
+dt = .00001
 
 
 % nts = 10*(1:15);
 % nts = 1*(1:15);
-nts = 4;
+% nts = 4;
 % nts = 1000*(1:3);
-% nts = 1/dt;
+% nts = round(1/dt);
+nts = round(.1/dt);
 % nts = 100;
+% nts = 1000;
 
 for tt = 1:numel(nts)
 nt = nts(tt);
@@ -123,7 +131,8 @@ for ii = 1:n_x0
         %% forward Euler
         x = x + dt*(nu*D*x + C*kron(x,x));  
         %% Gaus method (energy-conserving!)
-            % still waiting for license
+            % options = optimset('Display','off');
+            % x = fsolve(@(x1) x + dt*(nu*D*x1 + C*kron(x1,x1)) - x1,x,options);
         %% linear implicit method
 %             T = (nu*D + C*kron(x,eye(N)));
 %             x12 = (eye(N) - .5*dt*T)\x;
@@ -142,11 +151,15 @@ Conv_r = reduced_convection_operator(Conv);
 C_r = reduced_convection_operator(C);
 [Diff2,Conv2] = standardOpInf2(X,dt,nu);
 
-D_error(tt) = norm(D-Diff)
-D_error2(tt) =norm(D-Diff2)
+D_error(tt) = norm(D-Diff);
+D_error2(tt) =norm(D-Diff2);
 
-C_error(tt) = norm(reduced_convection_operator(C) - reduced_convection_operator(Conv))
-C_error2(tt) =norm(reduced_convection_operator(C) - reduced_convection_operator(Conv2))
+C_error(tt) = norm(reduced_convection_operator(C) - reduced_convection_operator(Conv));
+C_error2(tt) =norm(reduced_convection_operator(C) - reduced_convection_operator(Conv2));
+
+[D_error, C_error]
+[D_error2, C_error2]
+
 
 end
 
