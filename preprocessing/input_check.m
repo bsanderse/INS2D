@@ -164,7 +164,7 @@ else
 end
 
 if (rtp.show == 0 && rtp.movie==1)
-    warning('real-time plotting off (rtp.show=0) but movie generation is on (rtp.movie=1). no movie will be generated.');
+    error('real-time plotting off (rtp.show=0) but movie generation is on (rtp.movie=1). no movie will be generated.');
 end
 
 if (steady==0)

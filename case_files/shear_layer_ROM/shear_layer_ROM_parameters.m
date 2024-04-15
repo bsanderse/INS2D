@@ -18,21 +18,26 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    % offset = 1;
-    % delta   = pi/15;
-    % epsilon   = 0.05;    
-    offset = 1;
-    delta   = pi/15*10;
-    epsilon   = 0.05;
+    % offsets = 1;
+    deltas   = pi/15;
+    epsilons   = 0.05;   
 
     % offsets = [1 .5 0 -.5 -1];
     % deltas  = pi/15*[1 2 -2 -1];
     % epsilons = .05*[1 .5 -.5 1];
 
-        offsets = .5*[1 -1];
+    offsets = .5*[1 -1];
 
-        offset = offsets(j);
-    mesh_list = ones(length(offsets),1);
+    [offsets_,deltas_,epsilons_] = meshgrid(offsets,deltas,epsilons);
+
+    offsets_ = offsets_(:);
+    deltas_ = deltas_(:);
+    epsilons_ = epsilons_(:);
+
+    offset = offsets_(j);
+    delta = deltas_(j);
+    epsilon = epsilons_(j);
+    mesh_list = ones(length(offsets_),1);
 
     IC_params = [offset delta epsilon];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,9 +258,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
     rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
