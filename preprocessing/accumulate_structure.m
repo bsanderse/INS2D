@@ -103,7 +103,7 @@ accumulate_object;
 object = 'rom';
 
 voi = {
-    'rom', 0; ... % if 1, use reduced order model
+    'rom', 0; ... % if 1, use reduced order model, if 2, do operator inference stuff
     'pro_rom', 0; ... % set to 1 to provide V_h,inhom snapshots
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model
@@ -129,6 +129,7 @@ voi = {
     'BC_DEIMdim', 10; ... % number of DEIM interpolation points for BC approximation
     'standardPODvpROM', false; ... % standard POD velocity pressure ROM
     'rom_type', "intrusive"; ... % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    'changing_snapshotdata', 0; ... % 1 if every simulation has different snapshot data
     };
 
 accumulate_object;

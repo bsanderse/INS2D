@@ -210,7 +210,9 @@ for j=1:Nsim
     fprintf(fcw,'start solver...\n');
     tic
     
-    if (options.case.steady==1) % steady
+    if (options.case.steady==-1) % test mode for unit testing
+
+    elseif (options.case.steady==1) % steady
         
         switch options.case.visc
             case 'keps'
@@ -254,6 +256,9 @@ for j=1:Nsim
                 elseif (options.rom.rom==1)
                     fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
                     solver_unsteady_ROM;
+                elseif (options.rom.rom==2)
+                    fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                    solver_unsteady_ROM_OpInf;
                 else
                     error('wrong value for rom parameter');
                 end

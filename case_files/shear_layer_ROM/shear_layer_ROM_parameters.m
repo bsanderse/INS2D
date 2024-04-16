@@ -88,7 +88,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 0;         % steady(1) or unsteady(0)
+    % steady  = 0;         % steady(1) or unsteady(0) or test_mode(-1)
+    steady = -1;
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
@@ -153,7 +154,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    rom = 0
+    % rom = 0
+    rom = 2
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used
