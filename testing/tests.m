@@ -1,3 +1,3 @@
-% script for unit testing 
+% script specifying the test to be run when tests_run is executed
 
-main('shear_layer_ROM');
+Omega_POD(snapshot_matrix,no_modes,options)

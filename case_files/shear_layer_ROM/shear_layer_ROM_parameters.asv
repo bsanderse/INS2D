@@ -1,7 +1,8 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-run_multiple = 1;
+% run_multiple = 1;
+run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 M_list = 32;
@@ -18,16 +19,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    % offset = 1;
-    % delta   = pi/15;
-    % epsilon   = 0.05;    
-    offset = 1;
-    delta   = pi/15*10;
-    epsilon   = 0.05;
+    % offsets = 1;
+    deltas   = pi/15;
+    epsilons   = 0.05;   
 
-    offsets = [1 .5 0 -.5 -1];
-    deltas  = pi/15*[1 2 -2 -1];
-    epsilons = .05*[1 .5 -.5 1];
+    % offsets = [1 .5 0 -.5 -1];
+    % deltas  = pi/15*[1 2 -2 -1];
+    % epsilons = .05*[1 .5 -.5 1];
 
     offsets = .5*[1 -1];
 
@@ -37,8 +35,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     deltas_ = deltas_(:);
     epsilons_ = epsilons_(:);
 
-    offset = offsets(j);
-    mesh_list = ones(length(offsets),1);
+    offset = offsets_(j);
+    delta = deltas_(j);
+    epsilon = epsilons_(j);
+    mesh_list = ones(length(offsets_),1);
 
     IC_params = [offset delta epsilon];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% time and space discretization
 
     % steady or unsteady solver
-    steady  = 0;         % steady(1) or unsteady(0)
+    steady  = 0;         % steady(1) or unsteady(0) or test_mode(-1)
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
@@ -154,7 +154,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    rom = 0
+    % rom = 0
+    rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used
@@ -205,7 +206,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_FOMdata/matlab_data.mat';
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_g=.1_implicit/matlab_data.mat';
-    snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_GL1/matlab_data.mat';
+    % snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_GL1/matlab_data.mat';
+
+    for 
+            snapshot_data = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved
+
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -259,9 +264,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
     rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -277,9 +282,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved

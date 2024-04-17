@@ -1,7 +1,8 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-run_multiple = 1;
+% run_multiple = 1;
+run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 M_list = 32;
@@ -205,7 +206,15 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_FOMdata/matlab_data.mat';
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_g=.1_implicit/matlab_data.mat';
-    snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_GL1/matlab_data.mat';
+    % snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_GL1/matlab_data.mat';
+
+    for jj = 1:numel(offsets_)
+        offset = offsets_(jj);
+        delta = deltas_(jj);
+        epsilon = epsilons_(jj);
+        % MAKE THIS CONCATENATION OF STRINGS!!!
+        snapshot_data = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved
+    end
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

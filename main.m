@@ -265,7 +265,7 @@ for j=1:Nsim
                             solver_unsteady_ROM;
                         elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
                             fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                            solver_unsteady_ROM_OpInf;
+                            solver_unsteady_ROM_OpInf(snapshot_data,dt_sample,t_sample,options);
                         else
                             error('wrong value for parameter rom_type')
                         end
@@ -297,7 +297,9 @@ for j=1:Nsim
     %% post-processing
     fprintf(fcw,'post-processing...\n');
 %     post_processing;
-    post_processing2;
+    if options.rom.rom_type == "intrusive"
+        post_processing2;
+    end
     
     % save all data to a matlab file
     if (save_file == 1)
