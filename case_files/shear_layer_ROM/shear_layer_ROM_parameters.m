@@ -88,8 +88,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% time and space discretization
 
     % steady or unsteady solver
-    % steady  = 0;         % steady(1) or unsteady(0) or test_mode(-1)
-    steady = -1;
+    steady  = 0;         % steady(1) or unsteady(0) or test_mode(-1)
 
     % spatial accuracy: 2nd or 4th order    
     order4  = 0;
@@ -278,9 +277,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved

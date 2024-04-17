@@ -184,8 +184,13 @@ for j=1:Nsim
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m
     % here we create a handle to bodyforce file, if exists
-%     file_name_force = [options.case.project '_force'];
-    file_name_force =  'force_';
+    if file_format == 1
+            file_name_force =  'force_';
+    else
+            file_name_force = [options.case.project '_force'];
+    end
+    % file_name_force = [options.case.project '_force'];
+    % file_name_force =  'force_';
     if (exist(file_name_force,'file'))
         % create function handle with name bodyforce
         options.force.isforce   = 1;
@@ -211,7 +216,7 @@ for j=1:Nsim
     tic
     
     if options.case.test % test mode for unit testing
-        disp('runnning in test mode')
+        disp('RUNNING IN TEST MODE')
     else
         if (options.case.steady==1) % steady
 
