@@ -19,11 +19,7 @@ end
 
 if (nargin==1) ...
         || sum(folder_cases==0) % botch
-    if options.case.steady== -1
-        folder_cases = 'testing/case_files';
-    else
-        folder_cases = 'case_files'; % default folder name
-    end
+   folder_cases = 'case_files'; % default folder name 
 end
 
 %% close figures and clean variables
@@ -188,8 +184,13 @@ for j=1:Nsim
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m
     % here we create a handle to bodyforce file, if exists
-%     file_name_force = [options.case.project '_force'];
-    file_name_force =  'force_';
+    if file_format == 1
+            file_name_force =  'force_';
+    else
+            file_name_force = [options.case.project '_force'];
+    end
+    % file_name_force = [options.case.project '_force'];
+    % file_name_force =  'force_';
     if (exist(file_name_force,'file'))
         % create function handle with name bodyforce
         options.force.isforce   = 1;
@@ -214,65 +215,68 @@ for j=1:Nsim
     fprintf(fcw,'start solver...\n');
     tic
     
-    if (options.case.steady==-1) % test mode for unit testing
+    if options.case.test % test mode for unit testing
+        disp('RUNNING IN TEST MODE')
+    else
+        if (options.case.steady==1) % steady
 
-    elseif (options.case.steady==1) % steady
-        
-        switch options.case.visc
-            case 'keps'
-                fprintf(fcw,'Steady flow with k-epsilon model, 2nd order\n');                
-                solver_steady_ke;
-            case 'laminar'
-                if (options.discretization.order4==0)
-                    if (options.ibm.ibm==0)
-                        fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order\n');
+            switch options.case.visc
+                case 'keps'
+                    fprintf(fcw,'Steady flow with k-epsilon model, 2nd order\n');
+                    solver_steady_ke;
+                case 'laminar'
+                    if (options.discretization.order4==0)
+                        if (options.ibm.ibm==0)
+                            fprintf(fcw,'Steady flow with laminar viscosity model, 2nd order\n');
+                            solver_steady;
+                        elseif (options.ibm.ibm==1)
+                            fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order\n');
+                            solver_steady_ibm;
+                        else
+                            error('wrong value for ibm parameter');
+                        end
+                    elseif (options.discretization.order4==1)
+                        fprintf(fcw,'Steady flow with laminar viscosity model, 4th order\n');
+                        %                     solver_steady_4thorder;
                         solver_steady;
-                    elseif (options.ibm.ibm==1)
-                        fprintf(fcw,'Steady flow with laminar viscosity model and immersed boundary method, 2nd order\n');
-                        solver_steady_ibm;
                     else
-                        error('wrong value for ibm parameter');
+                        error('wrong value for order4 parameter');
                     end
-                elseif (options.discretization.order4==1)
-                    fprintf(fcw,'Steady flow with laminar viscosity model, 4th order\n');
-                    %                     solver_steady_4thorder;
+                case 'ML'
+                    fprintf(fcw,'Steady flow with mixing length, 2nd order\n');
                     solver_steady;
-                else
-                    error('wrong value for order4 parameter');
-                end
-            case 'ML'
-                fprintf(fcw,'Steady flow with mixing length, 2nd order\n');                
-                solver_steady;                
-            otherwise
-                error('wrong value for visc parameter');
+                otherwise
+                    error('wrong value for visc parameter');
+            end
+
+        else %unsteady
+
+            switch options.case.visc
+                case 'keps'
+                    fprintf(fcw,'Unsteady flow with k-eps model, 2nd order\n');
+                    solver_unsteady_ke;
+                case {'laminar','qr','LES','ML'}
+                    if (options.rom.rom==0)
+                        fprintf(fcw,'Unsteady flow with laminar or LES model\n');
+                        solver_unsteady;
+                    elseif (options.rom.rom==1)
+                        if options.rom.rom_type == "intrusive"
+                        fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                        solver_unsteady_ROM;
+                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC"
+                        fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                        solver_unsteady_ROM_OpInf;
+                    else
+                        error('wrong value for rom parameter');
+                    end
+
+                otherwise
+                    error('wrong value for visc parameter');
+            end
+
+            fprintf(fcw,['simulated time: ' num2str(t) '\n']);
+
         end
-        
-    else %unsteady
-        
-        switch options.case.visc
-            case 'keps'
-                fprintf(fcw,'Unsteady flow with k-eps model, 2nd order\n');
-                solver_unsteady_ke;
-            case {'laminar','qr','LES','ML'}
-                if (options.rom.rom==0)
-                    fprintf(fcw,'Unsteady flow with laminar or LES model\n');
-                    solver_unsteady;
-                elseif (options.rom.rom==1)
-                    fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                    solver_unsteady_ROM;
-                elseif (options.rom.rom==2)
-                    fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                    solver_unsteady_ROM_OpInf;
-                else
-                    error('wrong value for rom parameter');
-                end
-                    
-            otherwise
-                error('wrong value for visc parameter');
-        end
-        
-        fprintf(fcw,['simulated time: ' num2str(t) '\n']);
-        
     end
     
     cpu(j,1) = toc;

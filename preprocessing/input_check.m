@@ -116,17 +116,17 @@ else
                 % use provided initial condition (not recommended)
                 p = p_start(:);
             end
-        end
-    end
-    
+        end    
     % ROM: uses the IC for the pressure; note that in solver_unsteady the pressure will be
     % computed from the ROM PPE, after the ROM basis has been set-up
-    if (options.rom.rom==1)
+    elseif (options.rom.rom==1)
         if (options.case.steady==1)
             error('ROM not implemented for steady flow');
         else
             p = p_start(:); 
         end
+    else
+        error('not implemented value for options.rom.rom')
     end
     
     %%

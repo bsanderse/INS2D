@@ -104,7 +104,7 @@ accumulate_object;
 object = 'rom';
 
 voi = {
-    'rom', 0; ... % if 1, use reduced order model, if 2, do operator inference stuff
+    'rom', 0; ... % if 1, use reduced order model
     'pro_rom', 0; ... % set to 1 to provide V_h,inhom snapshots
     'M', 10; ... % number of velocity modes for reduced order model
     'Mp', 10; ... % number of pressure modes for reduced order model

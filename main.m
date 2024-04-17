@@ -260,13 +260,17 @@ for j=1:Nsim
                         fprintf(fcw,'Unsteady flow with laminar or LES model\n');
                         solver_unsteady;
                     elseif (options.rom.rom==1)
-                        fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                        solver_unsteady_ROM;
-                    elseif (options.rom.rom==2)
-                        fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                        solver_unsteady_ROM_OpInf;
+                        if options.rom.rom_type == "intrusive"
+                            fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                            solver_unsteady_ROM;
+                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
+                            fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                            solver_unsteady_ROM_OpInf;
+                        else
+                            error('wrong value for parameter rom_type')
+                        end
                     else
-                        error('wrong value for rom parameter');
+                        error('wrong value for parameter options.rom.rom');
                     end
 
                 otherwise
