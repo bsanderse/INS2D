@@ -1,9 +1,13 @@
-function solver_unsteady_ROM_OpInf(snapshot_data,dt_sample,t_sample,options)
+function solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options)
 %  Main solver file for unsteady calculations with reduced order model
 %  based on operator inference
 
 %% load snapshot data
-V_snapshots = load_snapshot_data(snapshot_data,dt_sample,t_sample);
+V_snapshots = [];
+for i = 1:numel(snapshot_datas)
+    snapshot_data = snapshot_datas(i);
+    V_snapshots = [V_snapshots load_snapshot_data(snapshot_data,dt_sample,t_sample)];
+end
 
 %% construct ROM basis/bases
 [basis,S] = Omega_POD(snapshot_matrix,options.rom.M,options);

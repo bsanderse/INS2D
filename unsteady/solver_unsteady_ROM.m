@@ -414,7 +414,8 @@ opinf_testing = true;
 if opinf_testing
     rom_type = options.rom.rom_type;
 
-    options.rom.rom_type = "OpInf";
+    % options.rom.rom_type = "OpInf";
+    options.rom.rom_type = "intrusive";
     options = operator_rom(options);
     Diff_OpInf = options.rom.Diff;
     Conv_OpInf = options.rom.Conv_quad;

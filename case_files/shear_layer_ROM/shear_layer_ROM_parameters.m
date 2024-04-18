@@ -195,7 +195,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %                 Mbc = 0;
                 %%
 
-    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    rom_type = "intrusive"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
@@ -207,14 +208,17 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_FOMdata/matlab_data.mat';
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_g=.1_implicit/matlab_data.mat';
     % snapshot_data = 'results/shear_layer_ROM_1.000e+100_20x20_GL1/matlab_data.mat';
-
+    
+    snapshot_datas = strings(numel(offsets_),1);
     for jj = 1:numel(offsets_)
         offset = offsets_(jj);
         delta = deltas_(jj);
         epsilon = epsilons_(jj);
         % MAKE THIS CONCATENATION OF STRINGS!!!
-        snapshot_data = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved
+        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon) '/matlab_data.mat']; % name of folder where results are saved
     end
+
+    snapshot_data = snapshot_datas(1);
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -272,7 +276,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
-    rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % movie name
+    rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each

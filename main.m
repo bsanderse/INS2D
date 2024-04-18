@@ -54,7 +54,10 @@ addpath('spatial/ROM/');
 addpath('spatial/ROM/DEIM');
 addpath('steady/');
 addpath('unsteady/');
+addpath('unsteady/OpInf_ROM_src');
+addpath('unsteady/ROM_bases_setup');
 addpath('testsuite/');
+addpath('results/');
 
 % path for inputfiles will be determined based on the value of 'restart'
 % if (~isempty(strfind(path,'inputfiles')))
@@ -265,7 +268,7 @@ for j=1:Nsim
                             solver_unsteady_ROM;
                         elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
                             fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                            solver_unsteady_ROM_OpInf(snapshot_data,dt_sample,t_sample,options);
+                            solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options);
                         else
                             error('wrong value for parameter rom_type')
                         end

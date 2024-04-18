@@ -1,6 +1,7 @@
 function V_snapshots = load_snapshot_data(snapshot_data,dt_sample,t_sample)
 
 disp('loading data...');
+    % snapshots = load("results\" + snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' );
     snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' );
     
     % dt that was used for creating the snapshot matrix:
