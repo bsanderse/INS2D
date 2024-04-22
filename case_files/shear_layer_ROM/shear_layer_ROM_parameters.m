@@ -1,8 +1,8 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-% run_multiple = 1;
-run_multiple = 0;
+run_multiple = 1;
+% run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 M_list = 32;
@@ -25,7 +25,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     offsets = [1 .5 0 -.5 -1];
     deltas  = pi/15*[1 2 -2 -1];
-    epsilons = .05*[1 .5 -.5 1];
+    epsilons = .05*[1 .5 -.5];
+    % epsilons = .05*[1 .5 -.5 -1];
 
     % offsets = .5*[1 -1];
 
@@ -211,11 +212,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     
     snapshot_datas = strings(numel(offsets_),1);
     for jj = 1:numel(offsets_)
-        offset = offsets_(jj);
-        delta = deltas_(jj);
-        epsilon = epsilons_(jj);
+        offset_ = offsets_(jj);
+        delta_ = deltas_(jj);
+        epsilon_ = epsilons_(jj);
         % MAKE THIS CONCATENATION OF STRINGS!!!
-        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon) '/matlab_data.mat']; % name of folder where results are saved
+        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '/matlab_data.mat']; % name of folder where results are saved
     end
 
     snapshot_data = snapshot_datas(1);
@@ -290,12 +291,12 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
-    results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta =' num2str(delta) ', epsilon =' num2str(epsilon)]; % name of folder where results are saved
+    results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ', delta=' num2str(delta) ', epsilon=' num2str(epsilon)]; % name of folder where results are saved
 
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
