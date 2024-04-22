@@ -1,4 +1,4 @@
-function [V,p,options] = main(case_name,folder_cases,file_format)
+function [V,p,options] = main(case_name,folder_cases,file_format,param_file_ending)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
@@ -18,8 +18,16 @@ if (nargin<1)
 end
 
 if (nargin==1) ...
-        || sum(folder_cases==0) % botch
+        % || sum(folder_cases==0) % botch
    folder_cases = 'case_files'; % default folder name 
+   file_format = 0;             % default file format
+   param_file_ending = "";      % default parameter file name ending
+end
+
+% botch that allows to keep default value for folder_cases while changing
+% later inputs
+if sum(folder_cases==0) 
+       folder_cases = 'case_files'; % default folder name 
 end
 
 %% close figures and clean variables
@@ -67,18 +75,17 @@ addpath('opinf_stuff/');
 %     rmpath('inputfiles/');
 % end
 
-if ~exist('file_format')
-    file_format = 0;
-end
 
 %% load input parameters and constants
 disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
+
 if file_format==1
-    run([folder_cases '/' case_name '/' 'parameters_.m']);
+    param_file = [folder_cases '/' case_name '/' 'parameters_' ] +  param_file_ending + ['.m'];
 else
-    run([folder_cases '/' case_name '/' case_name '_parameters.m']);    
+    param_file = [folder_cases '/' case_name '/' case_name '_parameters'] + param_file_ending + ['.m'];
 end
+run(param_file);
 
 % check if multiple simulations should be run
 if (~exist('run_multiple','var') || run_multiple == 0)
@@ -93,11 +100,7 @@ for j=1:Nsim
     
     if (j>1)
         % run parameter file again in case we are doing a mesh or parametric study
-        if file_format==1
-                    run([folder_cases '/' case_name '/' 'parameters_.m']);
-        else
-            run([folder_cases '/' case_name '/' case_name '_parameters.m']);
-        end
+        run(param_file);
     end
     
     % save into a structure called 'options'

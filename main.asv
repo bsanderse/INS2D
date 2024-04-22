@@ -1,4 +1,4 @@
-function [V,p,options] = main(case_name,folder_cases,file_format)
+function [V,p,options] = main(case_name,folder_cases,file_format,param_file_ending)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
@@ -20,6 +20,8 @@ end
 if (nargin==1) ...
         || sum(folder_cases==0) % botch
    folder_cases = 'case_files'; % default folder name 
+   file_format = 0;             % default file format
+   param_file_ending = "";      % default parameter file name ending
 end
 
 %% close figures and clean variables
@@ -54,23 +56,29 @@ addpath('spatial/ROM/');
 addpath('spatial/ROM/DEIM');
 addpath('steady/');
 addpath('unsteady/');
+addpath('unsteady/OpInf_ROM_src');
+addpath('unsteady/ROM_bases_setup');
 addpath('testsuite/');
+addpath('results/');
+
+addpath('unsteady/ROM_bases_setup/');
+addpath('opinf_stuff/');
 
 % path for inputfiles will be determined based on the value of 'restart'
 % if (~isempty(strfind(path,'inputfiles')))
 %     rmpath('inputfiles/');
 % end
 
-if ~exist('file_format')
-    file_format = 0;
-end
 
 %% load input parameters and constants
 disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
+
 if file_format==1
+    param_file = [folder_cases '/' case_name '/' 'parameters_.m']
     run([folder_cases '/' case_name '/' 'parameters_.m']);
 else
+    param_file = [folder_cases '/' case_name '/' case_name '_parameters.m']
     run([folder_cases '/' case_name '/' case_name '_parameters.m']);    
 end
 
@@ -261,13 +269,16 @@ for j=1:Nsim
                         solver_unsteady;
                     elseif (options.rom.rom==1)
                         if options.rom.rom_type == "intrusive"
-                        fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                        solver_unsteady_ROM;
-                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC"
-                        fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
-                        solver_unsteady_ROM_OpInf;
+                            fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                            solver_unsteady_ROM;
+                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
+                            fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
+                            solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options);
+                        else
+                            error('wrong value for parameter rom_type')
+                        end
                     else
-                        error('wrong value for rom parameter');
+                        error('wrong value for parameter options.rom.rom');
                     end
 
                 otherwise
@@ -294,7 +305,9 @@ for j=1:Nsim
     %% post-processing
     fprintf(fcw,'post-processing...\n');
 %     post_processing;
-    post_processing2;
+    if options.rom.rom_type == "intrusive"
+        post_processing2;
+    end
     
     % save all data to a matlab file
     if (save_file == 1)
