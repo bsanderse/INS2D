@@ -5,7 +5,8 @@ addpath('unsteady/ROM_bases_setup/');
 %% load snapshot data
 if (j==1) || operator.rom.changing_snapshotdata
     disp('loading data...');
-    snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' ...
+    % snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' ...
+    snapshots = load("results/"+snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' ...
        ... ,'k_diff', 'k_conv', 'k_pres', 'k_force', 'k_diffBC', 'k_presBC','k_obc'
         );
     % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
