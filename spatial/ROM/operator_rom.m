@@ -16,7 +16,7 @@ switch options.rom.rom_type
         dt = options.time.dt;
         nu = 1/options.fluid.Re;
 
-%         [Diff,Conv] = standardOpInf(A_,dt,nu);
+        [Diff,Conv] = standardOpInf(A_,dt,nu);
         [Diff,Conv] = standardOpInf2(A_,dt,nu);
 
         % compute snapshot ROM coefficient time derivative approximation

@@ -59,6 +59,9 @@ addpath('unsteady/ROM_bases_setup');
 addpath('testsuite/');
 addpath('results/');
 
+addpath('unsteady/ROM_bases_setup/');
+addpath('opinf_stuff/');
+
 % path for inputfiles will be determined based on the value of 'restart'
 % if (~isempty(strfind(path,'inputfiles')))
 %     rmpath('inputfiles/');

@@ -9,7 +9,6 @@ Z  = zeros(NV,1);
 
 B   = options.rom.B;
 M   = options.rom.M;
-Vbc = options.rom.Vbc;
 
 % P can project to M or to Mp modes 
 M1  = size(P,1);   
@@ -25,12 +24,16 @@ M1  = size(P,1);
 % (B'*D*B)*R + B'*yDiff, where yDiff = B'*(D*Vbc + yD)
 Diff = zeros(M1,M);
 
-% first evaluate diffusion with zero velocity (or Vbc field) to only get boundary
-% condition contribution:
-% diffusion(Vbc) returns D*Vbc + yD
-% [d2u_bc,d2v_bc] = diffusion(Vbc,0,options,0);
-[d2u_bc,d2v_bc] = mydiffusion(Vbc,0,options,0);
-yDiff           = P*[d2u_bc;d2v_bc];
+% only for inhomogeneous boundary conditions
+if options.rom.rom_bc ~= 0
+    Vbc = options.rom.Vbc;
+    % first evaluate diffusion with zero velocity (or Vbc field) to only get boundary
+    % condition contribution:
+    % diffusion(Vbc) returns D*Vbc + yD
+    % [d2u_bc,d2v_bc] = diffusion(Vbc,0,options,0);
+    [d2u_bc,d2v_bc] = mydiffusion(Vbc,0,options,0);
+    yDiff           = P*[d2u_bc;d2v_bc];
+end
 
 % now evaluate each column of the reduced matrix as B'*D*B, where the
 % boundary conditions are subtracted in order to get only the terms
