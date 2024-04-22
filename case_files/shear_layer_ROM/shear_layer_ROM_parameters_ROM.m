@@ -25,8 +25,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     offsets = [1 .5 0 -.5 -1];
     deltas  = pi/15*[1 2 -2 -1];
-    epsilons = .05*[1 .5 -.5];
-    % epsilons = .05*[1 .5 -.5 -1];
+    epsilons = .05*[1 .5 -.5 -1];
 
     % offsets = .5*[1 -1];
 
@@ -216,7 +215,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         delta_ = deltas_(jj);
         epsilon_ = epsilons_(jj);
         % MAKE THIS CONCATENATION OF STRINGS!!!
-        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ', delta=' num2str(delta_) ', epsilon=' num2str(epsilon_) '/matlab_data.mat']; % name of folder where results are saved
+        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '/matlab_data.mat']; % name of folder where results are saved
     end
 
     snapshot_data = snapshot_datas(1);

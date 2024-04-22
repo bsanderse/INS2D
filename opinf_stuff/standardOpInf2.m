@@ -1,7 +1,7 @@
 function [Diff,Conv] = standardOpInf2(A_,dt,nu,time_disc)
 
 if nargin < 4
-    time_disc = "forward"
+    time_disc = "forward";
 end
 
 A_dot = (A_(:,2:end,:) - A_(:,1:end-1,:))/dt;
