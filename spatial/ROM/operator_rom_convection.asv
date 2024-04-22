@@ -58,6 +58,9 @@ if options.rom.rom_bc ~= 0
     % conv(0,Vbc)
     [convu, convv] = convection(Z,Vbc,0,options,0);
     conv_bc2       = P*[convu;convv];
+    else
+    conv_bc1 = zeros(M,1);
+    conv_bc2 = zeros(M,1);
 end
 
 % second, compute the linear terms
@@ -93,11 +96,9 @@ for i=1:M
     % conv(B,Vbc) - conv(0,Vbc)
 %     conv_linear2(:,i)  = B'*(Diag.*[convu2;convv2]) - conv_bc2;
     
-    if options.rom.rom_bc ~= 0
-        % directly create conv_linear, which is conv_linear1+conv_linear2
-        conv_linear(:,i)   = P*[convu1;convv1] - conv_bc1 + ...
-            P*[convu2;convv2] - conv_bc2;
-    end
+    % directly create conv_linear, which is conv_linear1+conv_linear2
+    conv_linear(:,i)   = P*[convu1;convv1] - conv_bc1 + ...
+                         P*[convu2;convv2] - conv_bc2;
     
     % get conv(0,B) to be used for quadratic terms
     [convu3, convv3]   = convection(Z,B(:,i),0,options,0);

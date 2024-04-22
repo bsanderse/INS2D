@@ -34,7 +34,7 @@ if options.rom.rom_bc ~= 0
     [d2u_bc,d2v_bc] = mydiffusion(Vbc,0,options,0);
     yDiff           = P*[d2u_bc;d2v_bc];
 else
-    yDiff = zeros(M,1);
+    yD
 end
 
 % now evaluate each column of the reduced matrix as B'*D*B, where the

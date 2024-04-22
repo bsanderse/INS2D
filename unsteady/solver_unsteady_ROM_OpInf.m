@@ -25,11 +25,11 @@ end
 
 options = operator_rom(options);
 
-[Diff_intrusive,Conv_intrusive] = rom_operator_wrapper(options,"intrusive")
-[Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,"OpInf")
+[Diff_intrusive,Conv_intrusive] = rom_operator_wrapper(options,"intrusive");
+[Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,"OpInf");
 
 norm(Diff_intrusive - Diff_OpInf)
-norm(reduced_convection_operator(Conv_intrusive)-Conv_OpInf_r)
+norm(reduced_convection_operator(Conv_intrusive)-Conv_OpInf)
 
 
 %% initialize ROM solution
