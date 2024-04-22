@@ -20,14 +20,14 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
     % offsets = 1;
-    deltas   = pi/15;
-    epsilons   = 0.05;   
+    % deltas   = pi/15;
+    % epsilons   = 0.05;   
 
-    % offsets = [1 .5 0 -.5 -1];
-    % deltas  = pi/15*[1 2 -2 -1];
-    % epsilons = .05*[1 .5 -.5 1];
+    offsets = [1 .5 0 -.5 -1];
+    deltas  = pi/15*[1 2 -2 -1];
+    epsilons = .05*[1 .5 -.5 1];
 
-    offsets = .5*[1 -1];
+    % offsets = .5*[1 -1];
 
     [offsets_,deltas_,epsilons_] = meshgrid(offsets,deltas,epsilons);
 
@@ -154,8 +154,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    % rom = 0
-    rom = 1
+    rom = 0
+    % rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used

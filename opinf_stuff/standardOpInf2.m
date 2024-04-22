@@ -1,9 +1,16 @@
-function [Diff,Conv] = standardOpInf2(A_,dt,nu)
+function [Diff,Conv] = standardOpInf2(A_,dt,nu,time_disc)
+
+if nargin < 4
+    time_disc = "forward"
+end
 
 A_dot = (A_(:,2:end,:) - A_(:,1:end-1,:))/dt;
 
-        A = A_(:,1:end-1,:);
-%         A = A_(:,2:end,:);
+if time_disc == "forward"
+    A = A_(:,1:end-1,:);
+else
+    A = A_(:,2:end,:);
+end
 
         A_dot = A_dot(:,:);
         A = A(:,:);
