@@ -37,5 +37,8 @@ contour(xp,yp,vp')
 axis square
 colorbar
 
+title("time = " + num2str(t))
+
+
 % Om = options.grid.Om;
 % kinetic_energy = V'*(Om.*V)

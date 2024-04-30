@@ -1,7 +1,7 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-run_multiple = 1;
+% run_multiple = 1;
 % run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
@@ -19,13 +19,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    % offsets = 1;
-    % deltas   = pi/15;
-    % epsilons   = 0.05;   
+    offsets = 1;
+    deltas   = pi/15;
+    epsilons   = 0.05;   
 
-    offsets = [1 .5 0 -.5 -1];
-    deltas  = pi/15*[1 2 -2 -1];
-    epsilons = .05*[1 .5 -.5 -1];
+    % offsets = [1 .5 0 -.5 -1];
+    % deltas  = pi/15*[1 2 -2 -1];
+    % epsilons = .05*[1 .5 -.5 -1];
 
     % offsets = .5*[1 -1];
 
@@ -47,7 +47,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
-    Re      = 1e100;                  % Reynolds number
+    % Re      = 1e100;                  % Reynolds number
+    Re      = 150;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -64,6 +65,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     Nx      = 20;                   % number of volumes in the x-direction
     Ny      = 20;                   % number of volumes in the y-direction
+    % Nx      = 200;                   % number of volumes in the x-direction
+    % Ny      = 200;                   % number of volumes in the y-direction
 
     sx      = 1;                  % stretch factor
     sy      = 1;
@@ -109,7 +112,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %         dt = dts(j);
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
-        t_end         = 4;%4;         % end time
+        % t_end         = 4;%4;         % end time
+        t_end         = 4;         % end time
+        % t_end         = 8;%4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -124,11 +129,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-%         method            = 20; %21-(j>4);
-        method            = 21; %21-(j>4);
+        method            = 20; %21-(j>4);
+        % method            = 21; %21-(j>4);
 %         RK                = method_list{j}; %'RK44';
-%         RK                = 'RK44';
-        RK                = 'GL1';
+        RK                = 'RK44';
+        % RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -154,8 +159,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    rom = 0
-    % rom = 1
+    % rom = 0
+    rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used
@@ -215,8 +220,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         delta_ = deltas_(jj);
         epsilon_ = epsilons_(jj);
         % MAKE THIS CONCATENATION OF STRINGS!!!
-        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_)]; % name of folder where results are saved
+        snapshot_datas(jj) = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '/matlab_data.mat']; % name of folder where results are saved
     end
+
+    % snapshot_datas = "shear_layer_ROM_1.500e+02_200x200_FOMdata/matlab_data.mat";
 
     snapshot_data = snapshot_datas(1);
     
@@ -272,9 +279,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
     rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -295,7 +302,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
-    results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
+    % results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
 
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
