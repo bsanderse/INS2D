@@ -272,9 +272,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.movie        = 0;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
     rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
@@ -290,9 +290,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
