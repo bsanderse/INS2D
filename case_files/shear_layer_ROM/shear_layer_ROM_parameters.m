@@ -113,8 +113,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         % t_end         = 4;%4;         % end time
-        t_end         = 4;         % end time
-        % t_end         = 8;%4;         % end time
+        % t_end         = 4;         % end time
+        t_end         = 8;%4;         % end time
+        % t_end         = 24;%4;         % end time
 
         CFL           = 1;              
         timestep.set  = 0;         % time step determined in timestep.m, 
@@ -224,6 +225,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     end
 
     % snapshot_datas = "shear_layer_ROM_1.500e+02_200x200_FOMdata/matlab_data.mat";
+    snapshot_datas = "shear_layer_ROM_1.500e+02_20x20_t=8/matlab_data.mat";
 
     snapshot_data = snapshot_datas(1);
     
@@ -279,9 +281,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % make movie based on the real time plots
+    rtp.movie        = 1;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
     rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
