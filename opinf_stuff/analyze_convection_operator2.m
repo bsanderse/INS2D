@@ -32,3 +32,9 @@
     Phi = options.rom.B;
 
     C_r = Phi'*C*kron(Phi,Phi);
+
+
+    Diffu  = options.discretization.Diffu;
+    Diffv  = options.discretization.Diffv;
+
+    D = blkdiag(Diffu, Diffv);

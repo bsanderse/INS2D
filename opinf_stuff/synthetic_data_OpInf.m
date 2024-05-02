@@ -14,9 +14,17 @@ r = size(D,1);
 % end
 
 %%
+
+sparse_ = true;
 K = 2;
-Uhats = zeros(r+r^2,r,r,K);
-RHSs = zeros(r,r,r,K);
+if sparse_
+    Uhats = sparse(r+r^2,r*r*K);
+    RHSs = sparse(r,r*r*K);
+else
+    Uhats = zeros(r+r^2,r,r,K);
+    RHSs = zeros(r,r,r,K);
+end
+
 for k=1:K
     for i=1:r
         U = zeros(r,1);
@@ -24,19 +32,30 @@ for k=1:K
         for j =1:r
             V = zeros(r,1);
             V(j) = k;
-            VU = kron(V,U);
-
-            Uhats(:,i,j,k) = [U; VU];
-            RHSs(:,i,j,k) = nu*D*U - C*VU;
+            %% heterogenous data
+            % VU = kron(V,U); 
+            % Uhats(:,i,j,k) = [U; VU];
+            % RHSs(:,i,j,k) = nu*D*U - C*VU;
+            %% homogeneous data
+            U = U + V;
+            UU = kron(U,U);
+            if sparse_ 
+                Uhats(:,i+(j-1)*r+(k-1)*K) = [U; UU];
+                RHSs(:,i+(j-1)*r+(k-1)*K) = nu*D*U - C*UU;
+            else
+                Uhats(:,i,j,k) = [U; UU];
+                RHSs(:,i,j,k) = nu*D*U - C*UU;
+            end
+            %%
         end
     end
-end
-Uhats = Uhats(:,:);
-RHSs = RHSs(:,:);
+    end
+    if ~sparse_
+        Uhats = Uhats(:,:);
+        RHSs = RHSs(:,:);
+    end
 
 %%
 
 [nuD,C_OpInf] = OpInf_core(Uhats,RHSs);
-
-
 D_OpInf = nuD/nu;

@@ -19,13 +19,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    offsets = 1;
-    deltas   = pi/15;
-    epsilons   = 0.05;   
+    % offsets = 1;
+    % deltas   = pi/15;
+    % epsilons   = 0.05;   
 
-    % offsets = [1 .5 0 -.5 -1];
-    % deltas  = pi/15*[1 2 -2 -1];
-    % epsilons = .05*[1 .5 -.5 -1];
+    offsets = [1 .5 0 -.5 -1];
+    deltas  = pi/15*[1 2 -2 -1];
+    epsilons = .05*[1 .5 -.5 -1];
 
     % offsets = .5*[1 -1];
 
@@ -225,7 +225,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     end
 
     % snapshot_datas = "shear_layer_ROM_1.500e+02_200x200_FOMdata/matlab_data.mat";
-    snapshot_datas = "shear_layer_ROM_1.500e+02_20x20_t=8/matlab_data.mat";
+    % snapshot_datas = "shear_layer_ROM_1.500e+02_20x20_t=8/matlab_data.mat";
 
     snapshot_data = snapshot_datas(1);
     
@@ -304,7 +304,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
-    % results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
+    results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
 
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;
