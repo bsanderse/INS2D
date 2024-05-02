@@ -8,7 +8,14 @@ options.grid.Om = ones(3,1);
 [basis,S] = Omega_POD(snapshot_matrix,no_modes,options);
 
 norm(basis-eye(3))==0 || error("Omega_POD")
-Seye(3) || error("Omega_POD")
+norm(S-eye(3)) == 0 || error("Omega_POD")
+
+% vectorwise_kron
+A = zeros(3,3,3);
+A(1,1,1) =1;
+A(2,2,2) = 1;
+A(3,3,3) = 1;
+A = A(:,:)
 
 %% mock-up case -> tests are specified in tests.m
 % main('actuator_unsteady_consistent_test','testing/case_files',1);
