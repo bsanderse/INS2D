@@ -16,7 +16,7 @@ function [D_OpInf,C_OpInf] = synthetic_FOM_data_OpInf(nu,D,C,phi)
 %%
 
 sparse_ = true;
-K = 2;
+K = 4;
 % if sparse_
 %     Uhats = sparse(r+r^2,r*r*K);
 %     RHSs = sparse(r,r*r*K);
