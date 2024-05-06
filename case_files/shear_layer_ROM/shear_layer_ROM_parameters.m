@@ -1,11 +1,11 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-% run_multiple = 1;
+run_multiple = 1;
 % run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
-% M_list = 16;
-M_list = 32;
+M_list = 16;
+% M_list = 32;
 % M_list = [16 16 16];
 % M_list = [16 16];
 % M_list = [4 -1];% 8 16 32];
@@ -19,13 +19,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    offsets = 1;
-    deltas   = pi/15;
-    epsilons   = 0.05;   
+    % offsets = 1;
+    % deltas   = pi/15;
+    % epsilons   = 0.05;   
 
-    % offsets = [1 .5 0 -.5 -1];
-    % deltas  = pi/15*[1 2 -2 -1];
-    % epsilons = .05*[1 .5 -.5 -1];
+    offsets = [1 .5 0 -.5 -1];
+    deltas  = pi/15*[1 2 -2 -1];
+    epsilons = .05*[1 .5 -.5 -1];
 
     % offsets = .5*[1 -1];
 
@@ -133,7 +133,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         method            = 20; %21-(j>4);
         % method            = 21; %21-(j>4);
 %         RK                = method_list{j}; %'RK44';
-        RK                = 'RK44';
+        % RK                = 'RK44';
+        RK                  = 'FE11';
         % RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -160,8 +161,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% reduced order model
 
 %     rom = 0
-    % rom = 0
-    rom = 1
+    rom = 0
+    % rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used

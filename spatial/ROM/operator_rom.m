@@ -11,39 +11,11 @@ switch options.rom.rom_type
         if (options.rom.weighted_norm == 0)
             error('not implemented')
         end
-
-        A_ = options.rom.A;
-        dt = options.time.dt;
-        nu = 1/options.fluid.Re;
-
-        [Diff,Conv] = standardOpInf(A_,dt,nu);
-        [Diff,Conv] = standardOpInf2(A_,dt,nu);
-
-        % compute snapshot ROM coefficient time derivative approximation
         
-        %
-%         A_dot = (A_(:,2:end) - A_(:,1:end-1))/options.time.dt;
-% 
-%         A = A_(:,2:end);
-% 
-%         r = size(A,1);
-%         K = size(A,2);
-% 
-%         A_kron = zeros(r^2,K);
-%         for j = 1:K
-%             a_j = A(:,j);
-%             A_kron(:,j) = kron(a_j,a_j);
-%         end
-% 
-%         A_hat = [A', A_kron'];
-% 
-%         O = (A_hat\A_dot')';
-% 
-%         Diff = O(:,1:r)/options.fluid.Re;
-%         Conv = O(:,r+1:end);
-        %
+        A = options.rom.A;
+        [nuDiff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
 
-        options.rom.Diff = Diff;
+        options.rom.Diff = nuDiff*options.fluid.Re;
         options.rom.Conv_quad = Conv;
 
     case "intrusive"
