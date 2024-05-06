@@ -13,7 +13,8 @@ switch options.rom.rom_type
         end
         
         A = options.rom.A;
-        [nuDiff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
+        % [nuDiff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
+        [nuDiff,Conv] = OpInf_SVD([A; vectorwise_kron(A)],options.rom.A_dot);
 
         options.rom.Diff = nuDiff*options.fluid.Re;
         options.rom.Conv_quad = Conv;

@@ -9,6 +9,7 @@ addpath('opinf_stuff/');
 V_snapshots = [];
 
 for i = 1:numel(snapshot_datas)
+% for i = 1:1
     snapshot_data = snapshot_datas(i);
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
     V_snapshots = [V_snapshots V_snapshots_];
@@ -51,6 +52,7 @@ options.rom.A_dot = A_dots;
 [Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,"OpInf");
 
 Conv_intrusive_r = reduced_convection_operator(Conv_intrusive);
+Conv_OpInf_r = reduced_convection_operator(Conv_OpInf);
 
 norm(Diff_intrusive - Diff_OpInf)
 norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf))

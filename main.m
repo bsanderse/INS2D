@@ -19,9 +19,11 @@ end
 
 if (nargin==1) ...
         % || sum(folder_cases==0) % botch
-   folder_cases = 'case_files'; % default folder name 
-   file_format = 0;             % default file format
-   param_file_ending = "";      % default parameter file name ending
+    folder_cases = 'case_files'; % default folder name
+elseif nargin==2
+    file_format = 0;             % default file format
+elseif nargin ==3
+    param_file_ending = "";      % default parameter file name ending
 end
 
 % botch that allows to keep default value for folder_cases while changing

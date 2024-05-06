@@ -3,6 +3,7 @@ function [u,v,p,options] = shear_layer_ROM_IC(t,options)
 
 yu = options.grid.yu;
 xv = options.grid.xv;
+
 Npx = options.grid.Npx;
 Npy = options.grid.Npy;
 
@@ -16,9 +17,17 @@ e   = options.case.IC_params(3);
 
 % note: we add 1 to u in order to make global momentum conservation less
 % trivial
-u   = offset + tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
-v   = e*sin(xv);
+% u   = offset + tanh( (yu-pi/2)/d) .* (yu<=pi) + tanh( (3*pi/2 - yu)/d) .* (yu>pi);
+% v   = e*sin(xv);
 p   = zeros(Npx,Npy);
+
+
+% yv = options.grid.yu;
+% xu = options.grid.xv;
+
+v   = offset + tanh( (xv-pi/2)/d) .* (xv<=pi) + tanh( (3*pi/2 - xv)/d) .* (xv>pi);
+u   = e*sin(yu);
+
 
 % botch
 % u = 0*u + 1;
