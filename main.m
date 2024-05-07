@@ -20,9 +20,11 @@ end
 if (nargin==1) ...
         % || sum(folder_cases==0) % botch
     folder_cases = 'case_files'; % default folder name
-elseif nargin==2
+end
+if nargin<=2
     file_format = 0;             % default file format
-elseif nargin ==3
+end
+if nargin <=3
     param_file_ending = "";      % default parameter file name ending
 end
 

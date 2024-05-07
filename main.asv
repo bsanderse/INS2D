@@ -17,11 +17,19 @@ if (nargin<1)
     error('please provide an input file');
 end
 
-if (nargin==1) ...
-        || sum(folder_cases==0) % botch
-   folder_cases = 'case_files'; % default folder name 
-   file_format = 0;             % default file format
-   param_file_ending = "";      % default parameter file name ending
+if (nargin<=1) ...
+        % || sum(folder_cases==0) % botch
+    folder_cases = 'case_files'; % default folder name
+elseif nargin==2
+    file_format = 0;             % default file format
+elseif nargin ==3
+    param_file_ending = "";      % default parameter file name ending
+end
+
+% botch that allows to keep default value for folder_cases while changing
+% later inputs
+if sum(folder_cases==0) 
+       folder_cases = 'case_files'; % default folder name 
 end
 
 %% close figures and clean variables
@@ -75,12 +83,11 @@ disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
 
 if file_format==1
-    param_file = [folder_cases '/' case_name '/' 'parameters_.m']
-    run([folder_cases '/' case_name '/' 'parameters_.m']);
+    param_file = [folder_cases '/' case_name '/' 'parameters_' ] +  param_file_ending + ['.m'];
 else
-    param_file = [folder_cases '/' case_name '/' case_name '_parameters.m']
-    run([folder_cases '/' case_name '/' case_name '_parameters.m']);    
+    param_file = [folder_cases '/' case_name '/' case_name '_parameters'] + param_file_ending + ['.m'];
 end
+run(param_file);
 
 % check if multiple simulations should be run
 if (~exist('run_multiple','var') || run_multiple == 0)
@@ -95,11 +102,7 @@ for j=1:Nsim
     
     if (j>1)
         % run parameter file again in case we are doing a mesh or parametric study
-        if file_format==1
-                    run([folder_cases '/' case_name '/' 'parameters_.m']);
-        else
-            run([folder_cases '/' case_name '/' case_name '_parameters.m']);
-        end
+        run(param_file);
     end
     
     % save into a structure called 'options'

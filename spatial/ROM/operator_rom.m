@@ -14,9 +14,13 @@ switch options.rom.rom_type
         
         A = options.rom.A;
         % [nuDiff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
-        [nuDiff,Conv] = OpInf_SVD([A; vectorwise_kron(A)],options.rom.A_dot);
+        % [nuDiff,Conv] = OpInf_SVD([A; vectorwise_kron(A)],options.rom.A_dot);
+        % options.rom.Diff = nuDiff*options.fluid.Re;
 
-        options.rom.Diff = nuDiff*options.fluid.Re;
+        % [Diff,Conv] = OpInf_SVD([A/options.fluid.Re; vectorwise_kron(A)],options.rom.A_dot);
+        [Diff,Conv] = OpInf_SVD([A; vectorwise_kron(A)],options.rom.A_dot);
+        options.rom.Diff = Diff;
+
         options.rom.Conv_quad = Conv;
 
     case "intrusive"

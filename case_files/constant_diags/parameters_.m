@@ -57,8 +57,8 @@ phis = [-.25, -.125, 0 , .125 .25];
     y1      = 0;
     y2      = 1;
 
-    Nx      = 8;                   % number of volumes in the x-direction
-    Ny      = 8;                   % number of volumes in the y-direction
+    Nx      = 20;                   % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
     % Nx      = 200;                   % number of volumes in the x-direction
     % Ny      = 200;                   % number of volumes in the y-direction
 
@@ -156,7 +156,7 @@ phis = [-.25, -.125, 0 , .125 .25];
 
 %     rom = 0
     % rom = 0
-    rom = 1
+    % rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     % pro_rom = 0;
     % M      = M_list(j);     % number of modes used

@@ -20,12 +20,14 @@ x0_ = @(omega,A,f,phi) A*sin(2*pi*f*omega + phi);
 % fs = [1 2 3];
 % phis = [-.25, -.125, 0 , .125 .25];
 
-u = x0_(xu-yu,A,f,phi);
-v = x0_(xv-yv,A,f,phi);
+u = x0_(xu,A,f,phi);
+% v = x0_(xv-yv,A,f,phi);
+
+
+v = zeros(Nvx_in,Nvy_in);
 
 disp("Divergence error of initial condition = " + num2str(norm(options.discretization.M*[u(:);v(:)])))
 
-% v = zeros(Nvx_in,Nvy_in);
 
 
 % pressure: should in principle NOT be prescribed. will be calculated if
