@@ -12,7 +12,8 @@
 % M_list = [4 -1];% 8 16 32];
 % M_list = [4 8 16 32 -1];
 % M_list = 17;
-M_list = 2;
+% M_list = 80;
+M_list = 20;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -52,8 +53,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%% flow properties
     % Re      = 1e100;                  % Reynolds number
     % Re      = 150;                  % Reynolds number
-    % Re      = 100;                  % Reynolds number
-    Re      = 1e-3;                  % Reynolds number
+    Re      = 100;                  % Reynolds number
+    % Re      = 1e-3;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -146,9 +147,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         method            = 20; %21-(j>4);
         % method            = 21; %21-(j>4);
 %         RK                = method_list{j}; %'RK44';
-        RK                = 'RK44';
+        % RK                = 'RK44';
         % RK                = 'RK44C23';
-        % RK                  = 'FE11';
+        RK                  = 'FE11';
         % RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -170,7 +171,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %             beta    = 0.1; % should be Reynolds dependent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-save_name = @(offset,delta,epsilon) ['shear_layer_ROM_' num2str(Nx) 'x' num2str(Ny) '_Re=' num2str(Re) '_rotate=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)];
+save_name = @(offset,delta,epsilon) ['shear_layer_ROM_forward_euler_' num2str(Nx) 'x' num2str(Ny) '_Re=' num2str(Re) '_rotate=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)];
 
 
 
@@ -179,7 +180,7 @@ save_name = @(offset,delta,epsilon) ['shear_layer_ROM_' num2str(Nx) 'x' num2str(
 
 %     rom = 0
     % rom = 0
-    % rom = 1
+    rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used
@@ -187,6 +188,7 @@ save_name = @(offset,delta,epsilon) ['shear_layer_ROM_' num2str(Nx) 'x' num2str(
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
+    % t_sample  = .1;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
 
 %     t_sample  = 4;  % part of snapshot matrix used for building SVD
