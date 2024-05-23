@@ -67,7 +67,11 @@ conv_errors = zeros(M,1);
 diff_errors_ROM = zeros(M,1);
 conv_errors_ROM = zeros(M,1);
 
+rel_state_errors = zeros(M,1);
+rel_state_errors_ROM = zeros(M,1);
+
 %% construct ROM operators non-intrusively
+a0 = A_raw(:,1);
 
 for M_ = 1:M
 
@@ -91,6 +95,9 @@ conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection
 diff_errors(M_) = diff_error;
 conv_errors(M_) = conv_error;
 
+A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
+rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
+
 %% ... and with closure-clean ROM simulation data
 options.rom.A = As_ROM(1:M_,:);
 options.rom.A_dot = A_dots_ROM(1:M_,:);
@@ -105,6 +112,9 @@ conv_error_ROM = norm(reduced_convection_operator(Conv_intrusive)-reduced_convec
 
 diff_errors_ROM(M_) = diff_error_ROM;
 conv_errors_ROM(M_) = conv_error_ROM;
+
+A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
+rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
 %%
 
 
@@ -127,6 +137,13 @@ semilogy(conv_errors_ROM)
 title("relative operator errors")
 legend("diffusion", "convection")
 title("closure-clean ROM data")
+
+figure
+semilogy(rel_state_errors_ROM)
+hold on
+semilogy(rel_state_errors)
+legend("original FOM data","closure-clean data")
+title("relative state error (last trajectory)")
 
 r = 6
 
