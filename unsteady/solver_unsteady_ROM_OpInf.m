@@ -69,6 +69,7 @@ conv_errors_ROM = zeros(M,1);
 
 rel_state_errors = zeros(M,1);
 rel_state_errors_ROM = zeros(M,1);
+rel_state_errors_intrusive = zeros(M,1);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
@@ -94,6 +95,9 @@ conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection
 
 diff_errors(M_) = diff_error;
 conv_errors(M_) = conv_error;
+
+A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
+rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
 
 A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
 rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
@@ -139,11 +143,12 @@ legend("diffusion", "convection")
 title("closure-clean ROM data")
 
 figure
-semilogy(rel_state_errors_ROM)
+semilogy(rel_state_errors,'d-')
 hold on
-semilogy(rel_state_errors)
-legend("original FOM data","closure-clean data")
-title("relative state error (last trajectory)")
+semilogy(rel_state_errors_ROM,'x-')
+semilogy(rel_state_errors_intrusive,'o-')
+legend("original FOM data","closure-clean data","intrusive")
+title("relative state error (last trajectory only)")
 
 r = 6
 
