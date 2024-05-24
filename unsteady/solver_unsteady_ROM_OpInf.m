@@ -61,20 +61,23 @@ for i = 1:numel(snapshot_datas)
     As_ROM = [As_ROM A_ROM];
 end
 
-diff_errors = zeros(M,1);
-conv_errors = zeros(M,1);
+Ms = [1 3 4];
+NMs = numel(Ms);
 
-diff_errors_ROM = zeros(M,1);
-conv_errors_ROM = zeros(M,1);
+diff_errors = zeros(NMs,1);
+conv_errors = zeros(NMs,1);
 
-rel_state_errors = zeros(M,1);
-rel_state_errors_ROM = zeros(M,1);
-rel_state_errors_intrusive = zeros(M,1);
+diff_errors_ROM = zeros(NMs,1);
+conv_errors_ROM = zeros(NMs,1);
+
+rel_state_errors = zeros(NMs,1);
+rel_state_errors_ROM = zeros(NMs,1);
+rel_state_errors_intrusive = zeros(NMs,1);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
-for M_ = 1:M
+for M_ = Ms
 
 options.rom.M = M_;
 options.rom.B = basis(:,1:M_);
