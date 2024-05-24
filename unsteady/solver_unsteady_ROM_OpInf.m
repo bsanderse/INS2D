@@ -73,9 +73,9 @@ end
 % norm(A_dot_ROMs - A_dots_ROM)% unit test
 
 
-Ms = [20:10:80];
+% Ms = [20:10:80];
 % Ms = M;
-% Ms = 1:M;
+Ms = 1:M;
 NMs = max(Ms);
 
 diff_errors = zeros(NMs,1);
@@ -153,7 +153,7 @@ legend("diffusion", "convection")
 title("original FOM data")
 
 figure
-semilogy(diff_errors_ROM)
+semilogy(diff_errors_ROM,'d-')
 hold on
 semilogy(conv_errors_ROM,'x-')
 
