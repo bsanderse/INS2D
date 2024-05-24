@@ -19,11 +19,13 @@ switch options.rom.rom_type
 
         % [Diff,Conv] = OpInf_SVD([A/options.fluid.Re; vectorwise_kron(A)],options.rom.A_dot);
         % [Diff,Conv] = OpInf_SVD([A; vectorwise_kron(A)],options.rom.A_dot);
-        % [Diff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
-        A_kron = vectorwise_kron(A);
-        [~,~,u] = reduced_coordinates(size(B,2));
-        A_kron_reduced = A_kron(u,:);
-        [Diff,Conv] = OpInf_core([A; A_kron_reduced],options.rom.A_dot);
+        [Diff,Conv] = OpInf_core([A; vectorwise_kron(A)],options.rom.A_dot);
+        %% reduced convection operator inference
+        % A_kron = vectorwise_kron(A);
+        % [~,~,u] = reduced_coordinates(size(B,2));
+        % A_kron_reduced = A_kron(u,:);
+        % [Diff,Conv] = OpInf_core([A; A_kron_reduced],options.rom.A_dot);
+        %%
         options.rom.Diff = Diff;
 
         options.rom.Conv_quad = Conv;
