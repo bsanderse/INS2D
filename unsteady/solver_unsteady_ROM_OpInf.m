@@ -42,27 +42,41 @@ As = [];
 
 A_dots_ROM = [];
 As_ROM = [];
-for i = 1:numel(snapshot_datas)
+
+n_trajes = numel(snapshot_datas); % number of trajectories
+len_trajes = size(V_snapshots_,2); % length of trajectories
+a0s = zeros(M,n_trajes);
+
+for i = 1:n_trajes
     snapshot_data = snapshot_datas(i);
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
 
     A_raw = options.rom.B'*(options.grid.Om.*V_snapshots_);
-    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options); 
+    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt); 
     A_dots = [A_dots A_dot];
     As = [As A];
     
-    % alternatively to projecting FOM data, perform ROM simulation to
-    % obtain ROM coefficient snapshot data without closure error
-    A_raw_ROM = ROM_sim(Diff_intrusive_, -Conv_intrusive_,A_raw(:,1),options.time.dt,size(A_raw,2));
-    % A_diff = vecnorm(A_raw-A_raw_ROM);
+    % % alternatively to projecting FOM data, perform ROM simulation to
+    % % obtain ROM coefficient snapshot data without closure error
+    % A_raw_ROM = ROM_sim(Diff_intrusive_, -Conv_intrusive_,A_raw(:,1),options.time.dt,size(A_raw,2));
+    % % A_diff = vecnorm(A_raw-A_raw_ROM);
+    % 
+    % [A_dot_ROM,A_ROM] = time_difference_quotient(A_raw_ROM, "forward euler",options.time.dt); 
+    % A_dots_ROM = [A_dots_ROM A_dot_ROM];
+    % As_ROM = [As_ROM A_ROM];
 
-    [A_dot_ROM,A_ROM] = time_difference_quotient(A_raw_ROM, "forward euler",options); 
-    A_dots_ROM = [A_dots_ROM A_dot_ROM];
-    As_ROM = [As_ROM A_ROM];
+    a0s(:,i) = A_raw(:,1);
 end
 
-Ms = [1 3 4];
-NMs = numel(Ms);
+% [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive_, -Conv_intrusive_,a0s,options.time.dt,len_trajes);
+% norm(A_ROMs-As_ROM) %unit test
+% norm(A_dot_ROMs - A_dots_ROM)% unit test
+
+
+% Ms = [1 3 4];
+% Ms = M;
+Ms = 1:M;
+NMs = max(Ms);
 
 diff_errors = zeros(NMs,1);
 conv_errors = zeros(NMs,1);
@@ -106,8 +120,10 @@ A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2))
 rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
 
 %% ... and with closure-clean ROM simulation data
-options.rom.A = As_ROM(1:M_,:);
-options.rom.A_dot = A_dots_ROM(1:M_,:);
+[A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
+
+options.rom.A = A_ROMs(1:M_,:);
+options.rom.A_dot = A_dot_ROMs(1:M_,:);
 
 [Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,"OpInf");
 
@@ -128,9 +144,9 @@ rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:
 end
 
 figure
-semilogy(diff_errors)
+semilogy(diff_errors,'d-')
 hold on
-semilogy(conv_errors)
+semilogy(conv_errors,'x-')
 
 title("relative operator errors")
 legend("diffusion", "convection")
@@ -139,7 +155,7 @@ title("original FOM data")
 figure
 semilogy(diff_errors_ROM)
 hold on
-semilogy(conv_errors_ROM)
+semilogy(conv_errors_ROM,'x-')
 
 title("relative operator errors")
 legend("diffusion", "convection")
