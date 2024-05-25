@@ -73,9 +73,9 @@ end
 % norm(A_dot_ROMs - A_dots_ROM)% unit test
 
 
-Ms = [20:10:80];
+% Ms = [20:10:80];
 % Ms = M;
-% Ms = 1:M;
+Ms = 1:M;
 NMs = max(Ms);
 
 diff_errors = zeros(NMs,1);
@@ -87,6 +87,10 @@ conv_errors_ROM = zeros(NMs,1);
 rel_state_errors = zeros(NMs,1);
 rel_state_errors_ROM = zeros(NMs,1);
 rel_state_errors_intrusive = zeros(NMs,1);
+
+three_term_errors = zeros(NMs,1);
+three_term_errors_ROM = zeros(NMs,1);
+three_term_errors_intrusive = zeros(NMs,1);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
@@ -140,6 +144,11 @@ A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,si
 rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
 %%
 
+A = three_term_prop_constraint(M_);
+three_term_errors(M_) = norm(A*Conv_OpInf(:));
+three_term_errors_ROM(M_) = norm(A*Conv_OpInf_ROM(:));
+three_term_errors_intrusive(M_) = norm(A*Conv_intrusive(:));
+
 
 end
 
@@ -168,6 +177,14 @@ semilogy(rel_state_errors_ROM,'x-')
 semilogy(rel_state_errors_intrusive,'o-')
 legend("original FOM data","closure-clean data","intrusive")
 title("relative state error (last trajectory only)")
+
+figure
+semilogy(three_term_errors,'d-')
+hold on
+semilogy(three_term_errors_ROM,'x-')
+semilogy(three_term_errors_intrusive,'o-')
+title("three term property error")
+legend("original FOM data","closure-clean data","intrusive")
 
 r = 6
 

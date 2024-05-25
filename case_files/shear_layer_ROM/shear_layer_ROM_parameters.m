@@ -221,7 +221,8 @@ save_name = @(offset,delta,epsilon) ['shear_layer_ROM_forward_euler_' num2str(Nx
 %                 Mbc = 0;
                 %%
 
-    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    rom_type = "EC-OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
     % rom_type = "intrusive"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:

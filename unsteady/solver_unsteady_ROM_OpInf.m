@@ -88,6 +88,10 @@ rel_state_errors = zeros(NMs,1);
 rel_state_errors_ROM = zeros(NMs,1);
 rel_state_errors_intrusive = zeros(NMs,1);
 
+three_term_errors = zeros(NMs,1);
+three_term_errors_ROM = zeros(NMs,1);
+three_term_errors_intrusive = zeros(NMs,1);
+
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
@@ -98,7 +102,7 @@ options.rom.B = basis(:,1:M_);
 options.rom.A = As(1:M_,:);
 options.rom.A_dot = A_dots(1:M_,:);
 
-[Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,"OpInf");
+[Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,options.rom.rom_type);
 
 Diff_intrusive = Diff_intrusive_(1:M_,1:M_);
 Conv_intrusive = Conv_intrusive_tensor(1:M_,1:M_,1:M_);
@@ -125,7 +129,7 @@ rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
 options.rom.A = A_ROMs(1:M_,:);
 options.rom.A_dot = A_dot_ROMs(1:M_,:);
 
-[Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,"OpInf");
+[Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,options.rom.rom_type);
 
 Conv_OpInf_r_ROM = reduced_convection_operator(Conv_OpInf_ROM);
 
@@ -139,6 +143,11 @@ conv_errors_ROM(M_) = conv_error_ROM;
 A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
 rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
 %%
+
+A = three_term_prop_constraint(M_);
+three_term_errors(M_) = norm(A*Conv_OpInf(:));
+three_term_errors_ROM(M_) = norm(A*Conv_OpInf_ROM(:));
+three_term_errors_intrusive(M_) = norm(A*Conv_intrusive(:));
 
 
 end
@@ -168,6 +177,14 @@ semilogy(rel_state_errors_ROM,'x-')
 semilogy(rel_state_errors_intrusive,'o-')
 legend("original FOM data","closure-clean data","intrusive")
 title("relative state error (last trajectory only)")
+
+figure
+semilogy(three_term_errors,'d-')
+hold on
+semilogy(three_term_errors_ROM,'x-')
+semilogy(three_term_errors_intrusive,'o-')
+title("three term property error")
+legend("original FOM data","closure-clean data","intrusive")
 
 r = 6
 

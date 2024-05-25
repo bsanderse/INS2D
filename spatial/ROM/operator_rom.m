@@ -30,6 +30,33 @@ switch options.rom.rom_type
 
         options.rom.Conv_quad = Conv;
 
+    case "EC-OpInf"
+        if (options.rom.weighted_norm == 0)
+            error('not implemented')
+        end
+
+        A = options.rom.A;
+        A_kron = vectorwise_kron(A);
+        A_dot = options.rom.A_dot;
+        M = options.rom.M;
+        constraint = three_term_prop_constraint(M);
+
+        lsq = @(O) norm(O*[A; A_kron]-A_dot,"fro");
+        three_term_constraint = three_term_prop_constraint(M);
+        n_constr = size(three_term_constraint,1);
+        operator_constraint = [zeros(n_constr,M^2) three_term_constraint];
+        constraint_rhs = zeros(n_constr,1);
+        initial_operator = zeros(M,M+M^2);
+        % initial_operator = [options.rom.Diff options.rom.Conv];        
+
+        O = fmincon(lsq,initial_operator,operator_constraint,constraint_rhs);
+        r = M;
+        L = O(:,1:r);
+        Q = O(:,r+1:end);
+
+        options.rom.Diff = L;
+        options.rom.Conv_quad = Q;
+
     case "intrusive"
 
         if (options.rom.weighted_norm == 0)
