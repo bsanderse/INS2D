@@ -10,3 +10,18 @@ r = size(RHSs,1);
 
 L = O(:,1:r);
 Q = O(:,r+1:end);
+
+% just to test
+
+[A,b,T] = matrix_lsq_to_vector_ls(Uhats,RHSs);
+
+c = A\b;
+
+O2 = zeros(size(T(:,:,1)));
+for i = 1:numel(O2)
+    O2 = O2 + c(i)*T(:,:,i);
+end
+
+norm(O-O2)
+
+r
