@@ -147,7 +147,7 @@ rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:
 A = three_term_prop_constraint(M_);
 three_term_errors(M_) = norm(A*Conv_OpInf(:));
 three_term_errors_ROM(M_) = norm(A*Conv_OpInf_ROM(:));
-three_term_errors_intrusive(M_) = norm(A*Conv_intrusive(:));
+helpthree_term_errors_intrusive(M_) = norm(A*Conv_intrusive(:));
 
 
 end

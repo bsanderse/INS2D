@@ -14,6 +14,7 @@
 % M_list = 17;
 % M_list = 80;
 M_list = 10;
+% M_list = 3;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -221,8 +222,8 @@ save_name = @(offset,delta,epsilon) ['shear_layer_ROM_forward_euler_' num2str(Nx
 %                 Mbc = 0;
                 %%
 
-    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
-    % rom_type = "EC-OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    rom_type = "EC-OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
     % rom_type = "intrusive"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:
