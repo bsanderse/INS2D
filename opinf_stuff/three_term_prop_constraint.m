@@ -1,4 +1,6 @@
 function A = three_term_prop_constraint(N)
+% actually six term property: enforce that for each tupel i j k, the sum
+% over H_p is 0 with p all permutations of i j k
 
 A = zeros(N^3,N,N,N); 
 % could be made more efficient by eliminating repetitive permutations,
@@ -19,5 +21,8 @@ for i=1:N
 end
 
 A = A(:,:);
+
+% A = A'; A is symmetric (actually w.r.t. to any permutation of i j k,
+% obviously)
 
 

@@ -39,9 +39,12 @@ switch options.rom.rom_type
         A_kron = vectorwise_kron(A);
         A_dot = options.rom.A_dot;
         M = options.rom.M;
-        three_term_constraint = three_term_prop_constraint(M);
-        n_constr = size(three_term_constraint,1);
-        operator_constraint_ = [zeros(n_constr,M^2) three_term_constraint];
+        convection_constraint = [];
+        % convection_constraint = [convection_constraint; three_term_prop_constraint(M)];
+        % convection_constraint = [convection_constraint; ambiguity_constraint(M)];
+        convection_constraint = [convection_constraint; block_skewsymm_constraint(M)];
+        n_constr = size(convection_constraint,1);
+        operator_constraint_ = [zeros(n_constr,M^2) convection_constraint];
         ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
         operator_constraint = operator_constraint_(:,ordering(:));
         constraint_rhs = zeros(n_constr,1);
@@ -66,8 +69,12 @@ switch options.rom.rom_type
         Q = O(:,r+1:end);
 
         % norm(three_term_constraint*Q(:))
-        % Q_T = Q'
+        % Q_T = Q';
         % norm(three_term_constraint*Q_T(:))
+
+        % norm(block_skewsymm_constraint(M)*Q(:))
+        % Q_T = Q';
+        % norm(block_skewsymm_constraint(M)*Q_T(:))
 
         options.rom.Diff = L;
         options.rom.Conv_quad = Q;

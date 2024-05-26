@@ -92,6 +92,10 @@ three_term_errors = zeros(NMs,1);
 three_term_errors_ROM = zeros(NMs,1);
 three_term_errors_intrusive = zeros(NMs,1);
 
+block_skewsymm_errors = zeros(NMs,1);
+block_skewsymm_errors_ROM = zeros(NMs,1);
+block_skewsymm_errors_intrusive = zeros(NMs,1);
+
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
@@ -144,11 +148,15 @@ A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,si
 rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
 %%
 
-A = three_term_prop_constraint(M_);
-three_term_errors(M_) = norm(A*Conv_OpInf(:));
-three_term_errors_ROM(M_) = norm(A*Conv_OpInf_ROM(:));
-helpthree_term_errors_intrusive(M_) = norm(A*Conv_intrusive(:));
+three_term_constraint_ = three_term_prop_constraint(M_);
+three_term_errors(M_) = norm(three_term_constraint_*reshape(Conv_OpInf',M_^3,1));
+three_term_errors_ROM(M_) = norm(three_term_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
+three_term_errors_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
 
+block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+block_skewsymm_errors(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf',M_^3,1));
+block_skewsymm_errors_ROM(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
+block_skewsymm_errors_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
 
 end
 
@@ -184,6 +192,14 @@ hold on
 semilogy(three_term_errors_ROM,'x-')
 semilogy(three_term_errors_intrusive,'o-')
 title("three term property error")
+legend("original FOM data","closure-clean data","intrusive")
+
+figure
+semilogy(block_skewsymm_errors,'d-')
+hold on
+semilogy(block_skewsymm_errors_ROM,'x-')
+semilogy(block_skewsymm_errors_intrusive,'o-')
+title("block skew-symmetry error")
 legend("original FOM data","closure-clean data","intrusive")
 
 r = 6
