@@ -24,12 +24,15 @@ options.rom.B = basis;
 
 %% construct ROM operators intrusively
 
-[Diff_intrusive_,Conv_intrusive_] = rom_operator_wrapper(options,"intrusive");
-[Diff_intrusive_2,Conv_intrusive_2] = rom_operator_wrapper(options,"intrusive+");
+% [Diff_intrusive_,Conv_intrusive_] = rom_operator_wrapper(options,"intrusive");
+% [Diff_intrusive_2,Conv_intrusive_2] = rom_operator_wrapper(options,"intrusive+");
+
+[Diff_intrusive_,Conv_intrusive_] = rom_operator_wrapper(options,"intrusive+");
+
 
 M = options.rom.M;
 Conv_intrusive_tensor = reshape(Conv_intrusive_,M,M,M);
-Conv_intrusive_tensor2 = reshape(Conv_intrusive_2,M,M,M);
+% Conv_intrusive_tensor2 = reshape(Conv_intrusive_2,M,M,M);
 
 %% load snapshot data for operator inference
 % project velocity snapshots onto POD basis to get ROM coefficient
@@ -113,17 +116,17 @@ options.rom.B = basis(:,1:M_);
 options.rom.A = As(1:M_,:);
 options.rom.A_dot = A_dots(1:M_,:);
 
-%%
-Diff_intrusive2 = Diff_intrusive_2(1:M_,1:M_);
-Conv_intrusive2 = Conv_intrusive_tensor2(1:M_,1:M_,1:M_);
-Conv_intrusive2 = Conv_intrusive2(:,:);
-
-A_intrusive2 = ROM_sim(Diff_intrusive2, -Conv_intrusive2,a0(1:M_),options.time.dt,size(A_raw,2));
-rel_state_errors_intrusive2(M_) = relative_state_error(V_snapshots_,A_intrusive2,basis(:,1:M_));
-three_term_constraint_ = three_term_prop_constraint(M_);
-three_term_errors_intrusive2(M_) = norm(three_term_constraint_*reshape(Conv_intrusive2',M_^3,1));
-block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
-block_skewsymm_errors_intrusive2(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive2',M_^3,1));
+%% intrusive+ : intrusive with actually skew-symmetric convection operator
+% Diff_intrusive2 = Diff_intrusive_2(1:M_,1:M_);
+% Conv_intrusive2 = Conv_intrusive_tensor2(1:M_,1:M_,1:M_);
+% Conv_intrusive2 = Conv_intrusive2(:,:);
+% 
+% A_intrusive2 = ROM_sim(Diff_intrusive2, -Conv_intrusive2,a0(1:M_),options.time.dt,size(A_raw,2));
+% rel_state_errors_intrusive2(M_) = relative_state_error(V_snapshots_,A_intrusive2,basis(:,1:M_));
+% three_term_constraint_ = three_term_prop_constraint(M_);
+% three_term_errors_intrusive2(M_) = norm(three_term_constraint_*reshape(Conv_intrusive2',M_^3,1));
+% block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+% block_skewsymm_errors_intrusive2(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive2',M_^3,1));
 
 %%
 
