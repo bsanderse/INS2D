@@ -1,4 +1,4 @@
-
+function [conv_quad] = operator_rom_convection_block_skewsymm(options)
     Cux = options.discretization.Cux;
     Cuy = options.discretization.Cuy;
     Cvx = options.discretization.Cvx;
@@ -42,10 +42,4 @@
     %% switch to ROM operator
     Phi = options.rom.B;
 
-    C_r = Phi'*C*kron(Phi,Phi);
-
-
-    Diffu  = options.discretization.Diffu;
-    Diffv  = options.discretization.Diffv;
-
-    D = blkdiag(Diffu, Diffv);
+    conv_quad = Phi'*C*kron(Phi,Phi);

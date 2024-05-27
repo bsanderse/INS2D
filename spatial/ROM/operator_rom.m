@@ -79,6 +79,14 @@ switch options.rom.rom_type
         options.rom.Diff = L;
         options.rom.Conv_quad = Q;
 
+    case "intrusive+" % intrusive, but with actually block skew-symmetric convection operator 
+
+        options.rom.Conv_quad = operator_rom_convection_block_skewsymm(options);
+        [yDiff,Diff] = operator_rom_diffusion(B',options);
+
+        options.rom.Diff  = Diff;
+        options.rom.yDiff = yDiff;
+
     case "intrusive"
 
         if (options.rom.weighted_norm == 0)

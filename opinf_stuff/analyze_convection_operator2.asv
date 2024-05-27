@@ -35,9 +35,7 @@
 
     % even more efficient: don't construct P explicitly
 
-    % even more efficient: replace P*kron(I,A) by Hadamard product 
-    % -> ! I.*A does not work !
-
+    % even more efficient: use I.*A instead of P*kron(I,A)
 
     %% switch to ROM operator
     Phi = options.rom.B;
