@@ -42,13 +42,10 @@ function [conv_quad] = operator_rom_convection_block_skewsymm(options)
     %% switch to ROM operator
     Phi = options.rom.B;
 
-    % conv_quad = Phi'*C*kron(Phi,Phi); % causes storage problems
+    conv_quad = Phi'*C*kron(Phi,Phi); % causes storage problems
 
     r = size(Phi,2);
 
-    conv_quad = zeros(r,r,r);
+    conv_quad = zeros(r,r^2);
     for i = 1:r
-        conv_quad(:,:,i) = Phi'*C*kron(Phi(:,i),Phi);
-    end
-
-    conv_quad = conv_quad(:,:);
+        conv_quad(:,)
