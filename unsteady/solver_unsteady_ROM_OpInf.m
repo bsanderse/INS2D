@@ -89,9 +89,9 @@ conv_errors = zeros(NMs,1);
 diff_errors_ROM = zeros(NMs,1);
 conv_errors_ROM = zeros(NMs,1);
 
-rel_state_errors = zeros(NMs,1);
-rel_state_errors_ROM = zeros(NMs,1);
-rel_state_errors_intrusive = zeros(NMs,1);
+avg_rel_state_errors = zeros(NMs,1);
+avg_rel_state_errors_ROM = zeros(NMs,1);
+avg_rel_state_errors_intrusive = zeros(NMs,1);
 
 three_term_errors = zeros(NMs,1);
 three_term_errors_ROM = zeros(NMs,1);
@@ -145,11 +145,13 @@ conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection
 diff_errors(M_) = diff_error;
 conv_errors(M_) = conv_error;
 
-A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
-rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
+% A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
+% avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
+avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
-A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
-rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
+% A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
+% avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
+avg_rel_state_errors(M_) = average_relative_state_error(Diff_OpInf, Conv_OpInf,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
 %% ... and with closure-clean ROM simulation data
 [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
@@ -168,8 +170,9 @@ conv_error_ROM = norm(reduced_convection_operator(Conv_intrusive)-reduced_convec
 diff_errors_ROM(M_) = diff_error_ROM;
 conv_errors_ROM(M_) = conv_error_ROM;
 
-A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
-rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
+% A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
+% avg_rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
+avg_rel_state_errors_ROM(M_) = average_relative_state_error(Diff_OpInf_ROM, Conv_OpInf_ROM,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 %%
 
 three_term_constraint_ = three_term_prop_constraint(M_);
@@ -203,13 +206,15 @@ legend("diffusion", "convection")
 title("closure-clean ROM data")
 
 figure
-semilogy(rel_state_errors,'d-')
+semilogy(avg_rel_state_errors,'d-')
 hold on
-semilogy(rel_state_errors_ROM,'x-')
-semilogy(rel_state_errors_intrusive,'o-')
+semilogy(avg_rel_state_errors_ROM,'x-')
+semilogy(avg_rel_state_errors_intrusive,'o-')
 semilogy(rel_state_errors_intrusive2,'<-')
-legend("original FOM data","closure-clean data","intrusive","intrusive+")
-title("relative state error (last trajectory only)")
+legend("original FOM data","closure-clean data","intrusive")
+% legend("original FOM data","closure-clean data","intrusive","intrusive+")
+% title("relative state error (last trajectory only)")
+title("average relative state error")
 
 figure
 semilogy(three_term_errors,'d-')
@@ -218,7 +223,8 @@ semilogy(three_term_errors_ROM,'x-')
 semilogy(three_term_errors_intrusive,'o-')
 semilogy(three_term_errors_intrusive2,'<-')
 title("three term property error")
-legend("original FOM data","closure-clean data","intrusive","intrusive+")
+legend("original FOM data","closure-clean data","intrusive")
+% legend("original FOM data","closure-clean data","intrusive","intrusive+")
 
 figure
 semilogy(block_skewsymm_errors,'d-')
@@ -227,7 +233,8 @@ semilogy(block_skewsymm_errors_ROM,'x-')
 semilogy(block_skewsymm_errors_intrusive,'o-')
 semilogy(block_skewsymm_errors_intrusive2,'<-')
 title("block skew-symmetry error")
-legend("original FOM data","closure-clean data","intrusive","intrusive+")
+legend("original FOM data","closure-clean data","intrusive")
+% legend("original FOM data","closure-clean data","intrusive","intrusive+")
 
 r = 6
 

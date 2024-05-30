@@ -52,6 +52,7 @@ switch options.rom.rom_type
         
         A_dot_T = A_dot';
         O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+        % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
         O = reshape(O_,M+M^2,M)';
 
         % lsq = @(O) norm(O*[A; A_kron]-A_dot,"fro");
