@@ -1,10 +1,12 @@
-function [energies] = inviscid_energy_sim(C,dt,x0,nt,method)
+function [energies,X] = inviscid_energy_sim(C,dt,x0,nt,method)
 
 x = x0;
 N = numel(x0);
 
 X = zeros(N,nt);
 X(:,1) = x;
+energies = zeros(nt,1);
+energies(1) = norm(x)^2/2;
 
 for i = 1:nt-1
     switch method
@@ -14,7 +16,7 @@ for i = 1:nt-1
             x = x + dt*T*x12;
         case "Gauss method"
             options = optimset('Display','off');
-            x = fsolve(@(x1) x + dt*(nu*D*x1 + C*kron(x1,x1)) - x1,x,options);
+            x = fsolve(@(x1) x + dt*C*kron(x1,x1) - x1,x,options);
     end    
 
     % %% forward Euler

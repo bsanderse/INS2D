@@ -276,7 +276,7 @@ for j=1:Nsim
                         if options.rom.rom_type == "intrusive"
                             fprintf(fcw,['Unsteady flow with reduced order model with ' num2str(options.rom.M) ' modes \n']);
                             solver_unsteady_ROM;
-                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
+                        elseif options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf" || options.rom.rom_type == "EC-OpInf Koike" || options.rom.rom_type == "EC-OpInf skew"
                             fprintf(fcw,['Unsteady flow with OPERATOR INFERENCE reduced order model with ' num2str(options.rom.M) ' modes \n']);
                             solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options);
                         else
