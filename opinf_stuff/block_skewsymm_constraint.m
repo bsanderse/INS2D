@@ -3,8 +3,6 @@ function A = block_skewsymm_constraint(N)
 
 % A = zeros(N^3,N,N,N);
 A = [];
-% could be made more efficient by eliminating 0-rows,
-% but that would make the code messier
 
 
 for i=1:N % block row index

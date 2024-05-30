@@ -78,9 +78,9 @@ end
 % norm(A_dot_ROMs - A_dots_ROM)% unit test
 
 
-Ms = [20:10:80];
+% Ms = [20:10:80];
 % Ms = M;
-% Ms = 1:M;
+Ms = 1:M;
 NMs = max(Ms);
 
 diff_errors = zeros(NMs,1);
