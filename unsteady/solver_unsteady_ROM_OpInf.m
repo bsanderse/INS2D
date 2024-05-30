@@ -83,27 +83,41 @@ end
 Ms = 1:M;
 NMs = max(Ms);
 
-diff_errors = zeros(NMs,1);
-conv_errors = zeros(NMs,1);
+% diff_errors = zeros(NMs,1);
+% conv_errors = zeros(NMs,1);
+% 
+% diff_errors_ROM = zeros(NMs,1);
+% conv_errors_ROM = zeros(NMs,1);
+% 
+% avg_rel_state_errors = zeros(NMs,1);
+% avg_rel_state_errors_ROM = zeros(NMs,1);
+% avg_rel_state_errors_intrusive = zeros(NMs,1);
+% 
+% three_term_errors = zeros(NMs,1);
+% three_term_errors_ROM = zeros(NMs,1);
+% three_term_errors_intrusive = zeros(NMs,1);
+% 
+% block_skewsymm_errors = zeros(NMs,1);
+% block_skewsymm_errors_ROM = zeros(NMs,1);
+% block_skewsymm_errors_intrusive = zeros(NMs,1);
+% 
+% rel_state_errors_intrusive2 = zeros(NMs,1);
+% three_term_errors_intrusive2 = zeros(NMs,1);
+% block_skewsymm_errors_intrusive2 = zeros(NMs,1);
 
-diff_errors_ROM = zeros(NMs,1);
-conv_errors_ROM = zeros(NMs,1);
+rel_diff_errors = zeros(NMs,3,2); % [standard opinf, perm opinf, skew opinf] x [FOM projection data, closure-clean data]
+rel_conv_errors = zeros(NMs,3,2);
+rel_red_conv_errors = zeros(NMs,3,2);
 
-avg_rel_state_errors = zeros(NMs,1);
-avg_rel_state_errors_ROM = zeros(NMs,1);
-avg_rel_state_errors_intrusive = zeros(NMs,1);
+avg_rel_state_error = zeros(NMs,3,2);
 
-three_term_errors = zeros(NMs,1);
-three_term_errors_ROM = zeros(NMs,1);
-three_term_errors_intrusive = zeros(NMs,1);
+zero_perm_sum = zeros(NMs,3,2);
+block_skewsymm = zeros(NMs,3,2);
 
-block_skewsymm_errors = zeros(NMs,1);
-block_skewsymm_errors_ROM = zeros(NMs,1);
-block_skewsymm_errors_intrusive = zeros(NMs,1);
+avg_rel_state_error_intrusive = zeros(NMs,1);
 
-rel_state_errors_intrusive2 = zeros(NMs,1);
-three_term_errors_intrusive2 = zeros(NMs,1);
-block_skewsymm_errors_intrusive2 = zeros(NMs,1);
+zero_perm_sum_intrusive = zeros(NMs,1);
+block_skewsymm_intrusive = zeros(NMs,1);
 
 
 %% construct ROM operators non-intrusively
@@ -111,130 +125,215 @@ a0 = A_raw(:,1);
 
 for M_ = Ms
 
-options.rom.M = M_;
-options.rom.B = basis(:,1:M_);
-options.rom.A = As(1:M_,:);
-options.rom.A_dot = A_dots(1:M_,:);
+    options.rom.M = M_;
+    options.rom.B = basis(:,1:M_);
+    options.rom.A = As(1:M_,:);
+    options.rom.A_dot = A_dots(1:M_,:);
 
-%% intrusive+ : intrusive with actually skew-symmetric convection operator
-% Diff_intrusive2 = Diff_intrusive_2(1:M_,1:M_);
-% Conv_intrusive2 = Conv_intrusive_tensor2(1:M_,1:M_,1:M_);
-% Conv_intrusive2 = Conv_intrusive2(:,:);
-% 
-% A_intrusive2 = ROM_sim(Diff_intrusive2, -Conv_intrusive2,a0(1:M_),options.time.dt,size(A_raw,2));
-% rel_state_errors_intrusive2(M_) = relative_state_error(V_snapshots_,A_intrusive2,basis(:,1:M_));
-% three_term_constraint_ = three_term_prop_constraint(M_);
-% three_term_errors_intrusive2(M_) = norm(three_term_constraint_*reshape(Conv_intrusive2',M_^3,1));
-% block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
-% block_skewsymm_errors_intrusive2(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive2',M_^3,1));
+    %% intrusive+ : intrusive with actually skew-symmetric convection operator
+    % Diff_intrusive2 = Diff_intrusive_2(1:M_,1:M_);
+    % Conv_intrusive2 = Conv_intrusive_tensor2(1:M_,1:M_,1:M_);
+    % Conv_intrusive2 = Conv_intrusive2(:,:);
+    %
+    % A_intrusive2 = ROM_sim(Diff_intrusive2, -Conv_intrusive2,a0(1:M_),options.time.dt,size(A_raw,2));
+    % rel_state_errors_intrusive2(M_) = relative_state_error(V_snapshots_,A_intrusive2,basis(:,1:M_));
+    % three_term_constraint_ = three_term_prop_constraint(M_);
+    % three_term_errors_intrusive2(M_) = norm(three_term_constraint_*reshape(Conv_intrusive2',M_^3,1));
+    % block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+    % block_skewsymm_errors_intrusive2(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive2',M_^3,1));
 
-%%
+    %%
 
-[Diff_OpInf,Conv_OpInf] = rom_operator_wrapper(options,options.rom.rom_type);
+    Diff_intrusive = Diff_intrusive_(1:M_,1:M_);
+    Conv_intrusive = Conv_intrusive_tensor(1:M_,1:M_,1:M_);
+    Conv_intrusive = Conv_intrusive(:,:);
 
-Diff_intrusive = Diff_intrusive_(1:M_,1:M_);
-Conv_intrusive = Conv_intrusive_tensor(1:M_,1:M_,1:M_);
-Conv_intrusive = Conv_intrusive(:,:);
+    % Conv_intrusive_r = reduced_convection_operator(Conv_intrusive);
+    % Conv_OpInf_r = reduced_convection_operator(Conv_OpInf);
 
-Conv_intrusive_r = reduced_convection_operator(Conv_intrusive);
-Conv_OpInf_r = reduced_convection_operator(Conv_OpInf);
+    % diff_error = norm(Diff_intrusive - Diff_OpInf)/norm(Diff_intrusive);
+    % conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf))/norm(reduced_convection_operator(Conv_intrusive));
+    rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff)/norm(Diff_intrusive);
+    rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv)/norm(Conv_intrusive);
+    rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive-Conv))/norm(reduced_convection_operator(Conv_intrusive));
+    % rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff,"fro")/norm(Diff_intrusive,"fro");
+    % rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv,"fro")/norm(Conv_intrusive,"fro");
+    % rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive-Conv),"fro")/norm(reduced_convection_operator(Conv_intrusive),"fro");
 
-diff_error = norm(Diff_intrusive - Diff_OpInf)/norm(Diff_intrusive);
-conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf))/norm(reduced_convection_operator(Conv_intrusive));
+    rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
+    labels = ["stan" "perm" "skew"];
+    n_rom_types = numel(rom_types);
+    Diffs = zeros(n_rom_types,2,M_,M_);
+    Convs = zeros(n_rom_types,2,M_,M_^2);
 
-diff_errors(M_) = diff_error;
-conv_errors(M_) = conv_error;
+    % FOM projection data opinf
+    % [Diff_stan_fp,Conv_stan_fp] = rom_operator_wrapper(options,"OpInf");
+    % [Diff_perm_fp,Conv_perm_fp] = rom_operator_wrapper(options,"EC-OpInf Koike");
+    % [Diff_skew_fp,Conv_skew_fp] = rom_operator_wrapper(options,"EC-OpInf skew");
 
-% A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
-% avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
-avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    for i = 1:n_rom_types
+        [Diffs(i,1,:,:),Convs(i,1,:,:)] = rom_operator_wrapper(options,rom_types(i)); % 1 = FOM projection data
+    end
 
-% A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
-% avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
-avg_rel_state_errors(M_) = average_relative_state_error(Diff_OpInf, Conv_OpInf,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    % diff_errors(M_) = diff_error;
+    % conv_errors(M_) = conv_error;
 
-%% ... and with closure-clean ROM simulation data
-[A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
+    % A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
+    % avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
+    avg_rel_state_error_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
-options.rom.A = A_ROMs(1:M_,:);
-options.rom.A_dot = A_dot_ROMs(1:M_,:);
+    % A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
+    % avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
+    % avg_rel_state_errors(M_) = average_relative_state_error(Diff_OpInf, Conv_OpInf,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
-[Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,options.rom.rom_type);
+    % avg_rel_state_errors(M_,1,1) = average_relative_state_error(Diff_stan_fp,Conv_stan_fp,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    % avg_rel_state_errors(M_,2,1) = average_relative_state_error(Diff_perm_fp,Conv_perm_fp,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    % avg_rel_state_errors(M_,3,1) = average_relative_state_error(Diff_skew_fp,Conv_skew_fp,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
-Conv_OpInf_r_ROM = reduced_convection_operator(Conv_OpInf_ROM);
+    %% ... and with closure-clean ROM simulation data
+    [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
+
+    options.rom.A = A_ROMs(1:M_,:);
+    options.rom.A_dot = A_dot_ROMs(1:M_,:);
+
+    % [Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,options.rom.rom_type);
+
+    % [Diff_stan_cc,Conv_stan_cc] = rom_operator_wrapper(options,"OpInf");
+    % [Diff_perm_cc,Conv_perm_cc] = rom_operator_wrapper(options,"EC-OpInf Koike");
+    % [Diff_skew_cc,Conv_skew_cc] = rom_operator_wrapper(options,"EC-OpInf skew");
+
+    for i = 1:n_rom_types
+        [Diffs(i,2,:,:),Convs(i,2,:,:)] = rom_operator_wrapper(options,rom_types(i)); % 2 = closure-clean data
+    end
+
+    % Conv_OpInf_r_ROM = reduced_convection_operator(Conv_OpInf_ROM);
 
 
-diff_error_ROM = norm(Diff_intrusive - Diff_OpInf_ROM)/norm(Diff_intrusive);
-conv_error_ROM = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf_ROM))/norm(reduced_convection_operator(Conv_intrusive));
+    % diff_error_ROM = norm(Diff_intrusive - Diff_OpInf_ROM)/norm(Diff_intrusive);
+    % conv_error_ROM = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf_ROM))/norm(reduced_convection_operator(Conv_intrusive));
+    %
+    % diff_errors_ROM(M_) = diff_error_ROM;
+    % conv_errors_ROM(M_) = conv_error_ROM;
 
-diff_errors_ROM(M_) = diff_error_ROM;
-conv_errors_ROM(M_) = conv_error_ROM;
+    % A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
+    % avg_rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
+    % avg_rel_state_errors_ROM(M_) = average_relative_state_error(Diff_OpInf_ROM, Conv_OpInf_ROM,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    %%
 
-% A_opinf_ROM = ROM_sim(Diff_OpInf_ROM, Conv_OpInf_ROM,a0(1:M_),options.time.dt,size(A_raw,2));
-% avg_rel_state_errors_ROM(M_) = relative_state_error(V_snapshots_,A_opinf_ROM,basis(:,1:M_));
-avg_rel_state_errors_ROM(M_) = average_relative_state_error(Diff_OpInf_ROM, Conv_OpInf_ROM,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
-%%
+    three_term_constraint_ = three_term_prop_constraint(M_);
+    % three_term_errors(M_) = norm(three_term_constraint_*reshape(Conv_OpInf',M_^3,1));
+    % three_term_errors_ROM(M_) = norm(three_term_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
+    % three_term_errors_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
 
-three_term_constraint_ = three_term_prop_constraint(M_);
-three_term_errors(M_) = norm(three_term_constraint_*reshape(Conv_OpInf',M_^3,1));
-three_term_errors_ROM(M_) = norm(three_term_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
-three_term_errors_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
+    zero_perm_sum_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
 
-block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
-block_skewsymm_errors(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf',M_^3,1));
-block_skewsymm_errors_ROM(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
-block_skewsymm_errors_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
+    block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+    % block_skewsymm_errors(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf',M_^3,1));
+    % block_skewsymm_errors_ROM(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
+    % block_skewsymm_errors_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
+
+    block_skewsymm_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
+
+
+    % Diffs = [Diff_stan_fp, Diff_perm_fp, Diff_skew_fp, Diff_stan_cc, Diff_perm_cc, Diff_skew_cc];
+
+    rel_diff_errors = zeros(NMs,n_rom_types,2); % [standard opinf, perm opinf, skew opinf] x [FOM projection data, closure-clean data]
+    rel_conv_errors = zeros(NMs,n_rom_types,2);
+    rel_red_conv_errors = zeros(NMs,n_rom_types,2);
+
+    avg_rel_state_errors = zeros(NMs,n_rom_types,2);
+
+    zero_perm_sum = zeros(NMs,n_rom_types,2);
+    block_skewsymm = zeros(NMs,n_rom_types,2);
+
+    labels2 = ["FOM proj" "closure-clean"];
+    for j = 1:2
+        for i = 1:n_rom_types
+            Diff = Diffs(i,j,:,:);
+            Diff = reshape(Diff,M_,M_);
+            Conv = Convs(i,j,:,:);
+            Conv = reshape(Conv,M_,M_^2);
+
+            rel_diff_errors(M_,i,j) = rel_diff_error(Diff_intrusive,Diff);
+            rel_conv_errors(M_,i,j) = rel_conv_error(Conv_intrusive,Conv);
+            rel_conv_errors(M_,i,j) = rel_red_conv_error(Conv_intrusive,Conv);
+
+            avg_rel_state_errors(M_,i,j) = average_relative_state_error(Diff,Conv,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+
+            zero_perm_sum(M_,i,j) = norm(three_term_constraint_*reshape(Conv',M_^3,1));
+            block_skewsymm(M_,i,j) = norm(block_skewsymm_constraint_*reshape(Conv',M_^3,1));
+
+            labels_combined(i,j) = labels(i)+labels2(j);
+            %%
+
+        end
+    end
 
 end
 
-figure
-semilogy(diff_errors,'d-')
-hold on
-semilogy(conv_errors,'x-')
 
-title("relative operator errors")
-legend("diffusion", "convection")
-title("original FOM data")
+%% plotting
+markers = ["o" "+" "*"; "x", "s", "d"]
 
-figure
-semilogy(diff_errors_ROM,'d-')
-hold on
-semilogy(conv_errors_ROM,'x-')
+for i =1:n_rom_types
 
-title("relative operator errors")
-legend("diffusion", "convection")
-title("closure-clean ROM data")
+    % figure("rel operator errors FOM proj")
+    figure(1)
+    semilogy(rel_diff_errors(:,i,1),'d-','DisplayName',labels_combined(i,1))
+    hold on
+    semilogy(rel_conv_errors(:,i,1),'x-','DisplayName',labels_combined(i,1))
 
-figure
-semilogy(avg_rel_state_errors,'d-')
-hold on
-semilogy(avg_rel_state_errors_ROM,'x-')
-semilogy(avg_rel_state_errors_intrusive,'o-')
-semilogy(rel_state_errors_intrusive2,'<-')
-legend("original FOM data","closure-clean data","intrusive")
-% legend("original FOM data","closure-clean data","intrusive","intrusive+")
-% title("relative state error (last trajectory only)")
-title("average relative state error")
+    title("relative operator errors")
+    % legend("diffusion", "convection")
+    legend("show")
+    % title("original FOM data")
 
-figure
-semilogy(three_term_errors,'d-')
-hold on
-semilogy(three_term_errors_ROM,'x-')
-semilogy(three_term_errors_intrusive,'o-')
-semilogy(three_term_errors_intrusive2,'<-')
-title("three term property error")
-legend("original FOM data","closure-clean data","intrusive")
-% legend("original FOM data","closure-clean data","intrusive","intrusive+")
+    % figure("rel operator errors closure-clean")
+    figure(2)
+    semilogy(rel_diff_errors(:,i,2),'d-')
+    hold on
+    semilogy(rel_conv_errors(:,i,2),'x-')
 
-figure
-semilogy(block_skewsymm_errors,'d-')
-hold on
-semilogy(block_skewsymm_errors_ROM,'x-')
-semilogy(block_skewsymm_errors_intrusive,'o-')
-semilogy(block_skewsymm_errors_intrusive2,'<-')
-title("block skew-symmetry error")
-legend("original FOM data","closure-clean data","intrusive")
-% legend("original FOM data","closure-clean data","intrusive","intrusive+")
+    title("relative operator errors")
+    % legend("diffusion", "convection")
+    legend("show")
+    % title("closure-clean ROM data")
+
+    % for j =1:2
+    % 
+    %     figure("average relative state error")
+    %     semilogy(avg_rel_state_errors,'d-')
+    %     hold on
+    %     semilogy(avg_rel_state_errors_ROM,'x-')
+    %     semilogy(avg_rel_state_errors_intrusive,'o-')
+    %     semilogy(rel_state_errors_intrusive2,'<-')
+    %     legend("original FOM data","closure-clean data","intrusive")
+    %     % legend("original FOM data","closure-clean data","intrusive","intrusive+")
+    %     % title("relative state error (last trajectory only)")
+    %     title("average relative state error")
+    % 
+    %     figure("zero permutation sum")
+    %     semilogy(three_term_errors,'d-')
+    %     hold on
+    %     semilogy(three_term_errors_ROM,'x-')
+    %     semilogy(three_term_errors_intrusive,'o-')
+    %     semilogy(three_term_errors_intrusive2,'<-')
+    %     title("three term property error")
+    %     legend("original FOM data","closure-clean data","intrusive")
+    %     % legend("original FOM data","closure-clean data","intrusive","intrusive+")
+    % 
+    %     figure
+    %     semilogy(block_skewsymm_errors,'d-')
+    %     hold on
+    %     semilogy(block_skewsymm_errors_ROM,'x-')
+    %     semilogy(block_skewsymm_errors_intrusive,'o-')
+    %     semilogy(block_skewsymm_errors_intrusive2,'<-')
+    %     title("block skew-symmetry error")
+    %     legend("original FOM data","closure-clean data","intrusive")
+    %     % legend("original FOM data","closure-clean data","intrusive","intrusive+")
+
+    % end
+end
 
 r = 6
 
