@@ -30,7 +30,7 @@ switch options.rom.rom_type
 
         options.rom.Conv_quad = Conv;
 
-    case "EC-OpInf"
+    case "EC-OpInf Koike"
         if (options.rom.weighted_norm == 0)
             error('not implemented')
         end
@@ -40,9 +40,10 @@ switch options.rom.rom_type
         A_dot = options.rom.A_dot;
         M = options.rom.M;
         convection_constraint = [];
-        % convection_constraint = [convection_constraint; three_term_prop_constraint(M)];
-        % convection_constraint = [convection_constraint; ambiguity_constraint(M)];
-        convection_constraint = [convection_constraint; block_skewsymm_constraint(M)];
+        convection_constraint = [convection_constraint; three_term_prop_constraint(M)];
+        convection_constraint = [convection_constraint; ambiguity_constraint(M)];
+        % convection_constraint = [convection_constraint; block_skewsymm_constraint(M)];
+        % convection_constraint = [convection_constraint; triple_ambiguity_constraint(M)];
         n_constr = size(convection_constraint,1);
         operator_constraint_ = [zeros(n_constr,M^2) convection_constraint];
         ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
@@ -51,6 +52,7 @@ switch options.rom.rom_type
         
         A_dot_T = A_dot';
         O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+        % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
         O = reshape(O_,M+M^2,M)';
 
         % lsq = @(O) norm(O*[A; A_kron]-A_dot,"fro");
@@ -72,12 +74,52 @@ switch options.rom.rom_type
         % Q_T = Q';
         % norm(three_term_constraint*Q_T(:))
 
-        norm(block_skewsymm_constraint(M)*Q(:))
-        Q_T = Q';
-        norm(block_skewsymm_constraint(M)*Q_T(:))
+        % norm(block_skewsymm_constraint(M)*Q(:))
+        % Q_T = Q';
+        % norm(block_skewsymm_constraint(M)*Q_T(:))
 
         options.rom.Diff = L;
         options.rom.Conv_quad = Q;
+
+    case "EC-OpInf skew"
+        if (options.rom.weighted_norm == 0)
+            error('not implemented')
+        end
+
+        A = options.rom.A;
+        A_kron = vectorwise_kron(A);
+        A_dot = options.rom.A_dot;
+        M = options.rom.M;
+        convection_constraint = [];
+        % convection_constraint = [convection_constraint; three_term_prop_constraint(M)];
+        % convection_constraint = [convection_constraint; ambiguity_constraint(M)];
+        convection_constraint = [convection_constraint; block_skewsymm_constraint(M)];
+        convection_constraint = [convection_constraint; triple_ambiguity_constraint(M)];
+        n_constr = size(convection_constraint,1);
+        operator_constraint_ = [zeros(n_constr,M^2) convection_constraint];
+        ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
+        operator_constraint = operator_constraint_(:,ordering(:));
+        constraint_rhs = zeros(n_constr,1);
+        
+        A_dot_T = A_dot';
+        O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+        % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
+        O = reshape(O_,M+M^2,M)';
+
+        r = M;
+        L = O(:,1:r);
+        Q = O(:,r+1:end);
+
+        options.rom.Diff = L;
+        options.rom.Conv_quad = Q;
+
+    case "intrusive+" % intrusive, but with actually block skew-symmetric convection operator 
+
+        options.rom.Conv_quad = operator_rom_convection_block_skewsymm(options);
+        [yDiff,Diff] = operator_rom_diffusion(B',options);
+
+        options.rom.Diff  = Diff;
+        options.rom.yDiff = yDiff;
 
     case "intrusive"
 

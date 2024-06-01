@@ -119,6 +119,16 @@ avg_rel_state_errors_intrusive = zeros(NMs,1);
 zero_perm_sum_intrusive = zeros(NMs,1);
 block_skewsymm_intrusive = zeros(NMs,1);
 
+%% just plotting
+
+[~,S] = svd([As; vectorwise_kron(As)]);
+        figure(111)
+        s = diag(S);
+        plot(s/s(1),"kd-","DisplayName","FOM projection data")
+        hold on
+        sings_intrusive = s(1:100);
+
+        sings_s = zeros(100,NMs);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
@@ -211,6 +221,22 @@ for M_ = Ms
     options.rom.A = A_ROMs(1:M_,:);
     options.rom.A_dot = A_dot_ROMs(1:M_,:);
 
+    %% just plotting
+
+    [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
+        figure(111)
+        s = diag(S)
+        plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
+
+        sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
+        legend("show")
+        title("normalized singular value decay")
+
+        ylabel("normalized magnitude")
+        xlabel("singular value index")
+
+    %%
+
     % [Diff_OpInf_ROM,Conv_OpInf_ROM] = rom_operator_wrapper(options,options.rom.rom_type);
 
     % [Diff_stan_cc,Conv_stan_cc] = rom_operator_wrapper(options,"OpInf");
@@ -283,10 +309,10 @@ for i =1:n_rom_types
 
     % figure("rel operator errors FOM proj")
     figure(1)
-    semilogy(rel_diff_errors(:,i,1),'s-','DisplayName',"diffusion "+labels_combined(i,1))
+    % semilogy(rel_diff_errors(:,i,1),'s-','DisplayName',"diffusion "+labels_combined(i,1))
     hold on
-    % semilogy(rel_conv_errors(:,i,1),'x-','DisplayName',"convection "+labels_combined(i,1))
-    semilogy(rel_red_conv_errors(:,i,1),'+-','DisplayName',"reduced convection "+labels_combined(i,1))
+    semilogy(rel_conv_errors(:,i,1),'x-','DisplayName',"convection "+labels_combined(i,1))
+    semilogy(rel_red_conv_errors(:,i,1),'d-','DisplayName',"reduced convection "+labels_combined(i,1))
 
     title("relative operator errors - FOM projection data")
     % legend("diffusion", "convection")
@@ -295,9 +321,9 @@ for i =1:n_rom_types
 
     % figure("rel operator errors closure-clean")
     figure(2)
-    semilogy(rel_diff_errors(:,i,2),'s-','DisplayName',"diffusion "+labels_combined(i,2))
+    % semilogy(rel_diff_errors(:,i,2),'s-','DisplayName',"diffusion "+labels_combined(i,2))
     hold on
-    % semilogy(rel_conv_errors(:,i,2),'x-','DisplayName',"convection "+labels_combined(i,2))
+    semilogy(rel_conv_errors(:,i,2),'x-','DisplayName',"convection "+labels_combined(i,2))
     semilogy(rel_red_conv_errors(:,i,2),'+-','DisplayName',"reduced convection "+labels_combined(i,2))
 
     title("relative operator errors -closure-clean data")
@@ -316,8 +342,10 @@ for i =1:n_rom_types
         % legend("original FOM data","closure-clean data","intrusive")
         % legend("original FOM data","closure-clean data","intrusive","intrusive+")
         % title("relative state error (last trajectory only)")
-        title("average relative state error")
+        % title("average relative state error")
         legend("show")
+        ylabel("average relative state error")
+        xlabel("number of ROM modes")
 
         figure(4)
         % semilogy(three_term_errors(:,i,j),'d-','DisplayName',labels_combined(i,j))
@@ -345,6 +373,8 @@ for i =1:n_rom_types
 
     end
 end
+
+energy_conservation_sims
 
 r = 6
 
