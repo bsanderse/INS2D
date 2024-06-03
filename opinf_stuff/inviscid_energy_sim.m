@@ -16,7 +16,8 @@ for i = 1:nt-1
             x = x + dt*T*x12;
         case "Gauss method"
             options = optimset('Display','off');
-            x = fsolve(@(x1) x + dt*C*kron(x1,x1) - x1,x,options);
+            x12 = fsolve(@(x12) -x + x12 - .5*dt*C*kron(x12,x12),x,options);
+            x = x + dt*C*kron(x12,x12);
         case "forward Euler"
             x = x + dt* C*kron(x,x);
     end    

@@ -17,9 +17,9 @@ for i = 1:n_rom_types
         [energies_linim(:,i,j),X_linim] = inviscid_energy_sim(Conv,dt,a0s(:,1),nt,"linear implicit");
         [energies_euler(:,i,j),X_euler] = inviscid_energy_sim(Conv,dt,a0s(:,1),nt,"forward euler");
 
-        figure(71)
-        plot(energies_linim(:,i,j),'x-','DisplayName',labels_combined(i,j) + " linear implicit")
-        hold on
+        % figure(71)
+        % plot(energies_linim(:,i,j),'x-','DisplayName',labels_combined(i,j) + " linear implicit")
+        % hold on
         figure(72)
         plot(energies_gauss(:,i,j),'+-','DisplayName',labels_combined(i,j) + " Gauss method")
         hold on
