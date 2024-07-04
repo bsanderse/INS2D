@@ -181,12 +181,12 @@ for M_ = Ms
 
     % diff_error = norm(Diff_intrusive - Diff_OpInf)/norm(Diff_intrusive);
     % conv_error = norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(-Conv_OpInf))/norm(reduced_convection_operator(Conv_intrusive));
-    rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff)/norm(Diff_intrusive);
-    rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv)/norm(Conv_intrusive);
-    rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(Conv))/norm(reduced_convection_operator(Conv_intrusive));
-    % rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff,"fro")/norm(Diff_intrusive,"fro");
-    % rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv,"fro")/norm(Conv_intrusive,"fro");
-    % rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive-Conv),"fro")/norm(reduced_convection_operator(Conv_intrusive),"fro");
+    % rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff)/norm(Diff_intrusive);
+    % rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv)/norm(Conv_intrusive);
+    % rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive)-reduced_convection_operator(Conv))/norm(reduced_convection_operator(Conv_intrusive));
+    rel_diff_error = @(Diff_intrusive,Diff) norm(Diff_intrusive-Diff,"fro")/norm(Diff_intrusive,"fro");
+    rel_conv_error = @(Conv_intrusive,Conv) norm(Conv_intrusive-Conv,"fro")/norm(Conv_intrusive,"fro");
+    rel_red_conv_error = @(Conv_intrusive,Conv) norm(reduced_convection_operator(Conv_intrusive-Conv),"fro")/norm(reduced_convection_operator(Conv_intrusive),"fro");
 
     % FOM projection data opinf
     % [Diff_stan_fp,Conv_stan_fp] = rom_operator_wrapper(options,"OpInf");
@@ -225,7 +225,7 @@ for M_ = Ms
 
     [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
         figure(111)
-        s = diag(S)
+        s = diag(S);
         plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
 
         sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
