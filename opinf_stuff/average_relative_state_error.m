@@ -1,10 +1,10 @@
-function error = average_relative_state_error(D,C,a0s,dt,Nt,FOM_snapshots_s,ROM_basis)
+function error = average_relative_state_error(D,C,a0s,dt,Nt,FOM_snapshots_s,ROM_basis,skip)
 % average relative state error as defined in 
 % https://arxiv.org/pdf/2401.02889.pdf#cite.kaptanoglu2021promoting
 % equation (18)
 % assuming Forward Euler time discretization!!!
 
-[~,~,A_ROMs_s] = ROM_sims(D,C,a0s,dt,Nt);
+[~,~,A_ROMs_s] = ROM_sims(D,C,a0s,dt,Nt,skip);
 
 [r,n_trajes] = size(a0s);
 

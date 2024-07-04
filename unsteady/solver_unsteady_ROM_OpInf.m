@@ -57,7 +57,8 @@ for i = 1:n_trajes
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
 
     A_raw = options.rom.B'*(options.grid.Om.*V_snapshots_);
-    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt); 
+    skip = 10;
+    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt,skip); 
     A_dots = [A_dots A_dot];
     As = [As A];
     
@@ -205,7 +206,7 @@ for M_ = Ms
 
     % A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
-    avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_),skip);
 
     % A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
@@ -216,7 +217,7 @@ for M_ = Ms
     % avg_rel_state_errors(M_,3,1) = average_relative_state_error(Diff_skew_fp,Conv_skew_fp,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
     %% ... and with closure-clean ROM simulation data
-    [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
+    [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes,skip);
 
     options.rom.A = A_ROMs(1:M_,:);
     options.rom.A_dot = A_dot_ROMs(1:M_,:);
@@ -225,7 +226,7 @@ for M_ = Ms
 
     [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
         figure(111)
-        s = diag(S)
+        s = diag(S);
         plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
 
         sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
@@ -288,7 +289,7 @@ for M_ = Ms
             rel_conv_errors(M_,i,j) = rel_conv_error(Conv_intrusive,-Conv);
             rel_red_conv_errors(M_,i,j) = rel_red_conv_error(Conv_intrusive,-Conv);
 
-            avg_rel_state_errors(M_,i,j) = average_relative_state_error(Diff,Conv,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+            avg_rel_state_errors(M_,i,j) = average_relative_state_error(Diff,Conv,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_),skip);
 
             zero_perm_sum(M_,i,j) = norm(three_term_constraint_*reshape(Conv',M_^3,1));
             block_skewsymm(M_,i,j) = norm(block_skewsymm_constraint_*reshape(Conv',M_^3,1));
