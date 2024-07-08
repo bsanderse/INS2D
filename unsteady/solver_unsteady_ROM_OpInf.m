@@ -116,6 +116,7 @@ zero_perm_sum = zeros(NMs,3,2);
 block_skewsymm = zeros(NMs,3,2);
 
 avg_rel_state_errors_intrusive = zeros(NMs,1);
+avg_rel_state_errors_best_approx = zeros(NMs,1);
 
 zero_perm_sum_intrusive = zeros(NMs,1);
 block_skewsymm_intrusive = zeros(NMs,1);
@@ -207,6 +208,7 @@ for M_ = Ms
     % A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
     avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_),skip);
+    avg_rel_state_errors_best_approx(M_) = average_relative_state_error_best_approx(size(A_raw,2),V_snapshots,basis(:,1:M_),options);
 
     % A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
@@ -376,6 +378,7 @@ for i =1:n_rom_types
 end
 
 energy_conservation_sims
+eccomas_velocity_plot
 
 r = 6
 
