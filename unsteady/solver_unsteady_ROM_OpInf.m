@@ -57,7 +57,7 @@ for i = 1:n_trajes
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
 
     A_raw = options.rom.B'*(options.grid.Om.*V_snapshots_);
-    skip = 10;
+    skip = 1;
     [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt,skip); 
     A_dots = [A_dots A_dot];
     As = [As A];
@@ -224,17 +224,17 @@ for M_ = Ms
 
     %% just plotting
 
-    [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
-        figure(111)
-        s = diag(S);
-        plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
-
-        sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
-        legend("show")
-        title("normalized singular value decay")
-
-        ylabel("normalized magnitude")
-        xlabel("singular value index")
+    % [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
+    %     figure(111)
+    %     s = diag(S);
+    %     plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
+    % 
+    %     sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
+    %     legend("show")
+    %     title("normalized singular value decay")
+    % 
+    %     ylabel("normalized magnitude")
+    %     xlabel("singular value index")
 
     %%
 

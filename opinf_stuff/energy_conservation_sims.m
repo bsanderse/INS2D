@@ -35,9 +35,9 @@ title("kinetic energy conservation")
 
 %% slides plot
 figure(4353)
-semilogy(abs(energies_gauss(:,3,1)-energies_gauss(1,3,1)),"DisplayName","block-skew-symm gauss-legende")
+semilogy(abs(energies_gauss(:,3,1)-energies_gauss(1,3,1)),"DisplayName","block-skew-symm gauss-legendre")
 hold on
-semilogy(abs(energies_gauss(:,2,1)-energies_gauss(1,2,1)),"DisplayName","weaker constraint gauss-legende")
+semilogy(abs(energies_gauss(:,2,1)-energies_gauss(1,2,1)),"DisplayName","weaker constraint gauss-legendre")
 semilogy(abs(energies_linim(:,3,1)-energies_linim(1,3,1)),"DisplayName","block-skew-symm linear implicit")
 semilogy(abs(energies_linim(:,2,1)-energies_linim(1,2,1)),"DisplayName","weaker constraint linear implicit")
 legend("show")
