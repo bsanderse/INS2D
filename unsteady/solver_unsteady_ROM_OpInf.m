@@ -5,6 +5,18 @@ function solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options)
 addpath('unsteady/ROM_bases_setup/');
 addpath('opinf_stuff/');
 
+M = options.rom.M;
+%% things that at best should be in parameter file
+
+% Ms = [20:10:80];
+Ms = M;
+% Ms = 1:M;
+NMs = max(Ms);
+
+% skip = 50;
+skip = 1;
+
+
 %% load snapshot data for ROM basis construction
 V_snapshots = [];
 
@@ -29,8 +41,6 @@ options.rom.B = basis;
 
 [Diff_intrusive_,Conv_intrusive_] = rom_operator_wrapper(options,"intrusive+");
 
-
-M = options.rom.M;
 Conv_intrusive_tensor = reshape(Conv_intrusive_,M,M,M);
 % Conv_intrusive_tensor2 = reshape(Conv_intrusive_2,M,M,M);
 
@@ -57,7 +67,7 @@ for i = 1:n_trajes
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
 
     A_raw = options.rom.B'*(options.grid.Om.*V_snapshots_);
-    skip = 1;
+    % skip = 1;
     [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt,skip); 
     A_dots = [A_dots A_dot];
     As = [As A];
@@ -78,11 +88,6 @@ end
 % norm(A_ROMs-As_ROM) %unit test
 % norm(A_dot_ROMs - A_dots_ROM)% unit test
 
-
-% Ms = [20:10:80];
-% Ms = M;
-Ms = 1:M;
-NMs = max(Ms);
 
 % diff_errors = zeros(NMs,1);
 % conv_errors = zeros(NMs,1);
@@ -123,14 +128,14 @@ block_skewsymm_intrusive = zeros(NMs,1);
 
 %% just plotting
 
-[~,S] = svd([As; vectorwise_kron(As)]);
-        figure(111)
-        s = diag(S);
-        plot(s/s(1),"kd-","DisplayName","FOM projection data")
-        hold on
-        sings_intrusive = s(1:100);
-
-        sings_s = zeros(100,NMs);
+% [~,S] = svd([As; vectorwise_kron(As)]);
+%         figure(111)
+%         s = diag(S);
+%         plot(s/s(1),"kd-","DisplayName","FOM projection data")
+%         hold on
+%         sings_intrusive = s(1:100);
+% 
+%         sings_s = zeros(100,NMs);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);

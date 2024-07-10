@@ -34,9 +34,13 @@ switch options.rom.rom_type
             constraint_rhs = zeros(n_constr,1);
 
             A_dot_T = A_dot';
-            O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+            O_ = lsqlin(kron(eye(M),([A;A_kron]')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
-            O = reshape(O_,M+M^2,M)';
+            % O = reshape(O_,M+M^2,M)';
+
+            O_factors = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
+            O_D = symm_neg_def_diffusion(O_factors,M);
+            O = reshape(O_D,M+M^2,M)';
 
             r = M;
             Diff = O(:,1:r);

@@ -1,7 +1,7 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
 % run_multiple = 1;
-run_multiple = 1;
+% run_multiple = 1;
 % run_multiple = 0;
 % M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
@@ -11,8 +11,11 @@ run_multiple = 1;
 % M_list = [16 16];
 % M_list = [4 -1];% 8 16 32];
 % M_list = [4 8 16 32 -1];
+% M_list = 17;
+% M_list = 80;
+% M_list = 10;
 M_list = 20;
-% M_list = 5;
+% M_list = 3;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -20,12 +23,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% initial condition parameters
-    offsets = 0;
+    % offsets = [false true];
+    offsets = [true false];
     % deltas   = pi/15;
     % epsilons   = 0.05*20;
 
-    deltas   = pi/15*[2 1 .1 .05];
-    epsilons   = 0.05*[.5 1 10 20];
+    deltas   = pi/15*[1 .1];
+    epsilons   = 0.05*[1 10 20 -20 -10 -1];
 
     % offsets = [1 .5 0 -.5 -1];
     % deltas  = pi/15*[1 2 -2 -1];
@@ -52,6 +56,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % Re      = 1e100;                  % Reynolds number
     % Re      = 150;                  % Reynolds number
     Re      = 100;                  % Reynolds number
+    % Re      = 1e-3;                  % Reynolds number
     visc    = 'laminar';              % laminar or turbulent; 
                                       % influences stress tensor
     nu      = 1/Re;
@@ -68,10 +73,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     % Nx      = 5;                   % number of volumes in the x-direction
     % Ny      = 5;                   % number of volumes in the y-direction
-    Nx      = 8;                   % number of volumes in the x-direction
-    Ny      = 8;                   % number of volumes in the y-direction
-    % Nx      = 20;                   % number of volumes in the x-direction
-    % Ny      = 20;                   % number of volumes in the y-direction
+    % Nx      = 8;                   % number of volumes in the x-direction
+    % Ny      = 8;                   % number of volumes in the y-direction
+    Nx      = 20;                   % number of volumes in the x-direction
+    Ny      = 20;                   % number of volumes in the y-direction
     % Nx      = 100;                   % number of volumes in the x-direction
     % Ny      = 100;                   % number of volumes in the y-direction
     % Nx      = 200;                   % number of volumes in the x-direction
@@ -144,9 +149,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         method            = 20; %21-(j>4);
         % method            = 21; %21-(j>4);
 %         RK                = method_list{j}; %'RK44';
-        RK                = 'RK44';
+        % RK                = 'RK44';
         % RK                = 'RK44C23';
-        % RK                  = 'FE11';
+        RK                  = 'FE11';
         % RK                = 'GL1';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
@@ -168,13 +173,16 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %             beta    = 0.1; % should be Reynolds dependent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+save_name = @(offset,delta,epsilon) ['shear_layer_ROM_forward_euler_' num2str(Nx) 'x' num2str(Ny) '_Re=' num2str(Re) '_rotate=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)];
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
 %     rom = 0
     % rom = 0
-    % rom = 1
+    rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
     % M      = M_list(j);     % number of modes used
@@ -182,6 +190,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
+    % t_sample  = .1;  % part of snapshot matrix used for building SVD
     dt_sample = dt; % frequency of snapshots to be used for SVD
 
 %     t_sample  = 4;  % part of snapshot matrix used for building SVD
@@ -214,7 +223,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %                 Mbc = 0;
                 %%
 
-    rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "EC-OpInf"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    rom_type = "EC-OpInf Koike"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    % rom_type = "EC-OpInf skew"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
     % rom_type = "intrusive"; % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
 
     % 40x40:
@@ -236,12 +248,16 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         epsilon_ = epsilons_(jj);
         % MAKE THIS CONCATENATION OF STRINGS!!!
         % snapshot_datas_ = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_)]; % name of folder where results are saved
-        snapshot_datas_ = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '_forward_euler']; % name of folder where results are saved
-        snapshot_datas = [snapshot_datas; string([ snapshot_datas_ '/matlab_data.mat'])];
+        % snapshot_datas_ = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '_forward_euler']; % name of folder where results are saved
+        % snapshot_datas = [snapshot_datas; string([ snapshot_datas_ '/matlab_data.mat'])];
         
-        snapshot_datas_ = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '_forward_euler_uv_rotated']; % name of folder where results are saved
-        snapshot_datas = [snapshot_datas; string([ snapshot_datas_ '/matlab_data.mat'])];
+        % snapshot_datas_ = ['inviscid_shear_layer_ROM_offset=' num2str(offset_) ',delta=' num2str(delta_) ',epsilon=' num2str(epsilon_) '_forward_euler_uv_rotated']; % name of folder where results are saved
+        % snapshot_datas = [snapshot_datas; string([ snapshot_datas_ '/matlab_data.mat'])];
+        
         % snapshot_datas(jj) = [ snapshot_datas_ '/matlab_data.mat'];
+
+        snapshot_datas_ = save_name(offset_,delta_,epsilon_);
+        snapshot_datas = [snapshot_datas; string([ snapshot_datas_ '/matlab_data.mat'])];
     end
 
     % snapshot_datas = "shear_layer_ROM_1.500e+02_200x200_FOMdata/matlab_data.mat";
@@ -305,7 +321,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     rtp.n            = 10;
     rtp.movie        = 1;          % make movie based on the real time plots
     % rtp.moviename    = ['inviscid_shear_layer_ROM_' num2str(j)]; % movie name
-    rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
+    % rtp.moviename    = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % movie name
+    rtp.moviename    = save_name(offset,delta,epsilon); % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -319,14 +336,15 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     % results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
     % results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon) '_forward_euler']; % name of folder where results are saved
-    results_name = ['inviscid_shear_layer_ROM_' num2str(Nx) '_' num2str(Ny) '_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon) '_forward_euler_uv_rotated']; % name of folder where results are saved
+    % results_name = ['inviscid_shear_layer_ROM_' num2str(Nx) '_' num2str(Ny) '_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon) '_forward_euler_uv_rotated']; % name of folder where results are saved
+    results_name = save_name(offset,delta,epsilon); % name of folder where results are saved
 
     cw_output        = 1;          % command window output; 
                                    % 0: output file, 1: local command window;

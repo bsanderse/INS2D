@@ -11,3 +11,5 @@ ylabel("average relative state error")
 legend('show')
 
 semilogy(avg_rel_state_errors_best_approx,'d--','DisplayName',"ROM basis best approximation")
+
+title("skip = " + num2str(skip))
