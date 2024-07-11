@@ -9,8 +9,8 @@ M = options.rom.M;
 %% things that at best should be in parameter file
 
 % Ms = [20:10:80];
-Ms = M;
-% Ms = 1:M;
+% Ms = M;
+Ms = 1:M;
 NMs = max(Ms);
 
 % skip = 50;
@@ -141,6 +141,7 @@ block_skewsymm_intrusive = zeros(NMs,1);
 a0 = A_raw(:,1);
 
     rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
+    % rom_types = [ "EC-OpInf skew"];
     labels = ["stan" "perm" "skew"];
     n_rom_types = numel(rom_types);
 

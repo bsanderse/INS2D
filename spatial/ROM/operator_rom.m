@@ -36,15 +36,14 @@ switch options.rom.rom_type
             A_dot_T = A_dot';
             O_ = lsqlin(kron(eye(M),([A;A_kron]')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
-            % O = reshape(O_,M+M^2,M)';
+            % [Diff,Conv] = vec2ops(O_,M);
 
-            O_factors = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
-            O_D = symm_neg_def_diffusion(O_factors,M);
-            O = reshape(O_D,M+M^2,M)';
+            A_hat_vec = kron(eye(M),([A;A_kron]'));
+            A_dot_vec = A_dot_T(:);
+            O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
+            O_2 = symm_neg_def_diffusion(O_1,M);
 
-            r = M;
-            Diff = O(:,1:r);
-            Conv = O(:,r+1:end);
+            [Diff,Conv] = vec2ops(O_2,M);
         end
 
         options.rom.Diff = Diff;
