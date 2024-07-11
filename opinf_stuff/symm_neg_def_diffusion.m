@@ -1,10 +1,10 @@
 function vec = symm_neg_def_diffusion(vec,M)
 % takes the whole (diffusion+convection) vectorized operator and returns a
-% whole vectorized operator with symmetric psoitive definite diffusion
+% whole vectorized operator with symmetric positive definite diffusion
 
 vec_D = vec(1:M^2);
 D = reshape(vec_D,M,M);
-new_D = -D*D';
+new_D = symm_neg_def_diffusion_matrix(D);
 
 vec(1:M^2) = new_D(:);
 
