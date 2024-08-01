@@ -16,20 +16,13 @@ switch options.rom.rom_type
 
         A_hat = [A; A_kron];
 
-        %% botch
-        [U,S,V] = svd(A_hat',"econ");
-
-        rank = sum(abs(diag(S))>sqrt(eps))
-        Ut = U(:,1:rank);
-        St = S(1:rank,1:rank);
-        Vt = V(:,1:rank);
+        [Ut,St,Vt] = svd(A_hat',"econ");
 
         A_hat = St*Vt';
         A_dot = Ut'*A_dot';
 
         A_hat = A_hat';
-        A_dot = A_dot';
-        %%
+        A_dot
 
         if options.rom.rom_type == "OpInf"
             [Diff,Conv] = OpInf_core(A_hat,A_dot);
@@ -51,11 +44,11 @@ switch options.rom.rom_type
             constraint_rhs = zeros(n_constr,1);
 
             A_dot_T = A_dot';
-            O_ = lsqlin(kron(eye(M),(A_hat')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+            O_ = lsqlin(kron(eye(M),([A;A_kron]')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
             % [Diff,Conv] = vec2ops(O_,M);
 
-            A_hat_vec = kron(eye(M),(A_hat'));
+            A_hat_vec = kron(eye(M),(A-hat'));
             A_dot_vec = A_dot_T(:);
             O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
             O_2 = symm_neg_def_diffusion(O_1,M);

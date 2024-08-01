@@ -9,8 +9,10 @@ M = options.rom.M;
 %% things that at best should be in parameter file
 
 % Ms = [20:10:80];
-% Ms = M;
-Ms = 1:M;
+
+Ms = M;
+% Ms = 1:M;
+
 NMs = max(Ms);
 
 % skip = 50;
