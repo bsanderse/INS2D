@@ -18,11 +18,9 @@ for i=1:N % block row index
             G = H(:,:)'; % rearrange to convection-like matricized tensor and transpose
             % A(:,i,j,k) = G(:);
             % A(:,i,j,k) = H(:);
-            A = [A; G(:)'];
+            A = [A G(:)];
         end
     end
 end
 
-% A = A(:,:);
-% 
-% A = A';
+A = A';

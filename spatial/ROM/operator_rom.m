@@ -3,6 +3,8 @@ function options = operator_rom(options)
 NV  = options.grid.Nu+options.grid.Nv;
 B   = options.rom.B;
 
+profile on
+
 switch options.rom.rom_type
     case {"OpInf", "EC-OpInf Koike", "EC-OpInf skew"}
 
@@ -51,17 +53,23 @@ switch options.rom.rom_type
             constraint_rhs = zeros(n_constr,1);
 
             A_dot_T = A_dot';
-            O_ = lsqlin(kron(eye(M),(A_hat')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+            % O_ = lsqlin(tall(sparse(kron(eye(M),(A_hat')))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+            O_ = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
-            % [Diff,Conv] = vec2ops(O_,M);
+            [Diff,Conv] = vec2ops(O_,M);
 
-            A_hat_vec = kron(eye(M),(A_hat'));
-            A_dot_vec = A_dot_T(:);
-            O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
-            O_2 = symm_neg_def_diffusion(O_1,M);
+            %% botch: diffusion operator
+            % A_hat_vec = kron(eye(M),(A_hat'));
+            % A_dot_vec = A_dot_T(:);
+            % O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
+            % O_2 = symm_neg_def_diffusion(O_1,M);
+            % [Diff,Conv] = vec2ops(O_2,M);
+            %%
 
-            [Diff,Conv] = vec2ops(O_2,M);
         end
+
+        profile off
+        profile viewer
 
         options.rom.Diff = Diff;
         options.rom.Conv_quad = Conv;

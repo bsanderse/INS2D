@@ -12,6 +12,7 @@ M = options.rom.M;
 
 Ms = M;
 % Ms = 1:M;
+% Ms = 10:10:M;
 
 NMs = max(Ms);
 
@@ -142,8 +143,8 @@ block_skewsymm_intrusive = zeros(NMs,1);
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
-    rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
-    % rom_types = [ "EC-OpInf skew"];
+    % rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
+    rom_types = [ "EC-OpInf skew"];
     labels = ["stan" "perm" "skew"];
     n_rom_types = numel(rom_types);
 

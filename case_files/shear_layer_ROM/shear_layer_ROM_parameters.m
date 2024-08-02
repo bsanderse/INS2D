@@ -13,8 +13,10 @@
 % M_list = [4 8 16 32 -1];
 % M_list = 17;
 % M_list = 80;
-% M_list = 10;
-M_list = 20;
+% M_list = 60;
+% M_list = 30;
+M_list = 10;
+% M_list = 20;
 % M_list = 3;
 
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
