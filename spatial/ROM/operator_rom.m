@@ -18,6 +18,7 @@ switch options.rom.rom_type
 
         A_hat = [A; A_kron];
 
+        
         [Diff, Conv] = OpInf(A_dot,A_hat,options.rom.rom_type);
         
 
