@@ -68,14 +68,16 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
             A_vec = sparse(kron(eye(M),A_hat'));
             B_vec = A_dot_T(:);
 
-            if rom_type == "EC-OpInf skew"
+            if rom_type == "EC-OpInf skew" && M>1
                 T = feasible_basis(M);
                 TT = blkdiag(eye(M^2), T);
                 ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
                 TT = TT(ordering(:),:);
                 O_f = TT*((A_vec*TT)\B_vec);
-            end
 
+                            O_ = O_f;
+            else
+            
 
 
 
@@ -85,7 +87,9 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
             O_ = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),(A_hat')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
+            end
             [Diff,Conv] = vec2ops(O_,M);
+
 
             %% botch: diffusion operator
             % A_hat_vec = kron(eye(M),(A_hat'));
