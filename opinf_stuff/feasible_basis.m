@@ -7,7 +7,11 @@ function T = feasible_basis(N)
 % number of columns = N*(N^2-N) // all block-non-diagonal entries
 %                     / 2       // forming skew-symmetry pairs
 %                     - N choose 3 // triple ambiguity pairs
-no_trip = nchoosek(N,3);
+if N<3
+    no_trip = 0;
+else
+    no_trip = nchoosek(N,3);
+end
 
 % T = [];
 T = spalloc(N^3,N*(N^2-N)/2 - no_trip,N*(N^2-N)/2);

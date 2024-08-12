@@ -10,14 +10,20 @@ M = options.rom.M;
 
 % Ms = [20:10:80];
 
-Ms = M;
-% Ms = 1:M;
+% Ms = M;
+Ms = 1:M;
 % Ms = 10:10:M;
 
 NMs = max(Ms);
 
 % skip = 50;
 skip = 1;
+
+    rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
+    % rom_types = [ "EC-OpInf skew"];
+    labels = ["stan" "perm" "skew"];
+    % labels = ["skew"];
+    n_rom_types = numel(rom_types);
 
 
 %% load snapshot data for ROM basis construction
@@ -143,11 +149,7 @@ block_skewsymm_intrusive = zeros(NMs,1);
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
-    % rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
-    rom_types = [ "EC-OpInf skew"];
-    % labels = ["stan" "perm" "skew"];
-    labels = ["skew"];
-    n_rom_types = numel(rom_types);
+
 
     rel_diff_errors = zeros(NMs,n_rom_types,2); % [standard opinf, perm opinf, skew opinf] x [FOM projection data, closure-clean data]
     rel_conv_errors = zeros(NMs,n_rom_types,2);

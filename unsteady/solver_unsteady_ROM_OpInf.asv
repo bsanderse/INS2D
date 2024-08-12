@@ -5,6 +5,21 @@ function solver_unsteady_ROM_OpInf(snapshot_datas,dt_sample,t_sample,options)
 addpath('unsteady/ROM_bases_setup/');
 addpath('opinf_stuff/');
 
+M = options.rom.M;
+%% things that at best should be in parameter file
+
+% Ms = [20:10:80];
+
+% Ms = M;
+Ms = 1:M;
+% Ms = 10:10:M;
+
+NMs = max(Ms);
+
+% skip = 50;
+skip = 1;
+
+
 %% load snapshot data for ROM basis construction
 V_snapshots = [];
 
@@ -29,8 +44,6 @@ options.rom.B = basis;
 
 [Diff_intrusive_,Conv_intrusive_] = rom_operator_wrapper(options,"intrusive+");
 
-
-M = options.rom.M;
 Conv_intrusive_tensor = reshape(Conv_intrusive_,M,M,M);
 % Conv_intrusive_tensor2 = reshape(Conv_intrusive_2,M,M,M);
 
@@ -57,7 +70,8 @@ for i = 1:n_trajes
     V_snapshots_ = load_snapshot_data("results/"+snapshot_data,dt_sample,t_sample);
 
     A_raw = options.rom.B'*(options.grid.Om.*V_snapshots_);
-    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt); 
+    % skip = 1;
+    [A_dot,A] = time_difference_quotient(A_raw, "forward euler",options.time.dt,skip); 
     A_dots = [A_dots A_dot];
     As = [As A];
     
@@ -77,11 +91,6 @@ end
 % norm(A_ROMs-As_ROM) %unit test
 % norm(A_dot_ROMs - A_dots_ROM)% unit test
 
-
-% Ms = [20:10:80];
-% Ms = M;
-Ms = 1:M;
-NMs = max(Ms);
 
 % diff_errors = zeros(NMs,1);
 % conv_errors = zeros(NMs,1);
@@ -115,26 +124,29 @@ zero_perm_sum = zeros(NMs,3,2);
 block_skewsymm = zeros(NMs,3,2);
 
 avg_rel_state_errors_intrusive = zeros(NMs,1);
+avg_rel_state_errors_best_approx = zeros(NMs,1);
 
 zero_perm_sum_intrusive = zeros(NMs,1);
 block_skewsymm_intrusive = zeros(NMs,1);
 
 %% just plotting
 
-[~,S] = svd([As; vectorwise_kron(As)]);
-        figure(111)
-        s = diag(S);
-        plot(s/s(1),"kd-","DisplayName","FOM projection data")
-        hold on
-        sings_intrusive = s(1:100);
-
-        sings_s = zeros(100,NMs);
+% [~,S] = svd([As; vectorwise_kron(As)]);
+%         figure(111)
+%         s = diag(S);
+%         plot(s/s(1),"kd-","DisplayName","FOM projection data")
+%         hold on
+%         sings_intrusive = s(1:100);
+% 
+%         sings_s = zeros(100,NMs);
 
 %% construct ROM operators non-intrusively
 a0 = A_raw(:,1);
 
-    rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
-    labels = ["stan" "perm" "skew"];
+    % rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
+    rom_types = [ "EC-OpInf skew"];
+    % labels = ["stan" "perm" "skew"];
+    labels = ["skew"];
     n_rom_types = numel(rom_types);
 
     rel_diff_errors = zeros(NMs,n_rom_types,2); % [standard opinf, perm opinf, skew opinf] x [FOM projection data, closure-clean data]
@@ -205,7 +217,8 @@ for M_ = Ms
 
     % A_intrusive = ROM_sim(Diff_intrusive, -Conv_intrusive,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors_intrusive(M_) = relative_state_error(V_snapshots_,A_intrusive,basis(:,1:M_));
-    avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+    avg_rel_state_errors_intrusive(M_) = average_relative_state_error(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_),skip);
+    avg_rel_state_errors_best_approx(M_) = average_relative_state_error_best_approx(size(A_raw,2),V_snapshots,basis(:,1:M_),options);
 
     % A_opinf = ROM_sim(Diff_OpInf, Conv_OpInf,a0(1:M_),options.time.dt,size(A_raw,2));
     % avg_rel_state_errors(M_) = relative_state_error(V_snapshots_,A_opinf,basis(:,1:M_));
@@ -216,24 +229,24 @@ for M_ = Ms
     % avg_rel_state_errors(M_,3,1) = average_relative_state_error(Diff_skew_fp,Conv_skew_fp,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
 
     %% ... and with closure-clean ROM simulation data
-    [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes);
+    [A_ROMs,A_dot_ROMs] = ROM_sims(Diff_intrusive, -Conv_intrusive,a0s(1:M_,:),options.time.dt,len_trajes,skip);
 
     options.rom.A = A_ROMs(1:M_,:);
     options.rom.A_dot = A_dot_ROMs(1:M_,:);
 
     %% just plotting
 
-    [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
-        figure(111)
-        s = diag(S);
-        plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
-
-        sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
-        legend("show")
-        title("normalized singular value decay")
-
-        ylabel("normalized magnitude")
-        xlabel("singular value index")
+    % [~,S] = svd([A_ROMs; vectorwise_kron(A_ROMs)]);
+    %     figure(111)
+    %     s = diag(S);
+    %     plot(s/s(1),"x-","DisplayName","closure-clean data r = "+num2str(M_))
+    % 
+    %     sings_s(1:(M_+M_^2),M_) = s(1:(M_+M_^2));
+    %     legend("show")
+    %     title("normalized singular value decay")
+    % 
+    %     ylabel("normalized magnitude")
+    %     xlabel("singular value index")
 
     %%
 
@@ -268,7 +281,7 @@ for M_ = Ms
     % 
     zero_perm_sum_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
     % 
-    block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+    block_skewsymm_constraint_ = block_skewsymm_constraint(M_)';
     % % block_skewsymm_errors(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf',M_^3,1));
     % % block_skewsymm_errors_ROM(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
     % % block_skewsymm_errors_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
@@ -288,7 +301,7 @@ for M_ = Ms
             rel_conv_errors(M_,i,j) = rel_conv_error(Conv_intrusive,-Conv);
             rel_red_conv_errors(M_,i,j) = rel_red_conv_error(Conv_intrusive,-Conv);
 
-            avg_rel_state_errors(M_,i,j) = average_relative_state_error(Diff,Conv,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_));
+            avg_rel_state_errors(M_,i,j) = average_relative_state_error(Diff,Conv,a0s(1:M_,:),options.time.dt,size(A_raw,2),V_snapshots,basis(:,1:M_),skip);
 
             zero_perm_sum(M_,i,j) = norm(three_term_constraint_*reshape(Conv',M_^3,1));
             block_skewsymm(M_,i,j) = norm(block_skewsymm_constraint_*reshape(Conv',M_^3,1));
@@ -375,6 +388,7 @@ for i =1:n_rom_types
 end
 
 energy_conservation_sims
+eccomas_velocity_plot
 
 r = 6
 
