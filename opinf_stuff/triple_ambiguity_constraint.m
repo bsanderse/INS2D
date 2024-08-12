@@ -43,9 +43,9 @@ end
         % vec = G(:);
 
         % same thing but sparse:
-        vec = sparse(sub2ind([N,N,N],b,a,c),1,1,N^3,1);
-        % we traverse the third-order tensor first in second, then first,
-        % then third dimension
+        vec = sparse(sub2ind([N,N,N],b,c,a),1,1,N^3,1); 
+        % we traverse the third-order tensor first in second, then third, 
+        % then first dimension
 
     end
 

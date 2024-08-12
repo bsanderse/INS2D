@@ -89,6 +89,13 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
                 % % O_f2 = TT*c_f2';
 
                 % % norm(O_f - O_f2)
+
+                O_o = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+                norm(O_f-O_o)
+                A_vec = sparse(kron(eye(M),A_hat'));
+
+                norm(A_vec*O_f - B_vec)
+                norm(A_vec*O_ - B_vec)
             else
             
 
