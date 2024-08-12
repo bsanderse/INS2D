@@ -4,10 +4,10 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
         if true
             [U,S,V] = svd(A_hat',"econ");
 
-            rank = sum(abs(diag(S))>sqrt(eps))
-            Ut = U(:,1:rank);
-            St = S(1:rank,1:rank);
-            Vt = V(:,1:rank);
+            rank_ = sum(abs(diag(S))>sqrt(eps))
+            Ut = U(:,1:rank_);
+            St = S(1:rank_,1:rank_);
+            Vt = V(:,1:rank_);
 
             A_hat = St*Vt';
             A_dot = Ut'*A_dot';
@@ -69,13 +69,24 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
             B_vec = A_dot_T(:);
 
             if rom_type == "EC-OpInf skew" && M>1
-                T = feasible_basis(M);
+                T = sparse(feasible_basis(M));
                 TT = blkdiag(eye(M^2), T);
                 ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
                 TT = TT(ordering(:),:);
                 O_f = TT*((A_vec*TT)\B_vec);
 
-                            O_ = O_f;
+                O_ = O_f;
+                
+                % alternative to avoid rank deficiencies
+                % note: this SVD could probably be combined with the
+                % previous one, but SVD before multiplying TT is not
+                % sufficient!
+                % maybe multiple sequential SVDs are still useful as A_vec
+                % caused a memory bottleneck before (and still does)
+                [~,~,~,c_f2] = OpInf_SVD(full(A_vec*TT)',B_vec');
+                O_f2 = TT*c_f2';
+
+                norm(O_f - O_f2)
             else
             
 

@@ -1,6 +1,6 @@
 % perform core of OpInf: solve least squares problem and decompose solution
 % into linear and quadratic operator
-function [L,Q,rank] = OpInf_SVD(Uhats,RHSs)
+function [L,Q,rank,O] = OpInf_SVD(Uhats,RHSs)
 
 % Uhat = [Us' vectorwise_kron(Us)'];
 
