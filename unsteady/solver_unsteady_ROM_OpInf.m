@@ -281,7 +281,7 @@ for M_ = Ms
     % 
     zero_perm_sum_intrusive(M_) = norm(three_term_constraint_*reshape(Conv_intrusive',M_^3,1));
     % 
-    block_skewsymm_constraint_ = block_skewsymm_constraint(M_);
+    block_skewsymm_constraint_ = block_skewsymm_constraint(M_)';
     % % block_skewsymm_errors(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf',M_^3,1));
     % % block_skewsymm_errors_ROM(M_) = norm(block_skewsymm_constraint_*reshape(Conv_OpInf_ROM',M_^3,1));
     % % block_skewsymm_errors_intrusive(M_) = norm(block_skewsymm_constraint_*reshape(Conv_intrusive',M_^3,1));
