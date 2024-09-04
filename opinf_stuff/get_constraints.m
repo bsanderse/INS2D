@@ -4,7 +4,7 @@ function [operator_constraint,constraint_rhs] = get_constraints(M,rom_type)
             switch rom_type
                 case "EC-OpInf Koike"
                     convection_constraint = [convection_constraint; three_term_prop_constraint(M)'];
-                    convection_constraint = [convection_constraint; ambiguity_constraint(M)];
+                    convection_constraint = [convection_constraint; ambiguity_constraint(M)'];
                 case "EC-OpInf skew"
                     convection_constraint = [convection_constraint; block_skewsymm_constraint(M)'];
                     convection_constraint = [convection_constraint; triple_ambiguity_constraint(M)'];

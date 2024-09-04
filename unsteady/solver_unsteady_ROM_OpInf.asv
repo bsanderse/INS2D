@@ -401,9 +401,9 @@ for i =1:n_rom_types
         legend("show")
 
         figure(7)
-        plot(diff_largest_eig(:,i,j),'d-','DisplayName',labels_combined(i,j))
+        semilogy(diff_symm(:,i,j),'d-','DisplayName',labels_combined(i,j))
         hold on
-        title("diffusion largest eigen value")
+        title("diffusion symmetry error")
         legend("show")
 
     end

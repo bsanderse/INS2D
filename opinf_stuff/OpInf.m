@@ -118,6 +118,7 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
             %% botch: diffusion operator
             % A_hat_vec = kron(eye(M),(A_hat'));
             % A_dot_vec = A_dot_T(:);
+            % disp("fmincon starting")
             % O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
             % O_2 = symm_neg_def_diffusion(O_1,M);
             % [Diff,Conv] = vec2ops(O_2,M);
