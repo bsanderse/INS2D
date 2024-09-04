@@ -15,9 +15,9 @@
 % M_list = 80;
 % M_list = 60;
 % M_list = 30;
-% M_list = 10;
+M_list = 10;
 % M_list = 20;
-M_list = 3;
+% M_list = 3;
 % M_list = 3;
 % M_list = 2;
 

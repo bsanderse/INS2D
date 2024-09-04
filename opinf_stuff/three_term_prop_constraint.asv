@@ -31,7 +31,7 @@ function A = three_term_prop_constraint(N)
 if N == 1
     N_c = 1;
 elseif N == 2
-    N_c = 4;
+    N_c = 4
 else
     N_c = nchoosek(N,3);
 end
@@ -44,7 +44,7 @@ for i=1:N
             P = perms([i j k]);
             % H = zeros(N,N,N);
             H = spalloc(N^3,1,6);
-            for m =1:6 % possible improvement: remove repeating permutations
+            for m =1:6
                 p = P(m,:);
                 % H(p(1),p(2),p(3)) = 1; 
                 H = H + one_hot(p(1),p(2),p(3));
