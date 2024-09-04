@@ -10,7 +10,8 @@ function [operator_constraint,constraint_rhs] = get_constraints(M,rom_type)
                     convection_constraint = [convection_constraint; triple_ambiguity_constraint(M)'];
             end
             n_constr = size(convection_constraint,1);
-            operator_constraint_ = [zeros(n_constr,M^2) convection_constraint];
+            % operator_constraint_ = [zeros(n_constr,M^2) convection_constraint];
+            operator_constraint_ = [sparse(n_constr,M^2) convection_constraint];
             ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
             operator_constraint = operator_constraint_(:,ordering(:));
 
@@ -19,4 +20,4 @@ function [operator_constraint,constraint_rhs] = get_constraints(M,rom_type)
             n_constr = size(operator_constraint,1);
             %%
 
-            constraint_rhs = zeros(n_constr,1);
+            constraint_rhs = sparse(n_constr,1);

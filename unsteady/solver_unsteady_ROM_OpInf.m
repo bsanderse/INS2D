@@ -10,8 +10,8 @@ M = options.rom.M;
 
 % Ms = [20:10:80];
 
-% Ms = M;
-Ms = 1:M;
+Ms = M;
+% Ms = 1:M;
 % Ms = 10:10:M;
 
 NMs = max(Ms);
@@ -19,11 +19,13 @@ NMs = max(Ms);
 % skip = 50;
 skip = 1;
 
-    rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];
-    % rom_types = [ "EC-OpInf skew"];
-    labels = ["stan" "perm" "skew"];
-    % labels = ["skew"];
+    % rom_types = ["OpInf", "EC-OpInf Koike", "EC-OpInf skew"];     labels = ["stan" "perm" "skew"];
+    rom_types = [ "EC-OpInf skew"];     labels = ["skew"];
+
     n_rom_types = numel(rom_types);
+
+        labels2 = ["FOM proj" "closure-clean"];
+
 
 
 %% load snapshot data for ROM basis construction
@@ -389,8 +391,8 @@ for i =1:n_rom_types
     end
 end
 
-energy_conservation_sims
-eccomas_velocity_plot
+% energy_conservation_sims
+% eccomas_velocity_plot
 
 r = 6
 
