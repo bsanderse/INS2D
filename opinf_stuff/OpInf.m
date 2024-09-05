@@ -100,6 +100,18 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
                 % norm(A_vec*O_f - B_vec)
                 % norm(A_vec*O_ - B_vec)
                 %% 
+
+                [Diff,Conv] = vec2ops(O_,M);
+                
+
+                cvx_begin
+                    variable D(M,M) symmetric
+                    minimize( norm(A_dot - [D,Conv]*A_hat) )
+                    D <= 0
+                cvx_end
+
+                Diff = D;
+
             else
             
 
@@ -111,14 +123,17 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
             O_ = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),(A_hat')), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
             % O_ = lsqlin(kron(eye(M),[A;A_kron]'), A_dot_T(:), [],[], [],[]); % lsqlin without constaints
+
+                        [Diff,Conv] = vec2ops(O_,M);
+
             end
-            [Diff,Conv] = vec2ops(O_,M);
 
 
             %% botch: diffusion operator
             % A_hat_vec = kron(eye(M),(A_hat'));
             % A_dot_vec = A_dot_T(:);
             % disp("fmincon starting")
+            % O_ = 0*O_; % zero initial solution
             % O_1 = fmincon(@(O) norm(A_hat_vec*symm_neg_def_diffusion(O,M) - A_dot_vec),O_, [],[], operator_constraint, constraint_rhs);
             % O_2 = symm_neg_def_diffusion(O_1,M);
             % [Diff,Conv] = vec2ops(O_2,M);

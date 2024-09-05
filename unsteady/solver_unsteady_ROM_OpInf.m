@@ -409,7 +409,7 @@ for i =1:n_rom_types
     end
 end
 
-% energy_conservation_sims
+energy_conservation_sims
 % eccomas_velocity_plot
 
 r = 6
