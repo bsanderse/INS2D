@@ -10,8 +10,8 @@ M = options.rom.M;
 
 % Ms = [20:10:80];
 
-% Ms = M;
-Ms = 1:M;
+Ms = M;
+% Ms = 1:M;
 % Ms = 10:10:M;
 
 NMs = max(Ms);
