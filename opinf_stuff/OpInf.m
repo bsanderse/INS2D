@@ -104,9 +104,15 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
                 [Diff,Conv] = vec2ops(O_,M);
                 
 
-                cvx_begin
+                % cvx_begin
+                %     variable D(M,M) symmetric
+                %     minimize( norm(A_dot - [D,Conv]*A_hat) )
+                %     D <= 0
+                % cvx_end
+
+                cvx_begin sdp
                     variable D(M,M) symmetric
-                    minimize( norm(A_dot - [D,Conv]*A_hat) )
+                    minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
                     D <= 0
                 cvx_end
 
