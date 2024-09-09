@@ -410,8 +410,9 @@ if options.rom.rom_type == "OpInf" || options.rom.rom_type == "EC-OpInf"
     options.rom.A = options.rom.B'*(options.grid.Om.*V_svd);
 end
 
-% OpInf testing
-opinf_testing = true;
+%% OpInf testing
+% opinf_testing = true;
+opinf_testing = false;
 if opinf_testing
     rom_type = options.rom.rom_type;
 
