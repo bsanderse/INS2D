@@ -364,13 +364,14 @@ for i =1:n_rom_types
         semilogy(rel_red_conv_errors(:,i,j),'d-','DisplayName',"reduced convection "+labels_combined(i,j))
         title("relative operator errors - reduced convection")
         legend("show")
+        yscale("log")
 
         figure(2)
         hold on
         semilogy(rel_diff_errors(:,i,j),'d-','DisplayName',"reduced convection "+labels_combined(i,j))
         title("relative operator errors - reduced convection")
         legend("show")
-
+        yscale("log")
 
         figure(3)
         semilogy(avg_rel_state_errors(:,i,j),'d-','DisplayName',labels_combined(i,j))
@@ -430,7 +431,7 @@ for i =1:n_rom_types
     end
 end
 
-energy_conservation_sims
+% energy_conservation_sims
 % eccomas_velocity_plot
 
 r = 6

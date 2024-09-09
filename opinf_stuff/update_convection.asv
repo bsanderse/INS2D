@@ -12,11 +12,11 @@ B_vec = B_T(:);
 A_vecT_ = A_vecT(A_kron',feasible_basis);
 
 % normal equations approach
-% c = (A_vecT_'*A_vecT_)\(A_vecT_'*B_vec);
+c = (A_vecT_'*A_vecT_)\(A_vecT_'*B_vec);
 
 
 % SVD approach
-c = lsq_SVD(A_vecT_,B_vec);
+[~,~,rank,c] = OpInf_SVD(A_vecT_,B_vec');
 
 
 
