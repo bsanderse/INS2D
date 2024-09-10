@@ -102,11 +102,14 @@ if options.rom.rom == 1
     elseif options.rom.bc_recon ==5
         type = " vp";
 %         additional = " Mp ="+ num2str(Mp);
+    else
+        type = "";
     end
     
     suffix = "ROM" + type + " M= "+num2str(M)+" Mbc = "+num2str(Mbc); % + additional;
 %     suffix = suffix + " " + options.rom.bases_construction;
     name = suffix;
+    
 end
 
 name = "R = "+num2str(M);
@@ -132,9 +135,9 @@ end
 if (options.rom.rom == 1)
     
     %% kinetic energy comparison
-if options.verbosity.energy_verbosity == 1
-    ROM_FOM_kinetic_energy_comparison;
-end
+    if options.verbosity.energy_verbosity == 1
+        ROM_FOM_kinetic_energy_comparison;
+    end
     
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it

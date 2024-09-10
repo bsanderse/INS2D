@@ -5,7 +5,7 @@ run_multiple = 1;
 % run_multiple = 0;
 M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
-M_list = 32;
+% M_list = 32;
 % M_list = [16 16 16];
 % M_list = [16 16];
 % M_list = [4 -1];% 8 16 32];
@@ -35,10 +35,14 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     deltas_ = deltas_(:);
     epsilons_ = epsilons_(:);
 
-    offset = offsets_(j);
-    delta = deltas_(j);
-    epsilon = epsilons_(j);
-    mesh_list = ones(length(offsets_),1);
+    % offset = offsets_(j);
+    % delta = deltas_(j);
+    % epsilon = epsilons_(j);
+    % mesh_list = ones(length(offsets_),1);
+
+    offset = 1;
+    delta   = pi/15;
+    epsilon   = 0.05; 
 
     IC_params = [offset delta epsilon];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -297,7 +301,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
     save_results     = 0;          % write information during iterations/timesteps
-    save_unsteady    = 0;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
+    save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     % results_name = ['inviscid_shear_layer_ROM_offset=' num2str(offset) ',delta=' num2str(delta) ',epsilon=' num2str(epsilon)]; % name of folder where results are saved
     results_name = 'inviscid_shear_layer_ROM_2020_article_reproduction'; % name of folder where results are saved

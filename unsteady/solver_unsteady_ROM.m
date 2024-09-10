@@ -3,7 +3,7 @@
 addpath('unsteady/ROM_bases_setup/');
 
 %% load snapshot data
-if (j==1) || operator.rom.changing_snapshotdata
+if (j==1) || options.rom.changing_snapshotdata
     disp('loading data...');
     % snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' ...
     snapshots = load("results/"+snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc','options' ...
