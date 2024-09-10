@@ -82,7 +82,7 @@ for j=1:Nsim
     
     if (j>1)
         % run parameter file again in case we are doing a mesh or parametric study
-        run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+        run(param_file);
     end
     
     % save into a structure called 'options'
