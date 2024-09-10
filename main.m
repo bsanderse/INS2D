@@ -1,4 +1,4 @@
-function [V,p,options] = main(case_name,folder_cases)
+function [V,p,options] = main(case_name,folder_cases,param_file)
 
 %   This m-file contains the code for the 2D incompressible Navier-Stokes
 %   equations using a Finite Volume Method and a pressure correction
@@ -17,8 +17,12 @@ if (nargin<1)
     error('please provide an input file');
 end
 
-if (nargin==1) 
+if (nargin==1) || folder_cases == 0
    folder_cases = 'case_files'; % default folder name 
+end
+
+if (nargin<3)
+    param_file = [folder_cases '/' case_name '/' case_name '_parameters.m'];
 end
 
 %% close figures and clean variables
@@ -63,7 +67,7 @@ addpath('testsuite/');
 %% load input parameters and constants
 disp(['reading input parameters of case: ' num2str(case_name)]);
 j = 1; % simulation index counter
-run([folder_cases '/' case_name '/' case_name '_parameters.m']);
+run(param_file);
 
 % check if multiple simulations should be run
 if (~exist('run_multiple','var') || run_multiple == 0)
