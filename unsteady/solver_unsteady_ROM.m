@@ -8,7 +8,8 @@ switch options.rom.rom_type
         %% load snapshot data
         % assume that for parametric studies (e.g. changing number of modes, the
         % FOM data file does not change:
-        if (j==1)
+        % if (j==1)
+        if true
             
             disp(['loading datafile...: ' snapshot_data]);
             snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
