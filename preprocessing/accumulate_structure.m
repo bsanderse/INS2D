@@ -120,7 +120,6 @@ voi = {
     'pressure_mean', 0; ... % subtract pressure mean from snapshots
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
-    'div_free', 1; ... % 1: ROM basis is divergence-free (default); ROM basis is not divergence-free
     };
 
 accumulate_object;

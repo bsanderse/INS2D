@@ -213,8 +213,9 @@ switch options.rom.rom_type
         maxdiv_basis = max(div_basis);
         if (maxdiv_basis > 1e-14)
             warning(['ROM basis not divergence free: ' num2str(maxdiv_basis) '\n']);
-            warning('Adding basis for pressure\n');
-            options.rom.div_free = 0;
+            % warning('Adding basis for pressure\n');
+            % options.rom.div_free = 0;
+            options.rom.div_free = 1;
         else     
             options.rom.div_free = 1;
         end
