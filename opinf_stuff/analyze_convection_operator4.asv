@@ -1,0 +1,10 @@
+% try operator inference in INS2D framework but with synthetic data
+function [D_OpInf,C_OpInf] = synthetic_data_OpInf(nu,D,C)
+
+r = size(D,1);
+
+RHSs = zeros(r);
+for i=1:r
+    U = zeros(r,1);
+    U(i) = 1;
+    RHSs(:,i) = nu*D*U - 
