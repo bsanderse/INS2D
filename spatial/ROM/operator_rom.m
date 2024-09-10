@@ -10,6 +10,15 @@ B   = options.rom.B;
 switch options.rom.rom_type
     case {"OpInf", "EC-OpInf Koike", "EC-OpInf skew"}
 
+        if (options.rom.weighted_norm == 0)
+            error('not implemented')
+        end
+
+        [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.rom_type);
+
+        options.rom.Diff = Diff;
+        options.rom.Conv_quad = Conv;
+
     case "intrusive"
         warning("todo: make convection operator block-skew-symmetric")
 

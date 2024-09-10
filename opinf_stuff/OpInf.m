@@ -1,4 +1,8 @@
-function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type) 
+function [Diff, Conv] = OpInf(A,A_dot,rom_type) 
+
+
+        A_kron = vectorwise_kron(A);
+        A_hat = [A; A_kron];
 
     %% botch: SVD compression
         if true
