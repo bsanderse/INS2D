@@ -128,6 +128,8 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                 hold on
 %                 set(gca,'Yscale','log')
                 ylabel('energy error');
+                legend("M=2, implicit","M=4, implicit","M=8, implicit","M=16, implicit","M=2, explicit","M=4, explicit","M=8, explicit","M=16, explicit")
+
 
 %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
 %                 title('error in kinetic energy ROM');
