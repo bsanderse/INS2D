@@ -7,7 +7,7 @@ function options = operator_rom(options)
 NV  = options.grid.Nu+options.grid.Nv;
 B   = options.rom.B;
 
-switch options.rom.rom_type
+switch options.rom.opinf_type
     case {"OpInf", "EC-OpInf Koike", "EC-OpInf skew"}
 
         if (options.rom.weighted_norm == 0)
