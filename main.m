@@ -63,6 +63,8 @@ addpath('testsuite/');
 %     rmpath('inputfiles/');
 % end
 
+addpath([folder_cases '/' case_name]);
+
    
 %% load input parameters and constants
 disp(['reading input parameters of case: ' num2str(case_name)]);
