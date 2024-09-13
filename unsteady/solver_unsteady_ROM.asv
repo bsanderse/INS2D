@@ -597,7 +597,7 @@ end
 
 %% store operator inference snapshot data
 if options.rom.opinf_type ~= "intrusive"
-    [A,A_dot] = get_opinf_snapshots(V_svd);
+    [A,A_dot] = 
 end
 
 %% precompute ROM operators by calling operator_rom
