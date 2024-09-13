@@ -109,7 +109,7 @@ for i=1:M
     for j=1:M
         [convu, convv] = convection(B(:,i),B(:,j),0,options,0);
         % convert third order tensor to a matrix via the following indexing:
-        k = sub2ind([M,M],j,i); % first loop over j,  then over i
+        k = sub2ind([M,M],i,j); % first loop over j,  then over i
         conv_quad(:,k) = P*[convu;convv] - conv_linear3(:,i) ...
                           - conv_linear4(:,j) + conv_bc0;        
     end
