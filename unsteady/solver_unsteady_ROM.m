@@ -3,11 +3,6 @@
 
 solver_unsteady_ROM_basis_construction;
 
-%% store operator inference snapshot data
-if options.rom.opinf_type ~= "intrusive"
-    [A,A_dot] = get_opinf_snapshots(V_svd); % presumably only works for rom_type == "POD"
-end
-
 %% precompute ROM operators by calling operator_rom
 % results are stored in options structure
 disp('precomputing ROM operators...');

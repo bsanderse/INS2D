@@ -166,10 +166,7 @@ switch options.rom.rom_type
             error('wrong option for weighted norm or momentum conservation');
             
         end
-        clear V_svd;
-        
-        svd_end(j) = toc-svd_start
-        
+
         % take first M columns of W as a reduced basis
         % maximum:
         % M = size(Wu,2);
@@ -189,6 +186,17 @@ switch options.rom.rom_type
         % options.rom.BuT = BuT;
         % options.rom.BvT = BvT;
         toc
+
+        %% store operator inference snapshot data
+        if options.rom.opinf_type ~= "intrusive"
+            [A,A_dot] = get_opinf_snapshots(B'*V_svd); % presumably only works for rom_type == "POD"
+        end
+        %%
+
+        clear V_svd;
+        
+        svd_end(j) = toc-svd_start
+       
         
         % relative information content:
         if (size(S,2)>1)
