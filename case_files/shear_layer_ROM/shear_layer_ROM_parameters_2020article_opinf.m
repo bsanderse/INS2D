@@ -140,11 +140,12 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
 
-    opinf_types = {"intrusive","intrusive","intrusive","intrusive", ...
+    opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
                     "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
     
     % opinf_type = "intrusive";
-    opinf_type = opinf_types{j};
+    % opinf_type = opinf_types{j};
+    opinf_type = "EC-OpInf skew";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -172,7 +173,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % accuracy for non-linear solves (method 62, 72, 9)
     nonlinear_acc          = 1e-10;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+    nonlinear_maxit        = 100;
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
@@ -196,7 +197,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name

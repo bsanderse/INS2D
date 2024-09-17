@@ -29,7 +29,6 @@ switch options.rom.opinf_type
 
 
     case "intrusive"
-        warning("todo: make convection operator block-skew-symmetric")
 
         if (options.rom.weighted_norm == 0)
             Diag = options.grid.Om_inv;

@@ -73,9 +73,9 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                     hold on
                     plot(t_vec,error_V_best_2);
                     set(gca,'Yscale','log');
-                    legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
+                    % legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
-
+                    legend('show')
                     
                     if (options.rom.pressure_recovery == 1)
                         % correct spatial mean of both to be zero

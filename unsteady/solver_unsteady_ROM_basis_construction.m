@@ -189,7 +189,9 @@ switch options.rom.rom_type
 
         %% store operator inference snapshot data
         if options.rom.opinf_type ~= "intrusive"
-            [A,A_dot] = get_opinf_snapshots(B'*V_svd); % presumably only works for rom_type == "POD"
+            [A,A_dot] = get_opinf_snapshots(B'*V_svd,snapshots.dt); % presumably only works for rom_type == "POD"
+            options.rom.A = A;
+            options.rom.A_dot = A_dot;
         end
         %%
 
