@@ -1,3 +1,15 @@
+label = "M = " + num2str(M)+" "+options.rom.opinf_type;
+
+colors = get_7_default_colors();
+
+if j<= 4
+    color = colors{j};
+    line = "--"
+else
+    color = colors{j-4};
+    line = "-";
+end
+
 if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
@@ -53,10 +65,15 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
 %                     plot(t_vec,error_V_inf);
 %                     hold on
                     % skip i=1, as error_v_2_norm is zero for i=1
-                    label = "M = " + num2str(M)+options.rom.opinf_type;
-                    plot(t_vec,error_V_2,"displayname", "L_2 velocity error " + label); %(2:end)./error_V_2_norm(2:end));                    
+                    plot(t_vec,error_V_2, ...
+                        "color", color, ...
+                        "linestyle", line, ...
+                        "displayname", "L_2 velocity error " + label); %(2:end)./error_V_2_norm(2:end));                    
                     hold on
-                    plot(t_vec,error_V_best_2, "displayname", "best approx error "+ label);
+                    plot(t_vec,error_V_best_2,  ...
+                        "color", color, ...
+                        "linestyle", ":", ...
+                        "displayname", "best approx error "+ label);
                     set(gca,'Yscale','log');
                     % legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
@@ -69,7 +86,10 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                 figure(7103)
 %                 semilogy(t_vec,abs(k - snapshots.k(snapshot_indx))/snapshots.k(1));
 %                 semilogy(t_vec,abs(k - snapshots.k(1))/snapshots.k(1));
-                semilogy(t_vec,abs(k-k(1))/k(1),"displayname",label);
+                semilogy(t_vec,abs(k-k(1))/k(1), ...
+                        "color", color, ...
+                        "linestyle", line, ...
+                        "displayname",label);
                 hold on
 %                 set(gca,'Yscale','log')
                 ylabel('energy error');

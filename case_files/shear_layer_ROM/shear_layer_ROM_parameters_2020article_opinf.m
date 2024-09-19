@@ -146,7 +146,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
                         % "intrusive","intrusive","intrusive","intrusive"};
     
     % opinf_type = "intrusive";
-    % opinf_type = opinf_types{j};
+    opinf_type = opinf_types{j};
     % opinf_type = "EC-OpInf skew";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
