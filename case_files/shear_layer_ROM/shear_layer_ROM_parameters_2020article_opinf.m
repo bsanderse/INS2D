@@ -142,10 +142,12 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
                     "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
+        % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+                        % "intrusive","intrusive","intrusive","intrusive"};
     
     % opinf_type = "intrusive";
     % opinf_type = opinf_types{j};
-    opinf_type = "EC-OpInf skew";
+    % opinf_type = "EC-OpInf skew";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -192,6 +194,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% output parameters and visualization
+    pp_file = "shear_layer_ROM_pp_opinf1"; % specific postprocessing file to reproduce published figures;
+
     plotgrid         = 0;          % plot gridlines and pressure points
     
     tecplot.write    = 0;          % write to tecplot file

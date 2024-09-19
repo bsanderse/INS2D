@@ -3,10 +3,10 @@
 if (~exist("pp_file","var"))
     file_name = [case_name '_pp.m'];
 else
-    file_name = char(pp_file);
+    file_name = pp_file;
 end
-full_name = [folder_cases '/' case_name '/' file_name];
-% full_name = string(folder_cases) + "/" + string(case_name) +  "/" + string(file_name);
+% full_name = [folder_cases '/' case_name '/' file_name];
+full_name = string(folder_cases + '/' case_name '/' file_name];
 
 if (exist(full_name,'file'))
     
