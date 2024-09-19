@@ -78,6 +78,9 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                     % legend('L_2 error in ROM velocity','Best approximation (projection FOM)')
 %                     legend('L_{inf} error in ROM velocity','L_2 error in ROM velocity','Best approximation (projection FOM)')
                     legend('show')
+
+                    xlabel("time")
+                    ylabel("velocity error")
                                     
 
                 end
@@ -92,9 +95,12 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                         "displayname",label);
                 hold on
 %                 set(gca,'Yscale','log')
+                xlabel("time")
+
                 ylabel('energy error');
                 % legend("M=2, implicit","M=4, implicit","M=8, implicit","M=16, implicit","M=2, explicit","M=4, explicit","M=8, explicit","M=16, explicit")
                 legend('show');
+
 
 %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
 %                 title('error in kinetic energy ROM');
