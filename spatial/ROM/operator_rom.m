@@ -14,7 +14,7 @@ switch options.rom.opinf_type
             error('not implemented')
         end
 
-        [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.opinf_type)
+        [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.opinf_type);
 
         options.rom.Diff = Diff;
         options.rom.Conv_quad = Conv;

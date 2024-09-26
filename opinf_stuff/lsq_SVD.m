@@ -12,6 +12,6 @@ else
 end
 
 % rank = sum(abs(diag(S))>1e-7)
-rank = sum(abs(diag(S))>sqrt(eps()))
+rank = sum(abs(diag(S))>sqrt(eps())*abs(S(1,1)))
 
 X = (V(:,1:rank)*(S(1:rank,1:rank)\U(:,1:rank)'))*B;
