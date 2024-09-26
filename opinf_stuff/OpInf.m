@@ -114,11 +114,18 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
                 %     D <= 0
                 % cvx_end
 
-                cvx_begin sdp
-                    variable D(M,M) symmetric
-                    minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
-                    D <= 0
-                cvx_end
+                botch = true; % enforce that diffusion is 0 for inviscid case
+
+                if botch
+                    warning("Botch: enforce opinf diffusion to be 0")
+                    D = zeros(M,M);
+                else
+                    cvx_begin sdp
+                        variable D(M,M) symmetric
+                        minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
+                        D <= 0
+                    cvx_end
+                end
 
                 Diff = D;
                 Conv = update_convection(T,A_hat,D,A_dot);

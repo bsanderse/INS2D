@@ -1,4 +1,8 @@
-function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type) 
+function [Diff, Conv] = OpInf(A,A_dot,rom_type) 
+
+
+        A_kron = vectorwise_kron(A);
+        A_hat = [A; A_kron];
 
     %% botch: SVD compression
         if true
@@ -72,36 +76,36 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
 
             if rom_type == "EC-OpInf skew" && M>1
                 T = sparse(feasible_basis(M));
-                TT = blkdiag(eye(M^2), T);
-                ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
-                TT = TT(ordering(:),:);
-                % O_f = TT*((A_vec*TT)\B_vec);
-                O_f = TT*((A_vecT(A_hat',TT))\B_vec);
-                size(TT)
-
-                O_ = O_f;
-                
-                % alternative to avoid rank deficiencies
-                % note: this SVD could probably be combined with the
-                % previous one, but SVD before multiplying TT is not
-                % sufficient!
-                % maybe multiple sequential SVDs are still useful as A_vec
-                % caused a memory bottleneck before (and still does)
-                % % [~,~,~,c_f2] = OpInf_SVD(full(A_vec*TT)',B_vec');
-                % % O_f2 = TT*c_f2';
-
-                % % norm(O_f - O_f2)
-
-                %% debug stuff
-                % O_o = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
-                % norm(O_f-O_o)
-                % A_vec = sparse(kron(eye(M),A_hat'));
+                % TT = blkdiag(eye(M^2), T);
+                % ordering = [reshape(1:M^2,M,M); M^2 + reshape(1:M^3,M^2,M)];
+                % TT = TT(ordering(:),:);
+                % % O_f = TT*((A_vec*TT)\B_vec);
+                % O_f = TT*((A_vecT(A_hat',TT))\B_vec);
+                % size(TT)
                 % 
-                % norm(A_vec*O_f - B_vec)
-                % norm(A_vec*O_ - B_vec)
-                %% 
-
-                [Diff,Conv] = vec2ops(O_,M);
+                % O_ = O_f;
+                % 
+                % % alternative to avoid rank deficiencies
+                % % note: this SVD could probably be combined with the
+                % % previous one, but SVD before multiplying TT is not
+                % % sufficient!
+                % % maybe multiple sequential SVDs are still useful as A_vec
+                % % caused a memory bottleneck before (and still does)
+                % % % [~,~,~,c_f2] = OpInf_SVD(full(A_vec*TT)',B_vec');
+                % % % O_f2 = TT*c_f2';
+                % 
+                % % % norm(O_f - O_f2)
+                % 
+                % %% debug stuff
+                % % O_o = lsqlin(sparse(kron(eye(M),(A_hat'))), A_dot_T(:), [],[], operator_constraint, constraint_rhs);
+                % % norm(O_f-O_o)
+                % % A_vec = sparse(kron(eye(M),A_hat'));
+                % % 
+                % % norm(A_vec*O_f - B_vec)
+                % % norm(A_vec*O_ - B_vec)
+                % %% 
+                % 
+                % [Diff,Conv] = vec2ops(O_,M);
                 
 
                 % cvx_begin
@@ -110,6 +114,10 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
                 %     D <= 0
                 % cvx_end
 
+                botch = true; % enforce that diffusion is 0 for inviscid case
+
+                if botch
+                    warning
                 cvx_begin sdp
                     variable D(M,M) symmetric
                     minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
@@ -117,6 +125,7 @@ function [Diff, Conv] = OpInf(A_dot,A_hat,rom_type)
                 cvx_end
 
                 Diff = D;
+                Conv = update_convection(T,A_hat,D,A_dot);
 
             else
             
