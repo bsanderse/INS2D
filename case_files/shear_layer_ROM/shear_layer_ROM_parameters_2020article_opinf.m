@@ -142,9 +142,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
     %                 "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
-        opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+        % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+        %                 "intrusive","intrusive","intrusive","intrusive"};
+            opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
                         "intrusive","intrusive","intrusive","intrusive"};
-    
+
     % opinf_type = "intrusive";
     opinf_type = opinf_types{j};
     % opinf_type = "EC-OpInf skew";
