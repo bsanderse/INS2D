@@ -121,6 +121,7 @@ voi = {
     'process_iteration_FOM', 1; ... % compute divergence, residuals, kinetic energy etc. on FOM level
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'opinf_type', "intrusive"; ... % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
+    'reproject', "no"; ... % "no" = no reprojection, "opp" = online post-processing, ...
     };
 
 accumulate_object;
