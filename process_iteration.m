@@ -82,6 +82,18 @@ if (steady==0 && save_unsteady == 1)
     p_total(n,:)  = p;
 end
 
+if options.rom.reproject ~= "no"
+    B = options.rom.B;
+    r = size(B,2);
+
+    % store current ROM coefficient + kronecker product of it
+    a = B'*options.grid.Om.*V;
+    A_hat(:,n) = [a; kron(a,a)];
+    rank(A_hat(:,1:n))
+end
+
+
+
 % write data to Tecplot file
 if (tecplot.write==1 && rem(n,tecplot.n)==0)
     

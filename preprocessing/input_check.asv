@@ -164,12 +164,14 @@ else
 
     if options.rom.reproject ~= "no"
         B = options.rom.B;
-        r = size(B,2);
 
-        A_hat = zeros(r+r^2,nt);
-        % store initial ROM coefficient + kronecker product of it
-        a = B'*options.grid.Om.*V;
-        A_hat(:,1) = [a; kron(a,a)];
+        % V_start = B*(B'*(options.grid.Om.*V_start));
+        r = size(B,2);
+        V_start = B*ones(r,1); %botch to improve opinf rank
+        Nu      = options.grid.Nu;
+        Nv      = options.grid.Nv;
+        u_start = V_start(1:Nu);
+        v_start = V_start(Nu+1:end);
     end
     
 end

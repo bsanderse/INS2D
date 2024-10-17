@@ -181,7 +181,9 @@ for j=1:Nsim
     if options.rom.reproject ~= "no"
         solver_unsteady_ROM_basis_construction;
 
-        V_start = B*(B'*(options.grid.Om.*V_start));
+        % V_start = B*(B'*(options.grid.Om.*V_start));
+        r = size(B,2);
+        V_start = B*ones(r,1); %botch to improve opinf rank
         Nu      = options.grid.Nu;
         Nv      = options.grid.Nv;
         u_start = V_start(1:Nu);
