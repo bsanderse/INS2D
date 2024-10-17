@@ -13,11 +13,11 @@ end
 if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
     % check if ROM simulation dt is same as FOM dt, or an integer multiple of
     % it
-    if (rem(dt,dt_snapshots) == 0)
-        skip = dt/dt_snapshots;
+    if (rem(dt,snapshots.dt) == 0)
+        skip = dt/snapshots.dt;
         % final time should be smaller than FOM time
         if (t_end<=snapshots.t_end)
-            snapshot_end = ceil(t_end/dt_snapshots);
+            snapshot_end = ceil(t_end/snapshots.dt);
             snapshot_indx = 1:skip:(snapshot_end+1);
             t_vec = t_start:dt:t_end;
             

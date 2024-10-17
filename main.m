@@ -176,6 +176,18 @@ for j=1:Nsim
     else
         options.force.isforce   = 0;
     end
+
+    %% reprojection for operator inference snapshot data generation
+    if options.rom.reproject ~= "no"
+        solver_unsteady_ROM_basis_construction;
+
+        V_start = B*(B'*(options.grid.Om.*V_start));
+        Nu      = options.grid.Nu;
+        Nv      = options.grid.Nv;
+        u_start = V_start(1:Nu);
+        v_start = V_start(Nu+1:end);
+    end
+    %%
     
     
     %% input checking

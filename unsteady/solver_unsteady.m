@@ -1,5 +1,14 @@
 %  Main solver file for unsteady calculations
 
+% %% reprojection for operator inference snapshot data generation
+% if options.rom.reproject ~= "no"
+%     solver_unsteady_ROM_basis_construction;
+% 
+%     V = B*(B'*(options.grid.Om.*V));
+% end
+
+
+
 %% load restart file if necessary
 if (restart.load == 0 && options.output.save_results==1)
     fprintf(fconv,'n            dt               t                res              maxdiv           umom             vmom             k\n');
@@ -38,6 +47,7 @@ end
 Vn = V;
 pn = p;
 tn = t;
+
 
 % for methods that need extrapolation of convective terms
 if (method == 62 || method == 92 || method==142 || method==172 || method==182 || method==192)
@@ -97,6 +107,13 @@ while(n<=nt)
     % the new time level t+dt:
     t = tn + dt;
     time(n) = t;
+
+    %% reprojection for operator inference snapshot data generation
+    if options.rom.reproject == "opp"
+        phi = options.rom.B;
+        V = B*(B'*(options.grid.Om.*V));
+    end
+    %%
     
     % update solution
     V_old = Vn;

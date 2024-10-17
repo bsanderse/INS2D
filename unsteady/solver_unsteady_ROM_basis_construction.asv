@@ -4,7 +4,7 @@ switch options.rom.rom_type
     
     case 'POD'
         
-        [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sample,t_sample);
+        [V_svd,Vbc,dt_snapshots,t_end_snapshots] = load_snapshot_data(snapshot_data,options,dt_sample,t_sample);
         
         %% get Vbc into options (this has to be outside the j==1 if statement)
         options.rom.Vbc = Vbc;
@@ -113,7 +113,7 @@ switch options.rom.rom_type
 
         %% store operator inference snapshot data
         if options.rom.opinf_type ~= "intrusive" && options.rom.reproject == "no"
-            [A,A_dot] = get_opinf_snapshots(B'*(Om.*V_svd),snapshots.dt); % presumably only works for rom_type == "POD"
+            [A,A_dot] = get_opinf_snapshots(B'*(Om.*V_svd),dt_snapshots); % presumably only works for rom_type == "POD"
             options.rom.A = A;
             options.rom.A_dot = A_dot;
         end
