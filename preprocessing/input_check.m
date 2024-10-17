@@ -168,7 +168,7 @@ else
 
         A_hat = zeros(r+r^2,nt);
         % store initial ROM coefficient + kronecker product of it
-        a = B'*options.grid.Om.*V;
+        a = B'*(options.grid.Om.*V);
         A_hat(:,1) = [a; kron(a,a)];
     end
     

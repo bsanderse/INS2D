@@ -87,7 +87,7 @@ if options.rom.reproject ~= "no"
     r = size(B,2);
 
     % store current ROM coefficient + kronecker product of it
-    a = B'*options.grid.Om.*V;
+    a = B'*(options.grid.Om.*V);
     A_hat(:,n) = [a; kron(a,a)];
     rank(A_hat(:,1:n))
 end
