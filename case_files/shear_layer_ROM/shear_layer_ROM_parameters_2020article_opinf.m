@@ -143,7 +143,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
 
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r2/matlab_data.mat';
-    opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r4/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r4/matlab_data.mat';
 
 
     % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
@@ -154,6 +154,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
                         % "intrusive","intrusive","intrusive","intrusive"};
 
      opinf_types = {"EC-OpInf skew", "intrusive"};
+     % opinf_types = {"OpInf", "intrusive"};
 
     % opinf_type = "intrusive";
     opinf_type = opinf_types{j};

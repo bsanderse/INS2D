@@ -1,5 +1,6 @@
 function [Diff, Conv] = OpInf(A,A_dot,rom_type) 
 
+        A_dot_input = A_dot;
 
         A_kron = vectorwise_kron(A);
         A_hat = [A; -A_kron];
@@ -29,7 +30,17 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
 
         % if options.rom.rom_type == "OpInf"
         if rom_type == "OpInf"
-            [Diff,Conv] = OpInf_core(A_hat,A_dot);
+            % [Diff,Conv] = OpInf_core(A_hat,A_dot);
+            %% botch for inviscid case
+            N = size(A,1);
+            Diff = zeros(N,N);
+            Conv = ((-A_kron')\(A_dot_input'))';
+            
+            %% when using SVD compressed data
+            % A_kron = A_dot(N+1:end,:);
+            % Conv = ((-A_kron')\(A_dot'))';
+            %%
+            %%
         else
         % M = options.rom.M;
             M = size(A_dot,1);
