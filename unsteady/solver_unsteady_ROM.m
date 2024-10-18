@@ -6,9 +6,9 @@ solver_unsteady_ROM_basis_construction;
 %% than for inferring operators
 if options.rom.opinf_type ~= "intrusive" &&  exist("opinf_snapshot_data",'file')
     [opinf_V_svd,~,opinf_snapshots] = load_snapshot_data(opinf_snapshot_data,options,dt_sample,t_sample);
-    
-    % [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),opinf_snapshots.dt); % presumably only works for rom_type == "POD"
-    [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),dt_sample); % presumably only works for rom_type == "POD"
+
+    % [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),opinf_snapshots.dt);
+    [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),dt_sample); 
     options.rom.A = A;
     options.rom.A_dot = A_dot;
 

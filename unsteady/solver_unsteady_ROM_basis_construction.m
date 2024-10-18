@@ -112,8 +112,20 @@ switch options.rom.rom_type
         toc
 
         %% store operator inference snapshot data
-        if options.rom.opinf_type ~= "intrusive" && options.rom.reproject == "no"
-            [A,A_dot] = get_opinf_snapshots(B'*(Om.*V_svd),snapshots.dt); % presumably only works for rom_type == "POD"
+        if options.rom.opinf_type ~= "intrusive" &&  ~exist("opinf_snapshot_data",'file')
+
+            opinf_V_svd = V_svd;
+
+            [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),snapshots.dt); % presumably only works for rom_type == "POD"
+            
+            %% extend snapshot data by 90 degree-rotated data (modulo minus sign)
+            Nu = options.grid.Nu;
+            opinf_V_svd_rot = [V_svd(Nu+1:end,:); V_svd(1:Nu,:)];
+            [A_rot,A_dot_rot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd_rot),snapshots.dt); % presumably only works for rom_type == "POD"
+            A = [A A_rot];
+            A_dot = [A_dot A_dot_rot];
+            %%
+            
             options.rom.A = A;
             options.rom.A_dot = A_dot;
         end
