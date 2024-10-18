@@ -13,8 +13,8 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
             rank_ = sum(abs(diag(S))>sqrt(eps))
             % N_hat % bad, does not take kronecker product ambiguity into
             % account!
-            N = size(A,1);
-            N_hat_star = N + N + N*(N-1)/2;
+            N = size(A,1)
+            N_hat_star = N + N + N*(N-1)/2
             rank_ = min(rank_,N_hat); % N tilde does not need to be larger than N_hat. We also cannot go larger than rank_
             Ut = U(:,1:rank_);
             St = S(1:rank_,1:rank_);
