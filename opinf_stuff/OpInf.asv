@@ -10,6 +10,10 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
             [U,S,V] = svd(A_hat',"econ");
 
             rank_ = sum(abs(diag(S))>sqrt(eps))
+            % N_hat % bad, does not take kronecker product ambiguity into
+            % account!
+            N = size(A<1);
+            N_hat_star = N
             rank_ = min(rank_,N_hat); % N tilde does not need to be larger than N_hat. We also cannot go larger than rank_
             Ut = U(:,1:rank_);
             St = S(1:rank_,1:rank_);
@@ -117,12 +121,15 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
                 botch = true; % enforce that diffusion is 0 for inviscid case
 
                 if botch
-                    warning
-                cvx_begin sdp
-                    variable D(M,M) symmetric
-                    minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
-                    D <= 0
-                cvx_end
+                    warning("Botch: enforce opinf diffusion to be 0")
+                    D = zeros(M,M);
+                else
+                    cvx_begin sdp
+                        variable D(M,M) symmetric
+                        minimize( norm(A_dot - [D,update_convection(T,A_hat,D,A_dot)]*A_hat) )
+                        D <= 0
+                    cvx_end
+                end
 
                 Diff = D;
                 Conv = update_convection(T,A_hat,D,A_dot);
