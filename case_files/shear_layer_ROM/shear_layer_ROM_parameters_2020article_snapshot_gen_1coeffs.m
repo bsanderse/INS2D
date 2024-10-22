@@ -1,12 +1,10 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-run_multiple = 1;
-M_list = [2 4 8 16 2 4 8 16];
-% M_list = 16;
-% M_list = [2 2];
-% M_list = [4 4];
-% M_list = [8 8];
-M_list = [16 16];
+run_multiple = 0;
+% M_list = [2 4 8 16 2 4 8 16];
+M_list = 16;
+% M_list = 2;
+% M_list = [16 16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
@@ -71,6 +69,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % only for unsteady problems:
 
         dt            = 0.01;       % time step (for explicit methods it can be
+        % dt            = 0.001;       % time step (for explicit methods it can be
+        dt_factor = 1;
+        dt = dt/dt_factor;
                                    % determined during running with dynamic_dt)
         t_start       = 0;        % start time
         t_end         = 4;         % end time
@@ -90,8 +91,12 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 21 : generic implicit RK, can also be used for ROM            
         % method            = 21-(j>4);
         % RK                = method_list{j}; %'RK44';
-        method            = 21;
-        RK                = 'GL1';
+        % method            = 21;
+        % RK                = 'GL1';
+        % method            = 20;
+        % RK                = 'FE11';
+        method            = 20;
+        RK                = 'RK44';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -115,7 +120,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
@@ -143,28 +148,18 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
 
-    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r2/matlab_data.mat';
-    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r4/matlab_data.mat';
-
-    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snapshot_gen_1coeffs/matlab_data.mat';
-    opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snaps_gen_1coeffs_reproj/matlab_data.mat';
-
-
     % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
     %                 "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
-    % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
-    %     "intrusive","intrusive","intrusive","intrusive"};
-            % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
-            %             "intrusive","intrusive","intrusive","intrusive"};
-
-     opinf_types = {"EC-OpInf skew", "intrusive"};
-     % opinf_types = {"OpInf", "intrusive"};
+        % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+        %                 "intrusive","intrusive","intrusive","intrusive"};
+            opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
+                        "intrusive","intrusive","intrusive","intrusive"};
 
     % opinf_type = "intrusive";
     opinf_type = opinf_types{j};
     % opinf_type = "EC-OpInf skew";
 
-    % reproject = "opp";
+    reproject = "no";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -218,10 +213,12 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 0;          % real time plotting 
+    rtp.show         = 1;          % real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % make movie based on the real time plots
-    rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name
+    % rtp.n            = 20;
+    rtp.n = rtp.n*dt_factor;
+    rtp.movie        = 1;          % make movie based on the real time plots
+    rtp.moviename    = 'inviscid_shear_layer_ROM_FE11_dt0_001_reproj'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     statistics.write = 1;          % write averages and fluctuations each
@@ -235,9 +232,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 

@@ -178,7 +178,9 @@ for j=1:Nsim
     end
 
     %% reprojection for operator inference snapshot data generation
-    if options.rom.reproject ~= "no"
+    if options.rom.reproject ~= "no" ...
+            ... || true % botch
+            || false
         solver_unsteady_ROM_basis_construction;
 
         % V_start = B*(B'*(options.grid.Om.*V_start));

@@ -112,7 +112,7 @@ switch options.rom.rom_type
         toc
 
         %% store operator inference snapshot data
-        if options.rom.opinf_type ~= "intrusive" &&  ~exist("opinf_snapshot_data",'var')
+        if options.rom.opinf_type ~= "intrusive" &&  ~exist("opinf_snapshot_data",'file')
 
             opinf_V_svd = V_svd;
 
