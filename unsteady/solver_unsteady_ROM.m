@@ -141,6 +141,8 @@ while(n<=nt)
         time_ERK_ROM;
     elseif (method == 21)
         time_IRK_ROM;
+    elseif (method == 22)
+        time_linearly_IRK_ROM;
     else
         error('time integration method unknown');
     end

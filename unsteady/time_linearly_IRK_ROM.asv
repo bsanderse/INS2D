@@ -1,12 +1,9 @@
 %% for now, only implicit midpoint
 
-M  = options.rom.M;
-
-tn = t;
+tn = t
 tn12 = tn + 1/2*dt; 
 [~,~,dF] = F_ROM_split(0*Rn,Rn,[],tn12,options,1); 
-Rn12 = (eye(M) - 1/2*dt*dF)\Rn;
-R = Rn + dt*dF*RN12;
+
 
 
 % %% general linearly implicit Runge-Kutta method for ROM
