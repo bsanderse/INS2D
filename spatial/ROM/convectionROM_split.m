@@ -27,7 +27,7 @@ if (order4==0)
            % d/dR (kron(R,R)) = kron(E,R) + kron(R,E), where E = speye(M)
            E   = speye(M);
            % Jac = Conv_quad*(kron(E,R_convected) + kron(R_convecting,E)) + Conv_linear;
-           Jac = kron(R_convecting,E)) + Conv_linear;
+           Jac = Conv_quad*kron(R_convecting,E);
         else
            Jac = 0;
 %            Jac = spalloc(M,M,0);

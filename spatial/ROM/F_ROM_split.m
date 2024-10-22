@@ -43,7 +43,7 @@ end
 % convection:
 if (options.rom.precompute_convection == 1)
     % approach 1: (with precomputed matrices)
-    [conv, dconv] = convectionROM_split(R,R_old,t,options,getJacobian);
+    [conv, dconv] = convectionROM_split(R_old,R,t,options,getJacobian);
 elseif (options.rom.precompute_convection == 0)
     % approach 2: evaluate convection on FOM level, then map back
     [convu, convv, dconvu, dconvv] = convection(V,V_old,t,options,getJacobian);

@@ -6,7 +6,7 @@ M_list = [2 4 8 16 2 4 8 16];
 % M_list = [2 2];
 % M_list = [4 4];
 % M_list = [8 8];
-M_list = [16 16];
+% M_list = [16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
@@ -90,8 +90,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 21 : generic implicit RK, can also be used for ROM            
         % method            = 21-(j>4);
         % RK                = method_list{j}; %'RK44';
-        method            = 21;
-        RK                = 'GL1';
+        % method            = 21;
+        % RK                = 'GL1';
+        method            = 22;
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -152,12 +153,14 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
     %                 "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
-    % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
-    %     "intrusive","intrusive","intrusive","intrusive"};
-            % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
-            %             "intrusive","intrusive","intrusive","intrusive"};
+    
+    opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+        "intrusive","intrusive","intrusive","intrusive"};
 
-     opinf_types = {"EC-OpInf skew", "intrusive"};
+    % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
+    %             "intrusive","intrusive","intrusive","intrusive"};
+
+     % opinf_types = {"EC-OpInf skew", "intrusive"};
      % opinf_types = {"OpInf", "intrusive"};
 
     % opinf_type = "intrusive";
