@@ -25,15 +25,15 @@ p = @(x) [x; kron(x,x)];
 
 %% time-dependent force
 
-r = 12;
+r = 30;
 a0 = ones(r,1);
 
 B0 = eye(r);
 B = B0;
 for s = 1:r
     offset = zeros(r,1);
-    offset(s) = 1;
-    B = [B, B0 + 1];
+    % offset(s) = 1;  % apparently, this offset is not needed to stimulate full rank
+    B = [B, B0 + offset];
 end
 
 % B
@@ -53,4 +53,5 @@ end
 rank(A)
 r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
 % A
+
 
