@@ -9,8 +9,10 @@ for s = 1:r
 end
 
 % B
-r_hat_star = size(B,2);
-primes_ = primes(r_hat_star^2);
-primes_ = primes_(1:r_hat_star);
+r_hat = size(B,2);
+primes_ = primes(r_hat^2);
+primes_ = primes_(1:r_hat);
 
 f = B*cos(t*primes_)';
+% f = B*(t.^(1:r_hat))';   % not good
+% f = B*cos(t./primes_)';  % also not good

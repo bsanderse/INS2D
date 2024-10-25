@@ -37,21 +37,21 @@ for s = 1:r
 end
 
 % B
-r_hat_star = size(B,2);
-primes_ = primes(r_hat_star^2);
-primes_ = primes_(1:r_hat_star);
+r_hat = size(B,2);
+primes_ = primes(r_hat^2);
+primes_ = primes_(1:r_hat);
 
 g = @(a,t) a + B*cos(t*primes_)';
 
 A = [];
 a = a0;
-for i = 1:r_hat_star
+for i = 1:r_hat
     A = [A p(a)];
     a = g(a,i);
 end
 
 rank(A)
-r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
+r_hat_star = r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
 % A
 
 
