@@ -4,14 +4,17 @@ labels(j) = label;
 
 colors = get_7_default_colors();
 
+color = colors{mod(j-1,4)+1};
+line = "-";
+
 if j<= 4
-    color = colors{j};
+    % color = colors{j};
     line = "--"
 elseif j<= 8
-    color = colors{j-4};
+    % color = colors{j-4};
     line = "-";
 else
-    color = colors{j-8};
+    % color = colors{j-8};
     line = "-.";  
 end
 
@@ -96,19 +99,21 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                         hold on
                         subplot(1,2,1)
 
-                        for k = 1:12
+                        % for kk = 1:12
+                        % for kk = 1:8
+                        for kk = 9:12
 
-                            error_V_2 = errors_V_2(:,k);
-                            label = labels(k);
+                            error_V_2 = errors_V_2(:,kk);
+                            label = labels(kk);
 
-                            if k<= 4
-                                color = colors{k};
+                            if kk<= 4
+                                color = colors{kk};
                                 line = "-"
-                            elseif k<= 8
-                                color = colors{k-4};
+                            elseif kk<= 8
+                                color = colors{kk-4};
                                 line = "-.";
                             else
-                                color = colors{k-8};
+                                color = colors{kk-8};
                                 line = "--";
                             end
 
@@ -120,15 +125,15 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                             hold on
                         end
 
-                        for k =1:4
-                            color = colors{k};
-                            error_V_best_2 = errors_V_best_2(:,k);
+                        for kk =1:4
+                            color = colors{kk};
+                            error_V_best_2 = errors_V_best_2(:,kk);
 
                             plot(t_vec,error_V_best_2,  ...
                                 "color", color, ...
                                 "linestyle", ":", ...
                                 "LineWidth", 2, ...
-                                "displayname", "best approx error M = "+ num2str(M_list(k)));
+                                "displayname", "best approx error M = "+ num2str(M_list(kk)));
                             set(gca,'Yscale','log');
                         end
                         
@@ -142,9 +147,10 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
                         % ylim([1e-6 1])
                         ylim([1e-6 10])
 
-                        f.Position = [-2388         285        2237         922];
+                        % f.Position = [-2388         285        2237         922];
+                        % f.Position = [-2388         285        1193         922];
+                        f1.Position = [       -2388         672        1379         535];
                         legend('location', 'southeast')
-
 
                     end
                                     
@@ -173,6 +179,49 @@ if (options.rom.rom == 1 && strcmp(options.rom.rom_type,'POD'))
 
 %                 legend('(K_{ROM}(t)-K_{FOM}(t))/K_{FOM}(0)','(K_{ROM}(t)-K_{FOM}(0))/K_{FOM}(0)','(K_{ROM}(t)-K_{ROM}(0))/K_{ROM}(0)')
 %                 title('error in kinetic energy ROM');
+
+                if j==12
+                        %% energy error plot
+                        f1 = figure(444);
+                        subplot(1,2,1)
+                        hold on
+                        % for kk = 1:12
+                        % for kk = 1:8
+                        for kk = 9:12
+
+                            energy_error = energy_errors(:,kk);
+                            label = labels(kk);
+
+                            if kk<= 4
+                                color = colors{kk};
+                                line = "-"
+                            elseif kk<= 8
+                                color = colors{kk-4};
+                                line = "-.";
+                            else
+                                color = colors{kk-8};
+                                line = "--";
+                            end
+
+                            semilogy(t_vec,energy_error, ...
+                                "color", color, ...
+                                "linestyle", line, ...
+                                "LineWidth", 2, ...
+                                "displayname",label);
+                          
+                        end
+
+                        xlabel("time")
+                        ylabel('energy error');
+                        % legend('show');
+                        % f1.Position = [-2388         285        1193         922];
+                        f1.Position = [       -2388         672        1379         535];
+                        legend('location', 'southeast')
+
+                        ylim([1e-16 10])
+                        set(gca,'Yscale','log')
+                end
+
             end
         end
     end
