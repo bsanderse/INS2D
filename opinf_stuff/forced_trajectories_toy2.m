@@ -24,25 +24,54 @@ M = D - C;
 
 
 a0 = ones(r,1);
+nt = r_hat;
 
 a = a0;
-A = zeros(r_hat,r_hat);
+A = zeros(r_hat,nt+1);
 
 a2 = a0;
-A2 = zeros(r_hat,r_hat);
+A2 = zeros(r_hat,nt+1);
+
+sforces = zeros(r,nt);
+
+A(:,1) = p(a0);
+A2(:,1) = p(a0);
 
 for i = 1:r_hat
 % for i = 1:r_hat_star
     a = a + dt*M*a;
-    A(:,i) = p(a);
+    A(:,i+1) = p(a);
     % A(:,i) = p(a)/norm(p(a));
 
-    a2 = a2 + dt*M*a2 + dt*stimulating_function(i*dt,r);
+    sforce = stimulating_function((i-1)*dt,r);
+    sforces(:,i) = sforce;
+    a2 = a2 + dt*M*a2 + dt*sforce;
     % a2 = a2 + dt*stimulating_function(i*dt,r);
-    A2(:,i) = p(a2);
+    A2(:,i+1) = p(a2);
     % A2(:,i) = p(a2)/norm(p(a2));
 end
 
+
+
 rank(A)
 rank(A2)
+
+%% infer M
+
+A2_linear = A2(1:r,:);
+rank(A2_linear)
+
+dot = @(A) (A(:,2:end)-A(:,1:end-1))/dt;
+
+A2_linear_dot = dot(A2_linear);
+A2_dot_linear_clean = A2_linear_dot - sforces;
+
+M_opinf = A2_dot_linear_clean/A2_linear(:,1:end-1);
+
+
+% sanity check
+A_linear = A(1:r,:);
+A_dot_linear = dot(A_linear);
+M_opinf1 = A_dot_linear/A_linear(:,1:end-1);
+norm(M-M_opinf1)
     
