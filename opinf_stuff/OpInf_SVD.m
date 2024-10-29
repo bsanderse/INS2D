@@ -1,6 +1,9 @@
 % perform core of OpInf: solve least squares problem and decompose solution
 % into linear and quadratic operator
 function [L,Q,rank,O] = OpInf_SVD(Uhats,RHSs)
+% Uhats: r x (r+r^2)
+% RHSs: r x K
+
 
 % Uhat = [Us' vectorwise_kron(Us)'];
 
