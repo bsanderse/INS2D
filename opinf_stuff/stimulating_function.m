@@ -13,6 +13,6 @@ r_hat = size(B,2);
 primes_ = primes(r_hat^2);
 primes_ = primes_(1:r_hat);
 
-f = B*sin(t*primes_)';
+f = B*sin(t*primes_)'/r_hat;
 % f = B*(t.^(1:r_hat))';   % not good
 % f = B*cos(t./primes_)';  % also not good

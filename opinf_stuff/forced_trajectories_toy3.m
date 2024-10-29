@@ -4,7 +4,7 @@ rng("default")
 
 p = @(x) [x; -kron(x,x)]; % consistent with convection minus sign policiy opinf implementation
 
-r = 2;
+r = 8;
 r_hat = r + r^2
 r_hat_star = r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
 
@@ -65,7 +65,7 @@ A2_dot_clean = A2_dot - sforces;
 % norm([D C]-M_opinf)
 
 [~,~,~,M_opinf2] = OpInf_SVD(A2(:,1:end-1),A2_dot_clean);
-reduced_operator([D C] - M_opinf2)
+norm(reduced_operator([D C] - M_opinf2))
 
 % sanity check
 A_dot = dot(A(1:r,:));
@@ -73,7 +73,7 @@ A_dot = dot(A(1:r,:));
 % norm([D C]-M_opinf1)
 
 [~,~,~,M_opinf1] = OpInf_SVD(A(:,1:end-1),A_dot);
-reduced_operator([D C] - M_opinf1)
+norm(reduced_operator([D C] - M_opinf1))
 
 
 %% infer M
