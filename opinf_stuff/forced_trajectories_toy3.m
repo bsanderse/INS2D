@@ -61,13 +61,19 @@ dot = @(A) (A(:,2:end)-A(:,1:end-1))/dt;
 A2_dot = dot(A2(1:r,:));
 A2_dot_clean = A2_dot - sforces;
 
-M_opinf = A2_dot_clean/A2(:,1:end-1);
-norm([D C]-M_opinf)
+% M_opinf = A2_dot_clean/A2(:,1:end-1);
+% norm([D C]-M_opinf)
+
+[~,~,~,M_opinf2] = OpInf_SVD(A2(:,1:end-1),A2_dot_clean);
+reduced_operator([D C] - M_opinf2)
 
 % sanity check
 A_dot = dot(A(1:r,:));
-M_opinf1 = A_dot/A(:,1:end-1);
-norm([D C]-M_opinf1)
+% M_opinf1 = A_dot/A(:,1:end-1);
+% norm([D C]-M_opinf1)
+
+[~,~,~,M_opinf1] = OpInf_SVD(A(:,1:end-1),A_dot);
+reduced_operator([D C] - M_opinf1)
 
 
 %% infer M
