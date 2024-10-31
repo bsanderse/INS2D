@@ -5,12 +5,13 @@ rng("default")
 p = @(x) [x; -kron(x,x)]; % consistent with convection minus sign policiy opinf implementation
 
 % r = 12;
-r = 12;
+r = 16;
 r_hat = r + r^2
 r_hat_star = r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
 
 
-dt = .1;
+% dt = .1;
+dt = 1/r;
 % dt = .01;
 % M = magic(r); % leads to special cases
 M = rand(r,r);
@@ -47,8 +48,8 @@ for i = 1:r_hat
     A(:,i+1) = p(a);
     % A(:,i) = p(a)/norm(p(a));
 
-    % sforce = stimulating_function((i-1)*dt,r);
-    sforce = EC_stimulating_function((i-1)*dt,a2);
+    sforce = stimulating_function((i-1)*dt,r);
+    % sforce = EC_stimulating_function((i-1)*dt,a2);
     sforces(:,i) = sforce;
     a2 = a2 + dt*[D C]*p(a2) + dt*sforce;
     % a2 = a2 + dt*stimulating_function(i*dt,r);
