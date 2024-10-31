@@ -5,7 +5,7 @@ rng("default")
 p = @(x) [x; -kron(x,x)]; % consistent with convection minus sign policiy opinf implementation
 
 % r = 12;
-r = 16;
+r = 20;
 r_hat = r + r^2
 r_hat_star = r+ r+r*(r-1)/2 % linear terms + qudratic terms + half of the mixed terms
 
