@@ -34,7 +34,8 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
             %% botch for inviscid case
             N = size(A,1);
             Diff = zeros(N,N);
-            Conv = ((-A_kron')\(A_dot_input'))';
+            % Conv = ((-A_kron')\(A_dot_input'))';
+            Conv = OpInf_SVD_pure(A_kron,A_dot_input);
             
             %% when using SVD compressed data
             % A_kron = A_dot(N+1:end,:);

@@ -5,7 +5,7 @@ M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 % M_list = [2 2];
 % M_list = [4 4];
-M_list = [8 8];
+% M_list = [8 8];
 % M_list = [16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
@@ -93,6 +93,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method            = 21;
         % RK                = 'GL1';
         method            = 22;
+        % RK = 'RK44';
+        % method = 20;
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -150,7 +152,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snapshot_gen_1coeffs/matlab_data.mat';
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snaps_gen_1coeffs_reproj/matlab_data.mat';
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020art_snaps_gen_1coeffs_reproj_FE/matlab_data.mat';
-    opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020art_snaps_gen_1coeffs_reproj_FE8/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020art_snaps_gen_1coeffs_reproj_FE8/matlab_data.mat';
 
     % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
     %                 "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
@@ -158,10 +160,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
     %     "intrusive","intrusive","intrusive","intrusive"};
 
-    % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
-    %             "intrusive","intrusive","intrusive","intrusive"};
+    opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
+                "intrusive","intrusive","intrusive","intrusive"};
 
-     opinf_types = {"EC-OpInf skew", "intrusive"};
+     % opinf_types = {"EC-OpInf skew", "intrusive"};
      % opinf_types = {"OpInf", "intrusive"};
 
     % opinf_type = "intrusive";
