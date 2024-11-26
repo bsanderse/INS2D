@@ -1,0 +1,12 @@
+function [u,v,p,options] = shear_layer_ROM_IC_opinf_basis(t,options)
+
+%% note: this basis construction could be outsourced and only be done once
+B0 = eye(r);
+B = B0;
+for s = 1:r
+    offset = zeros(r,1);
+    offset(s) = 1; 
+    B = [B, B0 + offset]; % note: this basis includes redundant kronecker ambiguity pairs
+end
+
+%%

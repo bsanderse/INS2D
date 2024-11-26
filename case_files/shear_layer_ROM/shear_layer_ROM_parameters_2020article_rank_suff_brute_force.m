@@ -1,9 +1,15 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-run_multiple = 0;
+run_multiple = 1;
 % M_list = [2 4 8 16 2 4 8 16];
-M_list = 16;
-% M_list = [16 16 16];
+% M_list = [2 4 8 16 2 4 8 16 2 4 8 16];
+% M_list = 16;
+% M_list = [2 2];
+% M_list = [4 4];
+M = 4;
+M_list = M*ones(1,M+M^2);
+% M_list = [8 8];
+% M_list = [16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
 method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
@@ -85,8 +91,14 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 20;
-        RK                = 'RK44';
+        % method            = 21-(j>4);
+        % RK                = method_list{j}; %'RK44';
+        % method            = 21;
+        % RK                = 'GL1';
+        % method            = 22;
+        method = 20;
+        % RK     = 'RK44';
+        RK     = 'FE11';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -119,13 +131,13 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
     precompute_convection = 1;
     precompute_diffusion  = 1;
-    precompute_force      = 1;
+    precompute_force      = 0;
     pressure_recovery     = 0;
     pressure_precompute   = 0;
     process_iteration_FOM = 1; % execute the process_iteration script each time step (requires FOM evaluation)     
     weighted_norm         = 1;    
     basis_type            = 1; % 0: choose depending on matrix size, 1: SVD, 2: direct, 3: method of snapshots
-    mom_cons              = 1; %j>4;
+    mom_cons              = 0; %j>4;
     
     rom_bc = 0; % 0: homogeneous (no-slip, periodic); 
                 % 1: non-homogeneous, time-independent;
@@ -134,11 +146,37 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
     % 200x200:
-    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snapshot_generation/matlab_data.mat';
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
-    
-    
+
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r2/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r4/matlab_data.mat';
+
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snapshot_gen_1coeffs/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snaps_gen_1coeffs_reproj/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020art_snaps_gen_1coeffs_reproj_FE/matlab_data.mat';
+    % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020art_snaps_gen_1coeffs_reproj_FE8/matlab_data.mat';
+
+    % opinf_types = { "intrusive","intrusive","intrusive","intrusive", ...
+    %                 "OpInf", "OpInf", "OpInf", "OpInf", ...
+    %                 "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew"};
+
+    % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
+    %     "intrusive","intrusive","intrusive","intrusive"};
+
+    % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
+    %             "intrusive","intrusive","intrusive","intrusive"};
+
+     % opinf_types = {"EC-OpInf skew", "intrusive"};
+     % opinf_types = {"OpInf", "intrusive"};
+
+    % opinf_type = "intrusive";
+    % opinf_type = opinf_types{j};
+    % opinf_type = "EC-OpInf skew";
+
+    % reproject = "opp";
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -165,7 +203,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % accuracy for non-linear solves (method 62, 72, 9)
     nonlinear_acc          = 1e-10;
     nonlinear_relacc       = 1e-14;
-    nonlinear_maxit        = 10;
+    nonlinear_maxit        = 100;
     nonlinear_Newton       = 2;    % 0: do not compute Jacobian, but approximate iteration matrix with I/dt
                                    % 1: approximate Newton; build Jacobian once at beginning of nonlinear iterations
                                    % 2: full Newton; build Jacobian at each
@@ -184,12 +222,14 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% output parameters and visualization
+    pp_file = "shear_layer_ROM_pp_opinf1"; % specific postprocessing file to reproduce published figures;
+
     plotgrid         = 0;          % plot gridlines and pressure points
     
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 1;          % write tecplot files every n timesteps
     
-    rtp.show         = 1;          % real time plotting 
+    rtp.show         = 0;          % real time plotting 
     rtp.n            = 10;
     rtp.movie        = 0;          % make movie based on the real time plots
     rtp.moviename    = 'inviscid_shear_layer_ROM_GL1'; % movie name
@@ -206,9 +246,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
