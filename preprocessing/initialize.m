@@ -1,4 +1,4 @@
-if ~exist(IC_file,'var')
+if ~exist("IC_file",'var')
     IC_file = [options.case.project '_IC'];
 end
 

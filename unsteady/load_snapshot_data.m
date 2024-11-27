@@ -27,14 +27,14 @@ function [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sam
             end
             
             
-            %% check whether snapshots are divergence free
-            % this gives max div for each snapshot:
-            div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
-            % max over all snapshots:
-            maxdiv_snapshots = max(div_snapshots);
-            if (maxdiv_snapshots > 1e-14)
-                warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
-            end
+            %% check whether snapshots are divergence free  % uncommented because it causes trouble when run in initialize / IC
+            % % this gives max div for each snapshot:
+            % div_snapshots = max(abs(options.discretization.M*V_total_snapshots + options.discretization.yM),[],1); %
+            % % max over all snapshots:
+            % maxdiv_snapshots = max(div_snapshots);
+            % if (maxdiv_snapshots > 1e-14)
+            %     warning(['snapshots not divergence free: ' num2str(maxdiv_snapshots)]);
+            % end
             
             
             %% subtract non-homogeneous BC contribution:

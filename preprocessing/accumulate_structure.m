@@ -122,6 +122,9 @@ voi = {
     'basis_type',0; ... % 0: default (code chooses); 1: SVD, 2: direct, 3: snapshot method
     'opinf_type', "intrusive"; ... % "intrusive", "OpInf" = operator inference, "EC-OpInf" = energy-conserving operator inference
     'reproject', "no"; ... % "no" = no reprojection, "opp" = online post-processing, ...
+    'snapshot_data', "not defined"; ... % directory to snapshot data
+    'dt_sample', 0; ... %  part of snapshot matrix used for building SVD
+    't_sample', 0; ... % frequency of snapshots to be used for SVD
     };
 
 accumulate_object;

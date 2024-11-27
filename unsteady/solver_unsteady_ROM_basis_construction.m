@@ -133,7 +133,7 @@ switch options.rom.rom_type
 
         clear V_svd;
         
-        svd_end(j) = toc-svd_start
+        % svd_end(j) = toc-svd_start  % causes problems in initialize / IC
        
         
         % relative information content:

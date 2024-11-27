@@ -78,8 +78,6 @@ if (~exist('run_multiple','var') || run_multiple == 0)
 else
     Nsim = length(mesh_list);
 end
-
-options.simulation_nr = j;
     
 % loop over multiple simulations (e.g. different meshes or time steps)
 for j=1:Nsim
@@ -150,7 +148,9 @@ for j=1:Nsim
     % disp('construct operators...');
     fprintf(fcw,'construct operators...\n');
     operators;
-    
+
+    %% store simulation number in options
+    options.simulation_nr = j;    
     
     %% initialization of solution vectors
     % disp('initialization of vectors...');
@@ -160,8 +160,7 @@ for j=1:Nsim
     end
     
     %% boundary conditions
-    options = set_bc_vectors(t,options);
-    
+    options = set_bc_vectors(t,options);    
     
     %% construct body force or immersed boundary method
     % the body force is called in the residual routines e.g. F.m
