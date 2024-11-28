@@ -127,6 +127,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     t_sample  = 4;  % part of snapshot matrix used for building SVD
     dt_sample = 0.01; % frequency of snapshots to be used for SVD
 
+    t_sample_opinf  = dt;  % part of snapshot matrix used for building SVD
+    dt_sample_opinf = dt; % frequency of snapshots to be used for SVD
+
     precompute_convection = 1;
     precompute_diffusion  = 1;
     precompute_force      = 0;
@@ -151,12 +154,17 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r2/matlab_data.mat';
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_reproj_r4/matlab_data.mat';
 
-    opinf_snapshot_data = char("results/rank_suff_brute_force_M=2 j="+num2str(j)+"/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat");
+    % opinf_snapshot_data = char("results/rank_suff_brute_force_M=2 j="+num2str(j)+"/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat");
 
-    strings = {};
-    for jj = 1:4
-        strings{jj} = num2str(jj);
+    opinf_snapshot_datas = {};
+    for jj = 1:M+M^2
+        opinf_snapshot_datas{jj} = char("results/rank_suff_brute_force_M=2 j="+num2str(jj)+"/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat");
     end
+
+    % strings = {};
+    % for jj = 1:4
+    %     strings{jj} = num2str(jj);
+    % end
 
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snapshot_gen_1coeffs/matlab_data.mat';
     % opinf_snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200_2020article_snaps_gen_1coeffs_reproj/matlab_data.mat';

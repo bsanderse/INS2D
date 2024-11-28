@@ -6,19 +6,13 @@ solver_unsteady_ROM_basis_construction;
 %% than for inferring operators
 if options.rom.opinf_type ~= "intrusive" 
     if exist("opinf_snapshot_datas",'var')
-        A_comb = []; % combined ...
-        A_dot_comb = [];
         for jj = numel(opinf_snapshot_datas)
             opinf_snapshot_data = opinf_snapshot_datas{jj};
-            [opinf_V_svd,~,opinf_snapshots] = load_snapshot_data(opinf_snapshot_data,options,dt_sample_opinf,t_sample_opinf);
+            [opinf_V_svd,~,opinf_snapshots] = load_snapshot_data(opinf_snapshot_data,options,dt_sample,t_sample);
             [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),dt_sample);
-            A_comb = [A_comb A];
-            A_dot_comb = [A_dot_comb A_dot];
-        end
-        options.rom.A = A_comb;
-        options.rom.A_dot = A_dot_comb;
 
-    elseif exist("opinf_snapshot_data",'var')
+        end
+    if exist("opinf_snapshot_data",'var')
         [opinf_V_svd,~,opinf_snapshots] = load_snapshot_data(opinf_snapshot_data,options,dt_sample,t_sample);
 
         % [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),opinf_snapshots.dt);
