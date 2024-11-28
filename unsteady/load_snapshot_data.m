@@ -65,7 +65,7 @@ function [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sam
                 Nskip = dt_sample/snapshots.dt;
                 % check if t_sample is multiple of dt_sample
                 if (rem(t_sample,dt_sample) == 0)
-                    Nsnapshots    = t_sample / snapshots.dt; %size(V_total,2);
+                    Nsnapshots    = t_sample / snapshots.dt + 1; %size(V_total,2);
                     snapshot_sample = 1:Nskip:Nsnapshots;
                 else
                     error('sample dt is not an integer multiple of sample time');
@@ -79,4 +79,4 @@ function [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sam
             
             clear V_total_snapshots;
             
-        end
+        snend
