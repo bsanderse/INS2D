@@ -79,4 +79,4 @@ function [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sam
             
             clear V_total_snapshots;
             
-        snend
+        end

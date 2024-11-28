@@ -8,7 +8,7 @@ if options.rom.opinf_type ~= "intrusive"
     if exist("opinf_snapshot_datas",'var')
         A_comb = []; % combined ...
         A_dot_comb = [];
-        for jj = numel(opinf_snapshot_datas)
+        for jj = 1:numel(opinf_snapshot_datas)
             opinf_snapshot_data = opinf_snapshot_datas{jj};
             [opinf_V_svd,~,opinf_snapshots] = load_snapshot_data(opinf_snapshot_data,options,dt_sample_opinf,t_sample_opinf);
             [A,A_dot] = get_opinf_snapshots(B'*(Om.*opinf_V_svd),dt_sample);

@@ -15,6 +15,7 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
             % account!
             N = size(A,1)
             N_hat_star = N + N + N*(N-1)/2
+            N_hat_star_minus_N = N_hat_star - N
             rank_ = min(rank_,N_hat); % N tilde does not need to be larger than N_hat. We also cannot go larger than rank_
             Ut = U(:,1:rank_);
             St = S(1:rank_,1:rank_);

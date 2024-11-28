@@ -14,10 +14,22 @@ switch options.rom.opinf_type
             error('not implemented')
         end
 
-        [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.opinf_type)
+        %% botch: clean data
+        % Diag = ones(NV,1);
+        % P = B'*spdiags(Diag,0,NV,NV);
+        % [conv_bc,conv_linear,conv_quad] = operator_rom_convection(P,options);
+        % A_clean = [1 0 2 1 1 0; 0 1 0 1 1 2]; % only for M=2
+        % A_dot_clean = conv_quad*vectorwise_kron(A_clean);
+
+        % options.rom.A = A_clean;
+        % options.rom.A_dot = A_dot_clean;
+
+        %%
+
+        [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.opinf_type);
 
         options.rom.Diff = Diff;
-        options.rom.Conv_quad = Conv;
+        options.rom.Conv_quad = -Conv; %botch!!!
 
         % not yet implemented
         M = options.rom.M;
