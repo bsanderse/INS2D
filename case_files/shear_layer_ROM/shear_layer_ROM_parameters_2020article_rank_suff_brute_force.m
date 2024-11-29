@@ -8,6 +8,7 @@ run_multiple = 1;
 % M_list = [4 4];
 % M = 2;
 M = 8;
+% M = 16;
 M_list = M*ones(1,M+M^2);
 % M_list = [8 8];
 % M_list = [16 16];
@@ -250,10 +251,10 @@ IC_file = "shear_layer_ROM_IC_opinf_basis";
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     % path_results     = 'results';  % path where results are stored
     path_results     = char("results/rank_suff_brute_force_M="+ num2str(M)+" j="+num2str(j));  % path where results are stored
-    save_results     = 1;          % write information during iterations/timesteps
+    save_results     = 0;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
