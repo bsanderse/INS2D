@@ -8,7 +8,7 @@ NV  = options.grid.Nu+options.grid.Nv;
 B   = options.rom.B;
 
 switch options.rom.opinf_type
-    case {"OpInf", "EC-OpInf Koike", "EC-OpInf skew"}
+    case {"OpInf", "EC-OpInf Koike", "EC-OpInf skew", "OpInf inviscid"}
 
         if (options.rom.weighted_norm == 0)
             error('not implemented')
@@ -29,7 +29,7 @@ switch options.rom.opinf_type
         [Diff, Conv] = OpInf(options.rom.A,options.rom.A_dot,options.rom.opinf_type);
 
         options.rom.Diff = Diff;
-        options.rom.Conv_quad = -Conv; %botch!!!
+        options.rom.Conv_quad = Conv; 
 
         % not yet implemented
         M = options.rom.M;

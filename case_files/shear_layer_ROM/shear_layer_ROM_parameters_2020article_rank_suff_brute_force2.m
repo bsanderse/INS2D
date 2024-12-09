@@ -184,6 +184,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 
      % opinf_types = {"EC-OpInf skew", "intrusive"};
      opinf_types = {"OpInf", "intrusive"};
+     % opinf_types = {"OpInf inviscid", "intrusive"};
 
     % opinf_type = "intrusive";
     % opinf_type = "EC-OpInf skew";

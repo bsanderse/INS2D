@@ -1,5 +1,4 @@
-% perform core of OpInf: solve least squares problem and decompose solution
-% into linear and quadratic operator
+% perform core of OpInf: solve least squares problem
 function [O] = OpInf_SVD_pure(Uhats,RHSs)
 % Uhats: r x (r+r^2)
 % RHSs: r x K

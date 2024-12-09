@@ -2,11 +2,12 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
 
         A_dot_input = A_dot;
 
-        A_kron = vectorwise_kron(A);
-        A_hat = [A; -A_kron];
+        A_kron = -vectorwise_kron(A);
+        A_hat = [A; A_kron];
 
     %% botch: SVD compression
-        if true
+        % if true
+        if false
             N_hat = size(A_hat,1);
             [U,S,V] = svd(A_hat',"econ");
 
@@ -32,7 +33,9 @@ function [Diff, Conv] = OpInf(A,A_dot,rom_type)
         % if options.rom.rom_type == "OpInf"
         if rom_type == "OpInf"
             % [Diff,Conv] = OpInf_core(A_hat,A_dot);
-            %% botch for inviscid case
+            [Diff,Conv] = OpInf_SVD(A_hat,A_dot);
+        elseif rom_type == "OpInf inviscid"
+            %% botch for inviscid case -> not botch anymore :)
             N = size(A,1);
             Diff = zeros(N,N);
             % Conv = ((-A_kron')\(A_dot_input'))';
