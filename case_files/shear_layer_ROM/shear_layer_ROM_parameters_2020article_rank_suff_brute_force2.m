@@ -2,7 +2,7 @@
 % project = 'shear_layer_ROM';   % project name used in filenames
 run_multiple = 1;
 % M_list = [2 4 8 16 2 4 8 16];
-% M_list = [2 4 8 16 2 4 8 16 2 4 8 16];
+M_list = [2 4 8 16 2 4 8 16 2 4 8 16];
 % M_list = [2 2];
 % M_list = 16;
 % M_list = [2 2];
@@ -11,7 +11,7 @@ run_multiple = 1;
 M_list = [16 16];
 % M_list = [2 2 2 4 4 8 8 16 16 32 32]; % 5 10 15 20 ];
 mesh_list = ones(length(M_list),1);
-method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
+% method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% flow properties
     Re      = 1e100;                  % Reynolds number
@@ -179,11 +179,11 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % opinf_types = { "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", "EC-OpInf skew", ...
     %     "intrusive","intrusive","intrusive","intrusive"};
 
-    % opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
-    %             "intrusive","intrusive","intrusive","intrusive"};
+    opinf_types = { "OpInf", "OpInf", "OpInf", "OpInf", ...
+                "intrusive","intrusive","intrusive","intrusive"};
 
      % opinf_types = {"EC-OpInf skew", "intrusive"};
-     opinf_types = {"OpInf", "intrusive"};
+     % opinf_types = {"OpInf", "intrusive"};
      % opinf_types = {"OpInf inviscid", "intrusive"};
 
     % opinf_type = "intrusive";
