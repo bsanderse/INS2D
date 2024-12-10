@@ -32,9 +32,17 @@ velocities(j,:,:) = [uh_total; vh_total]
 if jj == Nsim
     figure(576)
 
+    line = "-";
+    color = colors{k};
+    v_diff_label = "M = " + num2str(M_list(k)) + " " + opinf_types{k} + "/" + opinf_types{k+4};
+
     for k = 1:4
         intrusive_opinf_velo_error = weightedL2norm(velocities(k,:,:)-velocities(k+4,:,:),options.grid.Om);
-        % CONTINUE HERE !!!!!
+        semilogy(intrusive_opinf_velo_error, ...
+                                "color", color, ...
+                                "linestyle", line, ...
+                                "LineWidth", 2, ...
+                                "displayname",v_diff_label);
     end
 
 end
