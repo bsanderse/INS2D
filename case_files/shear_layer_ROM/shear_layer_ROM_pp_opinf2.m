@@ -24,19 +24,21 @@ else
 end
 
 if j == 1
-    velocities = zeros(Nsim,options.grid.NV,size(uh_total,2));
+    % velocities = zeros(Nsim,options.grid.NV,size(uh_total,2)); too big
+    % for Matlab!
 end
 
-velocities(j,:,:) = [uh_total; vh_total]
+velocities(j,:,:) = [uh_total; vh_total];
 
 if jj == Nsim
     figure(576)
 
     line = "-";
-    color = colors{k};
-    v_diff_label = "M = " + num2str(M_list(k)) + " " + opinf_types{k} + "/" + opinf_types{k+4};
 
     for k = 1:4
+        color = colors{k};
+        v_diff_label = "M = " + num2str(M_list(k)) + " " + opinf_types{k} + "/" + opinf_types{k+4};
+
         intrusive_opinf_velo_error = weightedL2norm(velocities(k,:,:)-velocities(k+4,:,:),options.grid.Om);
         semilogy(intrusive_opinf_velo_error, ...
                                 "color", color, ...

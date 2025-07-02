@@ -21,18 +21,21 @@ D = D/dx^2;
 
 % D = 0*D;
 
+%% skew-symmetric convection operator for Burger's equation as described in
+% https://www.sciencedirect.com/science/article/pii/S0021999124002523
 index = @(x) mod(x-1,N)+1;
 kron_ind = @(i,j) i+(j-1)*N;
 
 C = zeros(N,N^2);
 for i = 1:N
-    C(i,kron_ind(index(i-1),index(i-1))) = 1;
-    C(i,kron_ind(index(i+1),index(i+1))) = -1;
-    C(i,kron_ind(index(i-1),i)) = 1;
-    C(i,kron_ind(index(i+1),i)) = -1;
+    C(i,kron_ind(index(i-1),index(i-1))) = 1; % u_{i-1}^2
+    C(i,kron_ind(index(i+1),index(i+1))) = -1; % u_{i+1}^2
+    C(i,kron_ind(index(i-1),i)) = 1; % u_i u_{i-1}
+    C(i,kron_ind(index(i+1),i)) = -1; % u_i u_{i+1}
 end
 
 C = C/(3*dx);
+%%
 
 % C = 0*C;
  

@@ -239,7 +239,8 @@ mesh_list = ones(length(M_list),1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% output parameters and visualization
-    pp_file = "shear_layer_ROM_pp_opinf1"; % specific postprocessing file to reproduce published figures;
+    % pp_file = "shear_layer_ROM_pp_opinf1"; % specific postprocessing file to reproduce published figures;
+    pp_file = "shear_layer_ROM_pp_opinf2"; % specific postprocessing file to reproduce published figures;
 
     plotgrid         = 0;          % plot gridlines and pressure points
     
