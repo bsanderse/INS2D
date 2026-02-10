@@ -6,9 +6,7 @@ function [V_svd,Vbc,snapshots] = load_snapshot_data(snapshot_data,options,dt_sam
         if true
             
             disp(['loading datafile...: ' snapshot_data]);
-            % snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
-            snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv');
-            Vbc = 0;
+            snapshots = load(snapshot_data,'uh_total','vh_total','p_total','dt','t_end','Re','k','umom','vmom','maxdiv','Vbc');
             % snapshots.U = [snapshots.uh_total; snapshots.vh_total];
             
             % dt that was used for creating the snapshot matrix:
