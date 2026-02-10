@@ -1,4 +1,4 @@
-function phi = feature(basis)
+function phi = opinf_feature(basis)
 
 [r,~] = size(basis);
 
