@@ -162,8 +162,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     rom = 1
 %     rom    = j<=4;      % set to 1 to use ROM solver
     pro_rom = 0;
-    % M      = M_list(j);     % number of modes used
-    M      = M_list;     % number of modes used
+    M      = M_list(j);     % number of modes used
+    % M      = M_list;     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
     t_sample  = t_end;  % part of snapshot matrix used for building SVD
