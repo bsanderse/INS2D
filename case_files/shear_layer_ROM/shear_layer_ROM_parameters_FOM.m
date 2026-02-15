@@ -1,7 +1,7 @@
 % input file                
 % project = 'shear_layer_ROM';   % project name used in filenames
-run_multiple = 1;
-% run_multiple = 0;
+% run_multiple = 1;
+run_multiple = 0;
 M_list = [2 4 8 16 2 4 8 16];
 % M_list = 16;
 % M_list = [16 16 16];
@@ -51,8 +51,8 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reduced order model
 
-    rom    = 1;      % set to 1 to use ROM solver
-    % rom    = 0;      % set to 1 to use ROM solver
+    % rom    = 1;      % set to 1 to use ROM solver
+    rom    = 0;      % set to 1 to use ROM solver
     M      = M_list(j);     % number of modes used
     Mp     = M;     % number of pressure modes used (only needed if pressure_recovery=1)
 
@@ -76,8 +76,7 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     % 40x40:
 %     snapshot_data = 'results/shear_layer01/matlab_data.mat';
     % 200x200:
-    % snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
-    snapshot_data = 'results/shear_layer_ROM_FOM_snapshots/matlab_data.mat';
+    snapshot_data = 'results/shear_layer_ROM_snapshots_rerunApril2020/matlab_data.mat';
     % 200x200, with RK4 until t=7
 %     snapshot_data = 'results/shear_layer_ROM_1.000e+100_200x200/matlab_data.mat';
     
@@ -122,10 +121,10 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
         % method 5 : explicit one leg beta; 2nd order
         % method 20 : generic explicit RK, can also be used for ROM
         % method 21 : generic implicit RK, can also be used for ROM            
-        method            = 21-(j>4);
-        % method            = 20;
-        RK                = method_list{j}; %'RK44';
-        % RK                = 'RK44';
+        % method            = 21-(j>4);
+        method            = 20;
+        % RK                = method_list{j}; %'RK44';
+        RK                = 'RK44';
 
         % for methods that are not self-starting, e.g. AB-CN or one-leg
         % beta, we need a startup method.
@@ -211,9 +210,9 @@ method_list = {'GL1','GL1','GL1','GL1','RK44','RK44','RK44','RK44'};
     restart.write    = 0;          % write restart files 
     restart.n        = 10;         % every restart.n timesteps
     
-    save_file        = 0;          % save all matlab data after program is completed    
+    save_file        = 1;          % save all matlab data after program is completed    
     path_results     = 'results';  % path where results are stored
-    save_results     = 0;          % write information during iterations/timesteps
+    save_results     = 1;          % write information during iterations/timesteps
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     cw_output        = 1;          % command window output; 
