@@ -94,7 +94,9 @@
     rtp.show         = 1;          % 1: real time plotting 
 %     rtp.type         = 'velocity'; % velocity, quiver, vorticity or pressure
     rtp.n            = 1;
-    rtp.movie        = 0;
+    rtp.movie        = 1;
+    rtp.moviename = "actuator"
+    rtp.movierate = 10
     
 %     statistics.write = 1;          % write averages and fluctuations each
 %     n steps

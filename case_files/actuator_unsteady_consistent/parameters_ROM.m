@@ -1,3 +1,6 @@
+% run as
+% main('actuator_unsteady_consistent',0,1,"ROM")
+
 % project = 'actuator_unsteady';   % project name used in filenames
 % run_multiple = 0;
 run_multiple = 0;
@@ -349,9 +352,9 @@ changing_snapshotdata = 0;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 0;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % requires rtp.show = 1
+    rtp.movie        = 1;          % requires rtp.show = 1
     rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     

@@ -1,3 +1,6 @@
+% run as
+% main('actuator_unsteady_consistent',0,1,"FOM")
+
 % project = 'actuator_unsteady';   % project name used in filenames
 % run_multiple = 0;
 run_multiple = 0;
@@ -115,6 +118,7 @@ changing_snapshotdata = 0;
     t_start       = 0;         % start time
 %     t_end         = 4*pi*4;        % end time
     t_end         = 4*pi;        % end time
+    % t_end         = pi/2;        % end time
     
 %         dt            = 4*pi/200;      % time step (for explicit methods it can be
         dt            = 4*pi/800;      % time step (for explicit methods it can be
@@ -345,10 +349,11 @@ changing_snapshotdata = 0;
     tecplot.write    = 0;          % write to tecplot file
     tecplot.n        = 0;         % write tecplot files every n
     
-    rtp.show         = 0;          % 1: real time plotting 
+    rtp.show         = 1;          % 1: real time plotting 
     rtp.n            = 10;
-    rtp.movie        = 0;          % requires rtp.show = 1
-    rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
+    rtp.movie        = 1;          % requires rtp.show = 1
+    % rtp.moviename    = 'actuator_unsteady_ROM'; % movie name
+    rtp.moviename    = 'actuator_unsteady_FOM_psi'; % movie name
     rtp.movierate    = 15;         % frame rate (/s); note one frame is taken every rtp.n timesteps
     
 %     show_sigmas = j<=1;
@@ -365,9 +370,9 @@ changing_snapshotdata = 0;
     restart.write    = 0;          % write restart files 
     restart.n        = 50;         % every restart.n iterations
     
-    save_file        = 1;          % save all matlab data after program is completed    
+    save_file        = 0;          % save all matlab data after program is completed    
     path_results     = 'results';  % folder where results are stored
-    save_results     = 1;          % create folder with results files and input files
+    save_results     = 0;          % create folder with results files and input files
     save_unsteady    = 1;          % save unsteady simulation data at each time step (velocity + pressure) - requires save_file=1
     
     results_name = 'actuator_unsteady_consistent_FOM_snapshots';

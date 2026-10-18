@@ -56,7 +56,7 @@ max_psi = max(psi,[],'all');
 min_psi = min(psi,[],'all');
 
 psi_vis = min_vis + (max_vis-min_vis)*(psi-min_psi)/(max_psi-min_psi);
-contour(x(2:end-1),y(2:end-1),reshape(psi_vis,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
+% contour(x(2:end-1),y(2:end-1),reshape(psi_vis,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
 %%
 title('u velocity component')
 axis equal
@@ -74,7 +74,7 @@ max_psi = max(psi,[],'all');
 min_psi = min(psi,[],'all');
 
 psi_vis = min_vis + (max_vis-min_vis)*(psi-min_psi)/(max_psi-min_psi);
-contour(x(2:end-1),y(2:end-1),reshape(psi_vis,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
+% contour(x(2:end-1),y(2:end-1),reshape(psi_vis,Nx-1,Ny-1)','k'); %labels,'LineWidth',1);
 %%
 title('v velocity component')
 axis equal
